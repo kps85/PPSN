@@ -116,6 +116,8 @@ nav a {
       height: 60px;
       padding-top: 40px;
       background-size: 50px 50px; } }
+  nav a:hover {
+    text-decoration: none; }
 nav a.home {
   background-image: url("img/icon_home.png"); }
 nav a.settings {
@@ -161,6 +163,8 @@ nav a.menuCloser {
       border-radius: 5px; }
       #list ul li a {
         display: inline-block; }
+        #list ul li a:hover {
+          text-decoration: none; }
       #list ul li a.ullink {
         width: 80%; }
       #list ul li a.dashicons {

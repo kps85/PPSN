@@ -3,7 +3,7 @@ $(document).ready(function() {
 		$(".post").first().clone().appendTo("#content");
 	}
 	
-	var $menuOpener = $("<a>", {'class':'menuOpener'});
+	var $menuOpener = $("<a>", {'class':'menuOpener', 'href':'javascript:;'});
 	var $patty = $("<div>", {'class':'patty'});
 	for(var i = 0; i <3; i++) {
 		$patty.clone().appendTo($menuOpener);
