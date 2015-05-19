@@ -27,9 +27,6 @@ nav {
 	background:$listBg;
 	color:#fff;
 	
-	
-	
-	
 	ul {
 		border-color:$listActive !important;
 		li.active {
@@ -37,9 +34,7 @@ nav {
 			background:$listActive;
 		}
 		
-		
 		a {
-			
 			color:$listColor;
 			&:hover {
 				color:#fff;
