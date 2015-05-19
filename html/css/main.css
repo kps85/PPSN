@@ -25,6 +25,9 @@ nav {
       #list ul a:hover {
         color: #fff; }
 
+.menuOpener .patty {
+  border-color: #6D6D6E !important; }
+
 #main, body {
   background: #F5F8FB; }
 
@@ -36,7 +39,10 @@ header {
   border-bottom: 1px solid #E4E8EA; }
 
 .post {
-  border: 1px solid #E4E8EA; }
+  border: 1px solid #E4E8EA;
+  background: #fff; }
+  .post:hover {
+    background: #fdfdfd; }
   .post .postTime {
     color: #aaa; }
 
@@ -59,12 +65,12 @@ textarea, input {
 
 /* Layout */
 @media screen and (min-width: 1024px) {
-  aside {
+  #aside {
     width: 30%;
     height: 100%;
     position: fixed; } }
 @media screen and (max-width: 1023px) {
-  aside {
+  #aside {
     display: none;
     position: fixed;
     top: 0;
@@ -190,16 +196,23 @@ header {
   header a.menuOpener {
     text-indent: -9999px;
     display: block;
+    box-sizing: border-box;
     height: 45px;
     width: 45px;
     margin-top: 22.5px;
     margin-right: 3%;
-    background: #eee;
+    padding-top: 2px;
     float: right;
     display: none; }
     @media screen and (max-width: 1023px) {
       header a.menuOpener {
         display: inherit; } }
+    header a.menuOpener:hover {
+      cursor: pointer;
+      opacity: 0.8; }
+    header a.menuOpener .patty {
+      margin: 14% 20%;
+      border-bottom: 5px solid transparent; }
   header #search input {
     padding: 10px;
     border: 1px solid #eee;
@@ -231,7 +244,6 @@ header {
       width: 94%; } }
 
 .post {
-  background: #fff;
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 20px; }

@@ -4,10 +4,17 @@ $(document).ready(function() {
 	}
 	
 	var $menuOpener = $("<a>", {'class':'menuOpener'});
+	var $patty = $("<div>", {'class':'patty'});
+	for(var i = 0; i <3; i++) {
+		$patty.clone().appendTo($menuOpener);
+	}
+	
+	
 	$menuOpener.appendTo("header");
 	
-	$(".menuOpener").click(function() {
-		var $a = $("aside");
+	$(".menuOpener, .menuOpener > *").click(function() {
+
+		var $a = $("#aside");
 		if($a.is(":hidden")) {
 			$a.show();
 			$a.animate({'left':0}, 300);
@@ -19,7 +26,7 @@ $(document).ready(function() {
 	$menuCloser.appendTo("nav");
 	
 	$(".menuCloser").click(function() {
-		var $a = $("aside");
+		var $a = $("#aside");
 		if($a.is(":visible")) {
 			
 			$a.animate({'left':'-100%'}, 300, function() {

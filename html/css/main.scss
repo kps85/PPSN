@@ -32,7 +32,7 @@ header {
 	
 }
 
-aside {
+#aside {
 	
 	@include desktop {
 		width:$asideWidth;
@@ -201,15 +201,25 @@ header {
 	a.menuOpener {
 		text-indent:-9999px;
 		display:block;
+		box-sizing:border-box;
 		height:$navWidthDesktop / 2;
 		width:$navWidthDesktop / 2;
 		margin-top:$navWidthDesktop / 4;
 		margin-right:3%;
-		background:#eee;
+		padding-top:2px;
 		float:right;
 		display:none;
 		@include tablet {
 			display:inherit;
+		}
+		
+		&:hover {
+			cursor:pointer;
+			opacity:0.8;
+		}
+		.patty {
+			margin:14% 20%;
+			border-bottom:5px solid transparent;
 		}
 	}
 	
@@ -255,8 +265,6 @@ header {
 
 $iconWidth:50px;
 .post {
-	
-	background:#fff;
 	border-radius:5px;
 	padding:20px;
 	

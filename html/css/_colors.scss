@@ -43,6 +43,14 @@ nav {
 	}
 }
 
+.menuOpener {
+	.patty {
+		border-color:#6D6D6E !important;
+	}
+}
+
+
+
 $mainBg:#F5F8FB;
 
 #main, body {
@@ -62,7 +70,10 @@ header {
 
 .post {
 	border:1px solid $headerBorder;
-	
+	background:#fff;
+	&:hover {
+		background:#fdfdfd;
+	}
 	.postTime {
 		color:#aaa;
 	}
