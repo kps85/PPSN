@@ -45,12 +45,12 @@ $(document).ready(function() {
 		if($(window).width() == windowWidth) return
 		windowWidth = $(window).width();
 		if($(".menuOpener").is(":hidden") && menuOpenerWasVisible) {
-			$("aside").css({'left':'0'})
-			$("aside").show();
+			$("#aside").css({'left':'0'})
+			$("#aside").show();
 			menuOpenerWasVisible = false;
 		} else if($(".menuOpener").is(":visible") && !menuOpenerWasVisible) {
-			$("aside").css({'left':'-100%'})
-			$("aside").hide();
+			$("#aside").css({'left':'-100%'})
+			$("#aside").hide();
 			menuOpenerWasVisible = true;
 		}
 	})
