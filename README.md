@@ -3,6 +3,11 @@
 ![TwitTUr - A social-networking platform][twittur_logo]
 ##**TwitTUr** - *A social-networking platform*
 
+######**AUFGABENSTELLUNG**
+>*Die SeminarteilnehmerInnen entwickelen eine social-networking Plattform basierend auf einem Webframework einer objekt-orientierten Sprache. Das Projektmanagement basiert auf modernen Praktiken agiler Softwareentwicklung und es sollen typische Werkzeuge aus der Welt der Open Source Entwicklung verwendet werden.*
+
+--
+
 ######**ZIEL DES PROJEKTS**
 >*Das Team entwickelt im Rahmen eines CIT-Moduls an der TU Berlin binnen neun Wochen ein Social-Network. Das System basiert im Allgemeinen auf der Struktur der TU Berlin und achtet auf festgelegte Sicherheitsrichtlinien. Es wird unter zu Hilfe nahme der Programmiersprache Python, dem Web-Framework Django und Twitter Bootstrap umgesetzt.*
 
@@ -27,9 +32,20 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 --
 
 ######**DIE PROJEKT-INFRASTRUKTUR**
-* [Google Sheet mit relevanten Dokumenten] (https://goo.gl/gzIMiu)
+* [Google Sheet] (https://goo.gl/gzIMiu)
+ - Diagramme (Kontextmodell, Use-Cases, Klassendiagramm, ...)
+ - Dokumentation (Protokoll Meetings)
+ - Stakeholderliste
+ - Anforderungskatalog
+ - Datenobjektliste (still empty)
+ - Glossar (still empty)
 * [GitHub Repository 'PPSN'] (https://goo.gl/pAsqLV)
+ - 'master'-Branch wird zu den entsprechenden Meetings aktualisiert
 * [Waffle.io Issue Organisation] (https://goo.gl/reOBQO)
+ - Backlog column dient als Product Backlog
+ - Ready column dient als Sprint Backlog
+ - entsprechende Meilensteine sind die zweiwöchigen Präsentationen
+* Zur Kommunikation wird 'slack.com' verwendet
 
 --
 
