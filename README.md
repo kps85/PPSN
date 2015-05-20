@@ -1,6 +1,7 @@
 #####**TU Berlin** - **C**omplex and Distributed **IT**-System
-
-![TwitTUr - A social-networking platform][twittur_logo]
+<p align="center">
+ <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="TwitTUr - A social-networking platform" width="200">
+</p>
 ##**TwitTUr** - *A social-networking platform*
 
 ######**AUFGABENSTELLUNG**
@@ -40,7 +41,9 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
  - Datenobjektliste (still empty)
  - Glossar (still empty)
 * [GitHub Repository 'PPSN'] (https://goo.gl/pAsqLV)
+ - readme dient dem Überblick aller relevanten Informationen zum Projekt
  - 'master'-Branch wird zu den entsprechenden Meetings aktualisiert
+ - eventuell wird Google Sheet noch in die Projekt Wiki übertragen
 * [Waffle.io Issue Organisation] (https://goo.gl/reOBQO)
  - Backlog column dient als Product Backlog
  - Ready column dient als Sprint Backlog
@@ -49,13 +52,12 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 
 --
 
-![Complex and Distributed IT Systems][cit_logo]
+<p align="center">
+ <img src="https://github.com/kps85/PPSN/blob/master/img/cit_logo.jpg" alt="Complex and Distributed IT Systems" width="100">
+</p>
 
 Ein Projekt im Rahmen des [Fachgebiet Komplexe und verteilte IT-Systeme] (https://www.cit.tu-berlin.de/) der TU Berlin. Geplant und entwickelt im Sommersemester 2015.
 
 Das TwitTUr-Logo findet im Rahmen dieses Projektes Verwendung. Es dient lediglich der Identifikation dessen und keinem wirtschaftlichen oder kommerziellen Zwecke.
 
 Icon made by Freepik from www.flaticon.com is licensed under CC BY 3.0. http://www.flaticon.com/free-icon/toucan-tropical-bird_47351 (17.05.2015, 10:52Uhr)
-
-[twittur_logo]: https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG
-[cit_logo]: https://github.com/kps85/PPSN/blob/master/img/cit_logo.jpg
