@@ -1,4 +1,3 @@
-#####**TU Berlin** - **C**omplex and Distributed **IT**-System
 <p align="center">
  <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="TwitTUr - A social-networking platform" width="200">
 </p>
