@@ -37,7 +37,13 @@ class Group(models.Model):
     group_super = models.ForeignKey( 'self',  blank = True, null = True )
 
     def __str__(self):
-        return self.group_name
+        return self.group_name 
+
+class Hashtag(models.Model):
+    hashtag_name = models.CharField( max_length = 50 )
+
+    def __str__(self):
+        return '#' + self.hashtag_name
 
 
 #### Relationships
@@ -49,7 +55,6 @@ class Favorite(models.Model):
 
     def __str__(self):
         return self.favorite_from.user_name + ' -> ' + self.favorite_to.user_name
-
 
 
 # - message directed to group or user or both
@@ -68,5 +73,21 @@ class ToUser(models.Model):
 
     def __str__(self):
         return "Message from " + self.toUser_from.user_name + " to User " + self.toUser_to.user_name  
+
+class IsInGroup(models.Model):
+    isInGroup_user = models.ForeignKey( User )
+    isInGroup_group = models.ForeignKey( Group )
+    #isInGroup_superuser = models.Boolean( default = False )
+
+    def __str__(self):
+        return self.isInGroup_superuser + ' joint the group ' + self.isInGroup_group
+
+class Has(models.Model):
+    has_message = models.ForeignKey( Message )
+    has_hashtag = models.ForeignKey( Hashtag )
+
+    def __str__(self):
+        return self.has_message.message_from.user_name + "'s' message contains #" + self.has_hashtag.hashtag_name
+    
 
 
