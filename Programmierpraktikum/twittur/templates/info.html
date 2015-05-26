@@ -1,6 +1,35 @@
 {% extends 'base.html' %}
 
 {% block list %}
+
+<ul>
+		<ul>
+		<li><h2> FAQ  </h2></li>
+			<ul>
+                <li>Was sind #Hashtags?</li>
+                <li>Wie funktionieren @ATs??</li>
+                <li>Wozu nutze ich &amp; (Und)?</li>
+                <li>Wie kann ich mir die Nachrichten einer bestimmten Person anzeigen lassen?</li>
+                <li>Wie ändere ich meine Sicherheitseinstellungen?</li>
+                <li>Wieso werden alle meine Beiträge negativ bewertet?</li>
+                <li>Wie verschicke ich eine Nachricht?</li>
+			</ul>
+		
+        <li><h3> Supportanfrage stellen</h3> </li>
+        <li>
+        	<select> 
+        		<option>Sie haben eine Frage</option>
+                
+                <option>Ihr Account wurde gehackt</option>
+                <option>Sie wollen einen Bug melden</option>
+             </select>
+        </li>
+        <li><h3> Über uns </h3> </li>
+
+
+        </ul>
+</ul>
+
 	{% if group_list %}
 	<ul class="groups">
 		<h3>Meine Gruppen</h3>
@@ -29,6 +58,27 @@
 
 {% block content %}
 
-		<div>Hallo Info Welt!</div>
+        <h4>Was sind #Hashtags?</h4>
+        <p><li>- Mit Hashtags werden den Nachrichten Kategorien zugewiesen, damit diese leichter mit der Suche gefunden werden können. Sie können ihrer Nachricht beispielsweise den Tag #Party hinzufügen, damit die Nachricht, von allen nach einer Party Suchenden, die ihre Nachricht sehen können, leichter gefunden werden kann.</li></p>
+        
+        <h4>Wie funktionieren @ATs??</h4>
+        <p></p>
+        
+        <h4>Wozu nutze ich &amp; (Und)?</h4>
+        <p></p>
+        
+        <h4>Wie kann ich mir die Nachrichten einer bestimmten Person anzeigen lassen?</h4>
+        <p></p>
+        
+        <h4>Wie ändere ich meine Sicherheitseinstellungen?</h4>
+        <p><li>- Unter Einstellungen auf ihrer Profilseite können sie ihre Standard-Sicherheitseinstellungen bearbeiten. Beim Nachrichtenversand kann separat für jede Nachricht die Sicherheitsstufe eingestellt werden.</li></p>
+        
+        <h4>Wieso werden alle meine Beiträge negativ bewertet?</h4>
+        <p></p>
+        
+        
+        <h4>Wie verschicke ich eine Nachricht?</h4>
+        <p></p>
+        
 
 {% endblock %}
