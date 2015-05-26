@@ -20,8 +20,10 @@ def login(request):
     return render(request, 'ftu.html', context)
 	
 def profile(request):
-    context = { 'active_page' : 'profile', 'nav': Nav.nav}
-    return render(request, 'profile.html', context)
+	user_list = User.objects.all()
+	group_list = Group.objects.all()
+	context = { 'active_page' : 'profile', 'user_list': user_list , 'group_list': group_list, 'nav': Nav.nav}
+	return render(request, 'profile.html', context)
 
 def info(request):
     context = { 'active_page' : 'info', 'nav': Nav.nav}
