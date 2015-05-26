@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block list %} 
+{% block list %}
 	{% if group_list %}
 	<ul class="groups">
 		<h3>Meine Gruppen</h3>
@@ -24,13 +24,14 @@
 {% endblock %}
 
 {% block nav %}
-	<a class="home active" href="#">Start</a>
+	<a class="home active" href="{% url 'twittur:index' %}">Start</a>
 	<a class="messages" href="#">Nachrichten</a>
-	<a class="info" href="#">Info</a>
-	<a class="settings" href="#">Einstellungen</a>
+	<a class="info" href="{% url 'twittur:info' %}">Info</a>
+	<a class="settings" href="{% url 'twittur:settings' %}">Einstellungen</a>
 {% endblock %}
 
 {% block content %}
+
 		<div class="post">
 			<div class="icon"></div>
 			<div class="postContent">

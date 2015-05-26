@@ -16,3 +16,8 @@ def index(request):
 def login(request):
 	return render(request, 'ftu.html')
 
+def info(request):
+	return render(request, 'info.html')
+
+def settings(request):
+	return render(request, 'settings.html')

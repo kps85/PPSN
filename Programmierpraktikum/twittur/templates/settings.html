@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block list %}
+	{% if group_list %}
+	<ul class="groups">
+		<h3>Meine Gruppen</h3>
+		{% for group in group_list %}
+		<li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting -->
+			<a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
+			<a class="dashicons dashicons-edit" href="#"></a>
+		</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+	
+	{% if user_list %}
+	<ul class="following">
+		<h3>Folgend</h3>
+		 {% for user in user_list %}
+		<li><a class="ullink" href="#">@{{ user.nickname }}</a></li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+{% endblock %}
+
+{% block nav %}
+	<a class="home" href="{% url 'twittur:index' %}">Start</a>
+	<a class="messages" href="#">Nachrichten</a>
+	<a class="info" href="{% url 'twittur:info' %}">Info</a>
+	<a class="settings active" href="{% url 'twittur:settings' %}">Einstellungen</a>
+{% endblock %}
+
+{% block content %}
+
+		<div>standardsicherheitsstufe, passwort ändern, e-mail adresse ändern (?), </div>
+        
+        <form>
+        
+        	<label>Username</label>
+            <input type="text" /><br />
+            
+        	<label>E-Mail</label>
+            <input type="email" /><br />
+            
+        	<label>Passwort</label>
+            <input type="password" /><br />
+            
+        	<label>Passwort bestätigen</label>
+            <input type="password" /><br />
+            
+            <label>Standard-Sicherheitsstufe</label>
+            <select>
+            	<option>public</option>
+            	<option>Uni</option>
+            	<option>Fakultät</option>
+            	<option>Studiengang</option>
+            </select><br />
+            
+            <input type="submit" />
+            <input type="reset" />
+        
+        </form>
+
+{% endblock %}
