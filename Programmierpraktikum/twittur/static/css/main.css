@@ -140,10 +140,10 @@ header {
         margin-bottom: 20px; } }
   @media screen and (min-width: 1024px) {
     #ftu .column-left {
-      width: 60%;
+      width: 55%;
       float: left; }
     #ftu .column-right {
-      width: 38%;
+      width: 43%;
       float: right; } }
 
 #ftuPosts {
