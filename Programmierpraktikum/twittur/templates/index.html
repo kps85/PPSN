@@ -24,10 +24,7 @@
 {% endblock %}
 
 {% block nav %}
-	<a class="home active" href="{% url 'twittur:index' %}">Start</a>
-	<a class="messages" href="#">Nachrichten</a>
-	<a class="info" href="{% url 'twittur:info' %}">Info</a>
-	<a class="settings" href="{% url 'twittur:settings' %}">Einstellungen</a>
+{% include 'layout/nav.html' %}
 {% endblock %}
 
 {% block content %}

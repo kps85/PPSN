@@ -1,0 +1,10 @@
+<!--
+<a class="home" href="{% url 'twittur:index' %}">Start</a>
+<a class="messages" href="#">Nachrichten</a>
+<a class="info" href="{% url 'twittur:info' %}">Info</a>
+<a class="settings" href="{% url 'twittur:settings' %}">Einstellungen</a>
+-->
+
+{% for i in nav %}
+<a class="{{ i.name }}{% if active_page == i.name %} active{% endif %}" href="{% url 'twittur:'|add:i.name %}">{{ i.title }}</a>
+{% endfor %}

@@ -225,10 +225,12 @@ nav a {
       background-size: 50px 50px; } }
   nav a:hover {
     text-decoration: none; }
-nav a.home {
+nav a.index {
   background-image: url("img/icon_home.png"); }
 nav a.settings {
   background-image: url("img/Settings-02-128.png"); }
+nav a.profile {
+  background-image: url("img/User-Profile-128.png"); }
 nav a.messages {
   background-image: url("img/Message-128.png"); }
 nav a.info {
