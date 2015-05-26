@@ -128,18 +128,25 @@
 	.column {
 		box-sizing:border-box;
 		@include desktop {
-			float:left;
+			
 			&:nth-child(even) {
 				padding-right:2%;
 			}
 		}
+		
+		@include phone {
+			margin-bottom:20px;
+		}
+		
 	}	
 	@include desktop {
 		.column-left {
 			width:60%;
+			float:left;
 		}
 		.column-right {
-			width:40%;
+			width:38%;
+			float:right;
 		}
 	}
 }
