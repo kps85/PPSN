@@ -51,7 +51,7 @@ nav {
 
 
 
-$mainBg:#F5F8FB;
+$mainBg:#F8F8F8;
 
 #main, body {
 	background:$mainBg;
@@ -66,6 +66,8 @@ $mainBg:#F5F8FB;
 $headerBorder:#E4E8EA;
 header {
 	border-bottom:1px solid $headerBorder;
+	background-color:#fff;
+	background-size:cover;
 }
 
 .post {

@@ -136,6 +136,7 @@ nav {
 		overflow:hidden;
 		width:100%;
 		height:100%;
+		overflow-y:scroll;
 		padding-left:$navWidthDesktop;
 		padding-top:0px;
 	
@@ -174,16 +175,13 @@ nav {
 }
 
 header {
-	background:#fff;
-	position:fixed;
+	
 	top:0;
 	opacity:0.95;
 	display:block;
 	width:100%;
-	@include desktop {
-		width:100-$asideWidth;
-	}
-	height:$navWidthDesktop;
+	
+	min-height:$navWidthDesktop;
 	
 	a.title {
 		text-indent:-9999px;
@@ -234,7 +232,7 @@ header {
 		input {
 			padding:10px;
 			border:1px solid #eee;
-			border-radius:5px;
+	
 			color:#333;
 			
 			margin-top:($navWidthDesktop / 2) - 20;
@@ -243,17 +241,32 @@ header {
 			}
 		}
 	}
+	
+	#head {
+		@include clear;
+	}
+
+	#infoBar {
+		background:transparent;
+		height:100px;
+		@include desktop {
+			width:80%;
+		}
+	
+		@include tablet {
+			width:94%;
+		}
+		margin:0 auto;
+	}
 }
 
 #main {
-	padding-top:$navWidthDesktop;;
 	@include desktop {
 		width:100-$asideWidth;
-		position:absolute;
 		top:0;
 		min-height:100%;
 		overflow:scroll;
-		left:$asideWidth;
+		margin-left:$asideWidth;
 	}
 }
 
@@ -272,7 +285,7 @@ header {
 
 $iconWidth:50px;
 .post {
-	border-radius:5px;
+	
 	padding:20px;
 	
 	margin-bottom:20px;
@@ -282,7 +295,7 @@ $iconWidth:50px;
 		width:$iconWidth;
 		height:$iconWidth;
 		display:block;
-		border-radius:5px;
+		
 		float:left;
 	}
 	
@@ -305,5 +318,6 @@ $iconWidth:50px;
 	
 	@include clear;
 }
+
 
 

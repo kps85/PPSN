@@ -36,3 +36,11 @@ $desktopWidth:1366px;
     clear: both;
   }
 }
+
+@mixin clearBefore {
+  &:before {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
