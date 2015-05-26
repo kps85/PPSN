@@ -36,7 +36,14 @@
             <h4>Profilbild auswählen</h4>
             
             <div class="col-xs-12 form-group">
-                <input type="file">
+            	<div class="col-xs-12 text-center">
+                	<img src="/static/css/img/profil_user200.jpg" class="img-thumbnail" width="200">
+                	<img src="/static/css/img/profil_user200.jpg" class="img-thumbnail" width="100">
+                	<img src="/static/css/img/profil_user200.jpg" class="img-thumbnail" width="50">
+                    <p class="help-block">Aktuelles Profilbild (200px, 100px, 50px).</p>
+                </div>
+                <label class="form-label" for="avatarInput">Profilbild aktualisieren</label>
+                <input id="avatarInput" type="file">
             </div>
             
         </div>
@@ -46,23 +53,23 @@
         	<h4>Accountverwaltung</h4>
         
             <div class="col-xs-12 form-group">
-                <label>Username</label>
-                <input class="form-control" type="text" value="kps" disabled />
+                <label class="control-label" for="usernameInput">Username</label>
+                <input class="form-control" id="usernameInput" type="text" value="kps" disabled />
                 <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
             </div>
             
             <div class="col-xs-12 form-group">
-                <label>E-Mail</label>
-                <input class="form-control" type="email" value="karl.p.schmidt@campus.tu-berlin.de" />
+                <label class="control-label" for="emailInput">E-Mail</label>
+                <input class="form-control" id="emailInput" type="email" value="karl.p.schmidt@campus.tu-berlin.de" />
             </div>
             
             <div class="col-xs-12 col-sm-6 form-group">
-                <label class="control-label">Passwort</label>
-                <input class="form-control" type="password" value="test1234" />
+                <label class="control-label" for="pw1Input">Passwort</label>
+                <input class="form-control" id="pw1Input" type="password" value="test1234" />
             </div>    
             <div class="col-xs-12 col-sm-6 form-group pull-right">
-                <label class="control-label">Passwort bestätigen</label>
-                <input class="form-control" type="password" value="test1234" />
+                <label class="control-label" for="pw2Input">Passwort bestätigen</label>
+                <input class="form-control" id="pw2Input" type="password" value="test1234" />
             </div>
     
         </div>  
@@ -72,20 +79,20 @@
         	<h4>Pers&ouml;nliche Daten</h4>
         
             <div class="col-xs-12 form-group">
-                <label>Studiengang</label>
-                <input class="form-control" type="text" value="Wirtschaftsinformatik" />
+                <label class="control-label" for="studiengangInput">Studiengang</label>
+                <input class="form-control" id="studiengangInput" type="text" value="Wirtschaftsinformatik" />
                 <p class="help-block">Über deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.</p>
             </div>
         
             <div class="col-xs-12 form-group">
-                <label>Matrikel-Nummer</label>
-                <input class="form-control" type="number" value="347132" />
+                <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
+                <input class="form-control" id="matrikelNummerInput" type="number" value="347132" />
                 <p class="help-block">Über deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.</p>
             </div>
         
             <div class="col-xs-12 form-group">
-                <label>Wohnort</label>
-                <input class="form-control" type="text" value="Falkensee" />
+                <label class="control-label" for="wohnortInput">Wohnort</label>
+                <input class="form-control" id="wohnortInput" type="text" value="Falkensee" />
             </div>
     
         </div>  
@@ -95,8 +102,8 @@
             <h4>Seiteneinstellungen</h4>
             
             <div class="col-xs-12 form-group">
-                <label>Standard-Sicherheitsstufe</label>
-                <select class="form-control">
+                <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
+                <select class="form-control" id="stdSafetylevelSelect">
                     <option>public</option>
                     <option>Uni</option>
                     <option>Fakultät</option>
@@ -107,8 +114,8 @@
         </div>
             
         <div class="col-xs-12 form-group text-center">
-            <input type="submit" class="btn btn-primary" />
-            <input type="reset" class="btn btn-default" />
+            <input type="submit" class="btn btn-primary" id="submitSettButton" />
+            <input type="reset" class="btn btn-default" id="resetSettButton />
         </div>
     
     </form>
