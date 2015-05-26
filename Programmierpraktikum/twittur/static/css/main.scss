@@ -137,6 +137,8 @@ nav {
 #list {
 	box-sizing:border-box;
 	@include clear;
+	max-height:100%;
+	overflow:scroll;
 	
 	@include desktop {
 		
