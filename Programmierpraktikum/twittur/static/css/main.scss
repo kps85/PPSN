@@ -1,5 +1,8 @@
 @import 'sass';
 @import 'colors';
+
+@import 'ftu';
+
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600);
 
 /* Basics */
@@ -174,6 +177,27 @@ nav {
 	}
 }
 
+a.title {
+	text-indent:-9999px;
+	
+	display:block;
+	float:left;
+	width:60%;
+	height:$navWidthDesktop;
+	background:url('img/logo.png') no-repeat;
+	background-position:0 10px;
+	background-size:144px 70px;
+	@include desktop {
+		margin-left:10%;
+		
+	}
+	
+	@include tablet {
+		margin-left:3%;
+	}
+}
+
+
 header {
 	
 	top:0;
@@ -183,25 +207,7 @@ header {
 	
 	min-height:$navWidthDesktop;
 	
-	a.title {
-		text-indent:-9999px;
-		
-		display:block;
-		float:left;
-		width:60%;
-		height:$navWidthDesktop;
-		background:url('img/logo.png') no-repeat;
-		background-position:0 10px;
-		background-size:144px 70px;
-		@include desktop {
-			margin-left:10%;
-			
-		}
-		
-		@include tablet {
-			margin-left:3%;
-		}
-	}
+	
 	
 	a.menuOpener {
 		text-indent:-9999px;

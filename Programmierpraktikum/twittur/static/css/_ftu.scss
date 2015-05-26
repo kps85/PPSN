@@ -1,0 +1,154 @@
+#ftu {
+
+
+	background:url('img/ftu_bg.png') center center;
+	color:#ddd;
+	padding:30px 0;
+	padding-bottom:100px;
+	
+	.center {
+		margin:0 auto;
+		width:80%;
+		min-width:320px;
+		@include phone {
+			width:95%;	
+			
+		}
+		@include clear;
+	}
+	
+	a {
+		color:#ddd;
+	}
+	
+	h2 {
+		font-weight:100;
+		margin:0;
+		padding:0;
+		margin-bottom:20px;
+		display:inline-block;
+		color:#333;
+		margin-right:15px;
+		border-bottom:1px solid transparent;
+		&.active {
+			color:#fff;
+			&:hover {
+				border-bottom:1px solid #fff;
+			}
+		}
+		
+		&:hover {
+			cursor:pointer;
+			border-bottom:1px solid #333;
+		}
+		
+		&:nth-child(even) {
+			
+		}
+	}
+
+	
+	#register {
+		display:none;
+	}
+	
+	input {
+		background:#111;
+		color:#fff;
+		border:1px solid #000;
+		padding:10px;
+		
+		margin-bottom:5px;
+	}
+	
+	input[type="text"], input[type="password"] {
+		width:100%;
+	}
+	
+	input[type="submit"] {
+		color:#fff;
+		background:#FF0000;
+		margin-top:5px;
+		&:hover {
+			opacity:0.9
+		}
+	}
+	
+	.login {
+		@include clear;
+	}
+	
+	.registerButton {
+		background:#00C88D !important;
+	}
+	
+	.headline {
+		font-size:4em;
+		font-weight:100;
+		line-height:1.2em;
+		span {
+			color:#F50000;
+		}	
+	}
+	
+	.subline {
+		margin-top:30px;
+		span {
+			color:#F50000;
+		}	
+		font-size:1.2em;
+		font-weight:200;
+		a {
+			border-bottom:1px solid #aaa;
+			&:hover {
+				text-decoration:none;
+				border-color:#F50000;
+			}
+		}
+	}
+
+	
+	.box {
+		background:#000;
+		padding:20px;
+		opacity:0.6;
+		color:#fff;
+		margin-top:20px;
+	}
+	
+	.title {
+		float:none !important;
+		margin-left:0 !important;
+		background-image:url('img/logo_white.png') !important;
+		width:100%;
+		margin-bottom:20px;
+		border:none;
+	}
+	
+	.column {
+		box-sizing:border-box;
+		@include desktop {
+			float:left;
+			&:nth-child(even) {
+				padding-right:2%;
+			}
+		}
+	}	
+	@include desktop {
+		.column-left {
+			width:60%;
+		}
+		.column-right {
+			width:40%;
+		}
+	}
+}
+
+#ftuPosts {
+	box-shadow: 0px -8px 10px 40px rgba(0,0,0,0.9);
+	background:#000;
+	display:block;
+	width:100%;
+	color:#fff;
+}
+

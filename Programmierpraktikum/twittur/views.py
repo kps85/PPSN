@@ -11,4 +11,8 @@ def index(request):
 	context = { 'user_list': user_list , 'group_list': group_list }
 	
 	return render(request, 'index.html', context)
+    
+    
+def login(request):
+	return render(request, 'ftu.html')
 

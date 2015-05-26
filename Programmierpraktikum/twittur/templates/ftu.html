@@ -1,0 +1,50 @@
+{% include 'header.html' %}
+<body>
+<div id="ftu" class="full-page">
+	<div class="center">
+		<a class="title" href="#">twitTUr</a>
+		<div class="column column-left">
+			<div class="headline">
+				twit<span>tu</span>r ist ein soziales Netzwerk f&uuml;r die TU Berlin.
+			</div>
+			<div class="subline">
+				<p>Es hilft Dir, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Du den &Uuml;berblick verlierst. </p>
+				<p>Erstelle gleich ein Konto und folge Nachrichten, die Dich interessieren. Oder sieh dir an, was die Nutzer von twit<span>tu</span>r der <a href="#ftuPosts">Welt</a> mitzuteilen haben.</p>
+			</div>
+		
+		
+		</div>
+		<div class="column column-right">
+			<div class="box">
+				
+					<h2 class="active toggle" id="show_login">Anmelden</h2>
+					<h2 class="toggle" id="show_register">Registrieren</h2>
+					<div class="toggleItem" id="login">
+						<form method="POST">
+							<input type="text" name="login_name" placeholder="Username" /><br />
+							<input type="password" name="login_pass" placeholder="Passwort" /><br />
+							<input type="submit" value="Los geht's!" />
+						</form>
+					</div>
+					
+					<div class="toggleItem" id="register">
+						<form method="POST">
+							<input type="text" name="register_fullname" placeholder="Dein Name" /><br />
+							<input type="text" name="register_name" placeholder="Username" /><br />
+							<input type="text" name="register_mail" placeholder="E-Mail" /><br />
+							<input type="password" name="register_pass" placeholder="Passwort" /><br />
+							
+							
+							<input type="submit" class="registerButton" value="Registrieren" />
+						</form>
+					</div>
+					
+			</div>
+		</div>
+	</div>
+</div>
+<div id="ftuPosts" class="full-page">
+	Hier kommen dann die öffentlichen Posts rein.
+</div>
+</body>
+{% include 'footer.html' %}

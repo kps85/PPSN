@@ -44,6 +44,112 @@ header {
   .post .postTime {
     color: #aaa; }
 
+#ftu {
+  background: url("img/ftu_bg.png") center center;
+  color: #ddd;
+  padding: 30px 0;
+  padding-bottom: 100px; }
+  #ftu .center {
+    margin: 0 auto;
+    width: 80%;
+    min-width: 320px; }
+    @media screen and (max-width: 639px) {
+      #ftu .center {
+        width: 95%; } }
+    #ftu .center:after {
+      content: "";
+      display: table;
+      clear: both; }
+  #ftu a {
+    color: #ddd; }
+  #ftu h2 {
+    font-weight: 100;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 20px;
+    display: inline-block;
+    color: #333;
+    margin-right: 15px;
+    border-bottom: 1px solid transparent; }
+    #ftu h2.active {
+      color: #fff; }
+      #ftu h2.active:hover {
+        border-bottom: 1px solid #fff; }
+    #ftu h2:hover {
+      cursor: pointer;
+      border-bottom: 1px solid #333; }
+  #ftu #register {
+    display: none; }
+  #ftu input {
+    background: #111;
+    color: #fff;
+    border: 1px solid #000;
+    padding: 10px;
+    margin-bottom: 5px; }
+  #ftu input[type="text"], #ftu input[type="password"] {
+    width: 100%; }
+  #ftu input[type="submit"] {
+    color: #fff;
+    background: #FF0000;
+    margin-top: 5px; }
+    #ftu input[type="submit"]:hover {
+      opacity: 0.9; }
+  #ftu .login:after {
+    content: "";
+    display: table;
+    clear: both; }
+  #ftu .registerButton {
+    background: #00C88D !important; }
+  #ftu .headline {
+    font-size: 4em;
+    font-weight: 100;
+    line-height: 1.2em; }
+    #ftu .headline span {
+      color: #F50000; }
+  #ftu .subline {
+    margin-top: 30px;
+    font-size: 1.2em;
+    font-weight: 200; }
+    #ftu .subline span {
+      color: #F50000; }
+    #ftu .subline a {
+      border-bottom: 1px solid #aaa; }
+      #ftu .subline a:hover {
+        text-decoration: none;
+        border-color: #F50000; }
+  #ftu .box {
+    background: #000;
+    padding: 20px;
+    opacity: 0.6;
+    color: #fff;
+    margin-top: 20px; }
+  #ftu .title {
+    float: none !important;
+    margin-left: 0 !important;
+    background-image: url("img/logo_white.png") !important;
+    width: 100%;
+    margin-bottom: 20px;
+    border: none; }
+  #ftu .column {
+    box-sizing: border-box; }
+    @media screen and (min-width: 1024px) {
+      #ftu .column {
+        float: left; }
+        #ftu .column:nth-child(even) {
+          padding-right: 2%; } }
+  @media screen and (min-width: 1024px) {
+    #ftu .column-left {
+      width: 60%; }
+    #ftu .column-right {
+      width: 40%; } }
+
+#ftuPosts {
+  box-shadow: 0px -8px 10px 40px rgba(0, 0, 0, 0.9);
+  background: #000;
+  display: block;
+  width: 100%;
+  color: #fff; }
+
 /* Basics */
 body {
   font-family: 'Source Sans Pro', sans-serif;
@@ -169,27 +275,28 @@ nav a.menuCloser {
       #list ul li a.dashicons {
         float: right; }
 
+a.title {
+  text-indent: -9999px;
+  display: block;
+  float: left;
+  width: 60%;
+  height: 90px;
+  background: url("img/logo.png") no-repeat;
+  background-position: 0 10px;
+  background-size: 144px 70px; }
+  @media screen and (min-width: 1024px) {
+    a.title {
+      margin-left: 10%; } }
+  @media screen and (max-width: 1023px) {
+    a.title {
+      margin-left: 3%; } }
+
 header {
   top: 0;
   opacity: 0.95;
   display: block;
   width: 100%;
   min-height: 90px; }
-  header a.title {
-    text-indent: -9999px;
-    display: block;
-    float: left;
-    width: 60%;
-    height: 90px;
-    background: url("img/logo.png") no-repeat;
-    background-position: 0 10px;
-    background-size: 144px 70px; }
-    @media screen and (min-width: 1024px) {
-      header a.title {
-        margin-left: 10%; } }
-    @media screen and (max-width: 1023px) {
-      header a.title {
-        margin-left: 3%; } }
   header a.menuOpener {
     text-indent: -9999px;
     display: block;
