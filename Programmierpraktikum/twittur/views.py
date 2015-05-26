@@ -10,5 +10,5 @@ def index(request):
 	group_list = Group.objects.all()
 	context = { 'user_list': user_list , 'group_list': group_list }
 	
-	return render(request, 'twittur/index.html', context)
+	return render(request, 'index.html', context)
 

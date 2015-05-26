@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block user %}
+	<h3> Alle User</h3>
+	{% if user_list %}
+	   	<table class="table">
+		   	<tbody>
+		    {% for user in user_list %}
+		    <tr>
+		        <td> {{ user.name }} </td>
+		        <td> {{ user.nickname }} </td>
+		    </tr>
+		    {% endfor %}
+			</tbody>
+		</table>
+	   
+	{% else %}
+	    <p>No User</p>
+	{% endif %}
+{% endblock %}
+
+{% block message %}
+{% endblock %}
+
+{% block follower %}
+{% endblock %}
+
+{% block group %}
+	 <h3> Alle Gruppen</h3>
+	{% if group_list %}
+	   	<table class="table">
+		   	<tbody>
+		    {% for group in group_list %}
+		    <tr>
+		        <td> {{ group.name }} </td>
+		        <td> {{ group.description }} </td>
+		    </tr>
+		    {% endfor %}
+			</tbody>
+		</table>
+	   
+	{% else %}
+	    <p>No User</p>
+	{% endif %}
+{% endblock %}

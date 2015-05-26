@@ -1,0 +1,46 @@
+// Breakpoints 
+$phoneWidth: 640px;
+$tabletWidth: 1024px;
+$desktopWidth:1366px;
+
+// Mixins fuer Breakpoints
+@mixin phone {
+  @media screen and (max-width:#{$phoneWidth - 1}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (max-width:#{$tabletWidth - 1}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (min-width:#{$tabletWidth}) {
+    @content;
+  }
+}
+
+@mixin landscape {
+  @media screen and (min-width:#{$desktopWidth}) {
+    @content;
+  }
+}
+
+// Clearfix
+@mixin clear {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin clearBefore {
+  &:before {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
