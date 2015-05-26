@@ -1,7 +1,4 @@
 $(document).ready(function() {
-	for(var i = 0; i < 20; i++) {
-		$(".post").first().clone().appendTo("#content");
-	}
 	
 	var $menuOpener = $("<a>", {'class':'menuOpener', 'href':'javascript:;'});
 	var $patty = $("<div>", {'class':'patty'});

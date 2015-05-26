@@ -28,7 +28,7 @@ nav {
 .menuOpener .patty {
   border-color: #6D6D6E !important; }
 
-#main, body {
+#main, html {
   background: #F8F8F8; }
 
 @media screen and (min-width: 1024px) {
@@ -171,8 +171,7 @@ nav a.menuCloser {
       #list ul li a.ullink {
         width: 80%; }
       #list ul li a.dashicons {
-        float: right;
-        margin-top: 3px; }
+        float: right; }
 
 header {
   top: 0;
