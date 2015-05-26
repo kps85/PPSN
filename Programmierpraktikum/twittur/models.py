@@ -2,7 +2,6 @@ from django.db import models
 
 
 
-
 #### Entitys
 
 # - user
@@ -14,16 +13,16 @@ class User(models.Model):
     lastSeen = models.DateTimeField( 'last seen' )
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
-    picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
+    picture = models.ImageField( upload_to = 'profilPicture/', height_field = None, width_field = None, max_length = 100, blank=True)
     
     def __str__(self):
         return self.nickname + ' (' + self.name + ')'
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
-    user = models.ForeignKey( User, related_name="user") # who write this shit?
+    user = models.ForeignKey( User ) # who write this shit?
     text = models.CharField( max_length = 254 )
-    picture = models.ImageField( upload_to = 'picture/', height_field = None, width_field = None,  blank=True)
+    picture = models.ImageField( upload_to = 'messagePicture/', height_field = None, width_field = None, max_length = 100, blank=True)
     date = models.DateTimeField( 'date published' )
     
     def __str__(self):
@@ -33,7 +32,7 @@ class Message(models.Model):
 class Group(models.Model):
     name = models.CharField( max_length = 50 )
     description = models.CharField( max_length = 256 )
-    picture = models.ImageField( upload_to = 'picture/', blank=True, default='picture/defaultG.gif')
+    picture = models.ImageField( upload_to = 'profilPicture/', height_field = None, width_field = None, max_length = 100, blank=True)
     date = models.DateTimeField( 'date published' )
     superGroup = models.ForeignKey( 'self',  blank = True, null = True )
 
