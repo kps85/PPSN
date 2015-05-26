@@ -10,7 +10,7 @@ $(document).ready(function() {
 	}
 	
 	
-	$menuOpener.appendTo("header");
+	$menuOpener.appendTo("#head");
 	
 	$(".menuOpener, .menuOpener > *").click(function() {
 
