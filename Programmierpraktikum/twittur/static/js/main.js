@@ -48,7 +48,7 @@ function initMenu() {
 	
 	$(".menuCloser").click(function() {
 		var $a = $("#aside");
-		if($a.is(":visible")) {
+		if($a.is(":visible") && $menuOpener.is(":visible")) {
 			
 			$a.animate({'left':'-100%'}, 300, function() {
 				$a.hide();
