@@ -1,0 +1,54 @@
+{% extends 'twittur/base_test.html' %}
+
+{% block user %}
+
+{% if user_list %}
+    {% for user in user_list %}
+    <div class="container well">
+        <p> {{ user.name }} (@{{ user.nickname }}) </p>
+    	<table class="table">
+    		
+    		
+    		<tr>
+    			{% if user.picture %}
+
+    				<td width="100">
+                        <img src="{{ user.picture.url }}" height="60" width="60" class="img-rounded" />
+    				</td>
+    			{% endif %}
+                <td>Message from {{ user.name }}:
+                    <div class="row ">
+                        {% if message_list %}
+                        {% for message in message_list %}
+                            
+                            {% if message.user.id == user.id %}
+                            <div class="col-sm-12 well">
+                                <p>@{{ message.user.nickname }}: <span class="pull-right">{{ message.date }} </span></p>
+                                <p>{{ message.text }}</p> 
+                                
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                </td>
+        	</tr>
+
+        </table>
+        
+    </div>
+       
+    {% endfor %}
+{% else %}
+    <p>No User</p>
+{% endif %}
+
+{% if message_list %}
+    {% for message in message_list %}
+    <p> {{ message.user.id }} </p>
+    <p> {{ message.text }} </p>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
