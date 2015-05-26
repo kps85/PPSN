@@ -229,7 +229,6 @@ header {
     clear: both; }
   header #infoBar {
     background: transparent;
-    height: 100px;
     margin: 0 auto; }
     @media screen and (min-width: 1024px) {
       header #infoBar {
