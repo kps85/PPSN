@@ -1,16 +1,26 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
+from Programmierpraktikum.settings import MEDIA_ROOT, MEDIA_URL
 
+<<<<<<< HEAD
 from .models import User, Group, Nav
 
 
+=======
+from .models import User, Group, Message
+>>>>>>> master
 
 
 
 # Create your views here.
 def index(request):
 	user_list = User.objects.all()
+	message_list = Message.objects.select_related('user')
+	#user_list = User.objects.all()
+	#message_list = Message.objects.all()
+	#message_list = Message.objects.all().select_related('user')
 	group_list = Group.objects.all()
+<<<<<<< HEAD
 	context = { 'active_page' : 'index', 'user_list': user_list , 'group_list': group_list, 'nav': Nav.nav }
 	return render(request, 'index.html', context)
     
@@ -28,6 +38,11 @@ def profile(request):
 def info(request):
     context = { 'active_page' : 'info', 'nav': Nav.nav}
     return render(request, 'info.html', context)
+=======
+	context = { 'user_list': user_list , 'message_list': message_list }
+	
+	return render(request, 'twittur/index_test.html', context)
+>>>>>>> master
 
 def settings(request):
     context = { 'active_page' : 'settings', 'nav': Nav.nav}
