@@ -3,9 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from Programmierpraktikum.settings import MEDIA_ROOT, MEDIA_URL
 from django.contrib.auth.models import User
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-
+from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message
 
 
@@ -30,17 +29,38 @@ def index(request):
     
 
 def login(request):
+
+
+	if request.method == "GET":
+		query_dict = request.GET
+		username = query_dict.get('username')
+		print(username)
+		password = query_dict.get('password')
+		print(password)
+		user = authenticate(username=username, password=password)
+		context = { 'active_page' : 'index', 'nav': Nav.nav }
+		if user is not None:
+			if user.is_active:
+				auth.login(request, user)
+				return render(request, 'index.html', context)
+		else:
+			HttpResponseRedirect('/twittur/login/')
+
+
 	if request.method == 'POST':
 		query_dict = request.POST
 		username = query_dict.get('name')
+		print(username)
 		email = query_dict.get('email')
 		password = query_dict.get('password')
+		print(password)
 		user = User.objects.create_user( username, email, password )
 		user_profil = UserProfile(user=user, studentNumber=000000, academicDiscipline='Informatik')
-		user = authenticate(username = 'username', password = 'password')
-		context = { 'active_page' : 'ftu', 'nav': Nav.nav , 'user': user_profil }
-		
-		return render(request, 'index.html')
+		user = authenticate(username = username, password = password)
+		context = { 'active_page' : 'index', 'nav': Nav.nav }
+		auth.login(request, user)
+		return render(request, 'index.html', context)
+
 	context = { 'active_page' : 'ftu', 'nav': Nav.nav}
 	return render(request, 'ftu.html', context)
 
