@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from Programmierpraktikum.settings import MEDIA_ROOT, MEDIA_URL
+from django.contrib.auth.models import User
 
-
-from .models import User, Group, Nav, Message
+from .models import UserProfile, Group, Nav, Message
 
 
 

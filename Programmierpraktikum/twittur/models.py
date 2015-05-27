@@ -1,27 +1,23 @@
 from django.db import models
-
-
-
+from django.contrib.auth.models import User
+from django.conf import settings
 
 #### Entitys
 
 # - user
-class User(models.Model):
-    name = models.CharField( max_length = 200 )
-    nickname = models.CharField( max_length = 200 )
-    email = models.EmailField( max_length = 200 )
-    password = models.CharField( max_length = 200 )
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, primary_key=True)
     lastSeen = models.DateTimeField( 'last seen' )
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
     
     def __str__(self):
-        return self.nickname + ' (' + self.name + ')'
+        return self.user.username + ' (' + self.user.first_name + ')'
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
-    user = models.ForeignKey( User, related_name="user") # who write this shit?
+    user = models.ForeignKey( settings.AUTH_USER_MODEL, related_name="user") # who write this shit?
     text = models.CharField( max_length = 254 )
     picture = models.ImageField( upload_to = 'picture/', height_field = None, width_field = None,  blank=True)
     date = models.DateTimeField( 'date published' )
@@ -51,8 +47,8 @@ class Hashtag(models.Model):
 
 # - user (follow_from_self) follows user (follow_to_user)
 class Favorite(models.Model):
-    fromUser = models.ForeignKey( User, related_name = 'favorite_from' )
-    toUser = models.ForeignKey( User, related_name = 'favorite_to' )
+    fromUser = models.ForeignKey( settings.AUTH_USER_MODEL, related_name = 'favorite_from' )
+    toUser = models.ForeignKey( settings.AUTH_USER_MODEL, related_name = 'favorite_to' )
 
     def __str__(self):
         return self.fromUser.name + ' -> ' + self.toUser.name
@@ -67,14 +63,14 @@ class ToGroup(models.Model):
         return "Message from '" + self.message.user.name + "' to group " + self.group.name 
  
 class ToUser(models.Model): 
-    toUser = models.ForeignKey( User )
+    toUser = models.ForeignKey( settings.AUTH_USER_MODEL )
     message = models.ForeignKey( Message )
 
     def __str__(self):
         return "Message from " + self.message.user.name + " to " + self.toUser.name  
 
 class IsInGroup(models.Model):
-    user = models.ForeignKey( User )
+    user = models.ForeignKey( settings.AUTH_USER_MODEL )
     group = models.ForeignKey( Group )
     #isInGroup_superuser = models.Boolean( default = False )
 
