@@ -5,6 +5,7 @@ function fph() {
     $('.full-page').css({'minHeight':vph + "px"});
 }
 
+var tspeed = 500;
 
 // First Time Use
 function initFtu() {
@@ -17,6 +18,18 @@ function initFtu() {
 		$("h2.active").removeClass("active");
 		$(this).addClass("active");
 	});
+	
+	$(".box .forgot").click(function() {
+		$(this).closest(".box").fadeOut(tspeed, function() {
+			$(".forgotBox").fadeIn(tspeed);
+		});
+	});
+	
+	$(".forgotBox .forgotBack").click(function() {
+		$(this).closest(".box").fadeOut(tspeed, function() {
+			$(".loginBox").fadeIn(tspeed);
+		});
+	})
 	
 }
 

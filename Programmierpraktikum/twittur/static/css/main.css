@@ -104,6 +104,9 @@ header {
     clear: both; }
   #ftu .registerButton {
     background: #00C88D !important; }
+  #ftu .forgotSendButton {
+    color: #333;
+    background: #F8F8F8; }
   #ftu .headline {
     font-size: 4em;
     font-weight: 100;
@@ -127,6 +130,16 @@ header {
     opacity: 0.6;
     color: #fff;
     margin-top: 20px; }
+  #ftu .forgotBox {
+    display: none;
+    background: #fff;
+    color: #333; }
+    #ftu .forgotBox input {
+      background: #eee;
+      border: 1px solid #ddd;
+      color: #333; }
+    #ftu .forgotBox a {
+      color: #333; }
   #ftu .title {
     float: none !important;
     margin-left: 0 !important;
@@ -149,7 +162,7 @@ header {
     #ftu .column-right {
       width: 43%;
       float: right; } }
-  #ftu .forgot {
+  #ftu .forgot, #ftu .forgotBack {
     padding: 10px;
     display: inline-block;
     float: right;

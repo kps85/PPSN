@@ -84,6 +84,11 @@
 		background:#00C88D !important;
 	}
 	
+	.forgotSendButton {
+		color:#333;
+		background:#F8F8F8
+	}
+	
 	.headline {
 		font-size:4em;
 		font-weight:100;
@@ -116,6 +121,21 @@
 		opacity:0.6;
 		color:#fff;
 		margin-top:20px;
+	}
+	
+	.forgotBox {
+		display:none;
+		background:#fff;
+		color:#333;
+		input {
+			background:#eee;
+			border:1px solid #ddd;
+			color:#333;
+		}
+		
+		a {
+			color:#333;
+		}
 	}
 	
 	.title {
@@ -152,7 +172,7 @@
 		}
 	}
 	
-	.forgot {
+	.forgot, .forgotBack {
 		padding:10px;
 		display:inline-block;
 		float:right;
