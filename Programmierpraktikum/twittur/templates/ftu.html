@@ -11,18 +11,20 @@
 					<h2 class="toggle" id="show_register">Registrieren</h2>
 					<div class="toggleItem" id="login">
 						<form method="POST">
-							<input type="text" name="login_name" placeholder="Username" /><br />
+							{% csrf_token %} 
+							<input type="text" name="login_name" placeholder="Username"  /><br />
 							<input type="password" name="login_pass" placeholder="Passwort" /><br />
 							<input type="submit" value="Los geht's!" />
 						</form>
 					</div>
 					
 					<div class="toggleItem" id="register">
-						<form method="POST">
-							<input type="text" name="register_fullname" placeholder="Dein Name" /><br />
-							<input type="text" name="register_name" placeholder="Username" /><br />
-							<input type="text" name="register_mail" placeholder="E-Mail" /><br />
-							<input type="password" name="register_pass" placeholder="Passwort" /><br />
+						<form method="POST" action="">
+							{% csrf_token %} 
+							<input type="text" name="first_name" placeholder="Dein Name" id="first_name" /><br />
+							<input type="text" name="name" placeholder="Username" id="name" /><br />
+							<input type="text" name="email" placeholder="E-Mail" id="email" /><br />
+							<input type="password" name="password" placeholder="Passwort" id="password" /><br />
 							
 							
 							<input type="submit" class="registerButton" value="Registrieren" />

@@ -1,19 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.db.models.signals import post_save
 
 #### Entitys
 
 # - user
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, primary_key=True)
-    lastSeen = models.DateTimeField( 'last seen' )
+    user = models.OneToOneField(User)
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
     
     def __str__(self):
-        return self.user.username + ' (' + self.user.first_name + ')'
+        return self.user.username + ' (' + self.user.first_name + ' ' + self.user.last_name +')'
+
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
@@ -23,7 +24,7 @@ class Message(models.Model):
     date = models.DateTimeField( 'date published' )
     
     def __str__(self):
-        return self.user.name + ': ' + '"' + self.text + '"'
+        return self.user.username + ': ' + '"' + self.text + '"'
 
 # - groups 
 class Group(models.Model):
@@ -60,14 +61,14 @@ class ToGroup(models.Model):
     message = models.ForeignKey( Message )
 
     def __str__(self):
-        return "Message from '" + self.message.user.name + "' to group " + self.group.name 
+        return "Message from '" + self.message.user.username + "' to group " + self.group.name
  
 class ToUser(models.Model): 
     toUser = models.ForeignKey( settings.AUTH_USER_MODEL )
     message = models.ForeignKey( Message )
 
     def __str__(self):
-        return "Message from " + self.message.user.name + " to " + self.toUser.name  
+        return "Message from " + self.message.user.username + " to " + self.toUser.name  
 
 class IsInGroup(models.Model):
     user = models.ForeignKey( settings.AUTH_USER_MODEL )
