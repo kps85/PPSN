@@ -28,20 +28,23 @@
 {% endblock %}
 
 {% block content %}
-
-		<div class="post">
-			<div class="icon"></div>
-			<div class="postContent">
-				<div class="postMeta">
-					<div class="postAuthor">@steffen</div>
-					<div class="postTime">19. Mai 2015 - 18:26</div>
+		{% if message_list %}
+			{% for message in message_list %}
+				<div class="post">
+					<div class="icon"></div>
+					<div class="postContent">
+						<div class="postMeta">
+							<div class="postAuthor">@{{ message.user.username }}</div>
+							<div class="postTime">{{ message.date }}</div>
+						</div>
+						<div class="postText">
+							{{ message.text }}
+							{{ message.user.userprofile.academicDiscipline }}
+						</div>
+					</div>
 				</div>
-				<div class="postText">
-					So k&ouml;nnte twitTUr aussehen ... la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la 
-				</div>
-			</div>
-		</div>
-		
+			{% endfor %}
+		{% endif %}
 		
 		<div class="post">
 			<div class="icon"></div>

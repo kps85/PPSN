@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 
 # - user
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    userprofile = models.OneToOneField(User)
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
@@ -18,7 +18,7 @@ class UserProfile(models.Model):
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
-    user = models.ForeignKey( settings.AUTH_USER_MODEL, related_name="user") # who write this shit?
+    user = models.ForeignKey( settings.AUTH_USER_MODEL ) # who write this shit?
     text = models.CharField( max_length = 254 )
     picture = models.ImageField( upload_to = 'picture/', height_field = None, width_field = None,  blank=True)
     date = models.DateTimeField( 'date published' )
