@@ -49,6 +49,10 @@ header {
   color: #ddd;
   padding: 30px 0;
   padding-bottom: 100px; }
+  #ftu:after {
+    content: "";
+    display: table;
+    clear: both; }
   #ftu .center {
     margin: 0 auto;
     width: 80%;
@@ -145,6 +149,11 @@ header {
     #ftu .column-right {
       width: 43%;
       float: right; } }
+  #ftu .forgot {
+    padding: 10px;
+    display: inline-block;
+    float: right;
+    margin-top: 5px; }
 
 #ftuPosts {
   box-shadow: 0px -8px 90px 40px rgba(0, 0, 0, 0.9);
