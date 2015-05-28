@@ -1,0 +1,35 @@
+{% include 'header.html' %}
+<body>
+<div id="aside">
+	<nav>
+        {% block nav %} 
+        {% endblock %}
+	</nav>
+	<div id="list">
+        {% block list %} 
+        {% endblock %}
+	</div>
+</div>
+
+
+<div id="main">
+	<header>
+		<div id="head">
+			<a class="title" href="#">twitTUr</a>
+			<form id="search" method="POST">
+				<input type="text" placeholder="Suche" name="search" />
+			</form>
+		</div>
+		<div id="infoBar">
+	        {% block infobar %} 
+	        {% endblock %}
+		</div>
+	</header>
+	<div id="content">
+		{% block content %}	
+		{% endblock %}	
+	</div>
+</div>
+
+</body>
+{% include 'footer.html' %}

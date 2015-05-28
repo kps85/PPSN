@@ -87,6 +87,15 @@ class Has(models.Model):
 
     def __str__(self):
         return self.message.user.name + "'s' message contains #" + self.hashtag.name
+
+# Navbar     
+class Nav(models.Model):
+    nav = [
+        {'name':'index','title':'Startseite'},
+        {'name':'profile','title':'Profil'},
+        {'name':'info','title':'Info'},
+        {'name':'settings','title':'Einstellungen'}
+    ]
     
 
 
