@@ -13,7 +13,7 @@ class UserProfile(models.Model):
     picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
     
     def __str__(self):
-        return self.user.username + ' (' + self.user.first_name + ' ' + self.user.last_name +')'
+        return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name +')'
 
 
 # - message from User (message_from_self) to User (message_to_user)

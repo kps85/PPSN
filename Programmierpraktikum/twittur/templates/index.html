@@ -31,7 +31,7 @@
 		{% if message_list %}
 			{% for message in message_list %}
 				<div class="post">
-					<div class="icon"></div>
+					<div class="icon">  <img src="{{ message.user.userprofile.picture.url }}" width=50 height=50>  </div>
 					<div class="postContent">
 						<div class="postMeta">
 							<div class="postAuthor">@{{ message.user.username }}</div>
@@ -39,24 +39,11 @@
 						</div>
 						<div class="postText">
 							{{ message.text }}
-							{{ message.user.userprofile.academicDiscipline }}
+
 						</div>
 					</div>
 				</div>
 			{% endfor %}
 		{% endif %}
-		
-		<div class="post">
-			<div class="icon"></div>
-			<div class="postContent">
-				<div class="postMeta">
-					<div class="postAuthor">@steffen</div>
-					<div class="postTime">19. Mai 2015 - 18:20</div>
-				</div>
-				<div class="postText">
-					Hallo Welt! :)
-				</div>
-			</div>
-		</div>
 
 {% endblock %}

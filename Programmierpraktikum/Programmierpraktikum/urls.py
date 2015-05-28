@@ -21,5 +21,4 @@ from django.conf import settings
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^twittur/', include('twittur.urls', namespace = "twittur")),
-    url(r'^accounts/', include('twittur.urls', namespace = "twittur")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

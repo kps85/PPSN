@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from Programmierpraktikum.settings import MEDIA_ROOT, MEDIA_URL
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
@@ -17,20 +18,21 @@ def index(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	user_list = UserProfile.objects.all()
-	message_list = Message.objects.all().select_related('user__userprofile')
-
-	if message_list:
-		print('yes')
-	else:
-		print('no')
-
+	print(request.user)
+	current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
+	user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
+	atTag = '@' + request.user.username + ' '
+	print (atTag)
+	message_list = Message.objects.all().select_related('user__userprofile').filter( Q(user__exact=request.user) | Q(text__contains=atTag))
+	print(message_list)
+	messageList = Message.objects.all()
+	print(messageList)
 	#user_list = User.objects.all()
 	#message_list = Message.objects.all()
 	#message_list = Message.objects.all().select_related('user')
 	group_list = Group.objects.all()
 
-	context = { 'active_page' : 'index', 'user_list': user_list , 'message_list' : message_list ,'group_list': group_list, 'nav': Nav.nav }
+	context = { 'active_page' : 'index', 'current_user' : current_user, 'user_list': user_list , 'message_list' : message_list , 'nav': Nav.nav }
 	return render(request, 'index.html', context)
     
 
@@ -48,7 +50,7 @@ def login(request):
 		if user is not None:
 			if user.is_active:
 				auth.login(request, user)
-				return render(request, 'index.html', context)
+				return HttpResponseRedirect('/twittur/')
 		else:
 			return render(request, 'ftu.html')			
 
@@ -56,10 +58,9 @@ def login(request):
 	if request.method == 'POST':
 		query_dict = request.POST
 		username = query_dict.get('name')
+
 		# check if available
 		checkUsername = User.objects.get( username__exact = username )
-		print(checkUsername.username)
-		print(username)
 		if checkUsername.username == username:
 			return render(request, 'ftu.html')
 
