@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.contrib.auth.views import login, logout
 
 
 from . import views
@@ -9,6 +10,7 @@ urlpatterns = [
     url(r'^settings/$', views.settings, name='settings'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^login/$', views.login, name='login'),
-    url(r'^/login/?next=/twittur/$', views.login, name='login'),
+    url(r'^logout/', views.logout, name='logout' ),
+
 ]
 

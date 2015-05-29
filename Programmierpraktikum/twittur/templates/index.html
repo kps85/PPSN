@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block list %}
+	<a href="{% url 'twittur:logout' %}"> Logout</a>					
+
 	{% if group_list %}
 	<ul class="groups">
 		<h3>Meine Gruppen</h3>
@@ -28,32 +30,22 @@
 {% endblock %}
 
 {% block content %}
+		{% if message_list %}
+			{% for message in message_list %}
+				<div class="post">
+					<div class="icon">  <img src="{{ message.user.userprofile.picture.url }}" width=50 height=50>  </div>
+					<div class="postContent">
+						<div class="postMeta">
+							<div class="postAuthor">@{{ message.user.username }}</div>
+							<div class="postTime">{{ message.date }}</div>
+						</div>
+						<div class="postText">
+							{{ message.text }}
 
-		<div class="post">
-			<div class="icon"></div>
-			<div class="postContent">
-				<div class="postMeta">
-					<div class="postAuthor">@steffen</div>
-					<div class="postTime">19. Mai 2015 - 18:26</div>
+						</div>
+					</div>
 				</div>
-				<div class="postText">
-					So k&ouml;nnte twitTUr aussehen ... la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la 
-				</div>
-			</div>
-		</div>
-		
-		
-		<div class="post">
-			<div class="icon"></div>
-			<div class="postContent">
-				<div class="postMeta">
-					<div class="postAuthor">@steffen</div>
-					<div class="postTime">19. Mai 2015 - 18:20</div>
-				</div>
-				<div class="postText">
-					Hallo Welt! :)
-				</div>
-			</div>
-		</div>
+			{% endfor %}
+		{% endif %}
 
 {% endblock %}

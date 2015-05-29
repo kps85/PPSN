@@ -102,3 +102,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/picture/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'picture/')
+AUTH_PROFILE_MODULE = 'twittur.UserProfile'
