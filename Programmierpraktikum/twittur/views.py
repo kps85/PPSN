@@ -70,19 +70,19 @@ def login(request):
 	# Registration
 	if request.method == 'POST':
 
-		query_dict = request.POST
-		print(query_dict)
-		username = query_dict.get('name')
-
 		# check if available
 		try:
-
+			query_dict = request.POST
+			print(query_dict)
+			username = query_dict.get('name')
 			checkUsername = User.objects.get( username__exact = username )
-			print(checkUsername)
+
+		# case if username is available (checkUsername = None)
 		except ObjectDoesNotExist:
 			password = query_dict.get('password')
 			ack_password = query_dict.get('ack_password')
 
+			# check passwort and ack_password
 			if password != ack_password :
 				error_password = "Passwörter sind nicht gleich."
 				return render(request, 'ftu.html', { 'error_password': error_password })
@@ -94,10 +94,10 @@ def login(request):
 			user = authenticate(username = username, password = password)
 			context = { 'active_page' : 'index', 'nav': Nav.nav , 'user' : user_profil }
 			auth.login(request, user)
-			
 			return render(request, 'index.html', context)
+
+		# case if username is taken (checkUsername == user)
 		else:
-	
 			error_user = "Sorry, Username ist vergeben."
 			return render(request, 'ftu.html', { 'error_user': error_user })
 
