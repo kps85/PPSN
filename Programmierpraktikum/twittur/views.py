@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from Programmierpraktikum.settings import MEDIA_ROOT, MEDIA_URL
+from django.contrib.auth.decorators import login_required
 
-
+from django.contrib.auth import authenticate, login
 from .models import User, Group, Nav, Message
 
 
@@ -11,7 +12,9 @@ from .models import User, Group, Nav, Message
 
 
 # Create your views here.
+@login_required
 def index(request):
+
 	user_list = User.objects.all()
 	message_list = Message.objects.select_related('user')
 	#user_list = User.objects.all()
@@ -24,6 +27,7 @@ def index(request):
     
 
 def login(request):
+
     context = { 'active_page' : 'ftu', 'nav': Nav.nav}
     return render(request, 'ftu.html', context)
 	
