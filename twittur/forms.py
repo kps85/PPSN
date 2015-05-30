@@ -22,8 +22,9 @@ class UserForm(ModelForm):
 		model = User
 		fields = ['username', 'password', 'email', 'first_name', 'last_name']
 
-	def __init__(self, instance):
-		super(UserForm, self).__init__()
+	def __init__(self, *args, **kwargs):
+		instance = kwargs.get('instance')
+		super(UserForm, self).__init__(*args, **kwargs)
 		self.fields['username'].widget.attrs['readonly'] = True
 		self.fields['password'].widget = forms.PasswordInput()
 		for field in self.fields:
@@ -36,9 +37,10 @@ class UserDataForm(ModelForm):
 		model = UserProfile
 		fields = ['picture', 'academicDiscipline', 'studentNumber', 'location']
 
-	def __init__(self, instance):
-		super(UserDataForm, self).__init__()
+	def __init__(self, *args, **kwargs):
+		instance = kwargs.get('instance')
+		super(UserDataForm, self).__init__(*args, **kwargs)
 		for field in self.fields:
 			if field != 'picture':
 				self.fields[field].widget.attrs['class'] = 'form-control'
-				self.fields[field].widget.attrs['value'] = getattr(instance, field)
+			self.fields[field].widget.attrs['value'] = getattr(instance, field)

@@ -137,31 +137,31 @@ def settings(request):
 
 	curUser = User.objects.get(pk = request.user.id)
 	curUserProfile = curUser.userprofile
-	success_msg, error_msg = None, None;
+	success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
 	if request.method == 'POST':
-		uForm = UserForm(request.POST)
-		if uForm.is_valid():
-			uForm.save()
+		userForm = UserForm(request.POST, instance = curUser)
+		if userForm.is_valid():
+			userForm.save()
 			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
+			userDataForm = UserDataForm(request.POST, instance = curUserProfile)
+			if userDataForm.is_valid():
+				userDataForm.save()
+				success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
+			else:
+				error_msg = "userProfileData failure"
 		else:
-			error_msg = 'Benutzerdaten konnten nicht aktualisiert werden.'
-
-		udForm = UserDataForm(request.POST)
-		if udForm.is_valid():
-			udForm.save()
-			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
-		else:
-			error_msg = 'Benutzerdaten konnten nicht aktualisiert werden.'
-
-	userForm = UserForm(curUser)
-	userDataForm = UserDataForm(curUserProfile)
+			error_msg = 'userData failure'
+	else:
+		userForm = UserForm(instance = curUser)
+		userDataForm = UserDataForm(instance = curUserProfile)
 
 	context = {
 		'active_page' : 'settings',
 		'nav': Nav.nav,
 		'success_msg': success_msg,
 		'error_msg': error_msg,
+		'user': curUser,
 		'userForm': userForm,
 		'userDataForm': userDataForm
 	}
