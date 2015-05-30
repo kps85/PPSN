@@ -15,10 +15,13 @@
 <div id="main">
 	<header>
 		<div id="head">
-			<a class="title" href="#">twitTUr</a>
-			<form id="search" method="POST">
-				<input type="text" placeholder="Suche" name="search" />
-			</form>
+			<a class="title" href="#">twittur</a>
+            <form action="" id="search" method="GET" class="searchForm pull-left">
+              <div class="form-group pull-left">
+                <input id="searchInput" name="search" type="text" class="form-control" placeholder="Search">
+              </div>
+              <button type="submit" class="btn btn-primary pull-left">Go</button>
+            </form>
 		</div>
 		<div id="infoBar">
 	        {% block infobar %} 

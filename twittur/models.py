@@ -14,9 +14,10 @@ class UserProfile(models.Model):
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
+
+    location = models.CharField( max_length = 200, default='' )
     
     def __str__(self):
-
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name +')'
 
 

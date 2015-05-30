@@ -11,15 +11,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message
-
-
-
+from .forms import UserForm, UserDataForm
 
 # startpage
 def index(request):
 
-
-	# redirect, if user is not authenticated 
+	# redirect, if user is not authenticated
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
@@ -41,7 +38,7 @@ def index(request):
 
 	context = { 'active_page' : 'index', 'current_user' : current_user, 'user_list': user_list , 'message_list' : message_list , 'nav': Nav.nav }
 	return render(request, 'index.html', context)
-    
+
 
 # login/registration page
 def login(request):
@@ -65,11 +62,11 @@ def login(request):
 					return HttpResponseRedirect('/twittur/')
 			elif username=="" and password=="" :
 				error_text = "Geben sie bitte Username und Passwort ein."
-				return render(request, 'ftu.html', { 'error_text' : error_text } )	
+				return render(request, 'ftu.html', { 'error_text' : error_text } )
 			else:
 				error_text = "Ups, Username oder Passwort falsch."
 				active_toggle = "active_toggle"
-				return render(request, 'ftu.html', { 'error_text' : error_text } )		
+				return render(request, 'ftu.html', { 'error_text' : error_text } )
 
 	# Registration
 	if request.method == 'POST':
@@ -110,9 +107,9 @@ def login(request):
 	return render(request, 'ftu.html', context)
 # logout
 def logout(request):
-	
+
 	auth.logout(request)
-	
+
 	#return render(request, 'ftu.html')
 	return HttpResponseRedirect('/twittur/')
 
@@ -138,5 +135,34 @@ def settings(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	context = { 'active_page' : 'settings', 'nav': Nav.nav}
+	curUser = User.objects.get(pk = request.user.id)
+	curUserProfile = curUser.userprofile
+	success_msg, error_msg = None, None;
+
+	if request.method == 'POST':
+		uForm = UserForm(request.POST)
+		if uForm.is_valid():
+			uForm.save()
+			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
+		else:
+			error_msg = 'Benutzerdaten konnten nicht aktualisiert werden.'
+
+		udForm = UserDataForm(request.POST)
+		if udForm.is_valid():
+			udForm.save()
+			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
+		else:
+			error_msg = 'Benutzerdaten konnten nicht aktualisiert werden.'
+
+	userForm = UserForm(curUser)
+	userDataForm = UserDataForm(curUserProfile)
+
+	context = {
+		'active_page' : 'settings',
+		'nav': Nav.nav,
+		'success_msg': success_msg,
+		'error_msg': error_msg,
+		'userForm': userForm,
+		'userDataForm': userDataForm
+	}
 	return render(request, 'settings.html', context)

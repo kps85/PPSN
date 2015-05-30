@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 
-{% block list %}
-	
+{% block list %}	
     <ul>
     	<h4>Einstellungen</h4>
         <li><a href="#profilbild" class="menuCloser">Profilbild ausw&auml;hlen</a></li>
@@ -10,27 +10,6 @@
         <li><a href="#seite" class="menuCloser">Seiteneinstellungen</a></li>
         <li><a href="#delete" class="menuCloser">Account l&ouml;schen</a></li>
     </ul>
-    
-	{% if group_list %}
-	<ul class="groups">
-		<h3>Meine Gruppen</h3>
-		{% for group in group_list %}
-		<li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting -->
-			<a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
-			<a class="dashicons dashicons-edit" href="#"></a>
-		</li>
-		{% endfor %}
-	</ul>
-	{% endif %}
-	
-	{% if user_list %}
-	<ul class="following">
-		<h3>Folgend</h3>
-		 {% for user in user_list %}
-		<li><a class="ullink" href="#">@{{ user.nickname }}</a></li>
-		{% endfor %}
-	</ul>
-	{% endif %}
 {% endblock %}
 
 {% block nav %}
@@ -38,8 +17,18 @@
 {% endblock %}
 
 {% block content %}
+	
+    {% if success_msg %}
+	<div class="alert alert-success" role="alert">
+    	<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        {{ success_msg }}
+    </div>
+    {% endif %}
+    
+    {{ success_msg.username }}
 
-    <form>
+    <form action="{% url 'twittur:settings' %}" method="post">
+    {% csrf_token %}
               
         <div class="post" id="profilbild">
         	
@@ -47,13 +36,15 @@
             
             <div class="col-xs-12 form-group">
             	<div class="col-xs-12 text-center" style="vertical-align: bottom !important;">
-                	<img src="/static/css/img/profil_user200.jpg" class="img-thumbnail" style="width: 100px;">
-                	<img src="/static/css/img/profil_user200.jpg" class="img-thumbnail" style="width: 75px; margin-top: 26px;">
-                	<img src="/static/css/img/profil_user200.jpg" class="img-thumbnail" style="width: 50px; margin-top: 54px;">
-                    <p class="help-block">Aktuelles Profilbild (100px, 75px, 50px).</p>
+                	<img src="/picture/{{ user.picture }}" class="img-thumbnail" style="width: 100px;">
+                	<img src="/picture/{{ user.picture }}" class="img-thumbnail" style="width: 75px; margin-top: 26px;">
+                	<img src="/picture/{{ user.picture }}" class="img-thumbnail" style="width: 50px; margin-top: 50px;">
+                    <p class="help-block">Aktuelles Profilbild (100px, 75px, 50px). {{ user.picture }}</p>
                 </div>
                 <label class="form-label" for="avatarInput">Profilbild aktualisieren</label>
-                <input id="avatarInput" type="file">
+                {{ userDataForm.picture }}
+                {{ userDataForm.picture.errors }}
+                <!--<input id="avatarInput" name="picture" type="file">-->
             </div>
             
         </div>
@@ -64,22 +55,31 @@
         
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="usernameInput">Username</label>
-                <input class="form-control" id="usernameInput" type="text" value="kps" disabled />
+                <!--<input name="userID" type="hidden" value="{{ user.id }}" />-->
+                {{ userForm.username }}
+                <!--<input class="form-control" id="usernameInput" name="username" type="text" value="{{ user.username }}" disabled />-->
                 <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
+                {{ userForm.username.errors }}
             </div>
             
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="emailInput">E-Mail</label>
-                <input class="form-control" id="emailInput" type="email" value="karl.p.schmidt@campus.tu-berlin.de" />
+                {{ userForm.email }}
+                {{ userForm.email.errors }}
+                <!--<input class="form-control" id="emailInput" name="email" type="email" value="{{ user.email }}" />-->
             </div>
             
             <div class="col-xs-12 col-sm-6 form-group">
                 <label class="control-label" for="pw1Input">Passwort</label>
-                <input class="form-control" id="pw1Input" type="password" value="test1234" />
+                {{ userForm.password }}
+                {{ userForm.password.errors }}
+                <!--<input class="form-control" id="pw1Input" name="password" type="password" value="{{ user.password }}" />-->
             </div>    
             <div class="col-xs-12 col-sm-6 form-group pull-right">
                 <label class="control-label" for="pw2Input">Passwort bestätigen</label>
-                <input class="form-control" id="pw2Input" type="password" value="test1234" />
+                
+                {{ userForm.password.errors }}
+                <!--<input class="form-control" id="pw2Input" type="password" value="{{ user.password }}" />-->
             </div>
     
         </div>  
@@ -87,22 +87,41 @@
         <div class="post" id="daten">
         
         	<h4>Pers&ouml;nliche Daten</h4>
+            
+            <div class="col-xs-12 col-sm-6 form-group">
+                <label class="control-label" for="vornameInput">Vorname</label>
+                {{ userForm.first_name }}
+                {{ userForm.first_name.errors }}
+                <!--<input class="form-control" id="vornameInput" name="vorname" type="text" value="{{ user.first_name }}" />-->
+            </div>    
+            <div class="col-xs-12 col-sm-6 form-group pull-right">
+                <label class="control-label" for="nachnameInput">Nachname</label>
+                {{ userForm.last_name }}
+                {{ userForm.last_name.errors }}
+                <!--<input class="form-control" id="nachnameInput" name="nachname" type="text" value="{{ user.last_name }}" />-->
+            </div>
         
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="studiengangInput">Studiengang</label>
-                <input class="form-control" id="studiengangInput" type="text" value="Wirtschaftsinformatik" />
+                {{ userDataForm.academicDiscipline }}
+                <!--<input class="form-control" id="studiengangInput" name="studiengang" type="text" value="{{ user.academicDiscipline }}" />-->
                 <p class="help-block">Über deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.</p>
+                {{ userDataForm.academicDiscipline.errors }}
             </div>
         
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
-                <input class="form-control" id="matrikelNummerInput" type="number" value="347132" />
+                {{ userDataForm.studentNumber }}
+                <!--<input class="form-control" id="matrikelNummerInput" name="matrikelnummer" type="number" value="{{ user.studentNumber }}" />-->
                 <p class="help-block">Über deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.</p>
+                {{ userDataForm.studentNumber.errors }}
             </div>
         
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="wohnortInput">Wohnort</label>
-                <input class="form-control" id="wohnortInput" type="text" value="Falkensee" />
+                {{ userDataForm.location }}
+                {{ userDataForm.location.errors }}
+                <!--<input class="form-control" id="wohnortInput" name="wohnort" type="text" value="{{ user.location }}" />-->
             </div>
     
         </div>  
@@ -113,7 +132,7 @@
             
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
-                <select class="form-control" id="stdSafetylevelSelect">
+                <select class="form-control" id="stdSafetylevelSelect" name="safety">
                     <option>public</option>
                     <option>Uni</option>
                     <option>Fakultät</option>
@@ -124,20 +143,19 @@
         </div>
               
         <div class="post" id="delete">
+        	
+            <h4>Account vollst&auml;ndig l&ouml;schen</h4>
             
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="deleteButton">Account vollst&auml;ndig l&ouml;schen</label>
-                <div class="text-center">
-                	<input type="button" class="btn btn-primary text-center" id="deleteButton" value="Account löschen" />
-                	<p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&uuml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
-                </div>
+            <div class="col-xs-12 form-group text-center">
+                <p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
+                <button type="button" class="btn btn-primary text-center" id="deleteButton">Account löschen</button>
             </div>
             
         </div>
             
         <div class="col-xs-12 form-group text-center">
-            <input type="submit" class="btn btn-primary" id="submitSettButton" />
-            <input type="reset" class="btn btn-default" id="resetSettButton" />
+            <button type="submit" class="btn btn-primary" id="submitSettButton">Speichern</button>
+            <button type="reset" class="btn btn-default" id="resetSettButton">Zur&uuml;cksetzen</button>
         </div>
     
     </form>
