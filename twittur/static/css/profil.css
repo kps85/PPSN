@@ -100,6 +100,7 @@
 
 .logout { padding-top: 18px; }
 .logout span { font-size: 36px; }
+.logout span:before { color: #ffffff; }
 
 @media screen and (max-width: 1023px) {
 	.logout { 
