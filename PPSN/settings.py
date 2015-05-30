@@ -51,7 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'Programmierpraktikum.urls'
+ROOT_URLCONF = 'PPSN.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Programmierpraktikum.wsgi.application'
+WSGI_APPLICATION = 'PPSN.wsgi.application'
 
 
 # Database

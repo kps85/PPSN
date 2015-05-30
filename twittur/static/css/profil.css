@@ -97,3 +97,30 @@
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(245,0,0, .6);
           box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(245,0,0, .6);
 }
+
+.logout { padding-top: 18px; }
+.logout span { font-size: 36px; }
+
+@media screen and (max-width: 1023px) {
+	.logout { 
+		padding-top: 12px;
+		line-height: 11px;
+	}
+	.logout span { font-size: 28px; }	
+}
+
+/*.logout {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.logout:before {
+  content: "\e017";
+}*/

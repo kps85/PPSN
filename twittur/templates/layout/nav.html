@@ -6,5 +6,10 @@
 -->
 
 {% for i in nav %}
-<a class="{{ i.name }}{% if active_page == i.name %} active{% endif %}" href="{% url 'twittur:'|add:i.name %}">{{ i.title }}</a>
+	{% if i.name == 'logout' %}
+    	<a class="{{ i.name }}{% if active_page == i.name %} active{% endif %}" href="{% url 'twittur:'|add:i.name %}">
+        	<span class="glyphicon glyphicon-off" aria-hidden="true"></span><br />{{ i.title }}</a>
+    {% else %}
+		<a class="{{ i.name }}{% if active_page == i.name %} active{% endif %}" href="{% url 'twittur:'|add:i.name %}">{{ i.title }}</a>
+    {% endif %}
 {% endfor %}
