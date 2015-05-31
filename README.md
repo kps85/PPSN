@@ -37,6 +37,7 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
  - Dokumentation (Protokoll Meetings)
  - Stakeholderliste
  - Anforderungskatalog
+  - `REQ Nr.` entspricht der `Issue ID` in Waffle.io
  - Datenobjektliste (still empty)
  - Glossar (still empty)
 * [GitHub Repository 'PPSN'] (https://goo.gl/pAsqLV)
@@ -46,6 +47,7 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 * [Waffle.io Issue Organisation] (https://goo.gl/reOBQO)
  - Backlog column dient als Product Backlog
  - Ready column dient als Sprint Backlog
+ - `Issue ID` entspricht der `REQ NR.` im Google Sheet
  - entsprechende Meilensteine sind die zweiwöchigen Präsentationen
 * Zur Kommunikation wird 'slack.com' verwendet
 
