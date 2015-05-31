@@ -44,9 +44,9 @@
             
             <div class="col-xs-12 form-group">
             	<div class="col-xs-12 text-center" style="vertical-align: bottom !important;">
-                	<img src="/picture/{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 100px;">
-                	<img src="/picture/{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 75px; margin-top: 26px;">
-                	<img src="/picture/{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 50px; margin-top: 50px;">
+                	<img src="{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 100px;">
+                	<img src="{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 75px; margin-top: 26px;">
+                	<img src="{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 50px; margin-top: 50px;">
                     <p class="help-block">{{ userDataForm.picture.help_text }}</p>
                 </div>
                 <label class="form-label" for="avatarInput">Profilbild aktualisieren</label><br />
