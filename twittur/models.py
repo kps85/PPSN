@@ -14,7 +14,7 @@ class UserProfile(models.Model):
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField(verbose_name = 'Profilbild', upload_to = 'picture/', blank=True,
-                                height_field = None, width_field = None, default='picture/default.gif',
+                                height_field = None, width_field = None, default='default.gif',
                                 help_text = 'Dieses Bild wird auf Deinem Profil und in deinen Nachrichten angezeigt.')
 
     location = models.CharField( max_length = 200, default='' )
@@ -37,7 +37,7 @@ class Message(models.Model):
 class Group(models.Model):
     name = models.CharField( max_length = 50 )
     description = models.CharField( max_length = 256 )
-    picture = models.ImageField( upload_to = 'picture/', blank=True, default='picture/defaultG.gif')
+    picture = models.ImageField( upload_to = 'picture/', blank=True, default='defaultG.gif')
     date = models.DateTimeField( 'date published' )
     superGroup = models.ForeignKey( 'self',  blank = True, null = True )
 
