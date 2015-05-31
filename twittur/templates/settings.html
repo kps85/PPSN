@@ -32,7 +32,7 @@
     </div>
     {% endif %}
 
-    <form action="{% url 'twittur:settings' %}" method="post">
+    <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     	
         {{ userForm.non_field_errors }}
@@ -47,11 +47,12 @@
                 	<img src="/picture/{{ user.userprofile.picture }}" class="img-thumbnail" style="width: 100px;">
                 	<img src="/picture/{{ user.userprofile.picture }}" class="img-thumbnail" style="width: 75px; margin-top: 26px;">
                 	<img src="/picture/{{ user.userprofile.picture }}" class="img-thumbnail" style="width: 50px; margin-top: 50px;">
-                    <p class="help-block">Aktuelles Profilbild (100px, 75px, 50px).</p>
+                    <p class="help-block">{{ userDataForm.picture.help_text }}</p>
                 </div>
                 <label class="form-label" for="avatarInput">Profilbild aktualisieren</label><br />
                 {{ userDataForm.picture }}
                 {{ userDataForm.picture.errors }}
+                
             </div>
             
         </div>

@@ -144,7 +144,7 @@ def settings(request):
 		if userForm.is_valid():
 			userForm.save()
 			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
-			userDataForm = UserDataForm(request.POST, instance = curUserProfile)
+			userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
 			if userDataForm.is_valid():
 				userDataForm.save()
 				success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
@@ -152,9 +152,9 @@ def settings(request):
 				error_msg = "userProfileData failure"
 		else:
 			error_msg = 'userData failure'
-	else:
-		userForm = UserForm(instance = curUser)
-		userDataForm = UserDataForm(instance = curUserProfile)
+
+	userForm = UserForm(instance = curUser)
+	userDataForm = UserDataForm(instance = curUserProfile)
 
 	context = {
 		'active_page' : 'settings',

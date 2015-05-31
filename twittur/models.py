@@ -13,7 +13,9 @@ class UserProfile(models.Model):
 
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
-    picture = models.ImageField( upload_to = 'picture/', blank=True, height_field = None, width_field = None, default='picture/default.gif')
+    picture = models.ImageField(verbose_name = 'Profilbild', upload_to = 'picture/', blank=True,
+                                height_field = None, width_field = None, default='picture/default.gif',
+                                help_text = 'Dieses Bild wird auf Deinem Profil und in deinen Nachrichten angezeigt.')
 
     location = models.CharField( max_length = 200, default='' )
     
@@ -25,7 +27,7 @@ class UserProfile(models.Model):
 class Message(models.Model):
     user = models.ForeignKey( settings.AUTH_USER_MODEL ) # who write this shit?
     text = models.CharField( max_length = 254 )
-    picture = models.ImageField( upload_to = 'picture/', height_field = None, width_field = None,  blank=True)
+    picture = models.ImageField(upload_to = 'picture/', height_field = None, width_field = None, blank=True)
     date = models.DateTimeField( 'date published' )
     
     def __str__(self):
