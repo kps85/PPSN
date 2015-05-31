@@ -37,6 +37,11 @@ class UserDataForm(ModelForm):
 		model = UserProfile
 		fields = ['picture', 'academicDiscipline', 'studentNumber', 'location']
 
+	def clean_picture(self):
+		picture = self.cleaned_data.get('picture')
+		if not picture:
+			return 'picture/default.gif'
+
 	def __init__(self, *args, **kwargs):
 		instance = kwargs.get('instance')
 		super(UserDataForm, self).__init__(*args, **kwargs)

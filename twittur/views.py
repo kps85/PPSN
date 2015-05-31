@@ -142,6 +142,7 @@ def settings(request):
 	if request.method == 'POST':
 		userForm = UserForm(request.POST, instance = curUser)
 		if userForm.is_valid():
+			print(request)
 			userForm.save()
 			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
 			userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
