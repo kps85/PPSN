@@ -18,6 +18,8 @@ class LoginForm(forms.Form):
 
 
 class UserForm(ModelForm):
+	ack_password = forms.CharField(max_length=128, widget = forms.PasswordInput)
+
 	class Meta:
 		model = User
 		fields = ['username', 'password', 'email', 'first_name', 'last_name']
@@ -29,7 +31,10 @@ class UserForm(ModelForm):
 		self.fields['password'].widget = forms.PasswordInput()
 		for field in self.fields:
 			self.fields[field].widget.attrs['class'] = 'form-control'
-			self.fields[field].widget.attrs['value'] = getattr(instance, field)
+			if field == 'ack_password':
+				self.fields['ack_password'].widget.attrs['value'] = getattr(instance, 'password')
+			else:
+				self.fields[field].widget.attrs['value'] = getattr(instance, field)
 
 
 class UserDataForm(ModelForm):
