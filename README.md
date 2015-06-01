@@ -21,11 +21,11 @@ Wissenschaftlicher Mitarbeiter | Projekt-Koordination | Tim Jungnickel
 Wissenschaftlicher Mitarbeiter | Projekt-Unterstützung | Anton Gulenko
  |  | 
 Wirtschaftsinformatiker | Scrum-Master, Produkt-Entwicklung | Karl Schmidt
-Wirtschaftsinformatiker | Produkt-Entwicklung, Dokumentation | Lilia Butenkova
+Wirtschaftsinformatiker | Produkt-Entwicklung | Lilia Butenkova
 Wirtschaftsinformatiker | Produkt-Entwicklung, Dokumentation | Thomas Tietz
-Wirtschaftsinformatiker | Produkt-Entwicklung, Frontend | Steffen Zerbe
+Wirtschaftsinformatiker | Produkt-Entwicklung | Steffen Zerbe
 Informatiker | Produkt-Entwicklung, Backend | Willy Cai
-Wirtschaftsinformatiker | Produkt-Entwicklung, Tests | Yiming Chen
+Wirtschaftsinformatiker | Produkt-Entwicklung, Dokumentation | Yiming Chen
  |  | 
 Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen, Studenten
 
@@ -48,6 +48,7 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
  - Backlog column dient als Product Backlog
  - Ready column dient als Sprint Backlog
  - `Issue ID` entspricht der `REQ NR.` im Google Sheet
+ - **Issue Struktur**: `Titel` = Story = Anforderung aus dem Google Sheet; `Description` = Tasks; `Comments` = Changelog (erledigte Tasks, Änderungen an Story und / oder Tasks)
  - entsprechende Meilensteine sind die zweiwöchigen Präsentationen
 * Zur Kommunikation wird 'slack.com' verwendet
 
