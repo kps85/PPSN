@@ -42,9 +42,11 @@ class UserDataForm(ModelForm):
 		# this is the current picture, nothing will happen if checkbox not clicked
 		picture = self.cleaned_data.get('picture')
 		# checkbox (False if clicked) -> return default picture
+		print(picture)
 		if picture == False:
 			return 'default.gif'
 		return picture
+		
 	def __init__(self, *args, **kwargs):
 		instance = kwargs.get('instance')
 		super(UserDataForm, self).__init__(*args, **kwargs)
