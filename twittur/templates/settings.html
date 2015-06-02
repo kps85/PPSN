@@ -79,13 +79,13 @@
             
             <div class="col-xs-12 col-sm-6 form-group">
                 <label class="control-label" for="pw1Input">Passwort</label>
-                {{ userForm.password }}
+                {{ passwordForm.new_password1 }}
                 {{ userForm.password.errors }}
                 <!--<input class="form-control" id="pw1Input" name="password" type="password" value="{{ user.password }}" />-->
             </div>    
             <div class="col-xs-12 col-sm-6 form-group pull-right">
                 <label class="control-label" for="pw2Input">Passwort bestätigen</label>
-                {{ userForm.ack_password }}                
+                {{ passwordForm.new_password2 }}                
                 {{ userForm.password.errors }}
                 <!--<input class="form-control" id="pw2Input" type="password" value="{{ user.password }}" />-->
             </div>

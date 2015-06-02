@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message
-from .forms import UserForm, UserDataForm
+from .forms import UserForm, UserDataForm, SetPasswordForm
 
 # startpage
 def index(request):
@@ -141,20 +141,26 @@ def settings(request):
 
 	if request.method == 'POST':
 		userForm = UserForm(request.POST, instance = curUser)
-		if userForm.is_valid():
-			userForm.save()
-			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
-			userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
-			if userDataForm.is_valid():
-				userDataForm.save()
+		passwordForm = SetPasswordForm( curUser, request.POST)
+		print(userForm.is_valid() )
+		print(passwordForm.is_valid())
+		if passwordForm.is_valid():
+			passwordForm.save()
+			if userForm.is_valid():
+				userForm.save(commit = False)
 				success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
+				userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
+				if userDataForm.is_valid():
+					userDataForm.save()
+					success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
+				else:
+					error_msg = "userProfileData failure"
 			else:
-				error_msg = "userProfileData failure"
-		else:
-			error_msg = 'userData failure'
+				error_msg = 'userData failure'
 
 	userForm = UserForm(instance = curUser)
 	userDataForm = UserDataForm(instance = curUserProfile)
+	passwordForm = SetPasswordForm(curUser)
 
 	context = {
 		'active_page' : 'settings',
@@ -163,6 +169,7 @@ def settings(request):
 		'error_msg': error_msg,
 		'user': curUser,
 		'userForm': userForm,
-		'userDataForm': userDataForm
+		'userDataForm': userDataForm,
+		'passwordForm': passwordForm
 	}
 	return render(request, 'settings.html', context)
