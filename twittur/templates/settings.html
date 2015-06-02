@@ -46,7 +46,7 @@
             <h4>Profilbild auswählen</h4>
             
             <div class="col-xs-12 form-group">
-            	<div class="col-xs-12 text-center">
+            	<div class="col-xs-12 text-center profilePictures">
                 	{% if user.userprofile.picture %}
                         <a href="{{ user.userprofile.picture.url }}" target="_blank">
                             <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail" id="profilbild-l">

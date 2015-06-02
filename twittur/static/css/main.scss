@@ -2,16 +2,18 @@
 @import 'colors';
 
 @import 'ftu';
-@import 'main_changes';
+
+
+
 
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600);
 
 /* Basics */
 
 body {
-	font-family: 'Source Sans Pro', sans-serif;
-	color:#333;
-	font-size:1em;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #333;
+  font-size: 1.4em; 
 }
 
 * {
@@ -248,7 +250,7 @@ header {
 	
 			color:#333;
 			
-			margin-top:($navWidthDesktop / 2) - 20;
+			
 			@include tablet {
 				display:none;
 			}
@@ -331,5 +333,15 @@ $iconWidth:50px;
 	@include clear;
 }
 
+/* Settings */
 
+.profilePictures {
+	img {
+		
+		display:inline;
+		vertical-align:bottom;
+	}
+}
+
+@import 'main_changes';
 
