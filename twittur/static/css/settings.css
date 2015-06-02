@@ -1,43 +1,9 @@
-.btn-primary {
-	background-color: #F50000;
-	background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
-	background-image:      -o-linear-gradient(top, #F50000 0%, #990000 100%);
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#F50000), to(#990000));
-	background-image:         linear-gradient(to bottom, #F50000 0%, #990000 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffF50000', endColorstr='#ff990000', GradientType=0);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-	background-repeat: repeat-x;
-	border-color: rgba(153,0,0,1);
-}
-.btn-primary:hover, .btn-primary:focus {
-	background-color: #990000;
-	background-position: 0 -15px;
-	border-color: rgba(153,0,0,1);
-}
-
-.form-control:focus, button:focus {
-  border-color: rgba(217,14,31,1);
-  outline: 0;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(245,0,0, .6);
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(245,0,0, .6);
-}
-
-header #search input {
-	border-bottom-right-radius: 0;
-	border-top-right-radius: 0;
-}
-header #search button {
-	margin-top: 25px;
-	border-bottom-left-radius: 0;
-	border-top-left-radius: 0;	
-}
-
 .alert .errorlist { display: inline-block }
 
 .profilbild-l { width: 100px; }
 .profilbild-m { width: 75px; }
 .profilbild-s { width: 50px; }
 
-#profBildUpdate { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 0em; }
+#profBildUpdate { font-size: 0em; }
 #profBildUpdate > a, #profBildUpdate > input, #profBildUpdate > label, #profBildUpdate > span  { font-size: 14px; }
 #profBildUpdate > a:after { clear: both; display: block; width: 100%; content: ''; }

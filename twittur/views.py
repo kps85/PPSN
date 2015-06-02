@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from PPSN.settings import MEDIA_ROOT, MEDIA_URL
@@ -11,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message
-from .forms import UserForm, UserDataForm
+from .forms import UserForm, UserDataForm, MessageForm
 
 # startpage
 def index(request):
@@ -20,29 +22,26 @@ def index(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-
 	#print(request.user)
 	current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
 	user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
 	atTag = '@' + request.user.username + ' '
 	#print (atTag)
-	message_list = Message.objects.all().select_related('user__userprofile').filter( Q(user__exact=request.user) | Q(text__contains=atTag))
-	#print(message_list)
-	messageList = Message.objects.all()
-	#print(messageList)
+	message_list = Message.objects.all().select_related('user__userprofile')\
+		.filter( Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
 
-	#user_list = User.objects.all()
-	#message_list = Message.objects.all()
-	#message_list = Message.objects.all().select_related('user')
+	#print(message_list)
+	message_list = Message.objects.all().order_by('-date')
+
 	group_list = Group.objects.all()
 
-	context = { 'active_page' : 'index', 'current_user' : current_user, 'user_list': user_list , 'message_list' : message_list , 'nav': Nav.nav }
+	context = { 'active_page' : 'index', 'current_user' : current_user, 'user_list': user_list ,
+				'message_list': message_list , 'nav': Nav.nav, 'msgForm': msgDialog(request) }
 	return render(request, 'index.html', context)
 
 
 # login/registration page
 def login(request):
-
 
 	if request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/')
@@ -105,9 +104,9 @@ def login(request):
 	# twitter/login/
 	context = { 'active_page' : 'ftu', 'nav': Nav.nav}
 	return render(request, 'ftu.html', context)
+
 # logout
 def logout(request):
-
 	auth.logout(request)
 
 	#return render(request, 'ftu.html')
@@ -119,7 +118,8 @@ def profile(request):
 		return HttpResponseRedirect('/twittur/login/')
 	user_list = User.objects.all()
 	group_list = Group.objects.all()
-	context = { 'active_page' : 'profile', 'user_list': user_list , 'group_list': group_list, 'nav': Nav.nav}
+	context = { 'active_page' : 'profile', 'user_list': user_list , 'group_list': group_list, 'nav': Nav.nav,
+				'msgForm': msgDialog(request)}
 	return render(request, 'profile.html', context)
 
 # infopage
@@ -127,7 +127,7 @@ def info(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	context = { 'active_page' : 'info', 'nav': Nav.nav}
+	context = { 'active_page' : 'info', 'nav': Nav.nav, 'msgForm': msgDialog(request)}
 	return render(request, 'info.html', context)
 
 # settingspage
@@ -148,6 +148,9 @@ def settings(request):
 		if userForm.is_valid():
 			userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
 			userDataForm.oldPicture = curUserProfile.picture
+			if 'picture' in request.FILES or request.POST['picture-clear'] == 'on':
+				if userDataForm.oldPicture != 'picture/default.gif':
+					userDataForm.oldPicture.delete()
 			if userDataForm.is_valid():
 				userForm.save()
 				userDataForm.save()
@@ -163,6 +166,7 @@ def settings(request):
 	context = {
 		'active_page' : 'settings',
 		'nav': Nav.nav,
+		'msgForm': msgDialog(request),
 		'success_msg': success_msg,
 		'error_msg': error_msg,
 		'user': curUser,
@@ -170,3 +174,16 @@ def settings(request):
 		'userDataForm': userDataForm
 	}
 	return render(request, 'settings.html', context)
+
+def msgDialog(request):
+	curUser = User.objects.get(pk = request.user.id)
+	curUserProfile = curUser.userprofile
+
+	if request.method == 'POST':
+		msgForm = MessageForm(request.POST)
+		if msgForm.is_valid():
+			msgForm.save()
+
+	msgForm = MessageForm(initial = {'user': curUser.id, 'date': datetime.datetime.now()})
+
+	return msgForm

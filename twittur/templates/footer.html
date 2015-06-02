@@ -1,4 +1,35 @@
 {% load staticfiles %}
+
+    <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+<!--    			{% if ative_page == 'index' %}<form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
+          {% elif active_page == 'profil' %}<form action="{% url 'twittur:profil' %}" method="post" enctype="multipart/form-data">
+          {% elif active_page == 'info' %}<form action="{% url 'twittur:info' %}" method="post" enctype="multipart/form-data">
+          {% elif active_page == 'settings' %}<form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
+          {% endif %}-->
+          <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
+    			{% csrf_token %}
+          	<input name="msgDialog" type="hidden" value="true" />
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
+            </div>
+            <div class="modal-body">
+              {{ msgForm.text }}
+            </div>
+            <div class="modal-footer">
+            	<div class="msgDiaDate pull-left">{% now "j F Y, H:i" %} Uhr</div>
+              {{ msgForm.user }}
+              {{ msgForm.date }}
+              <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+              <button type="submit" class="btn btn-primary">Nachricht senden</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>            
+
 	<script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>

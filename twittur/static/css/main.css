@@ -1,5 +1,28 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600);
-a:hover { text-decoration: none !important; }
+a:hover { text-decoration: none !important; }	
+.btn-primary {
+	background-color: #F50000;
+	background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
+	background-image:      -o-linear-gradient(top, #F50000 0%, #990000 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#F50000), to(#990000));
+	background-image:         linear-gradient(to bottom, #F50000 0%, #990000 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffF50000', endColorstr='#ff990000', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	background-repeat: repeat-x;
+	border-color: rgba(153,0,0,1);
+}
+.btn-primary:hover, .btn-primary:focus {
+	background-color: #990000;
+	background-position: 0 -15px;
+	border-color: rgba(153,0,0,1);
+}
+
+.form-control:focus, button:focus {
+  border-color: rgba(217,14,31,1);
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(245,0,0, .6);
+          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(245,0,0, .6);
+}
 
 nav {
   background: #2F313F;
@@ -181,18 +204,17 @@ header {
 body {
   font-family: 'Source Sans Pro', sans-serif;
   color: #333;
-  font-size: 1em; }
+  font-size: 1.4em; 
+}
 
 * {
   margin: 0;
   padding: 0;
   list-style-type: none; }
 
-a {
-  text-decoration: none; }
+a { text-decoration: none; }
 
-textarea, input {
-  outline: none; }
+textarea, input { outline: none; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -319,17 +341,17 @@ a.title {
   text-indent: -9999px;
   display: block;
   float: left;
-  width: 60%;
+  width: 200px;
   height: 90px;
   background: url("img/logo.png") no-repeat;
   background-position: 0 10px;
   background-size: 144px 70px; }
   @media screen and (min-width: 1024px) {
     a.title {
-      margin-left: 10%; } }
+      margin-left: 3%; } }
   @media screen and (max-width: 1023px) {
     a.title {
-      margin-left: 3%; } }
+      margin-left: 6%; } }
 
 header {
   top: 0;
@@ -348,23 +370,46 @@ header {
     padding-top: 2px;
     float: right;
     display: none; }
+	header .newMsg {
+    height: 45px;
+    width: 45px;
+		margin-top: 22.5px;
+		margin-left: 3%;
+	}
     @media screen and (max-width: 1023px) {
-      header a.menuOpener {
-        display: inherit; } }
+      header a.menuOpener { display: inherit; } 
+		}
     header a.menuOpener:hover {
       cursor: pointer;
       opacity: 0.8; }
     header a.menuOpener .patty {
       margin: 14% 20%;
       border-bottom: 5px solid transparent; }
-  header #search input {
-    padding: 10px;
-    border: 1px solid #eee;
-    color: #333;
-    margin-top: 25px; }
-    @media screen and (max-width: 1023px) {
-      header #search input {
-        display: none; } }
+	
+	header #search {
+		margin-right: 3%;
+    margin-top: 25px;
+	}
+		header #search input {
+			padding: 10px;
+			border: 1px solid #eee;
+			color: #333;
+			border-bottom-right-radius: 0;
+			border-top-right-radius: 0;
+		}
+		header #search button {
+			margin-left: 0;
+			margin-top: 0;
+			border-bottom-left-radius: 0;
+			border-top-left-radius: 0;	
+		}
+			@media screen and (max-width: 1023px) {
+				header #search { display: none; } 
+			}
+	
+	#newMessage textarea { width: 100%; }
+	#newMessage .msgDiaDate { padding: 6px 12px; }
+				
   header #head:after {
     content: "";
     display: table;

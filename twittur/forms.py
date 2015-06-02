@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, is_password_usable
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from .models import User, UserProfile
+from .models import User, UserProfile, Message
 
 
 class RegistrationForm(forms.Form):
@@ -27,6 +27,17 @@ class UserForm(ModelForm):
 		model = User
 		fields = ['username', 'password', 'ack_password', 'email', 'first_name', 'last_name']
 
+	def __init__(self, *args, **kwargs):
+		instance = kwargs.get('instance')
+		super(UserForm, self).__init__(*args, **kwargs)
+		self.fields['username'].widget.attrs['readonly'] = True
+		self.fields['password'].widget = forms.PasswordInput()
+		self.fields['password'].required = False
+		for field in self.fields:
+			self.fields[field].widget.attrs['class'] = 'form-control'
+			if field != 'ack_password' and field != 'password':
+				self.fields[field].widget.attrs['value'] = getattr(instance, field)
+
 	def clean(self):
 		password = self.cleaned_data.get('password')
 		ack_password = self.cleaned_data.get('ack_password')
@@ -47,17 +58,6 @@ class UserForm(ModelForm):
 		if commit:
 			instance.save()
 		return instance
-
-	def __init__(self, *args, **kwargs):
-		instance = kwargs.get('instance')
-		super(UserForm, self).__init__(*args, **kwargs)
-		self.fields['username'].widget.attrs['readonly'] = True
-		self.fields['password'].widget = forms.PasswordInput()
-		self.fields['password'].required = False
-		for field in self.fields:
-			self.fields[field].widget.attrs['class'] = 'form-control'
-			if field != 'ack_password' and field != 'password':
-				self.fields[field].widget.attrs['value'] = getattr(instance, field)
 
 
 class UserDataForm(ModelForm):
@@ -85,9 +85,19 @@ class UserDataForm(ModelForm):
 
 	def save(self, commit=True):
 		instance = super(UserDataForm, self).save(commit=False)
-		oldPic = self.oldPicture
-		if oldPic != 'picture/default.gif':
-			oldPic.delete()
 		if commit:
 			instance.save()
 		return instance
+
+
+class MessageForm(ModelForm):
+	class Meta:
+		model = Message
+		fields = ['user', 'text', 'date']
+
+	def __init__(self, *args, **kwargs):
+		super(MessageForm, self).__init__(*args, **kwargs)
+		self.fields['user'].widget = forms.HiddenInput()
+		self.fields['date'].widget = forms.HiddenInput()
+		self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
+		self.fields['text'].widget.attrs['class'] = 'form-control'
