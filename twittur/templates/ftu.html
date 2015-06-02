@@ -16,8 +16,8 @@
 
 						<form method="GET">
 							{% csrf_token %} 
-							<input type="text" name="username" id="username" placeholder="Username"  /><br />
-							<input type="password" name="password" name="password" placeholder="Passwort" /><br />
+							<input type="text" name="username" id="username" placeholder="Username" data-validation="required"  /><br />
+							<input type="password" name="password" name="password" placeholder="Passwort" data-validation="required" /><br />
 							{% if error_text %}
 								<p><font color="#FF0000">{{ error_text }}</font></p>
 							{% endif %}
@@ -29,12 +29,13 @@
 					<div class="toggleItem" id="register">
 						<form method="POST" action="">
 							{% csrf_token %} 
-							<input type="text" name="first_name" placeholder="Dein Name" id="first_name" /><br />
-							<input type="text" name="name" placeholder="Username" id="name" />
+							<input type="text" name="first_name" placeholder="Dein Name" id="first_name" data-validation="required"  /><br />
+							<input type="text" name="name" placeholder="Username" id="name" data-validation="required" />
 							<br />
-							<input type="text" name="email" placeholder="E-Mail" id="email" /><br />
-							<input type="password" name="password" placeholder="Passwort" id="password" /><br />
-							<input type="password" name="ack_password" placeholder="Passwort bestätigen" id="ack_password" /><br />
+							<p>
+							<input type="text" name="email" placeholder="E-Mail" id="email" data-validation="email" data-validation-error-msg="You did not enter a valid e-mail" data-validation="required" /></p>
+							<input type="password" name="password" placeholder="Passwort" id="password" data-validation="required" /><br />
+							<input type="password" name="ack_password" placeholder="Passwort bestätigen" id="ack_password" data-validation="confirmation" data-validation-confirm="password" data-validation="required" /><br />
 							{% if error_user %}
 								<p><font color="#FF0000">{{ error_user }}</font></p>
 							{% endif %}
@@ -43,8 +44,10 @@
 							{% endif %}
 							
 							
-							<input type="submit" class="registerButton" value="Registrieren" />
+							<input type="submit" class="registerButton" value="Registrieren" name="submit" />
+							<input type="reset" value="Reset form" />
 						</form>
+						
 					</div>	
 			</div>
 			<div class="box forgotBox">
@@ -75,5 +78,6 @@
 <div id="ftuPosts" class="full-page">
 	Hier kommen dann die öffentlichen Posts rein.
 </div>
+
 </body>
 {% include 'footer.html' %}
