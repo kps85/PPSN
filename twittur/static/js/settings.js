@@ -23,8 +23,3 @@ $(window).load(function() {
 	"use strict";
 	initialSetup();
 });
-
-$(window).scroll(function() {
-	"use strict";
-	initialSetup();
-});

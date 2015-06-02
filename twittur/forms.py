@@ -79,19 +79,15 @@ class UserDataForm(ModelForm):
 		# this is the current picture, nothing will happen if checkbox not clicked
 		picture = self.cleaned_data.get('picture')
 		# checkbox (False if clicked) -> return default picture
-		if not picture:
+		if picture == False:
 			return 'picture/default.gif'
 		return picture
 
 	def save(self, commit=True):
 		instance = super(UserDataForm, self).save(commit=False)
 		oldPic = self.oldPicture
-		print(oldPic)
-		print(instance.picture)
-		if oldPic != 'picture/default.gif' and oldPic != instance.picture and oldPic != '':
+		if oldPic != 'picture/default.gif':
 			oldPic.delete()
-			print(commit)
 		if commit:
-			print('im commit')
 			instance.save()
 		return instance
