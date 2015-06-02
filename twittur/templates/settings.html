@@ -24,16 +24,19 @@
         {{ success_msg }}
     </div>
     {% endif %}
-	
+    
     {% if error_msg %}
-	<div class="alert alert-danger" role="alert">
-    	<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-        {{ error_msg }}
-    </div>
+    	{% for key, value in error_msg.items %}
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+            {{ value }} ({{ key }})
+        </div>
+        {% endfor %}
     {% endif %}
 
     <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    	<input name="delete" type="hidden" value="false" />
     	
         {{ userForm.non_field_errors }}
         {{ userDataForm.non_field_errors }}
@@ -43,20 +46,28 @@
             <h4>Profilbild auswählen</h4>
             
             <div class="col-xs-12 form-group">
-            	<div class="col-xs-12 text-center" style="vertical-align: bottom !important;">
-                	<a href="{{ user.userprofile.picture.url }}" target="_blank">
-                    	<img src="{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 100px;">
-                        <img src="{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 75px; margin-top: 26px;">
-                        <img src="{{ user.userprofile.picture.url }}" class="img-thumbnail" style="width: 50px; margin-top: 50px;">
-                    </a>
+            	<div class="col-xs-12 text-center">
+                	{% if user.userprofile.picture %}
+                        <a href="{{ user.userprofile.picture.url }}" target="_blank">
+                            <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail" id="profilbild-l">
+                            <img src="{{ user.userprofile.picture.url }}" class="profilbild-m img-thumbnail" id="profilbild-m">
+                            <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail" id="profilbild-s">
+                        </a>
+                    {% else %}
+                        <a href="{{ user.userprofile.picture }}" target="_blank">
+                            <img src="{{ user.userprofile.picture }}" class="profilbild-l img-thumbnail" id="profilbild-l">
+                            <img src="{{ user.userprofile.picture }}" class="profilbild-m img-thumbnail" id="profilbild-m">
+                            <img src="{{ user.userprofile.picture }}" class="profilbild-s img-thumbnail" id="profilbild-s">
+                        </a>                    
+                    {% endif %}
                     <p class="help-block">{{ userDataForm.picture.help_text }}</p>
                 </div>
-                <label class="form-label" for="avatarInput">Profilbild aktualisieren</label><br />
-                {{ userDataForm.picture }}
-                {{ userDataForm.picture.errors }}
-                
-            </div>
-            
+                <div id="profBildUpdate">
+                	{% if user.userprofile.picture %}<span>Aktuelles Profilbild: </span>{% endif %}
+        	        {{ userDataForm.picture }}
+      	        	{{ userDataForm.picture.errors }}
+                </div>                
+            </div>            
         </div>
         
         <div class="post" id="account">
@@ -74,20 +85,17 @@
                 <label class="control-label" for="emailInput">E-Mail</label>
                 {{ userForm.email }}
                 {{ userForm.email.errors }}
-                <!--<input class="form-control" id="emailInput" name="email" type="email" value="{{ user.email }}" />-->
             </div>
             
             <div class="col-xs-12 col-sm-6 form-group">
                 <label class="control-label" for="pw1Input">Passwort</label>
                 {{ userForm.password }}
-                {{ userForm.password.errors }}
-                <!--<input class="form-control" id="pw1Input" name="password" type="password" value="{{ user.password }}" />-->
+                {{ userForm.password.errors.as_text }}
             </div>    
             <div class="col-xs-12 col-sm-6 form-group pull-right">
                 <label class="control-label" for="pw2Input">Passwort bestätigen</label>
                 {{ userForm.ack_password }}                
-                {{ userForm.password.errors }}
-                <!--<input class="form-control" id="pw2Input" type="password" value="{{ user.password }}" />-->
+                {{ userForm.ack_password.errors.as_text }}
             </div>
     
         </div>  
@@ -100,19 +108,16 @@
                 <label class="control-label" for="vornameInput">Vorname</label>
                 {{ userForm.first_name }}
                 {{ userForm.first_name.errors }}
-                <!--<input class="form-control" id="vornameInput" name="vorname" type="text" value="{{ user.first_name }}" />-->
             </div>    
             <div class="col-xs-12 col-sm-6 form-group pull-right">
                 <label class="control-label" for="nachnameInput">Nachname</label>
                 {{ userForm.last_name }}
                 {{ userForm.last_name.errors }}
-                <!--<input class="form-control" id="nachnameInput" name="nachname" type="text" value="{{ user.last_name }}" />-->
             </div>
         
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="studiengangInput">Studiengang</label>
                 {{ userDataForm.academicDiscipline }}
-                <!--<input class="form-control" id="studiengangInput" name="studiengang" type="text" value="{{ user.academicDiscipline }}" />-->
                 <p class="help-block">Über deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.</p>
                 {{ userDataForm.academicDiscipline.errors }}
             </div>
@@ -120,7 +125,6 @@
             <div class="col-xs-12 form-group">
                 <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
                 {{ userDataForm.studentNumber }}
-                <!--<input class="form-control" id="matrikelNummerInput" name="matrikelnummer" type="number" value="{{ user.studentNumber }}" />-->
                 <p class="help-block">Über deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.</p>
                 {{ userDataForm.studentNumber.errors }}
             </div>
@@ -129,7 +133,6 @@
                 <label class="control-label" for="wohnortInput">Wohnort</label>
                 {{ userDataForm.location }}
                 {{ userDataForm.location.errors }}
-                <!--<input class="form-control" id="wohnortInput" name="wohnort" type="text" value="{{ user.location }}" />-->
             </div>
     
         </div>  
@@ -156,7 +159,7 @@
             
             <div class="col-xs-12 form-group text-center">
                 <p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
-                <button type="button" class="btn btn-primary text-center" id="deleteButton">Account löschen</button>
+                <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#delAccModal" id="deleteButton">Account löschen</button>
             </div>
             
         </div>
@@ -167,5 +170,27 @@
         </div>
     
     </form>
+    
+    <div class="modal fade" id="delAccModal" tabindex="-1" role="dialog" aria-labelledby="delAccModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Account l&ouml;schen?</h4>
+          </div>
+          <div class="modal-body">
+            Willst Du deinen Account wirklich l&ouml;schen?
+          </div>
+          <div class="modal-footer">
+            <form action="{% url 'twittur:settings' %}" method="POST">
+    			{% csrf_token %}
+            	<input name="delete" type="hidden" value="true" />
+            	<button type="button" class="btn btn-default" data-dismiss="modal">Ok, doch nicht.</button>
+            	<button type="submit" class="btn btn-primary">Ja, ich will!</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
 {% endblock %}

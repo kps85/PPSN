@@ -1,4 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600);
+a:hover { text-decoration: none !important; }
+
 nav {
   background: #2F313F;
   color: #697584;
@@ -257,15 +259,24 @@ nav a.messages {
   background-image: url("img/Message-128.png"); }
 nav a.info {
   background-image: url("img/Message-Information-128.png"); }
+nav a.logout { padding-top: 18px; }
+nav a.logout span { font-size: 36px; }
+nav a.logout span:before { color: #ffffff; }
 nav a.menuCloser {
   float: right;
   background-image: url("img/Login-Arrow-128.png");
-  display: none; }
-  @media screen and (max-width: 1023px) {
-    nav a.menuCloser {
-      display: inherit; } }
-  nav a.menuCloser:hover {
-    cursor: pointer; }
+  display: none; 
+}
+nav a.menuCloser:hover { cursor: pointer; }
+@media screen and (max-width: 1023px) {
+	#search { display: none; }
+	nav a.logout { 
+		padding-top: 12px;
+		line-height: 11px;
+	}
+	nav a.logout span { font-size: 28px; }
+    nav a.menuCloser { display: inherit; }
+}
 
 #list {
   box-sizing: border-box;

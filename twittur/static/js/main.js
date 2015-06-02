@@ -91,8 +91,6 @@ function initMenu() {
 }
 
 
-
-
 $(document).ready(function() {
 	initMenu();
 	initFtu();

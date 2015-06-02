@@ -139,19 +139,23 @@ def settings(request):
 	curUserProfile = curUser.userprofile
 	success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
-	if request.method == 'POST':
+	if request.method == 'POST' and request.POST['delete'] == 'true':
+		curUser.userprofile.delete()
+		curUser.delete()
+		return HttpResponseRedirect('/twittur/')
+	elif request.method == 'POST':
 		userForm = UserForm(request.POST, instance = curUser)
 		if userForm.is_valid():
-			userForm.save()
-			success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
 			userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
+			userDataForm.oldPicture = curUserProfile.picture
 			if userDataForm.is_valid():
+				userForm.save()
 				userDataForm.save()
 				success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
 			else:
-				error_msg = "userProfileData failure"
+				error_msg = userDataForm.errors
 		else:
-			error_msg = 'userData failure'
+			error_msg = userForm.errors
 
 	userForm = UserForm(instance = curUser)
 	userDataForm = UserDataForm(instance = curUserProfile)

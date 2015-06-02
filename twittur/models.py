@@ -14,7 +14,7 @@ class UserProfile(models.Model):
     studentNumber = models.IntegerField(default=0)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField(verbose_name = 'Profilbild', upload_to = 'picture/', blank=True,
-                                height_field = None, width_field = None, default='default.gif',
+                                height_field = None, width_field = None, default='picture/default.gif',
                                 help_text = 'Dieses Bild wird auf Deinem Profil und in deinen Nachrichten angezeigt.')
 
     location = models.CharField( max_length = 200, default='' )
@@ -22,6 +22,11 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name +')'
 
+    def delete(self, using=None):
+        print(self)
+        if self.picture != 'picture/default.gif':
+            self.picture.delete()
+        super(UserProfile, self).delete()
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
