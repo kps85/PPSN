@@ -84,7 +84,7 @@ def login(request):
 
 			# check passwort and ack_password
 			if password != ack_password :
-				error_password = "Passwörter sind nicht gleich."
+				error_password = "Passwoerter sind nicht gleich."
 				return render(request, 'ftu.html', { 'error_password': error_password })
 
 			email = query_dict.get('email')
