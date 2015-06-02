@@ -148,7 +148,7 @@ def settings(request):
 		if userForm.is_valid():
 			userDataForm = UserDataForm(request.POST, request.FILES, instance = curUserProfile)
 			userDataForm.oldPicture = curUserProfile.picture
-			if 'picture' in request.FILES or request.POST['picture-clear'] == 'on':
+			if 'picture' in request.FILES or 'picture-clear' in request.POST:
 				if userDataForm.oldPicture != 'picture/default.gif':
 					userDataForm.oldPicture.delete()
 			if userDataForm.is_valid():
