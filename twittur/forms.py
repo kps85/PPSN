@@ -24,6 +24,15 @@ class UserForm(ModelForm):
 		model = User
 		fields = ['username', 'password', 'email', 'first_name', 'last_name']
 
+	def clean_password(self):
+		password = self.cleaned_data.get('password')
+		ack_password = self.cleaned_data.get('ack_password')
+
+		if password != ack_password:
+			return ValueError('Passwoerter stimmen nicht ueberein!')
+
+		return User.make_password(password)
+
 	def __init__(self, *args, **kwargs):
 		instance = kwargs.get('instance')
 		super(UserForm, self).__init__(*args, **kwargs)
@@ -31,9 +40,7 @@ class UserForm(ModelForm):
 		self.fields['password'].widget = forms.PasswordInput()
 		for field in self.fields:
 			self.fields[field].widget.attrs['class'] = 'form-control'
-			if field == 'ack_password':
-				self.fields['ack_password'].widget.attrs['value'] = getattr(instance, 'password')
-			else:
+			if field != 'ack_password' and field != 'password':
 				self.fields[field].widget.attrs['value'] = getattr(instance, field)
 
 
