@@ -15,7 +15,7 @@ class UserProfile(models.Model):
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField(verbose_name = 'Profilbild', upload_to = 'picture/', blank=True,
                                 height_field = None, width_field = None, default='picture/default.gif',
-                                help_text = 'Dieses Bild wird auf Deinem Profil und in deinen Nachrichten angezeigt.')
+                                help_text = 'Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt.')
 
     location = models.CharField( max_length = 200, default='' )
     

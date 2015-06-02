@@ -1,7 +1,6 @@
 .alert .errorlist { display: inline-block }
 
-.profilbild-l { width: 100px; }
-.profilbild-m { width: 75px; }
+.profilbild-l { width: 200px; margin-right: 15px; }
 .profilbild-s { width: 50px; }
 
 #profBildUpdate { font-size: 0em; }

@@ -22,6 +22,13 @@ def index(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
+	success_msg = None
+
+	if request.method == 'POST' and 'delMessage' in request.POST:
+		curMsg = Message.objects.get(pk = request.POST['delMessage'])
+		curMsg.delete()
+		success_msg = 'Nachricht gel&ouml;scht!'
+
 	#print(request.user)
 	current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
 	user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
@@ -35,8 +42,9 @@ def index(request):
 
 	group_list = Group.objects.all()
 
-	context = { 'active_page' : 'index', 'current_user' : current_user, 'user_list': user_list ,
-				'message_list': message_list , 'nav': Nav.nav, 'msgForm': msgDialog(request) }
+	context = { 'active_page' : 'index', 'current_user' : current_user, 'user_list': user_list,
+				'message_list': message_list , 'nav': Nav.nav, 'msgForm': msgDialog(request),
+				'success_msg': success_msg }
 	return render(request, 'index.html', context)
 
 
@@ -116,10 +124,20 @@ def logout(request):
 def profile(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
+
+	success_msg = None
+
+	if request.method == 'POST' and 'delMessage' in request.POST:
+		curMsg = Message.objects.get(pk = request.POST['delMessage'])
+		curMsg.delete()
+		success_msg = 'Nachricht gel&ouml;scht!'
+
 	user_list = User.objects.all()
 	group_list = Group.objects.all()
+	message_list = Message.objects.all().select_related('user__userprofile')\
+		.filter( Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ')).order_by('-date')
 	context = { 'active_page' : 'profile', 'user_list': user_list , 'group_list': group_list, 'nav': Nav.nav,
-				'msgForm': msgDialog(request)}
+				'message_list': message_list, 'msgForm': msgDialog(request), 'success_msg': success_msg}
 	return render(request, 'profile.html', context)
 
 # infopage
@@ -177,7 +195,6 @@ def settings(request):
 
 def msgDialog(request):
 	curUser = User.objects.get(pk = request.user.id)
-	curUserProfile = curUser.userprofile
 
 	if request.method == 'POST':
 		msgForm = MessageForm(request.POST)

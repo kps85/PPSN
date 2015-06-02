@@ -28,22 +28,18 @@
 {% endblock %}
 
 {% block content %}
-		{% if message_list %}
-			{% for message in message_list %}
-				<div class="post">
-					<div class="icon">  <img src="{{ message.user.userprofile.picture.url }}" width=50 height=50>  </div>
-					<div class="postContent">
-						<div class="postMeta">
-							<div class="postAuthor">@{{ message.user.username }}</div>
-							<div class="postTime">{{ message.date }}</div>
-						</div>
-						<div class="postText">
-							{{ message.text }}
-
-						</div>
-					</div>
-				</div>
-			{% endfor %}
-		{% endif %}
-
+  {% if success_msg %}
+  <div class="alert alert-success" role="alert">
+    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+    {{ success_msg|safe }}
+  </div>
+  {% endif %}
+  
+  {% if message_list %}
+    {% for message in message_list %}
+      {% include "message_box.html" with message=message page=active_page user=user  %}
+    {% endfor %}
+  {% else %}
+  	<div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+  {% endif %}
 {% endblock %}
