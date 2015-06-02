@@ -90,6 +90,8 @@ function initMenu() {
 	})
 }
 
+var hideInfo = function(e) { $(e).parent("div").hide(); }
+
 
 $(document).ready(function() {
 	initMenu();
@@ -99,7 +101,5 @@ $(document).ready(function() {
 	$(window).resize(function() {
 		fph();
 	});
-	
-
 	
 });
