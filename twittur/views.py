@@ -96,25 +96,13 @@ def login(request):
 			password = query_dict.get('password')
 			ack_password = query_dict.get('ack_password')
 
-			# check passwort and ack_password
-			if password == "":
-				error_reg_user_p = " - Passwort darf nicht leer sein."
+			# check password and ack_password
 			if password != ack_password :
 				error_reg_user_p = " - Passwörter sind nicht gleich."
-				# return render(request, 'ftu.html', { 'error_reg_user': error_reg_user })
 
 			email = query_dict.get('email')
-			if email == "":
-				error_reg_userprofile_e = " - Ungültige Emailadresse"
-				# return render(request, 'ftu.html', { 'error_reg_userprofil': error_reg_userprofil })
-
 			studentNumber = query_dict.get('studentNumber')
-			if studentNumber == "":
-				error_reg_userprofile_nr = " - Ungültige Matrikelnummer"
-
 			academicDiscipline = query_dict.get('academicDiscipline')
-			if studentNumber == "":
-				error_reg_userprofile_ad = " - Ungültiger Studiengang"
 
 			first_name = query_dict.get('first_name')
 			last_name = query_dict.get('last_name')
