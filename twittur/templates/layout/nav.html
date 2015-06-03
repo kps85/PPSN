@@ -3,7 +3,7 @@
   	<a class="{{ i.name }}{% if active_page == i.name and user == pUser %} active{% endif %}" href="{% url 'twittur:'|add:i.name user=user.username %}">
 	{% else %}
   	<a class="{{ i.name }}{% if active_page == i.name %} active{% endif %}" href="{% url 'twittur:'|add:i.name %}">
-  {% endif %}
+  	{% endif %}
 			{% if i.name == 'logout' %}<span class="glyphicon glyphicon-off" aria-hidden="true"></span><br />{% endif %}
     	{{ i.title }}
     </a>

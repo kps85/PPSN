@@ -29,7 +29,7 @@
 							<input type="text" name="username" id="username" placeholder="Username"  /><br />
 							<input type="password" name="password" name="password" placeholder="Passwort"  /><br />
 							{% if error_login %}
-								<p><font color="#FF0000">{{ error_login }}</font></p>
+								<p><font color="#FF0000"> &nbsp; {{ error_login }}</font></p>
 							{% else %}
 								<p></p>
 							{% endif %}
@@ -43,7 +43,7 @@
 					<div class="{% if rActive %}active {% endif %}toggleItem" id="register">
 						<form method="POST" action="">
 							{% csrf_token %} 
-							<p>Login Daten</p>
+							<p>Deine Login Daten</p>
 							<input type="text" name="name" placeholder="Username *" id="name"/>
 							<br />
 							<input type="password" name="password" placeholder="Passwort *" id="password" /><br />
@@ -51,16 +51,16 @@
 							{% if error_reg_user_p or error_reg_user_n %}
 								
 								{% if error_reg_user_n %}
-									<p><font color="#FF0000">{{ error_reg_user_n }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_user_n }}</font></p>
 								{% endif %}
 								{% if error_reg_user_p %}
-									<p><font color="#FF0000">{{ error_reg_user_p }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_user_p }}</font></p>
 								{% endif %}
 							{% else %}
 								<p></p>
 							{% endif %}
 							<br />
-							<p>Persönliche Daten</p>
+							<p>Deine persönliche Daten</p>
 							<input type="text" name="first_name" placeholder="Vorname" id="first_name"   /><br />
 							<input type="text" name="last_name" placeholder="Nachname" id="last_name"   /><br />
 							<input type="text" name="email" placeholder="E-Mail *" id="email" /><br />
@@ -68,13 +68,13 @@
 							<input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" /><br />
 						
 								{% if error_reg_userprofile_e %}
-									<p><font color="#FF0000">{{ error_reg_userprofile_e }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_e }}</font></p>
 								{% endif %}
 								{% if error_reg_userprofile_nr %}
-									<p><font color="#FF0000">{{ error_reg_userprofile_nr }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_nr }}</font></p>
 								{% endif %}
 								{% if error_reg_userprofile_ad %}
-									<p><font color="#FF0000">{{ error_reg_userprofile_ad }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_ad }}</font></p>
 								{% endif %}
 																		
 							<p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>

@@ -10,7 +10,9 @@ urlpatterns = [
     url(r'^settings/$', views.settings, name='settings'),
     url(r'^profile/(?P<user>\w+)$', views.profile, name='profile'),
     url(r'^login/$', views.login, name='login'),
-    url(r'^logout/', views.logout, name='logout' ),
+    url(r'^logout/$', views.logout, name='logout' ),
+    url(r'^search/$', views.search, name='search' ),
+
 
 ]
 

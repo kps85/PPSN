@@ -62,17 +62,13 @@ def login(request):
 			username = query_dict.get('username')
 			password = query_dict.get('password')
 			user = authenticate(username=username, password=password)
-			context = { 'active_page' : 'index', 'nav': Nav.nav }
 
 			if user is not None:
 				if user.is_active:
 					auth.login(request, user)
 					return HttpResponseRedirect('/twittur/')
-			elif username=="" and password=="" :
-				error_login = "Geben sie bitte Username und Passwort ein."
-				return render(request, 'ftu.html', { 'error_login' : error_login } )
 			else:
-				error_login = "Ups, Username oder Passwort falsch."
+				error_login = "- Ups, Username oder Passwort falsch."
 				active_toggle = "active_toggle"
 				return render(request, 'ftu.html', { 'error_login' : error_login } )
 
@@ -82,13 +78,9 @@ def login(request):
 		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
 		error_reg_userprofile_ad, error_reg_userprofile_nr = None, None, None, None, None, None, None
 
-		# check if available
 		try:
 			query_dict = request.POST
 			username = query_dict.get('name')
-			if username == "":
-				error_reg_user_n = " - Ungültiger Username"
-
 			checkUsername = User.objects.get( username__exact = username )
 			
 		# case if username is available (checkUsername = None)
@@ -96,18 +88,20 @@ def login(request):
 			password = query_dict.get('password')
 			ack_password = query_dict.get('ack_password')
 
-			# check password and ack_password
+			# Password validation
 			if password != ack_password :
 				error_reg_user_p = " - Passwörter sind nicht gleich."
 			if " " in password:
 				error_reg_user_p = " - Keine Leerzeichen in Passwort erlaubt."
 
+			# fill the rest for modal User and Userprofile
 			email = query_dict.get('email')
 			studentNumber = query_dict.get('studentNumber')
 			academicDiscipline = query_dict.get('academicDiscipline')
-
 			first_name = query_dict.get('first_name')
 			last_name = query_dict.get('last_name')
+
+			# context for html
 			context = { 'active_page' : 'index', 
 						'nav': Nav.nav , 
 						'error_reg_user': error_reg_user, 
@@ -118,15 +112,19 @@ def login(request):
 						'error_reg_userprofile_nr': error_reg_userprofile_nr,
 						'rActive': 'active'
 						}
+			# error? 
 			if 	error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
 				return render(request, 'ftu.html', context)
 			
+			# create User and Userprofile 
 			user = User.objects.create_user( username, email, password )
 			user.first_name = first_name
 			user.last_name = last_name
 			user.save()
 			user_profil = UserProfile(userprofile=user, studentNumber=studentNumber, academicDiscipline=academicDiscipline)
 			user_profil.save()
+
+			# log user in and redirect to index page
 			user = authenticate(username = username, password = password)
 			auth.login(request, user)
 			return render(request, 'index.html', context)
@@ -143,8 +141,6 @@ def login(request):
 # logout
 def logout(request):
 	auth.logout(request)
-
-	#return render(request, 'ftu.html')
 	return HttpResponseRedirect('/twittur/')
 
 # profilpage
@@ -152,7 +148,8 @@ def profile(request, user):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	user = User.objects.get(username = user)
+	curUser = User.objects.get(username = user)
+	curUserProfile = curUser.userprofile
 	success_msg = None
 
 	if request.method == 'POST' and 'delMessage' in request.POST:
@@ -162,15 +159,22 @@ def profile(request, user):
 
 	user_list = User.objects.all()
 	group_list = Group.objects.all()
+	
 	message_list = Message.objects.all().select_related('user__userprofile')\
 		.filter(
-			Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ') |
-			Q(user__exact=user) | Q(text__contains='@' + user.username + ' ')
+			Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ')
 		).order_by('-date')
-
-	context = { 'active_page' : 'profile', 'user_list': user_list, 'pUser': user, 'group_list': group_list,
-				'nav': Nav.nav, 'message_list': message_list, 'msgForm': msgDialog(request),
-				'success_msg': success_msg}
+	
+	context = { 'curUser': curUser, 
+				'curUserProfile': curUserProfile, 
+				'active_page' : 'profile', 
+				'user_list': user_list, 
+				'group_list': group_list,
+				'nav': Nav.nav, 
+				'message_list': message_list, 
+				'msgForm': msgDialog(request),
+				'success_msg': success_msg
+				}
 	return render(request, 'profile.html', context)
 
 # infopage
@@ -237,3 +241,22 @@ def msgDialog(request):
 	msgForm = MessageForm(initial = {'user': curUser.id, 'date': datetime.datetime.now()})
 
 	return msgForm
+
+def search(request):
+
+	if request.method == 'GET':
+		query_dict = request.GET
+		search = query_dict.get('search')
+
+	message_list = Message.objects.all().select_related('user__userprofile')\
+		.filter(
+			  Q(text__contains=search) | Q(user__username__contains=search)
+		).order_by('-date')
+
+	context = {
+		'search': search,
+		'message_list': message_list,
+		'active_page' : 'settings',
+		'nav': Nav.nav,
+	}
+	return render(request, 'search.html', context)

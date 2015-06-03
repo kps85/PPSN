@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% if group_list %}
+    <ul class="groups">
+      <h3>Meine Gruppen</h3>
+      {% for group in group_list %}
+      <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
+        <a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! --> 
+        <a class="dashicons dashicons-edit" href="#"></a> </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  
+  {% if user_list %}
+    <ul class="following">
+      <h3>Folgend</h3>
+      {% for user in user_list %}
+      <li><a class="ullink" href="#">@{{ user.nickname }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  
+  {% include 'layout/nav_foot.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="post">
+  <h2>Suchergebnisse für "{{ search }}"</h2>
+  </div>
+  {% if success_msg %}
+    <div class="infoMessage alert alert-success" role="alert">
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      {{ success_msg|safe }}
+      <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="hideInfo(this);"></span>
+    </div>
+  {% endif %}
+  
+  {% if message_list %}
+    {% for message in message_list %}
+      {% include "message_box.html" with message=message page=active_page user=user  %}
+    {% endfor %}
+  {% else %}
+    <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+  {% endif %}
+{% endblock %}

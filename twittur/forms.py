@@ -89,6 +89,11 @@ class MessageForm(ModelForm):
 		model = Message
 		fields = ['user', 'text', 'date']
 
+	def clean_text(self):
+		text = self.cleaned_data.get('text')
+		text += " "
+		return text
+
 	def __init__(self, *args, **kwargs):
 		super(MessageForm, self).__init__(*args, **kwargs)
 		self.fields['user'].widget = forms.HiddenInput()
