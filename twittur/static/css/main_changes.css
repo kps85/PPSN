@@ -25,6 +25,10 @@ a:hover { color: #F50000; }
   #ftu .registerButton {
     background: #a00000 !important; }
 	
+	#ftu .toggleItem { display: none; }
+	#ftu .toggleItem.active { display: block; }
+	#ftu #register.active { display: block; }
+	
 nav a {
 	color: #fff; }
 	nav a:hover {

@@ -14,7 +14,6 @@ class RegistrationUserForm(forms.Form):
         fields = [ 'firstname', 'username', 'email', 'password', 'ack_password', 'last_name' ]
 
 
-
 class UserForm(ModelForm):
 	ack_password = forms.CharField(max_length=128, widget = forms.PasswordInput, required=False)
 

@@ -97,7 +97,8 @@ $('body').delegate('#ftu, #ftu input[type=text], #ftu input[type=password]', 'mo
 																							$('#login input[type=submit]').prop("disabled", false) :
 																							$('#login input[type=submit]').prop("disabled", true);
 	($('#name').val().replace( /\s/g, "") != '' && $('#email').val().replace( /\s/g, "") != '' &&
-	 $('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '') ? 
+	 $('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '' &&
+	 $('#academicDiscipline').val().replace( /\s/g, "") != '') ? 
 																							$('#register input[type=submit]').prop("disabled", false) :
 																							$('#register input[type=submit]').prop("disabled", true);
 });

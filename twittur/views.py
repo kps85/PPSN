@@ -79,7 +79,8 @@ def login(request):
 	# Registration
 	if request.method == 'POST':
 
-		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, error_reg_userprofile_ad, error_reg_userprofile_nr= None, None, None, None, None, None, None
+		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
+		error_reg_userprofile_ad, error_reg_userprofile_nr = None, None, None, None, None, None, None
 
 		# check if available
 		try:
@@ -124,7 +125,8 @@ def login(request):
 						'error_reg_user_n': error_reg_user_n,
 						'error_reg_user_p': error_reg_user_p,
 						'error_reg_userprofile_ad': error_reg_userprofile_ad,
-						'error_reg_userprofile_nr': error_reg_userprofile_nr
+						'error_reg_userprofile_nr': error_reg_userprofile_nr,
+						'rActive': 'active'
 						}
 			if 	error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
 				return render(request, 'ftu.html', context)
@@ -142,7 +144,7 @@ def login(request):
 		# case if username is taken (checkUsername == user)
 		else:
 			error_reg_user_n = "Sorry, Username ist vergeben."
-			return render(request, 'ftu.html', { 'error_reg_user_n': error_reg_user_n })
+			return render(request, 'ftu.html', { 'error_reg_user_n': error_reg_user_n, 'rActive': 'active' })
 
 
 	context = { 'active_page' : 'ftu', 'nav': Nav.nav}

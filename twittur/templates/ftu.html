@@ -1,73 +1,4 @@
 {% include 'header.html' %}
-<body>
-<<<<<<< HEAD
-  <div id="ftu" class="full-page">
-    <div class="center">
-      <a class="title" href="#">twittur</a>
-      <div class="column column-right">
-        <div class="box loginBox">
-          <h2 class="active toggle" id="show_login">Anmelden</h2>
-          <h2 class="toggle" id="show_register">Registrieren</h2>
-          <div class="toggleItem" id="login">
-            <form method="GET">
-              {% csrf_token %}
-              <input type="text" name="username" id="username" placeholder="Username" data-validation="required"  />
-              <br />
-              <input type="password" name="password" name="password" placeholder="Passwort" data-validation="required" />
-              <br />
-              {% if error_text %}
-              <p><font color="#FF0000">{{ error_text }}</font></p>
-              {% endif %}
-              <input type="submit" value="Los geht's!" name="login" disabled="disabled" />
-            </form>
-          </div>
-          <div class="toggleItem" id="register">
-            <form method="POST" action="">
-              {% csrf_token %}
-              <input type="text" name="first_name" placeholder="Dein Name" id="first_name" data-validation="required"  />
-              <br />
-              <input type="text" name="name" placeholder="Username" id="name" data-validation="required" />
-              <br />
-              <p>
-                <input type="text" name="email" placeholder="E-Mail" id="email" data-validation="email" data-validation-error-msg="You did not enter a valid e-mail" data-validation="required" />
-              </p>
-              <input type="password" name="password" placeholder="Passwort" id="password" data-validation="required" />
-              <br />
-              <input type="password" name="ack_password" placeholder="Passwort bestätigen" id="ack_password" data-validation="confirmation" data-validation-confirm="password" data-validation="required" />
-              <br />
-              {% if error_user %}
-              <p><font color="#FF0000">{{ error_user }}</font></p>
-              {% endif %}
-              {% if error_password %}
-              <p><font color="#FF0000">{{ error_password }}</font></p>
-              {% endif %}
-              <input type="submit" class="registerButton" value="Registrieren" name="submit" disabled="disabled" />
-              <input type="reset" value="Reset form" />
-            </form>
-          </div>
-        </div>
-        <div class="box forgotBox">
-          <h2>Passiert jedem mal ...</h2>
-          <form method="POST">
-          <input type="text" name="password_reset" placeholder="Deine Mailadresse" />
-          <br />
-          <input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
-          <a href="#" class="forgotBack">Zur&uuml;ck</a>
-        </div>
-      </div>
-      <div class="column column-left">
-        <div class="headline"> twit<span>tu</span>r ist ein soziales Netzwerk f&uuml;r die TU Berlin. </div>
-        <div class="subline">
-          <p>Es hilft Dir, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Du den &Uuml;berblick verlierst. </p>
-          <p>Erstelle gleich ein Konto und folge Nachrichten, die Dich interessieren. Oder sieh dir an, was die Nutzer von twit<span>tu</span>r der <a href="#ftuPosts">Welt</a> mitzuteilen haben.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="ftuPosts" class="full-page">
-  	Hier kommen dann die öffentlichen Posts rein.
-  </div>
-=======
 <div id="ftu" class="full-page">
 	<div class="center">
 		<a class="title" href="#">twittur</a>
@@ -87,12 +18,11 @@
 		<div class="column column-right">
 
 			<div class="box loginBox">
-				
 
-					<h2 class="active toggle" id="show_login">Anmelden</h2>
-					<h2 class="toggle" id="show_register">Registrieren</h2>
-		
-					<div class="toggleItem" id="login">
+					<h2 class="{% if not rActive %}active {% endif %} toggle" id="show_login">Anmelden</h2>
+					<h2 class="{% if rActive %}active {% endif %}toggle" id="show_register">Registrieren</h2>
+          
+					<div class="{% if not rActive %}active {% endif %}toggleItem" id="login">
 
 						<form method="GET">
 							{% csrf_token %} 
@@ -110,18 +40,18 @@
 						
 					</div>
 					
-					<div class="toggleItem" id="register">
+					<div class="{% if rActive %}active {% endif %}toggleItem" id="register">
 						<form method="POST" action="">
 							{% csrf_token %} 
 							<p>Login Daten</p>
-							<input type="text" name="name" placeholder="Username" id="name"/>
+							<input type="text" name="name" placeholder="Username *" id="name"/>
 							<br />
-							<input type="password" name="password" placeholder="Passwort" id="password" /><br />
-							<input type="password" name="ack_password" placeholder="Passwort bestätigen" id="ack_password" /><br />
+							<input type="password" name="password" placeholder="Passwort *" id="password" /><br />
+							<input type="password" name="ack_password" placeholder="Passwort bestätigen *" id="ack_password" /><br />
 							{% if error_reg_user_p or error_reg_user_n %}
 								
 								{% if error_reg_user_n %}
-									<p><font color="#FF0000">{{ error_reg_user_n }}</font></P>
+									<p><font color="#FF0000">{{ error_reg_user_n }}</font></p>
 								{% endif %}
 								{% if error_reg_user_p %}
 									<p><font color="#FF0000">{{ error_reg_user_p }}</font></p>
@@ -133,8 +63,8 @@
 							<p>Persönliche Daten</p>
 							<input type="text" name="first_name" placeholder="Vorname" id="first_name"   /><br />
 							<input type="text" name="last_name" placeholder="Nachname" id="last_name"   /><br />
-							<input type="text" name="email" placeholder="E-Mail" id="email" /><br />
-							<input type="text" name="academicDiscipline" placeholder="Studiengang" id="academicDiscipline" /><br />
+							<input type="text" name="email" placeholder="E-Mail *" id="email" /><br />
+							<input type="text" name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" /><br />
 							<input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" /><br />
 						
 								{% if error_reg_userprofile_e %}
@@ -146,10 +76,8 @@
 								{% if error_reg_userprofile_ad %}
 									<p><font color="#FF0000">{{ error_reg_userprofile_ad }}</font></p>
 								{% endif %}
-							
-							<br />
-														
-							
+																		
+							<p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
 							
 							<input type="submit" class="registerButton" value="Registrieren" name="submit" />
 							<input type="reset" value="Zurücksetzen" />
@@ -175,7 +103,4 @@
 <div id="ftuPosts" class="full-page">
 	Hier kommen dann die öffentlichen Posts rein.
 </div>
-
->>>>>>> origin/dev
-</body>
 {% include 'footer.html' %}
