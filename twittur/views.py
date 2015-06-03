@@ -99,6 +99,8 @@ def login(request):
 			# check password and ack_password
 			if password != ack_password :
 				error_reg_user_p = " - Passwörter sind nicht gleich."
+			if " " in password:
+				error_reg_user_p = " - Keine Leerzeichen in Passwort erlaubt."
 
 			email = query_dict.get('email')
 			studentNumber = query_dict.get('studentNumber')
