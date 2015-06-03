@@ -3,7 +3,7 @@
 	<div class="postContent">
 		<div class="postMeta">
 			<div class="postAuthor">@{{ message.user.username }}</div>
-			<div class="postTime">{{ message.date }}</div>
+			<div class="postTime">am {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}</div>
       {% if message.user == user %}
       <div class="postEdit pull-right">
       	<button type="button" class="btn btn-default btn-xs" aria-label="Edit">
@@ -27,7 +27,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Nachricht vom {{ message.date|date:"j. F, H:i" }} Uhr wirklich l&ouml;schen?</h4>
+        <h4 class="modal-title" id="myModalLabel">Nachricht vom {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }} wirklich l&ouml;schen?</h4>
       </div>
       <div class="modal-body">
         <em>{{ message.text }}</em>
