@@ -1,1 +1,49 @@
+a { color: #a00000; }
+a:hover { color: #F50000; }
+
+#ftu h2 {
+	padding: 3px 5px;
+	color: #fff;
+	border-bottom: none; }
+	#ftu h2.active {
+		background-color: #a00000; }
+		#ftu h2.active:hover {
+			border-bottom: none; }
+	#ftu h2:hover {
+		background-color: #a00000;
+		border-bottom: none; }
+  #ftu input[type="submit"] {
+    background: #a00000; }
+  #ftu input[type="submit"][disabled] {
+		pointer-events: none;
+		cursor: not-allowed;
+		filter: alpha(opacity=65);
+		-webkit-box-shadow: none;
+						box-shadow: none;
+		opacity: .65;
+  }
+  #ftu .registerButton {
+    background: #a00000 !important; }
+	
+nav a {
+	color: #fff; }
+	nav a:hover {
+		background-color: #a00000; }
+	nav a.active {
+		background-color: #a00000;
+		color: #fff;
+		font-weight: bold; }
+
+.btn-primary[disabled] {
+	background-color: #a00000;
+	border-color: #990000;
+}
+
+.copy { font-size: .6em; }
+.copy a { color: #a00000; font-size: 1.2em; }
+.copy a:hover { color: #F50000; }
+
 .infoMessage .glyphicon-remove:hover { cursor: pointer; }
+
+.postFoot { margin-top: 10px; }
+.postFoot a { margin-right: 15px; }

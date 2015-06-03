@@ -2,21 +2,19 @@
   border: 1px solid #E4E8EA;
   background: #fff; }
   .profil:hover {
-    border-color: #d3d3d3 #d3d3d3;
+    border-color: #d3d3d3;
 	}
   .profil .profilNick {
     color: #aaa;
     margin-top: 10px;}
     .profil .profilStadt {
     margin-top: 10px;}
-    .profil .profilNick:hover{ 
-    text-decoration: underline;
+    .profil .profilNick:hover{
     cursor: pointer;}
     
     .profil .profilLink {
     margin-top: 10px;}
-    .profil .profilLink:hover{ 
-    text-decoration: underline;
+    .profil .profilLink:hover{
     cursor: pointer;
     color: red;}
     
@@ -42,8 +40,7 @@
     font-weight: bold;
     font-size: 24px;
     font-weight: inherit; }
-    .profil .profilAuthor:hover{ 
-    text-decoration: underline;
+    .profil .profilAuthor:hover{
     cursor: pointer;}
   .profil .profilText {
     margin-top: 5px; }
@@ -58,11 +55,7 @@
     color: red;}
 
 .post:hover {
-    border-color: #d3d3d3 #d3d3d3;}
+    border-color: #d3d3d3;}
     
 .post .icon:hover{
 	cursor: pointer;}
-	
-	.post .postAuthor:hover{ 
-    text-decoration: underline;
-    cursor: pointer;}

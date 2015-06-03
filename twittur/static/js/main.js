@@ -92,6 +92,20 @@ function initMenu() {
 
 var hideInfo = function(e) { $(e).parent("div").hide(); }
 
+$('body').delegate('#ftu, #ftu input[type=text], #ftu input[type=password]', 'mousemove', function(e) {
+	($('#login input[type=text]').val().replace( /\s/g, "") != '' && $('#login input[type=password]').val().replace( /\s/g, "") != '') ? 
+																							$('#login input[type=submit]').prop("disabled", false) :
+																							$('#login input[type=submit]').prop("disabled", true);
+	($('#name').val().replace( /\s/g, "") != '' && $('#email').val().replace( /\s/g, "") != '' &&
+	 $('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '') ? 
+																							$('#register input[type=submit]').prop("disabled", false) :
+																							$('#register input[type=submit]').prop("disabled", true);
+});
+
+$('#newMessage').delegate('textarea', 'keyup', function(e) {
+	($(this).val().replace( /\s/g, "") != '') ? $('#newMessage button[type=submit]').prop("disabled", false) :
+																							$('#newMessage button[type=submit]').prop("disabled", true);
+});
 
 $(document).ready(function() {
 	initMenu();

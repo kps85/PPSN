@@ -121,10 +121,11 @@ def logout(request):
 	return HttpResponseRedirect('/twittur/')
 
 # profilpage
-def profile(request):
+def profile(request, user):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
+	user = User.objects.get(username = user)
 	success_msg = None
 
 	if request.method == 'POST' and 'delMessage' in request.POST:
@@ -135,9 +136,14 @@ def profile(request):
 	user_list = User.objects.all()
 	group_list = Group.objects.all()
 	message_list = Message.objects.all().select_related('user__userprofile')\
-		.filter( Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ')).order_by('-date')
-	context = { 'active_page' : 'profile', 'user_list': user_list , 'group_list': group_list, 'nav': Nav.nav,
-				'message_list': message_list, 'msgForm': msgDialog(request), 'success_msg': success_msg}
+		.filter(
+			Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ') |
+			Q(user__exact=user) | Q(text__contains='@' + user.username + ' ')
+		).order_by('-date')
+
+	context = { 'active_page' : 'profile', 'user_list': user_list, 'pUser': user, 'group_list': group_list,
+				'nav': Nav.nav, 'message_list': message_list, 'msgForm': msgDialog(request),
+				'success_msg': success_msg}
 	return render(request, 'profile.html', context)
 
 # infopage
