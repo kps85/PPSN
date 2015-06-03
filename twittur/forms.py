@@ -8,16 +8,11 @@ from django.forms import ModelForm
 from .models import User, UserProfile, Message
 
 
-class RegistrationForm(forms.Form):
-	first_name = forms.CharField(max_length=100, min_length=1)
-	username = forms.CharField(max_length=100, min_length=1)
-	password = forms.CharField(max_length=100)
-	email = forms.EmailField(max_length=100)
+class RegistrationUserForm(forms.Form):
+    class Meta:
+        model = User
+        fields = [ 'firstname', 'username', 'email', 'password', 'ack_password', 'last_name' ]
 
-
-class LoginForm(forms.Form):
-	username = forms.CharField(max_length=100, min_length=1)
-	password = forms.CharField(max_length=100)
 
 
 class UserForm(ModelForm):

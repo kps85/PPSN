@@ -56,6 +56,7 @@ def login(request):
 
 	# login
 	if request.method == "GET":
+
 		if 'login' in request.GET:
 			query_dict = request.GET
 			username = query_dict.get('username')
@@ -68,48 +69,82 @@ def login(request):
 					auth.login(request, user)
 					return HttpResponseRedirect('/twittur/')
 			elif username=="" and password=="" :
-				error_text = "Geben sie bitte Username und Passwort ein."
-				return render(request, 'ftu.html', { 'error_text' : error_text } )
+				error_login = "Geben sie bitte Username und Passwort ein."
+				return render(request, 'ftu.html', { 'error_login' : error_login } )
 			else:
-				error_text = "Ups, Username oder Passwort falsch."
+				error_login = "Ups, Username oder Passwort falsch."
 				active_toggle = "active_toggle"
-				return render(request, 'ftu.html', { 'error_text' : error_text } )
+				return render(request, 'ftu.html', { 'error_login' : error_login } )
 
 	# Registration
 	if request.method == 'POST':
 
+		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, error_reg_userprofile_ad, error_reg_userprofile_nr= None, None, None, None, None, None, None
+
 		# check if available
 		try:
 			query_dict = request.POST
-			print(query_dict)
 			username = query_dict.get('name')
-			checkUsername = User.objects.get( username__exact = username )
+			if username == "":
+				error_reg_user_n = " - Ungültiger Username"
 
+			checkUsername = User.objects.get( username__exact = username )
+			
 		# case if username is available (checkUsername = None)
 		except ObjectDoesNotExist:
 			password = query_dict.get('password')
 			ack_password = query_dict.get('ack_password')
 
 			# check passwort and ack_password
+			if password == "":
+				error_reg_user_p = " - Passwort darf nicht leer sein."
 			if password != ack_password :
-				error_password = "Passwoerter sind nicht gleich."
-				return render(request, 'ftu.html', { 'error_password': error_password })
+				error_reg_user_p = " - Passwörter sind nicht gleich."
+				# return render(request, 'ftu.html', { 'error_reg_user': error_reg_user })
 
 			email = query_dict.get('email')
+			if email == "":
+				error_reg_userprofile_e = " - Ungültige Emailadresse"
+				# return render(request, 'ftu.html', { 'error_reg_userprofil': error_reg_userprofil })
+
+			studentNumber = query_dict.get('studentNumber')
+			if studentNumber == "":
+				error_reg_userprofile_nr = " - Ungültige Matrikelnummer"
+
+			academicDiscipline = query_dict.get('academicDiscipline')
+			if studentNumber == "":
+				error_reg_userprofile_ad = " - Ungültiger Studiengang"
+
+			first_name = query_dict.get('first_name')
+			last_name = query_dict.get('last_name')
+			context = { 'active_page' : 'index', 
+						'nav': Nav.nav , 
+						'error_reg_user': error_reg_user, 
+						'error_reg_userprofile_e': error_reg_userprofile_e,
+						'error_reg_user_n': error_reg_user_n,
+						'error_reg_user_p': error_reg_user_p,
+						'error_reg_userprofile_ad': error_reg_userprofile_ad,
+						'error_reg_userprofile_nr': error_reg_userprofile_nr
+						}
+			if 	error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
+				return render(request, 'ftu.html', context)
+			
 			user = User.objects.create_user( username, email, password )
-			user_profil = UserProfile(userprofile=user, studentNumber=000000, academicDiscipline='Informatik')
+			user.first_name = first_name
+			user.last_name = last_name
+			user.save()
+			user_profil = UserProfile(userprofile=user, studentNumber=studentNumber, academicDiscipline=academicDiscipline)
 			user_profil.save()
 			user = authenticate(username = username, password = password)
-			context = { 'active_page' : 'index', 'nav': Nav.nav , 'user' : user_profil }
 			auth.login(request, user)
 			return render(request, 'index.html', context)
 
 		# case if username is taken (checkUsername == user)
 		else:
-			error_user = "Sorry, Username ist vergeben."
-			return render(request, 'ftu.html', { 'error_user': error_user })
+			error_reg_user_n = "Sorry, Username ist vergeben."
+			return render(request, 'ftu.html', { 'error_reg_user_n': error_reg_user_n })
 
-	# twitter/login/
+
 	context = { 'active_page' : 'ftu', 'nav': Nav.nav}
 	return render(request, 'ftu.html', context)
 
