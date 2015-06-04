@@ -281,7 +281,7 @@ def msgDialog(request):
 			# Merge lists 
 			list_link = list_hashtag + list_attag
 			for element in list_link:
-				msgForm.instance.text = msgForm.instance.text.replace(element,('<a href="{% url twittur:searchhashtag" ' + element +' %}>' + element + '</a>'))
+				msgForm.instance.text = msgForm.instance.text.replace(element,('<a href="">'+ element +'</a>'))
 			print(msgForm.instance.text)
 			msgForm.save()
 			message = msgForm.instance
