@@ -90,7 +90,7 @@ def login(request):
 
 			# Password validation
 			if password != ack_password :
-				error_reg_user_p = " - Passwörter sind nicht gleich."
+				error_reg_user_p = " - Passw&ouml;rter sind nicht gleich."
 			if " " in password:
 				error_reg_user_p = " - Keine Leerzeichen in Passwort erlaubt."
 

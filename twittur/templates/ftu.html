@@ -29,7 +29,7 @@
 							<input type="text" name="username" id="username" placeholder="Username"  /><br />
 							<input type="password" name="password" name="password" placeholder="Passwort"  /><br />
 							{% if error_login %}
-								<p><font color="#FF0000"> &nbsp; {{ error_login }}</font></p>
+								<p><font color="#FF0000"> &nbsp; {{ error_login|safe }}</font></p>
 							{% else %}
 								<p></p>
 							{% endif %}
@@ -51,10 +51,10 @@
 							{% if error_reg_user_p or error_reg_user_n %}
 								
 								{% if error_reg_user_n %}
-									<p><font color="#FF0000"> &nbsp; {{ error_reg_user_n }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_user_n|safe }}</font></p>
 								{% endif %}
 								{% if error_reg_user_p %}
-									<p><font color="#FF0000"> &nbsp; {{ error_reg_user_p }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_user_p|safe }}</font></p>
 								{% endif %}
 							{% else %}
 								<p></p>
@@ -68,13 +68,13 @@
 							<input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" /><br />
 						
 								{% if error_reg_userprofile_e %}
-									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_e }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_e|safe }}</font></p>
 								{% endif %}
 								{% if error_reg_userprofile_nr %}
-									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_nr }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_nr|safe }}</font></p>
 								{% endif %}
 								{% if error_reg_userprofile_ad %}
-									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_ad }}</font></p>
+									<p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_ad|safe }}</font></p>
 								{% endif %}
 																		
 							<p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
