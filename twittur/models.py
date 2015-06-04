@@ -11,13 +11,13 @@ class UserProfile(models.Model):
 
     userprofile = models.OneToOneField(User)
 
-    studentNumber = models.IntegerField(default=0)
+    studentNumber = models.IntegerField(default=000000)
     academicDiscipline = models.CharField( max_length = 200 )
     picture = models.ImageField(verbose_name = 'Profilbild', upload_to = 'picture/', blank=True,
                                 height_field = None, width_field = None, default='picture/default.gif',
                                 help_text = 'Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt.')
 
-    location = models.CharField( max_length = 200, default='' )
+    location = models.CharField( max_length = 200, default='None' )
     
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name +')'
@@ -53,7 +53,7 @@ class Hashtag(models.Model):
     name = models.CharField( max_length = 50 )
 
     def __str__(self):
-        return '#' + self.name
+        return  self.name
 
 
 #### Relationships
@@ -80,7 +80,7 @@ class ToUser(models.Model):
     message = models.ForeignKey( Message )
 
     def __str__(self):
-        return "Message from " + self.message.user.username + " to " + self.toUser.name  
+        return "Message from " + self.message.user.username + " to " + self.toUser.username  
 
 class IsInGroup(models.Model):
 
@@ -96,7 +96,7 @@ class Has(models.Model):
     hashtag = models.ForeignKey( Hashtag )
 
     def __str__(self):
-        return self.message.user.name + "'s' message contains #" + self.hashtag.name
+        return self.message.user.username + "'s' message contains " + self.hashtag.name
 
 # Navbar     
 class Nav(models.Model):

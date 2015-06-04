@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, is_password_usable
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from .models import User, UserProfile, Message
+from .models import User, UserProfile, Message, Hashtag, Has, ToUser
 
 
 class RegistrationUserForm(forms.Form):
@@ -92,6 +92,7 @@ class MessageForm(ModelForm):
 	def clean_text(self):
 		text = self.cleaned_data.get('text')
 		text += " "
+
 		return text
 
 	def __init__(self, *args, **kwargs):

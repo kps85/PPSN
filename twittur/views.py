@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
-from .models import UserProfile, Group, Nav, Message
+from .models import UserProfile, Group, Nav, Message, Hashtag, Has, ToUser
 from .forms import UserForm, UserDataForm, MessageForm
 
 # startpage
@@ -121,7 +121,7 @@ def login(request):
 			user.first_name = first_name
 			user.last_name = last_name
 			user.save()
-			user_profil = UserProfile(userprofile=user, studentNumber=studentNumber, academicDiscipline=academicDiscipline)
+			user_profil = UserProfile(userprofile=user, studentNumber=studentNumber, academicDiscipline=academicDiscipline, location="Irgendwo")
 			user_profil.save()
 
 			# log user in and redirect to index page
@@ -236,8 +236,86 @@ def msgDialog(request):
 	if request.method == 'POST':
 		msgForm = MessageForm(request.POST)
 		if msgForm.is_valid():
-			msgForm.save()
+			
+			text = msgForm.instance.text 
 
+			
+			print(text)
+			# exstract # and @
+			list_hashtag = []
+			list_attag = []
+			code = ""
+			# boolean for # and @
+			hashtag = False
+			attag = False
+
+			for i in text:
+
+				# hashtag found
+			    if i == "#" :
+			        hashtag = True
+			        print ("hashtag found")
+			    # end with " "
+			    if hashtag and i == " ":
+			        list_hashtag.append(code)
+			        code = ""
+			        hashtag = False
+
+			    if (hashtag):
+			        code += i
+
+			    # @ found
+			    if i == "@" :
+			        attag = True
+			        print ("attag found")
+			    # end with " "
+			    if attag and i == " ":
+			        list_attag.append(code)
+			        code = ""
+			        attag = False
+
+			    if (attag):
+			        code += i
+
+
+			# Merge lists 
+			list_link = list_hashtag + list_attag
+			for element in list_link:
+				msgForm.instance.text = msgForm.instance.text.replace(element,('<a href="{% url twittur:searchhashtag" ' + element +' %}>' + element + '</a>'))
+			print(msgForm.instance.text)
+			msgForm.save()
+			message = msgForm.instance
+			# Check list with # 
+			if list_hashtag:
+				for ele in list_hashtag:
+					# create hashtag table ele
+					hashtag = Hashtag(name = ele)
+					hashtag.save()
+					has = Has(message=message, hashtag=hashtag)
+					has.save()
+					print (ele)
+
+			# Check list with @
+			if list_attag:
+				for ele in list_attag:
+					# username[0] = '' and username[1] = username
+					username = ele.split('@')
+					print(username[1])
+					try:
+						# check if user exist
+						user = User.objects.get( username__exact = username[1] )
+					except ObjectDoesNotExist:
+						# there is no user with username
+						pass
+					else:
+						# create ToUser ele
+						touser = ToUser(toUser = user, message = message)
+						touser.save()
+						print (ele)
+
+
+					
+				
 	msgForm = MessageForm(initial = {'user': curUser.id, 'date': datetime.datetime.now()})
 
 	return msgForm
@@ -253,6 +331,21 @@ def search(request):
 			  Q(text__contains=search) | Q(user__username__contains=search)
 		).order_by('-date')
 
+	context = {
+		'search': search,
+		'message_list': message_list,
+		'active_page' : 'settings',
+		'nav': Nav.nav,
+	}
+	return render(request, 'search.html', context)
+
+def searchhashtag(request, text):
+	search = text
+	message_list = Message.objects.all().select_related('user__userprofile')\
+		.filter(
+			  Q(text__contains=text)
+		).order_by('-date')
+	print(text)
 	context = {
 		'search': search,
 		'message_list': message_list,
