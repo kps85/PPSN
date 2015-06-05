@@ -129,6 +129,16 @@ $('#newMessage').delegate('textarea', 'keyup', function(e) {
 																							$('#newMessage button[type=submit]').prop("disabled", true);
 });
 
+if ($('.supportCont').length > 0) {
+	activeForm = (window.location.href.split("#"))[1];
+	$("#"+activeForm).removeClass('hidden');
+	$(window).on("hashchange", function() {
+		form = (window.location.href.split("#"))[1];
+		$(".supportCont").addClass('hidden');
+		$("#"+form).removeClass('hidden');
+	});
+}
+
 $(document).ready(function() {
 	initMenu();
 	initFtu();

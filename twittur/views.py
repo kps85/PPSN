@@ -24,10 +24,13 @@ def index(request):
 
 	success_msg = None
 
-	if request.method == 'POST' and 'delMessage' in request.POST:
-		curMsg = Message.objects.get(pk = request.POST['delMessage'])
-		curMsg.delete()
-		success_msg = 'Nachricht gel&ouml;scht!'
+	if request.method == 'POST':
+		if 'delMessage' in request.POST:
+			curMsg = Message.objects.get(pk = request.POST['delMessage'])
+			curMsg.delete()
+			success_msg = 'Nachricht gel&ouml;scht!'
+		else:
+			success_msg = 'Nachricht erfolgreich gesendet!'
 
 	#print(request.user)
 	current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
@@ -167,17 +170,17 @@ def profile(request, user):
 			Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ')
 		).order_by('-date')
 	
-	context = { 'curUser': curUser, 
-				'curUserProfile': curUserProfile, 
-				'active_page': 'profile',
-				'profileUser': user,
-				'user_list': user_list, 
-				'group_list': group_list,
-				'nav': Nav.nav, 
-				'message_list': message_list, 
-				'msgForm': msgDialog(request),
-				'success_msg': success_msg
-				}
+	context = {'curUser': curUser,
+			   'curUserProfile': curUserProfile,
+			   'active_page': 'profile',
+			   'profileUser': user,
+			   'user_list': user_list,
+			   'group_list': group_list,
+			   'nav': Nav.nav,
+			   'message_list': message_list,
+			   'msgForm': msgDialog(request),
+			   'success_msg': success_msg
+	}
 	return render(request, 'profile.html', context)
 
 # infopage
@@ -185,7 +188,7 @@ def info(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	projektTeam = User.objects.filter(is_superuser = True);
+	projektTeam = User.objects.filter(is_superuser = True).order_by('last_name');
 
 	context = {
 		'active_page' : 'info',
@@ -202,14 +205,13 @@ def faq(request):
 
 	success_msg, error_msg = None, None
 
-	print(request.POST)
-
 	if request.method == 'POST':
 		faqForm = FAQForm(request.POST)
 		if faqForm.is_valid():
 			faqForm.save()
-	else:
-		faqForm = FAQForm(instance=request.user)
+			success_msg = "Neuer FAQ Eintrag hinzugef&uuml;gt!"
+
+	faqForm = FAQForm(instance=request.user)
 
 	FAQs = FAQ.objects.all()
 	faqMain = FAQ.objects.filter(category = 'Allgemeine Frage')
@@ -227,7 +229,9 @@ def faq(request):
 		'faqStart': faqStart,
 		'faqProfile': faqProfile,
 		'faqInfo': faqInfo,
-		'faqSettings': faqSettings
+		'faqSettings': faqSettings,
+		'success_msg': success_msg,
+		'error_msg': error_msg
 	}
 	return render(request, 'info_faq.html', context)
 
@@ -294,21 +298,19 @@ def msgDialog(request):
 	if request.method == 'POST':
 		msgForm = MessageForm(request.POST)
 		if msgForm.is_valid():
-			
-			text = msgForm.instance.text 
-
-			
+			text = msgForm.instance.text
 			print(text)
+
 			# exstract # and @
 			list_hashtag = []
 			list_attag = []
 			code = ""
+
 			# boolean for # and @
 			hashtag = False
 			attag = False
 
 			for i in text:
-
 				# hashtag found
 			    if i == "#" :
 			        hashtag = True
@@ -335,7 +337,6 @@ def msgDialog(request):
 			    if (attag):
 			        code += i
 
-
 			# Merge lists 
 			list_link = list_hashtag + list_attag
 			for element in list_link:
@@ -343,6 +344,7 @@ def msgDialog(request):
 			print(msgForm.instance.text)
 			msgForm.save()
 			message = msgForm.instance
+
 			# Check list with # 
 			if list_hashtag:
 				for ele in list_hashtag:
@@ -370,12 +372,8 @@ def msgDialog(request):
 						touser = ToUser(toUser = user, message = message)
 						touser.save()
 						print (ele)
-
-
-					
 				
 	msgForm = MessageForm(initial = {'user': curUser.id, 'date': datetime.datetime.now()})
-
 	return msgForm
 
 def search(request):

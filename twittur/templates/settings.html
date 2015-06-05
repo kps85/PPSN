@@ -19,173 +19,153 @@
 {% endblock %}
 
 {% block content %}
-   
-  {% if success_msg %}
-  <div class="infoMessage alert alert-success" role="alert">
-    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-    {{ success_msg|safe }}
-    <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="hideInfo(this);"></span>
-  </div>
-  {% endif %}
+  <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+    <input name="delete" type="hidden" value="false" />
     
-  {% if error_msg %}
-  {% for key, value in error_msg.items %}
-  <div class="infoMessage alert alert-danger" role="alert">
-    <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-    {{ value|safe }} ({{ key }})
-    <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="hideInfo(this);"></span>
-  </div>
-  {% endfor %}
-  {% endif %}
-
-    <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    	<input name="delete" type="hidden" value="false" />
-    	
-        {{ userForm.non_field_errors | safe }}
-        {{ userDataForm.non_field_errors | safe }}
-              
-        <div class="post" id="profilbild">
-        	
-            <h4>Profilbild auswählen</h4>
+      {{ userForm.non_field_errors | safe }}
+      {{ userDataForm.non_field_errors | safe }}
             
-            <div class="col-xs-12 form-group">
-            	<div class="col-xs-12 text-center profilePictures">
-                <a href="{{ user.userprofile.picture.url }}" target="_blank">
-                  <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail">
-                  <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">
-                </a>
-                <p class="help-block">{{ userDataForm.picture.help_text | safe }}</p>
-              </div>
-              <div id="profBildUpdate">
-                {% if user.userprofile.picture %}<span>Aktuelles Profilbild: </span>{% endif %}
-                {{ userDataForm.picture }}
-                {{ userDataForm.picture.errors }}
-              </div>                
-            </div>            
-        </div>
+      <div class="post" id="profilbild">
         
-        <div class="post" id="account">
-        
-        	<h4>Accountverwaltung</h4>
-        
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="usernameInput">Username</label>
-                {{ userForm.username }}
-                <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
-                {{ userForm.username.errors }}
+          <h4>Profilbild auswählen</h4>
+          
+          <div class="col-xs-12 form-group">
+            <div class="col-xs-12 text-center profilePictures">
+              <a href="{{ user.userprofile.picture.url }}" target="_blank">
+                <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail">
+                <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">
+              </a>
+              <p class="help-block">{{ userDataForm.picture.help_text | safe }}</p>
             </div>
-            
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="emailInput">E-Mail</label>
-                {{ userForm.email }}
-                {{ userForm.email.errors }}
-            </div>
-            
-            <div class="col-xs-12 col-sm-6 form-group">
-                <label class="control-label" for="pw1Input">Passwort</label>
-                {{ userForm.password }}
-                {{ userForm.password.errors }}
-            </div>    
-            <div class="col-xs-12 col-sm-6 form-group pull-right">
-                <label class="control-label" for="pw2Input">Passwort bestätigen</label>
-                {{ userForm.ack_password }}                
-                {{ userForm.ack_password.errors }}
-            </div>
-    
-        </div>  
-        
-        <div class="post" id="daten">
-        
-        	<h4>Pers&ouml;nliche Daten</h4>
-            
-            <div class="col-xs-12 col-sm-6 form-group">
-                <label class="control-label" for="vornameInput">Vorname</label>
-                {{ userForm.first_name }}
-                {{ userForm.first_name.errors }}
-            </div>    
-            <div class="col-xs-12 col-sm-6 form-group pull-right">
-                <label class="control-label" for="nachnameInput">Nachname</label>
-                {{ userForm.last_name }}
-                {{ userForm.last_name.errors }}
-            </div>
-        
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="studiengangInput">Studiengang</label>
-                {{ userDataForm.academicDiscipline }}
-                <p class="help-block">Über deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.</p>
-                {{ userDataForm.academicDiscipline.errors }}
-            </div>
-        
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
-                {{ userDataForm.studentNumber }}
-                <p class="help-block">Über deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.</p>
-                {{ userDataForm.studentNumber.errors }}
-            </div>
-        
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="wohnortInput">Wohnort</label>
-                {{ userDataForm.location }}
-                {{ userDataForm.location.errors }}
-            </div>
-    
-        </div>  
-              
-        <div class="post" id="seite">
-        	
-            <h4>Seiteneinstellungen</h4>
-            
-            <div class="col-xs-12 form-group">
-                <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
-                <select class="form-control" id="stdSafetylevelSelect" name="safety">
-                    <option>public</option>
-                    <option>Uni</option>
-                    <option>Fakultät</option>
-                    <option selected>Studiengang</option>
-                </select>
-            </div>
-            
-        </div>
-              
-        <div class="post" id="delete">
-        	
-            <h4>Account vollst&auml;ndig l&ouml;schen</h4>
-            
-            <div class="col-xs-12 form-group text-center">
-                <p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
-                <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#delAccModal" id="deleteButton">Account löschen</button>
-            </div>
-            
-        </div>
-            
-        <div class="col-xs-12 form-group text-center">
-            <button type="submit" class="btn btn-primary" id="submitSettButton">Speichern</button>
-            <button type="reset" class="btn btn-default" id="resetSettButton">Zur&uuml;cksetzen</button>
-        </div>
-    
-    </form>
-    
-    <div class="modal fade" id="delAccModal" tabindex="-1" role="dialog" aria-labelledby="delAccModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Account l&ouml;schen?</h4>
+            <div id="profBildUpdate">
+              {% if user.userprofile.picture %}<span>Aktuelles Profilbild: </span>{% endif %}
+              {{ userDataForm.picture }}
+              {{ userDataForm.picture.errors }}
+            </div>                
+          </div>            
+      </div>
+      
+      <div class="post" id="account">
+      
+        <h4>Accountverwaltung</h4>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="usernameInput">Username</label>
+              {{ userForm.username }}
+              <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
+              {{ userForm.username.errors }}
           </div>
-          <div class="modal-body">
-            Willst Du deinen Account wirklich l&ouml;schen?
+          
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="emailInput">E-Mail</label>
+              {{ userForm.email }}
+              {{ userForm.email.errors }}
           </div>
-          <div class="modal-footer">
-            <form action="{% url 'twittur:settings' %}" method="POST">
-    			{% csrf_token %}
-            	<input name="delete" type="hidden" value="true" />
-            	<button type="button" class="btn btn-default" data-dismiss="modal">Ok, doch nicht.</button>
-            	<button type="submit" class="btn btn-primary">Ja, ich will!</button>
-            </form>
+          
+          <div class="col-xs-12 col-sm-6 form-group">
+              <label class="control-label" for="pw1Input">Passwort</label>
+              {{ userForm.password }}
+              {{ userForm.password.errors }}
+          </div>    
+          <div class="col-xs-12 col-sm-6 form-group pull-right">
+              <label class="control-label" for="pw2Input">Passwort bestätigen</label>
+              {{ userForm.ack_password }}                
+              {{ userForm.ack_password.errors }}
           </div>
+  
+      </div>  
+      
+      <div class="post" id="daten">
+      
+        <h4>Pers&ouml;nliche Daten</h4>
+          
+          <div class="col-xs-12 col-sm-6 form-group">
+              <label class="control-label" for="vornameInput">Vorname</label>
+              {{ userForm.first_name }}
+              {{ userForm.first_name.errors }}
+          </div>    
+          <div class="col-xs-12 col-sm-6 form-group pull-right">
+              <label class="control-label" for="nachnameInput">Nachname</label>
+              {{ userForm.last_name }}
+              {{ userForm.last_name.errors }}
+          </div>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="studiengangInput">Studiengang</label>
+              {{ userDataForm.academicDiscipline }}
+              <p class="help-block">Über deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.</p>
+              {{ userDataForm.academicDiscipline.errors }}
+          </div>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
+              {{ userDataForm.studentNumber }}
+              <p class="help-block">Über deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.</p>
+              {{ userDataForm.studentNumber.errors }}
+          </div>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="wohnortInput">Wohnort</label>
+              {{ userDataForm.location }}
+              {{ userDataForm.location.errors }}
+          </div>
+  
+      </div>  
+            
+      <div class="post" id="seite">
+        
+          <h4>Seiteneinstellungen</h4>
+          
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
+              <select class="form-control" id="stdSafetylevelSelect" name="safety">
+                  <option>public</option>
+                  <option>Uni</option>
+                  <option>Fakultät</option>
+                  <option selected>Studiengang</option>
+              </select>
+          </div>
+          
+      </div>
+            
+      <div class="post" id="delete">
+        
+          <h4>Account vollst&auml;ndig l&ouml;schen</h4>
+          
+          <div class="col-xs-12 form-group text-center">
+              <p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
+              <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#delAccModal" id="deleteButton">Account löschen</button>
+          </div>
+          
+      </div>
+          
+      <div class="col-xs-12 form-group text-center">
+          <button type="submit" class="btn btn-primary" id="submitSettButton">Speichern</button>
+          <button type="reset" class="btn btn-default" id="resetSettButton">Zur&uuml;cksetzen</button>
+      </div>
+  
+  </form>
+  
+  <div class="modal fade" id="delAccModal" tabindex="-1" role="dialog" aria-labelledby="delAccModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Account l&ouml;schen?</h4>
+        </div>
+        <div class="modal-body">
+          Willst Du deinen Account wirklich l&ouml;schen?
+        </div>
+        <div class="modal-footer">
+          <form action="{% url 'twittur:settings' %}" method="POST">
+        {% csrf_token %}
+            <input name="delete" type="hidden" value="true" />
+            <button type="button" class="btn btn-default" data-dismiss="modal">Ok, doch nicht.</button>
+            <button type="submit" class="btn btn-primary">Ja, ich will!</button>
+          </form>
         </div>
       </div>
     </div>
-
+  </div>
 {% endblock %}

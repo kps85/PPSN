@@ -1,22 +1,7 @@
 {% extends 'base.html' %}
 
 {% block list %}
-  <ul>
-    <li><h3 class="text-uppercase"> Über uns </h3></li>
-    <li><a href="{% url 'twittur:info' %}#impressum" class="menuCloser ullink">Impressum</a></li>
-    <li><a href="{% url 'twittur:info' %}#team" class="menuCloser ullink">Das Team</a></li>
-    <li><a href="{% url 'twittur:info' %}#projekt" class="menuCloser ullink">Unser Projekt</a></li>
-    <li><h2> FAQ </h2>
-    <li><a href="{% url 'twittur:faq' %}#allgemein" class="menuCloser ullink">Allgemeine Fragen</a></li>
-    <li><a href="{% url 'twittur:faq' %}#startseite" class="menuCloser ullink">Startseite</a></li>
-    <li><a href="{% url 'twittur:faq' %}#profilseite" class="menuCloser ullink">Profilseite</a></li>
-    <li><a href="{% url 'twittur:faq' %}#infoseite" class="menuCloser ullink">Infoseite</a></li>
-    <li><a href="{% url 'twittur:faq' %}#einstellungen" class="menuCloser ullink">Einstellungen</a></li>
-    <li><h3 class="text-uppercase"> Supportanfrage</h3></li>
-    <li><a href="{% url 'twittur:support' %}#nachricht" class="menuCloser ullink">Nachricht schreiben</a></li>
-    <li><a href="{% url 'twittur:support' %}#kontaktformular" class="menuCloser ullink">Kontaktformular</a></li>
-  </ul>  
-  
+	{% include 'layout/nav_info.html' %}
   {% include 'layout/nav_foot.html' %}
 {% endblock %}
 
@@ -25,95 +10,62 @@
 {% endblock %}
 
 {% block content %}
-
-<h3 class="text-uppercase" id="impressum">Impressum</h4>
-<div class="container-fluid">
-	<div class="col-xs-12 post">
-    <p class="text-justify">Inhaltlich verantwortlich gemäß &sect;5 TMG ist <a href="#team">das Team 'twittur'</a>.<br>
-      <br>
-      Trotz sorgf&auml;ltiger inhaltlicher Kontrolle &uuml;bernehmen wir keine Haftung f&uuml;r die Inhalte externer Links. F&uuml;r den Inhalt der verlinkten Seiten sind ausschlie&szlig;lich deren Betreiber verantwortlich. Mit dem Urteil vom 12. Mai 1998 hat das Landgericht Hamburg entschieden, dass man durch die Anbringung eines Links die Inhalte der gelinkten Seiten ggf. mit zu verantworten hat. Dies kann nur dadurch verhindert werden, dass man sich ausdr&uuml;cklich von diesem Inhalt distanziert. F&uuml;r alle Links auf dieser Homepage gilt: Wir distanzieren uns hiermit ausdr&uuml;cklich von allen Inhalten aller gelinkten Seiten auf dieser Homepage und machen uns diese Inhalte nicht zu Eigen.</p>
-  </div>
-</div>
-
-<h3 class="text-uppercase" id="team">Das Projekt-Team <small>Gruppe 2: 'twittur'</small></h4>
-<div class="teamContainer container-fluid">
-{% for ma in team %}
-	<div class="col-xs-12 col-sm-6 post">
-    <div class="col-xs-4 col-sm-4 text-center">
-      <img src="{{ ma.userprofile.picture.url }}" class="img-thumbnail">
+<div class="supportCont hidden" id="nachricht">
+	<h3 class="text-uppercase" id="nachricht">Nachricht an Teammitglied schicken</h3>
+  <form action="{% url 'twittur:support' %}" method="POST">
+    {% csrf_token %}
+    <input name="user" type="hidden" value="text" />
+  	<div class="col-xs-6 form-group">
+    	<label for="questionInput">Betreff</label>
+      <input class="form-control" type="text" />
     </div>
-    <div class="col-xs-8 col-sm-8">
-    	<dt>Name</dt><dd>{{ ma.first_name }} {{ ma.last_name }} (@<a href="{% url 'twittur:profile' user=ma %}">{{ ma.username }}</a>)</dd>
-    	<dt>Studiengang</dt><dd>{{ ma.userprofile.academicDiscipline }}</dd>
-    	<dt>E-Mail</dt><dd>{{ ma.email }}</dd>
+  	<div class="col-xs-6 form-group pull-right">
+    	<label for="katSelect">Ansprechpartner w&auml;hlen</label>
+      <select class="form-control">
+      	<option>Lilia Butenkova</option>
+      	<option>William Cai</option>
+      	<option>Yiming Chen</option>
+      	<option>Karl P. Schmidt</option>
+      	<option>Thomas Tietz</option>
+      	<option>Steffen Zerbe</option>
+      </select>
     </div>
-  </div>
-{% endfor %}
+  	<div class="col-xs-12 form-group">
+    	<label for="answerInput">Nachtricht schreiben</label>
+    	<textarea class="form-control" rows="5"></textarea>
+    </div>
+    <div class="col-xs-12 form-group text-right">
+      <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
+      <button class="btn btn-primary" type="submit">Absenden</button>
+    </div>
+  </form>
 </div>
 
-<h3 class="text-uppercase" id="projekt">Unser Projekt <small>Gruppe 2: 'twittur'</small></h4>
-<div class="container-fluid">
-	<div class="col-xs-12 post">
-  	<h4>Aufgabenstellung</h4>
-    <p>Die SeminarteilnehmerInnen entwickelen eine social-networking Plattform basierend auf einem Webframework einer objekt-orientierten Sprache. Das Projektmanagement basiert auf modernen Praktiken agiler Softwareentwicklung und es sollen typische Werkzeuge aus der Welt der Open Source Entwicklung verwendet werden.</p>
-  </div>
-	<div class="col-xs-12 post">
-  	<h4>Ziel des Projekts</h4>
-    <p>Das Team entwickelt im Rahmen eines CIT-Moduls an der TU Berlin binnen neun Wochen ein Social-Network. Das System basiert im Allgemeinen auf der Struktur der TU Berlin und achtet auf festgelegte Sicherheitsrichtlinien. Es wird unter zu Hilfe nahme der Programmiersprache Python, dem Web-Framework Django und Twitter Bootstrap umgesetzt.</p>
-  </div>
-</div>
-
-<div class="post clearfix">
-  <h4 id="faq1" name="faq1" title="faq1">Was sind #Hashtags?</h4>
-  <p>
-  <li>- Mit Hashtags werden den Nachrichten Kategorien zugewiesen, damit diese leichter mit der Suche gefunden werden können. Sie können ihrer Nachricht beispielsweise den Tag #Party hinzufügen, damit die Nachricht, von allen nach einer Party Suchenden, die ihre Nachricht sehen können, leichter gefunden werden kann.</li>
-  </p>
-</div>
-
-<div class="post">
-  <h4 id="faq2" name="faq2" title="faq2">Wie funktionieren @ATs??</h4>
-  <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.<br />
-    <br />
-    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.<br />
-    <br />
-    Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse</p>
-</div>
-<div class="post">
-  <h4 id="faq3" name="faq3" title="faq3">Wozu nutze ich &amp; (Und)?</h4>
-  <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.<br />
-    <br />
-    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.<br />
-    <br />
-    Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse</p>
-</div>
-<div class="post">
-  <h4 id="faq4" name="faq4" title="faq4">Wie kann ich mir die Nachrichten einer bestimmten Person anzeigen lassen?</h4>
-  <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.<br />
-    <br />
-    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. <br />
-    <br />
-    Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse</p>
-</div>
-<div class="post">
-  <h4 id="faq5" name="faq5" title="faq5">Wie ändere ich meine Sicherheitseinstellungen?</h4>
-  <p>
-  <li>- Unter Einstellungen auf ihrer Profilseite können sie ihre Standard-Sicherheitseinstellungen bearbeiten. Beim Nachrichtenversand kann separat für jede Nachricht die Sicherheitsstufe eingestellt werden.</li>
-  </p>
-</div>
-<div class="post">
-  <h4 id="faq6" name="faq6" title="faq6">Wieso werden alle meine Beiträge negativ bewertet?</h4>
-  <p class="text-justify">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. <br />
-    <br />
-    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. <br />
-    <br />
-    Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse</p>
-</div>
-<div class="post">
-  <h4 id="faq7" name="faq7" title="faq7">Wie verschicke ich eine Nachricht?</h4>
-  <p class="text-justify">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.<br />
-    <br />
-    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. <br />
-    <br />
-    Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse</p>
+<div class="supportCont hidden" id="kontaktformular">
+	<h3 class="text-uppercase" id="nachricht">Supportanfrage senden</h3>
+  <form action="{% url 'twittur:support' %}" method="POST">
+    {% csrf_token %}
+    <input name="user" type="hidden" value="text" />
+  	<div class="col-xs-6 form-group">
+    	<label for="questionInput">Betreff</label>
+      <input class="form-control" type="text" />
+    </div>
+  	<div class="col-xs-6 form-group pull-right">
+    	<label for="katSelect">Thema w&auml;hlen</label>
+      <select class="form-control">
+      	<option>Thema #1</option>
+      	<option>Thema #1</option>
+      	<option>Thema #1</option>
+      </select>
+    </div>
+  	<div class="col-xs-12 form-group">
+    	<label for="answerInput">Nachtricht schreiben</label>
+    	<textarea class="form-control" rows="5"></textarea>
+    </div>
+    <div class="col-xs-12 form-group text-right">
+      <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
+      <button class="btn btn-primary" type="submit">Absenden</button>
+    </div>
+  </form>
 </div>
 {% endblock %}

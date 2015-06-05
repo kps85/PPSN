@@ -29,15 +29,7 @@
 	{% include 'layout/nav.html' %}
 {% endblock %}
 
-{% block content %}
-  {% if success_msg %}
-  <div class="infoMessage alert alert-success" role="alert">
-    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-    {{ success_msg|safe }}
-    <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="hideInfo(this);"></span>
-  </div>
-  {% endif %}
-      
+{% block content %}      
   <div class="profil">
     <div class="container-fluid">
       <div class="row">

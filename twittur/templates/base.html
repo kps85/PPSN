@@ -29,6 +29,24 @@
       </div>
     </header>
     <div id="content">
+      {% if success_msg %}
+        <div class="infoMessage alert alert-success" role="alert">
+          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+          {{ success_msg|safe }}
+          <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="hideInfo(this);"></span>
+        </div>
+      {% endif %}
+    
+      {% if error_msg %}
+        {% for key, value in error_msg.items %}
+        <div class="infoMessage alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+          {{ value|safe }} ({{ key }})
+          <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="hideInfo(this);"></span>
+        </div>
+        {% endfor %}
+      {% endif %}
+      
     	{% block content %}	
       {% endblock %}
     </div>

@@ -1,0 +1,16 @@
+<ul>
+  <li><h3 class="text-uppercase"> Über uns </h3></li>
+  <li><a href="{% url 'twittur:info' %}#impressum" class="menuCloser ullink">Impressum</a></li>
+  <li><a href="{% url 'twittur:info' %}#team" class="menuCloser ullink">Das Team</a></li>
+  <li><a href="{% url 'twittur:info' %}#projekt" class="menuCloser ullink">Unser Projekt</a></li>
+  <li><h2> FAQ </h2>
+  {% if user.is_superuser %}<li><a href="{% url 'twittur:faq' %}#faq hinzufuegen" class="menuCloser ullink">FAQ hinzuf&uuml;gen</a></li>{% endif %}
+  <li><a href="{% url 'twittur:faq' %}#allgemein" class="menuCloser ullink">Allgemeine Fragen</a></li>
+  <li><a href="{% url 'twittur:faq' %}#startseite" class="menuCloser ullink">Startseite</a></li>
+  <li><a href="{% url 'twittur:faq' %}#profilseite" class="menuCloser ullink">Profilseite</a></li>
+  <li><a href="{% url 'twittur:faq' %}#infoseite" class="menuCloser ullink">Infoseite</a></li>
+  <li><a href="{% url 'twittur:faq' %}#einstellungen" class="menuCloser ullink">Einstellungen</a></li>
+  <li><h3 class="text-uppercase"> Supportanfrage</h3></li>
+  <li><a href="{% url 'twittur:support' %}#nachricht" class="menuCloser ullink">Nachricht schreiben</a></li>
+  <li><a href="{% url 'twittur:support' %}#kontaktformular" class="menuCloser ullink">Kontaktformular</a></li>
+</ul>  
