@@ -5,3 +5,5 @@
 
 .faqContainer .post:hover { cursor: pointer; }
 .faqContainer .post.active { background-color: rgba(92,184,92,.1); }
+.faqContainer h4 { position: relative; width: 100%; }
+.faqContainer h4 span { position: absolute; right: 0; }
