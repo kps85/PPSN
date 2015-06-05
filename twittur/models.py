@@ -98,6 +98,12 @@ class Has(models.Model):
     def __str__(self):
         return self.message.user.username + "'s' message contains " + self.hashtag.name
 
+class FAQ(models.Model):
+    author = models.CharField(max_length=25)
+    question = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    answer = models.TextField(max_length=1000)
+
 # Navbar     
 class Nav(models.Model):
     nav = [

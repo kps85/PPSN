@@ -12,8 +12,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
-from .models import UserProfile, Group, Nav, Message, Hashtag, Has, ToUser
-from .forms import UserForm, UserDataForm, MessageForm
+from .models import UserProfile, Group, Nav, Message, FAQ, Hashtag, Has, ToUser
+from .forms import UserForm, UserDataForm, MessageForm, FAQForm
 
 # startpage
 def index(request):
@@ -185,14 +185,63 @@ def info(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	projektTeam = User.objects.filter();
+	projektTeam = User.objects.filter(is_superuser = True);
+
+	context = {
+		'active_page' : 'info',
+		'nav': Nav.nav,
+		'msgForm': msgDialog(request),
+		'team': projektTeam
+	}
+	return render(request, 'info.html', context)
+
+# infopage
+def faq(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/twittur/login/')
+
+	success_msg, error_msg = None, None
+
+	print(request.POST)
+
+	if request.method == 'POST':
+		faqForm = FAQForm(request.POST)
+		if faqForm.is_valid():
+			faqForm.save()
+	else:
+		faqForm = FAQForm(instance=request.user)
+
+	FAQs = FAQ.objects.all()
+	faqMain = FAQ.objects.filter(category = 'Allgemeine Frage')
+	faqStart = FAQ.objects.filter(category = 'Startseite')
+	faqProfile = FAQ.objects.filter(category = 'Profilseite')
+	faqInfo = FAQ.objects.filter(category = 'Infoseite')
+	faqSettings = FAQ.objects.filter(category = 'Einstellungen')
+
+	context = {
+		'active_page' : 'info',
+		'nav': Nav.nav,
+		'msgForm': msgDialog(request),
+		'faqForm': faqForm,
+		'faqMain': faqMain,
+		'faqStart': faqStart,
+		'faqProfile': faqProfile,
+		'faqInfo': faqInfo,
+		'faqSettings': faqSettings
+	}
+	return render(request, 'info_faq.html', context)
+
+# infopage
+def support(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/twittur/login/')
 
 	context = {
 		'active_page' : 'info',
 		'nav': Nav.nav,
 		'msgForm': msgDialog(request)
 	}
-	return render(request, 'info.html', context)
+	return render(request, 'info_support.html', context)
 
 # settingspage
 def settings(request):

@@ -91,6 +91,27 @@ function initMenu() {
 }
 
 var hideInfo = function(e) { $(e).parent("div").hide(); }
+var toggleFAQ = function(e) {
+	pChild = $(e).children('p');
+	spanChild = $(e).children('h4').children('span');
+	if ($(e).hasClass('active')) {
+		$(e).removeClass('active');
+		pChild.addClass('hidden');
+		spanChild.removeClass('glyphicon-minus').addClass('glyphicon-plus');
+	} else {
+		$('.post').removeClass('active');
+		$('.post p')
+				.removeClass('hidden')
+				.addClass('hidden');
+		$('.post span')
+				.removeClass('glyphicon-minus glyphicon-plus')
+				.addClass('glyphicon-plus');
+		
+		$(e).addClass('active');
+		pChild.removeClass('hidden');
+		spanChild.removeClass('glyphicon-plus').addClass('glyphicon-minus');
+	}
+}
 
 $('body').delegate('#ftu, #ftu input[type=text], #ftu input[type=password]', 'mousemove', function(e) {
 	($('#login input[type=text]').val().replace( /\s/g, "") != '' && $('#login input[type=password]').val().replace( /\s/g, "") != '') ? 

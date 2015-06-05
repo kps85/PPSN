@@ -1,0 +1,7 @@
+.teamContainer { margin-bottom: 20px; }
+.teamContainer .post { margin-bottom: 0; }
+.teamContainer img { max-width: 80px; }
+.teamContainer dd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.faqContainer .post:hover { cursor: pointer; }
+.faqContainer .post.active { background-color: rgba(92,184,92,.1); }

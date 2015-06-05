@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  <ul>
+    <li><h3 class="text-uppercase"> Über uns </h3></li>
+    <li><a href="{% url 'twittur:info' %}#impressum" class="menuCloser ullink">Impressum</a></li>
+    <li><a href="{% url 'twittur:info' %}#team" class="menuCloser ullink">Das Team</a></li>
+    <li><a href="{% url 'twittur:info' %}#projekt" class="menuCloser ullink">Unser Projekt</a></li>
+    <li><h2> FAQ </h2>
+    <li><a href="{% url 'twittur:faq' %}#allgemein" class="menuCloser ullink">Allgemeine Fragen</a></li>
+    <li><a href="{% url 'twittur:faq' %}#startseite" class="menuCloser ullink">Startseite</a></li>
+    <li><a href="{% url 'twittur:faq' %}#profilseite" class="menuCloser ullink">Profilseite</a></li>
+    <li><a href="{% url 'twittur:faq' %}#infoseite" class="menuCloser ullink">Infoseite</a></li>
+    <li><a href="{% url 'twittur:faq' %}#einstellungen" class="menuCloser ullink">Einstellungen</a></li>
+    <li><h3 class="text-uppercase"> Supportanfrage</h3></li>
+    <li><a href="{% url 'twittur:support' %}#nachricht" class="menuCloser ullink">Nachricht schreiben</a></li>
+    <li><a href="{% url 'twittur:support' %}#kontaktformular" class="menuCloser ullink">Kontaktformular</a></li>
+  </ul>  
+  
+  {% include 'layout/nav_foot.html' %}
+{% endblock %}
+
+{% block nav %}
+	{% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+
+{% if user.is_superuser %}
+	<h3 class="text-uppercase" id="allgemein">FAQ Hinzuf&uuml;gen</h3>
+  
+  <form action="{% url 'twittur:faq' %}" method="POST">
+    {% csrf_token %}
+    {{ faqForm.author }}
+  	<div class="col-xs-6 form-group">
+    	<label for="questionInput">Frage eintragen</label>
+      {{ faqForm.question }}
+    </div>
+  	<div class="col-xs-6 form-group pull-right">
+    	<label for="katSelect">Kategorie w&auml;hlen</label>
+      {{ faqForm.category }}
+    </div>
+  	<div class="col-xs-12 form-group">
+    	<label for="answerInput">Antwort eintragen</label>
+    	{{ faqForm.answer }}
+    </div>
+    <div class="col-xs-12 form-group text-right">
+      <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
+      <button class="btn btn-primary" type="submit">Speichern</button>
+    </div>
+  </form>
+{% endif %}
+
+<h3 class="text-uppercase" id="allgemein">Allgemeine Fragen</h3>
+<div class="faqContainer container-fluid">
+{% for faq in faqMain %}
+  <div class="post" onclick="toggleFAQ(this);">
+    <h4 id="{{ faq.question }}">
+      {% if user.is_superuser %}
+      {% endif %}
+    	{{ faq.question }}
+    	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
+    </h4>    
+    <p class="hidden text-justify">{{ faq.answer }}</p>
+  </div>
+{% endfor %}
+</div>
+	
+<h3 class="text-uppercase" id="startseite">Startseite</h3>
+<div class="faqContainer container-fluid">
+{% for faq in faqStart %}
+  <div class="post" onclick="toggleFAQ(this);">
+    <h4 id="{{ faq.question }}">
+    	{{ faq.question }}
+    	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
+    </h4>    
+    <p class="hidden text-justify">{{ faq.answer }}</p>
+  </div>
+{% endfor %}
+</div>
+	
+<h3 class="text-uppercase" id="profilseite">Profilseite</h3>
+<div class="faqContainer container-fluid">
+{% for faq in faqProfile %}
+  <div class="post" onclick="toggleFAQ(this);">
+    <h4 id="{{ faq.question }}">
+    	{{ faq.question }}
+    	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
+    </h4>    
+    <p class="hidden text-justify">{{ faq.answer }}</p>
+  </div>
+{% endfor %}
+</div>
+	
+<h3 class="text-uppercase" id="infoseite">Infoseite</h3>
+<div class="faqContainer container-fluid">
+{% for faq in faqInfo %}
+  <div class="post" onclick="toggleFAQ(this);">
+    <h4 id="{{ faq.question }}">
+    	{{ faq.question }}
+    	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
+    </h4>    
+    <p class="hidden text-justify">{{ faq.answer }}</p>
+  </div>
+{% endfor %}
+</div>
+	
+<h3 class="text-uppercase" id="einstellungen">Einstellungen</h3>
+<div class="faqContainer container-fluid">
+{% for faq in faqSettings %}
+  <div class="post" onclick="toggleFAQ(this);">
+    <h4 id="{{ faq.question }}">
+    	{{ faq.question }}
+    	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
+    </h4>    
+    <p class="hidden text-justify">{{ faq.answer }}</p>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

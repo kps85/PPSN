@@ -2,9 +2,18 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-
-from .models import UserProfile, Message, Group, Favorite, ToGroup, ToUser, Has, Hashtag 
+from .models import UserProfile, Message, Group, Favorite, ToGroup, ToUser, Has, Hashtag, FAQ
+from .forms import FAQForm
 # Register your models here.
+
+class FAQAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Kategorie', {'fields': ['category']}),
+        ('Frage',               {'fields': ['question', 'answer']}),
+        ('Autor',               {'fields': ['author']}),
+    ]
+    list_display = ('question', 'category', 'author')
+    form = FAQForm
 
 UserAdmin.list_display = ('username' ,'email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
 
@@ -18,3 +27,4 @@ admin.site.register(ToGroup)
 admin.site.register(ToUser)
 admin.site.register(Has)
 admin.site.register(Hashtag)
+admin.site.register(FAQ, FAQAdmin)

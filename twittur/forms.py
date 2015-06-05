@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, is_password_usable
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from .models import User, UserProfile, Message, Hashtag, Has, ToUser
+from .models import User, UserProfile, Message, FAQ, Hashtag, Has, ToUser
 
 
 class RegistrationUserForm(forms.Form):
@@ -101,3 +101,33 @@ class MessageForm(ModelForm):
 		self.fields['date'].widget = forms.HiddenInput()
 		self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
 		self.fields['text'].widget.attrs['class'] = 'form-control'
+
+class FAQForm (ModelForm):
+	class Meta:
+		model = FAQ
+		fields = ['author', 'question', 'category', 'answer']
+
+	def __init__(self, *args, **kwargs):
+		super(FAQForm, self).__init__(*args, **kwargs)
+		self.fields['author'].widget = forms.HiddenInput()
+		if 'instance' in kwargs:
+			user = kwargs.get('instance')
+			self.fields['author'].widget.attrs['value'] = user.username
+		self.fields['question'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Frage'})
+		catChoices = (
+			('Allgemeine Frage', 'Allgemeine Frage'),
+			('Startseite', 'Startseite'),
+			('Profilseite', 'Profilseite'),
+			('Infoseite', 'Infoseite'),
+			('Einstellungen', 'Einstellungen')
+		)
+		self.fields['category'] = forms.ChoiceField(choices=catChoices, widget=forms.Select)
+		self.fields['answer'].widget = forms.Textarea(attrs={'rows': '5', 'placeholder': 'Antwort'})
+		for field in self.fields:
+			self.fields[field].widget.attrs['class'] = 'form-control'
+
+	def save(self, commit=True):
+		instance = super(FAQForm, self).save(commit=False)
+		if commit:
+			instance.save()
+		return instance
