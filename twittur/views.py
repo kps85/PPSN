@@ -75,11 +75,12 @@ def login(request):
 	# Registration
 	if request.method == 'POST':
 
-		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
+		query_dict = request.POST
+		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e,  \
 		error_reg_userprofile_ad, error_reg_userprofile_nr = None, None, None, None, None, None, None
+		studentNumber = 0
 
 		try:
-			query_dict = request.POST
 			username = query_dict.get('name')
 			checkUsername = User.objects.get( username__exact = username )
 			
@@ -94,13 +95,6 @@ def login(request):
 			if " " in password:
 				error_reg_user_p = " - Keine Leerzeichen in Passwort erlaubt."
 
-			# fill the rest for modal User and Userprofile
-			email = query_dict.get('email')
-			studentNumber = query_dict.get('studentNumber')
-			academicDiscipline = query_dict.get('academicDiscipline')
-			first_name = query_dict.get('first_name')
-			last_name = query_dict.get('last_name')
-
 			# context for html
 			context = { 'active_page' : 'index', 
 						'nav': Nav.nav , 
@@ -111,10 +105,18 @@ def login(request):
 						'error_reg_userprofile_ad': error_reg_userprofile_ad,
 						'error_reg_userprofile_nr': error_reg_userprofile_nr,
 						'rActive': 'active'
-						}
+					}
 			# error? 
 			if 	error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
 				return render(request, 'ftu.html', context)
+
+			# fill the rest for modal User and Userprofile
+			email = query_dict.get('email')
+			if len(query_dict.get('studentNumber')) > 0: # if input is empty, keep default (0)
+				studentNumber = query_dict.get('studentNumber')
+			academicDiscipline = query_dict.get('academicDiscipline')
+			first_name = query_dict.get('first_name')
+			last_name = query_dict.get('last_name')
 			
 			# create User and Userprofile 
 			user = User.objects.create_user( username, email, password )
@@ -167,7 +169,8 @@ def profile(request, user):
 	
 	context = { 'curUser': curUser, 
 				'curUserProfile': curUserProfile, 
-				'active_page' : 'profile', 
+				'active_page': 'profile',
+				'profileUser': user,
 				'user_list': user_list, 
 				'group_list': group_list,
 				'nav': Nav.nav, 
@@ -182,7 +185,13 @@ def info(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/login/')
 
-	context = { 'active_page' : 'info', 'nav': Nav.nav, 'msgForm': msgDialog(request)}
+	projektTeam = User.objects.filter();
+
+	context = {
+		'active_page' : 'info',
+		'nav': Nav.nav,
+		'msgForm': msgDialog(request)
+	}
 	return render(request, 'info.html', context)
 
 # settingspage
