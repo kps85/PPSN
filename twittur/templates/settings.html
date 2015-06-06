@@ -67,6 +67,7 @@
               <label class="control-label" for="pw1Input">Passwort</label>
               {{ userForm.password }}
               {{ userForm.password.errors }}
+          		<p class="help-block">Dein Passwort darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!</p>
           </div>    
           <div class="col-xs-12 col-sm-6 form-group pull-right">
               <label class="control-label" for="pw2Input">Passwort bestätigen</label>
@@ -94,20 +95,21 @@
           <div class="col-xs-12 form-group">
               <label class="control-label" for="studiengangInput">Studiengang</label>
               {{ userDataForm.academicDiscipline }}
-              <p class="help-block">Über deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.</p>
+              <p class="help-block">{{ userDataForm.academicDiscipline.help_text|safe }}</p>
               {{ userDataForm.academicDiscipline.errors }}
           </div>
       
           <div class="col-xs-12 form-group">
               <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
               {{ userDataForm.studentNumber }}
-              <p class="help-block">Über deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.</p>
+              <p class="help-block">{{ userDataForm.studentNumber.help_text|safe }}</p>
               {{ userDataForm.studentNumber.errors }}
           </div>
       
           <div class="col-xs-12 form-group">
               <label class="control-label" for="wohnortInput">Wohnort</label>
               {{ userDataForm.location }}
+              <p class="help-block">{{ userDataForm.location.help_text|safe }}</p>
               {{ userDataForm.location.errors }}
           </div>
   

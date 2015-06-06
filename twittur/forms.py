@@ -63,6 +63,7 @@ class UserDataForm(ModelForm):
 		instance = kwargs.get('instance')
 		super(UserDataForm, self).__init__(*args, **kwargs)
 		self.fields['location'].required = False
+		self.fields['studentNumber'].widget = forms.TextInput(attrs={'onkeyup': 'checkNumeric(this);'})
 		for field in self.fields:
 			if field != 'picture':
 				self.fields[field].widget.attrs['class'] = 'form-control'

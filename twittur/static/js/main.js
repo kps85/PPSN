@@ -90,6 +90,15 @@ function initMenu() {
 	})
 }
 
+var checkNumeric = function(e) {
+	val = $(e).val();
+	last = $(e).val().substr(length-1);
+	rep = val.replace( last, '' );
+	if ( !$.isNumeric(val) || val.length > 6 ) {
+		$(e).val( rep );
+	}
+	
+}
 var hideInfo = function(e) { $(e).parent("div").hide(); }
 var toggleFAQ = function(e) {
 	pChild = $(e).children('p');
