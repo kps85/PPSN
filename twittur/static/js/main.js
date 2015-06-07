@@ -126,7 +126,9 @@ function initInputValidation() {
 	})
 
 
-	validateFtu();
+	if($("#ftu").length) {
+		validateFtu();
+	}
 	$("#ftu input").on("keyup", function() {
 		validateFtu();
 	});
