@@ -170,6 +170,8 @@ def profile(request, user):
     curUserProfile = curUser.userprofile
     success_msg = None
 
+    print user
+
     if request.method == 'POST' and 'delMessage' in request.POST:
         curMsg = Message.objects.get(pk=request.POST['delMessage'])
         curMsg.delete()
@@ -180,7 +182,7 @@ def profile(request, user):
 
     message_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
-        Q(user__exact=request.user) | Q(hashtags__name__exact="@"+request.user.username)
+        Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
     ).order_by('-date')
 
     context = {'curUser': curUser,
