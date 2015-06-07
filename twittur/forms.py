@@ -63,10 +63,13 @@ class UserDataForm(ModelForm):
 		instance = kwargs.get('instance')
 		super(UserDataForm, self).__init__(*args, **kwargs)
 		self.fields['location'].required = False
-		self.fields['studentNumber'].widget = forms.TextInput(attrs={'onkeyup': 'checkNumeric(this);'})
+		self.fields['studentNumber'].widget = forms.TextInput()
 		for field in self.fields:
 			if field != 'picture':
-				self.fields[field].widget.attrs['class'] = 'form-control'
+				if field != 'studentNumber':
+					self.fields[field].widget.attrs['class'] = 'form-control'
+				else:
+					self.fields[field].widget.attrs['class'] = 'form-control checkNumeric'
 			self.fields[field].widget.attrs['value'] = getattr(instance, field)
 
 	# validation: check after submit before save
