@@ -34,7 +34,7 @@ a {
 textarea, input { outline: none; }
 
 /* Bootstrap */
-.btn-primary {
+.btn-primary, .btn-primary[disabled] {
 	background-color: #F50000;
 	background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
 	background-image:      -o-linear-gradient(top, #F50000 0%, #990000 100%);
@@ -45,6 +45,11 @@ textarea, input { outline: none; }
 	background-repeat: repeat-x;
 	border-color: rgba(153,0,0,1);
 }
+
+.btn-primary[disabled] {
+	opacity:0.4;
+}
+
 .btn-primary:hover, .btn-primary:focus {
 	background-color: #990000;
 	background-position: 0 -15px;

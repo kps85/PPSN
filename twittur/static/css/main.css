@@ -227,7 +227,7 @@ textarea, input {
   outline: none; }
 
 /* Bootstrap */
-.btn-primary {
+.btn-primary, .btn-primary[disabled] {
   background-color: #F50000;
   background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
   background-image: -o-linear-gradient(top, #F50000 0%, #990000 100%);
@@ -237,6 +237,9 @@ textarea, input {
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   background-repeat: repeat-x;
   border-color: #990000; }
+
+.btn-primary[disabled] {
+  opacity: 0.4; }
 
 .btn-primary:hover, .btn-primary:focus {
   background-color: #990000;
