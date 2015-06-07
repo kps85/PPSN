@@ -43,7 +43,6 @@ function initMenu() {
 		$patty.clone().appendTo($menuOpener);
 	}
 	
-	
 	$menuOpener.appendTo("#head");
 	
 	$(".menuOpener, .menuOpener > *").click(function() {
@@ -90,67 +89,86 @@ function initMenu() {
 	})
 }
 
-var checkNumeric = function(e) {
-	val = $(e).val();
-	last = $(e).val().substr(length-1);
-	rep = val.replace( last, '' );
-	if ( !$.isNumeric(val) || val.length > 6 ) {
-		$(e).val( rep );
-	}
+function validateFtu() {
+	// Validiert die Daten der Login/Registrierungsseite
+	// TODO: Einfacher gestalten...
+	var loginFilledCorrectly = $('#login input[type=text]').val().replace( /\s/g, "") != '' 
+	&& $('#login input[type=password]').val().replace( /\s/g, "") != '';
+	console.log(loginFilledCorrectly);
+	
+	var registerFilledCorrectly = $('#name').val().replace( /\s/g, "") != '' && $('#email').val().replace( /\s/g, "") != '' &&
+	$('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '' &&
+	$('#academicDiscipline').val().replace( /\s/g, "") != '';
+	
+	(loginFilledCorrectly) ? $('#login input[type=submit]').prop("disabled", false) : $('#login input[type=submit]').prop("disabled", true);
+	(registerFilledCorrectly) ? $('#register input[type=submit]').prop("disabled", false) : $('#register input[type=submit]').prop("disabled", true);
+	
 	
 }
-var hideInfo = function(e) { $(e).parent("div").hide(); }
-var toggleFAQ = function(e) {
-	pChild = $(e).children('p');
-	spanChild = $(e).children('h4').children('span');
-	if ($(e).hasClass('active')) {
-		$(e).removeClass('active');
-		pChild.addClass('hidden');
-		spanChild.removeClass('glyphicon-minus').addClass('glyphicon-plus');
-	} else {
-		$('.post').removeClass('active');
-		$('.post p')
-				.removeClass('hidden')
-				.addClass('hidden');
-		$('.post span')
-				.removeClass('glyphicon-minus glyphicon-plus')
-				.addClass('glyphicon-plus');
-		
-		$(e).addClass('active');
-		pChild.removeClass('hidden');
-		spanChild.removeClass('glyphicon-plus').addClass('glyphicon-minus');
+
+
+function initInputValidation() {
+	$(".checkNumeric").keypress(function(e) {
+		// Erlaubt nur numerische Eingaben
+		if((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 8) {
+			e.preventDefault();
+			 e.returnValue = false;
+			return false;
+		}
+	});
+	
+	$(".faqContainer .post").click(function() {
+		// Blendet Infotext ein und wechselt + zu - 
+		var isActive = $(this).hasClass("active");
+		$(this).toggleClass("active", !isActive);
+		$(this).find("p").toggleClass("hidden", isActive);
+		$(this).find("h4 span").toggleClass('glyphicon-minus', !isActive).toggleClass('glyphicon-plus', isActive);
+	})
+
+
+	validateFtu();
+	$("#ftu input").on("keyup", function() {
+		validateFtu();
+	});
+
+	$('#newMessage').keypress(function(e) {
+		// Ueberprueft ob Textfeld leer ist oder nur Leerzeichen enthaelt
+		if($(this).val().replace( /\s/g, "") != '') {
+			$('#newMessage button[type=submit]').prop("disabled", false);
+		} else {
+			$('#newMessage button[type=submit]').prop("disabled", true);
+		}
+	});
+	
+}
+
+
+function initSupport() {
+	// ???
+	if ($('.supportCont').length > 0) {
+		var activeForm = (window.location.href.split("#"))[1];
+		$("#"+activeForm).removeClass('hidden');
+		$(window).on("hashchange", function() {
+			var form = (window.location.href.split("#"))[1];
+			$(".supportCont").addClass('hidden');
+			$("#"+form).removeClass('hidden');
+		});
 	}
 }
 
-$('body').delegate('#ftu, #ftu input[type=text], #ftu input[type=password]', 'mousemove', function(e) {
-	($('#login input[type=text]').val().replace( /\s/g, "") != '' && $('#login input[type=password]').val().replace( /\s/g, "") != '') ? 
-																							$('#login input[type=submit]').prop("disabled", false) :
-																							$('#login input[type=submit]').prop("disabled", true);
-	($('#name').val().replace( /\s/g, "") != '' && $('#email').val().replace( /\s/g, "") != '' &&
-	 $('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '' &&
-	 $('#academicDiscipline').val().replace( /\s/g, "") != '') ? 
-																							$('#register input[type=submit]').prop("disabled", false) :
-																							$('#register input[type=submit]').prop("disabled", true);
-});
-
-$('#newMessage').delegate('textarea', 'keyup', function(e) {
-	($(this).val().replace( /\s/g, "") != '') ? $('#newMessage button[type=submit]').prop("disabled", false) :
-																							$('#newMessage button[type=submit]').prop("disabled", true);
-});
-
-if ($('.supportCont').length > 0) {
-	activeForm = (window.location.href.split("#"))[1];
-	$("#"+activeForm).removeClass('hidden');
-	$(window).on("hashchange", function() {
-		form = (window.location.href.split("#"))[1];
-		$(".supportCont").addClass('hidden');
-		$("#"+form).removeClass('hidden');
+function initVarious() {
+	// Hide Info Button
+	$(".hideInfo").click(function() {
+		$(this).parent("div").hide();
 	});
 }
 
 $(document).ready(function() {
 	initMenu();
 	initFtu();
+	initSupport();
+	initInputValidation();
+	initVarious();
 	
 	fph();
 	$(window).resize(function() {

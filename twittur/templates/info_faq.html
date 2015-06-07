@@ -39,7 +39,7 @@
 <h3 class="text-uppercase" id="allgemein">Allgemeine Fragen</h3>
 <div class="faqContainer container-fluid">
 {% for faq in faqMain %}
-  <div class="post" onclick="toggleFAQ(this);">
+  <div class="post" >
     <h4 id="{{ faq.question }}">
       {% if user.is_superuser %}
       {% endif %}
@@ -54,7 +54,7 @@
 <h3 class="text-uppercase" id="startseite">Startseite</h3>
 <div class="faqContainer container-fluid">
 {% for faq in faqStart %}
-  <div class="post" onclick="toggleFAQ(this);">
+  <div class="post" >
     <h4 id="{{ faq.question }}">
     	{{ faq.question }}
     	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
 <h3 class="text-uppercase" id="profilseite">Profilseite</h3>
 <div class="faqContainer container-fluid">
 {% for faq in faqProfile %}
-  <div class="post" onclick="toggleFAQ(this);">
+  <div class="post">
     <h4 id="{{ faq.question }}">
     	{{ faq.question }}
     	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
@@ -80,7 +80,7 @@
 <h3 class="text-uppercase" id="infoseite">Infoseite</h3>
 <div class="faqContainer container-fluid">
 {% for faq in faqInfo %}
-  <div class="post" onclick="toggleFAQ(this);">
+  <div class="post">
     <h4 id="{{ faq.question }}">
     	{{ faq.question }}
     	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
@@ -93,7 +93,7 @@
 <h3 class="text-uppercase" id="einstellungen">Einstellungen</h3>
 <div class="faqContainer container-fluid">
 {% for faq in faqSettings %}
-  <div class="post" onclick="toggleFAQ(this);">
+  <div class="post">
     <h4 id="{{ faq.question }}">
     	{{ faq.question }}
     	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
