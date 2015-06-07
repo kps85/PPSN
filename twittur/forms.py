@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, is_password_usable
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from .models import User, UserProfile, Message, FAQ, Hashtag, Has, ToUser
+from .models import User, UserProfile, Message, FAQ, Hashtag
 
 
 class RegistrationUserForm(forms.Form):

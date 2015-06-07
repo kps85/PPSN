@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import UserProfile, Message, Group, Favorite, ToGroup, ToUser, Has, Hashtag, FAQ
+from .models import UserProfile, Message, Group, ToGroup, Hashtag, FAQ
 from .forms import FAQForm
 # Register your models here.
 
@@ -22,9 +22,6 @@ admin.site.register(User, UserAdmin)
 admin.site.register(UserProfile)
 admin.site.register(Message)
 admin.site.register(Group)
-admin.site.register(Favorite)
 admin.site.register(ToGroup)
-admin.site.register(ToUser)
-admin.site.register(Has)
 admin.site.register(Hashtag)
 admin.site.register(FAQ, FAQAdmin)
