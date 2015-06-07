@@ -187,10 +187,36 @@ body {
   list-style-type: none; }
 
 a {
+  color: #a00000;
   text-decoration: none; }
+  a:hover {
+    text-decoration: none; }
 
 textarea, input {
   outline: none; }
+
+/* Bootstrap */
+.btn-primary {
+  background-color: #F50000;
+  background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
+  background-image: -o-linear-gradient(top, #F50000 0%, #990000 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#F50000), to(#990000));
+  background-image: linear-gradient(to bottom, #F50000 0%, #990000 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffF50000', endColorstr='#ff990000', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  background-repeat: repeat-x;
+  border-color: #990000; }
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #990000;
+  background-position: 0 -15px;
+  border-color: #990000; }
+
+.form-control:focus, button:focus {
+  border-color: #d90e1f;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(245, 0, 0, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(245, 0, 0, 0.6); }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -257,6 +283,18 @@ nav a.messages {
   background-image: url("img/Message-128.png"); }
 nav a.info {
   background-image: url("img/Message-Information-128.png"); }
+nav a.logout {
+  padding-top: 20px; }
+  nav a.logout span {
+    font-size: 36px; }
+    nav a.logout span:before {
+      color: #ffffff; }
+  @media screen and (max-width: 1023px) {
+    nav a.logout {
+      padding-top: 12px;
+      line-height: 11px; }
+      nav a.logout span {
+        font-size: 28px; } }
 nav a.menuCloser {
   float: right;
   background-image: url("img/Login-Arrow-128.png");
@@ -308,14 +346,15 @@ a.title {
   text-indent: -9999px;
   display: block;
   float: left;
-  width: 60%;
+  width: 200px;
+  height: 90px;
   height: 90px;
   background: url("img/logo.png") no-repeat;
   background-position: 0 10px;
   background-size: 144px 70px; }
   @media screen and (min-width: 1024px) {
     a.title {
-      margin-left: 10%; } }
+      margin-left: 6%; } }
   @media screen and (max-width: 1023px) {
     a.title {
       margin-left: 3%; } }
@@ -346,12 +385,25 @@ header {
     header a.menuOpener .patty {
       margin: 14% 20%;
       border-bottom: 5px solid transparent; }
-  header #search input {
-    padding: 10px;
-    border: 1px solid #eee;
-    color: #333; }
+  header #search {
+    margin-right: 3%;
+    margin-top: 25px; }
+    header #search input {
+      padding: 10px;
+      border: 1px solid #eee;
+      color: #333;
+      padding: 10px;
+      border: 1px solid #eee;
+      color: #333;
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0; }
+    header #search button {
+      margin-left: 0;
+      margin-top: 0;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0; }
     @media screen and (max-width: 1023px) {
-      header #search input {
+      header #search {
         display: none; } }
   header #head:after {
     content: "";
@@ -366,6 +418,15 @@ header {
     @media screen and (max-width: 1023px) {
       header #infoBar {
         width: 94%; } }
+  header .newMsg {
+    height: 45px;
+    width: 45px;
+    margin-top: 22.5px;
+    margin-left: 3%; }
+    header .newMsg textarea {
+      width: 100%; }
+    header .newMsg .msgDiaDate {
+      padding: 6px 12px; }
 
 @media screen and (min-width: 1024px) {
   #main {
@@ -411,98 +472,5 @@ header {
 .profilePictures img {
   display: inline;
   vertical-align: bottom; }
-
-/* CSS Document */
-a:hover {
-  text-decoration: none !important; }
-
-.btn-primary {
-  background-color: #F50000;
-  background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
-  background-image: -o-linear-gradient(top, #F50000 0%, #990000 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#F50000), to(#990000));
-  background-image: linear-gradient(to bottom, #F50000 0%, #990000 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffF50000', endColorstr='#ff990000', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  background-repeat: repeat-x;
-  border-color: #990000; }
-
-.btn-primary:hover, .btn-primary:focus {
-  background-color: #990000;
-  background-position: 0 -15px;
-  border-color: #990000; }
-
-.form-control:focus, button:focus {
-  border-color: #d90e1f;
-  outline: 0;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(245, 0, 0, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(245, 0, 0, 0.6); }
-
-nav a.logout {
-  padding-top: 18px; }
-
-nav a.logout span {
-  font-size: 36px; }
-
-nav a.logout span:before {
-  color: #ffffff; }
-
-@media screen and (max-width: 1023px) {
-  nav a.logout {
-    padding-top: 12px;
-    line-height: 11px; }
-
-  nav a.logout span {
-    font-size: 28px; }
-
-  nav a.menuCloser {
-    display: inherit; } }
-a.title {
-  text-indent: -9999px;
-  display: block;
-  float: left;
-  width: 200px;
-  height: 90px;
-  background: url("img/logo.png") no-repeat;
-  background-position: 0 10px;
-  background-size: 144px 70px; }
-
-@media screen and (min-width: 1024px) {
-  a.title {
-    margin-left: 3%; } }
-@media screen and (max-width: 1023px) {
-  a.title {
-    margin-left: 6%; } }
-header .newMsg {
-  height: 45px;
-  width: 45px;
-  margin-top: 22.5px;
-  margin-left: 3%; }
-
-header #search {
-  margin-right: 3%;
-  margin-top: 25px; }
-
-header #search input {
-  padding: 10px;
-  border: 1px solid #eee;
-  color: #333;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0; }
-
-header #search button {
-  margin-left: 0;
-  margin-top: 0;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0; }
-
-@media screen and (max-width: 1023px) {
-  header #search {
-    display: none; } }
-#newMessage textarea {
-  width: 100%; }
-
-#newMessage .msgDiaDate {
-  padding: 6px 12px; }
 
 /*# sourceMappingURL=main.css.map */
