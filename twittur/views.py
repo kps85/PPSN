@@ -387,6 +387,7 @@ def search(request):
         'message_list': message_list,
         'active_page': 'settings',
         'nav': Nav.nav,
+        'msgForm': msgDialog(request),
     }
     return render(request, 'search.html', context)
 
@@ -401,5 +402,6 @@ def hashtag(request, text):
         'message_list': message_list,
         'active_page': 'settings',
         'nav': Nav.nav,
+        'msgForm': msgDialog(request),
     }
     return render(request, 'search.html', context)
