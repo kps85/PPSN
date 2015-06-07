@@ -170,7 +170,7 @@ def profile(request, user):
     curUserProfile = curUser.userprofile
     success_msg = None
 
-    print user
+    print(user)
 
     if request.method == 'POST' and 'delMessage' in request.POST:
         curMsg = Message.objects.get(pk=request.POST['delMessage'])
@@ -334,7 +334,7 @@ def msgDialog(request):
                     else:
                         list.append(word)
                         href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                        print "# Step 1: " + word.encode("utf-8")
+                        print("# Step 1: " + word.encode("utf-8"))
                         msgForm.instance.text = msgForm.instance.text.replace(word, href)
                 if word[0] == "@":
                     try:
@@ -345,11 +345,11 @@ def msgDialog(request):
                         list.append(word)
                         href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                         msgForm.instance.text = msgForm.instance.text.replace(word, href)
-                        print "@ Step 1: " + word
+                        print("@ Step 1: " + word)
 
             # save this shit for the next step
-            print msgForm.instance.text
-            print type(msgForm.instance.text)
+            print(msgForm.instance.text)
+            print(type(msgForm.instance.text))
             msgForm.save()
 
             # Step 2: add # and @ related with message in database
@@ -361,15 +361,15 @@ def msgDialog(request):
                         hashtag = Hashtag(name=str(word))
                         hashtag.save()
                     msgForm.instance.hashtags.add(hashtag)
-                    print "# Step 2: " + word
+                    print("# Step 2: " + word)
             # Check list with @
                 if word[0] == "@":
                     user = User.objects.get(username__exact=str(word[1:]))
                     msgForm.instance.attags.add(user)
-                    print "@ Step 2: " + word
+                    print("@ Step 2: " + word)
             msgForm.save()
-            print msgForm.instance.attags.all()
-            print msgForm.instance.hashtags.all()
+            print(msgForm.instance.attags.all())
+            print(msgForm.instance.hashtags.all())
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
     return msgForm
