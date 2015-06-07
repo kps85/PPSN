@@ -147,9 +147,9 @@ function initInputValidation() {
 		validateFtu();
 	});
 
-	$('#newMessage').keypress(function(e) {
+	$('#newMessage').on("keyup", function(e) {
 		// Ueberprueft ob Textfeld leer ist oder nur Leerzeichen enthaelt
-		if($(this).val().replace( /\s/g, "") != '') {
+		if($(this).find("textarea").val().replace( /\s/g, "") != '') {
 			$('#newMessage button[type=submit]').prop("disabled", false);
 		} else {
 			$('#newMessage button[type=submit]').prop("disabled", true);
