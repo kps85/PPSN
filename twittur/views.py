@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render
-from django.http import  HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from PPSN.settings import MEDIA_ROOT, MEDIA_URL
 
 from django.contrib.auth.models import User
@@ -298,6 +298,7 @@ def settings(request):
         'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)
+
 
 # messagebox clicked on pencil button
 def msgDialog(request):
