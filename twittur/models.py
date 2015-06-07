@@ -63,15 +63,6 @@ class Group(models.Model):
 
 # Relationships
 
-# - user (follow_from_self) follows user (follow_to_user)
-class Favorite(models.Model):
-    fromUser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='favorite_from')
-    toUser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='favorite_to')
-
-    def __str__(self):
-        return self.fromUser.name + ' -> ' + self.toUser.name
-
-
 # - message directed to group or user or both
 class ToGroup(models.Model):
     group = models.ForeignKey(Group)
@@ -81,12 +72,6 @@ class ToGroup(models.Model):
         return "Message from '" + self.message.user.username + "' to group " + self.group.name
 
 
-class ToUser(models.Model):
-    toUser = models.ForeignKey(settings.AUTH_USER_MODEL)
-    message = models.ForeignKey(Message)
-
-    def __str__(self):
-        return "Message from " + self.message.user.username + " to " + self.toUser.username
 
 
 class IsInGroup(models.Model):
@@ -98,12 +83,6 @@ class IsInGroup(models.Model):
         return self.user.name + ' joint the group ' + self.group.name
 
 
-class Has(models.Model):
-    message = models.ForeignKey(Message)
-    hashtag = models.ForeignKey(Hashtag)
-
-    def __str__(self):
-        return self.message.user.username + "'s' message contains " + self.hashtag.name
 
 
 class FAQ(models.Model):
