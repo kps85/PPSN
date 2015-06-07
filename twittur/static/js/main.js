@@ -103,6 +103,26 @@ function initMenu() {
 	})
 }
 
+function initList() {
+	
+	// Hauptfenster nicht mitscrollen
+	$('#list').bind('mousewheel DOMMouseScroll', function(e) {
+	    var scrollTo = null;
+
+	    if (e.type == 'mousewheel') {
+	        scrollTo = (e.originalEvent.wheelDelta * -1);
+	    }
+	    else if (e.type == 'DOMMouseScroll') {
+	        scrollTo = 40 * e.originalEvent.detail;
+	    }
+
+	    if (scrollTo) {
+	        e.preventDefault();
+	        $(this).scrollTop(scrollTo + $(this).scrollTop());
+	    }
+	});
+}
+
 function validateFtu() {
 	// Validiert die Daten der Login/Registrierungsseite
 	// TODO: Einfacher gestalten...
@@ -181,6 +201,7 @@ function initVarious() {
 
 $(document).ready(function() {
 	initMenu();
+	initList();
 	initFtu();
 	initSupport();
 	initInputValidation();

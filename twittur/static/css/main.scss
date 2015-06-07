@@ -160,6 +160,9 @@ nav {
 	
 	a.logout {
 		padding-top:20px;
+		position:absolute;
+		bottom:0;
+		
 		
 		span { 
 			font-size: 36px;
@@ -169,7 +172,14 @@ nav {
 		}
 		
 		@include tablet {
+			left:0;
+			display:block;
+			min-height:50px;
+			width:100%;
+			z-index:400;
+			text-align:center;
 			padding-top:12px;
+			background:#30303F;
 			line-height: 11px;
 			span {
 				font-size:28px;
@@ -195,17 +205,26 @@ nav {
 	box-sizing:border-box;
 	@include clear;
 	max-height:100%;
-	overflow:auto;
 	
+	overflow:auto;
+	overflow:hidden;
+	width:100%;
+	height:100%;
+	overflow-y:auto;
 	@include desktop {
 		
-		overflow:hidden;
-		width:100%;
-		height:100%;
-		overflow-y:auto;
+		
 		padding-left:$navWidthDesktop;
 		padding-top:0px;
 	
+	}
+	
+	@include tablet {
+		position:fixed;
+		z-index:3;
+		padding-bottom:$navWidthMobile;
+		max-height:80%;
+		top:$navWidthMobile;
 	}
 	
 	ul {
