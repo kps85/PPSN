@@ -369,8 +369,7 @@ nav a.menuCloser {
       position: fixed;
       z-index: 3;
       padding-bottom: 60px;
-      max-height: 80%;
-      top: 60px; } }
+      max-height: 80%; } }
   #list ul {
     display: block;
     margin-bottom: 15px;
