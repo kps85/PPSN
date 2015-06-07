@@ -20,9 +20,9 @@
       {% endif %}
 		</div>
 		<div class="postText">
- 
-			{{ message.text|safe }} 
-
+            {% if message.text %}
+			    {{ message.text | safe }}
+            {% endif %}
 		</div>
     <div class="postFoot">
       <a href="">
