@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import  HttpResponseRedirect
 from PPSN.settings import MEDIA_ROOT, MEDIA_URL
 
 from django.contrib.auth.models import User
@@ -13,11 +13,6 @@ from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message, FAQ, Hashtag
 from .forms import UserForm, UserDataForm, MessageForm, FAQForm
 
-
-
-
-
-import unicodedata
 
 # startpage
 def index(request):
@@ -56,103 +51,98 @@ def index(request):
 
 # login/registration page
 def login(request):
-	if request.user.is_authenticated():
-		return HttpResponseRedirect('/twittur/')
-		
-	active_page = "ftu"
-		
-	# Public Messages: TODO Filtern!
-	message_list = Message.objects.all().order_by('-date')
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/')
 
-	# login
-	if request.method == "GET":
+    active_page = "ftu"
 
-		if 'login' in request.GET:
-			query_dict = request.GET
-			username = query_dict.get('username')
-			password = query_dict.get('password')
-			user = authenticate(username=username, password=password)
+    # Public Messages: TODO Filtern!
+    message_list = Message.objects.all().order_by('-date')
 
-			if user is not None:
-				if user.is_active:
-					auth.login(request, user)
-					return HttpResponseRedirect('/twittur/')
-			else:
-				error_login = "- Ups, Username oder Passwort falsch."
-				active_toggle = "active_toggle"
-				return render(request, 'ftu.html', { 'error_login' : error_login, 'message_list':message_list, 'active_page':active_page } )
+    # login
+    if request.method == "GET":
 
-	# Registration
-	if request.method == 'POST':
+        if 'login' in request.GET:
+            query_dict = request.GET
+            username = query_dict.get('username')
+            password = query_dict.get('password')
+            user = authenticate(username=username, password=password)
 
-		query_dict = request.POST
-		error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e,  \
-		error_reg_userprofile_ad, error_reg_userprofile_nr = None, None, None, None, None, None, None
-		studentNumber = 0
+            if user is not None:
+                if user.is_active:
+                    auth.login(request, user)
+                    return HttpResponseRedirect('/twittur/')
+            else:
+                error_login = "- Ups, Username oder Passwort falsch."
+                active_toggle = "active_toggle"
+                return render(request, 'ftu.html',
+                              {'error_login': error_login, 'message_list': message_list, 'active_page': active_page})
 
-		try:
-			username = query_dict.get('name')
-			checkUsername = User.objects.get( username__exact = username )
-			
-		# case if username is available (checkUsername = None)
-		except ObjectDoesNotExist:
-			password = query_dict.get('password')
-			ack_password = query_dict.get('ack_password')
+    # Registration
+    if request.method == 'POST':
 
-			# Password validation
-			if password != ack_password :
-				error_reg_user_p = " - Passw&ouml;rter sind nicht gleich."
-			if " " in password:
-				error_reg_user_p = " - Keine Leerzeichen in Passwort erlaubt."
+        query_dict = request.POST
+        error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
+        error_reg_userprofile_ad, error_reg_userprofile_nr = None, None, None, None, None, None, None
+        studentNumber = 0
 
-			# context for html
-			context = { 'active_page' : 'index', 
-						'nav': Nav.nav , 
-						'error_reg_user': error_reg_user, 
-						'error_reg_userprofile_e': error_reg_userprofile_e,
-						'error_reg_user_n': error_reg_user_n,
-						'error_reg_user_p': error_reg_user_p,
-						'error_reg_userprofile_ad': error_reg_userprofile_ad,
-						'error_reg_userprofile_nr': error_reg_userprofile_nr,
-						'rActive': 'active'
-					}
-			# error? 
-			if 	error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
-				return render(request, 'ftu.html', context)
+        try:
+            username = query_dict.get('name')
+            checkUsername = User.objects.get(username__exact=username)
 
-			# fill the rest for modal User and Userprofile
-			email = query_dict.get('email')
-			if len(query_dict.get('studentNumber')) > 0: # if input is empty, keep default (0)
-				studentNumber = query_dict.get('studentNumber')
-			academicDiscipline = query_dict.get('academicDiscipline')
-			first_name = query_dict.get('first_name')
-			last_name = query_dict.get('last_name')
-			
-			# create User and Userprofile 
-			user = User.objects.create_user( username, email, password )
-			user.first_name = first_name
-			user.last_name = last_name
-			user.save()
-			user_profil = UserProfile(userprofile=user, studentNumber=studentNumber, academicDiscipline=academicDiscipline, location="Irgendwo")
-			user_profil.save()
+        # case if username is available (checkUsername = None)
+        except ObjectDoesNotExist:
+            password = query_dict.get('password')
+            ack_password = query_dict.get('ack_password')
 
-			# log user in and redirect to index page
-			user = authenticate(username = username, password = password)
-			auth.login(request, user)
-			return render(request, 'index.html', context)
+            # Password validation
+            if password != ack_password:
+                error_reg_user_p = " - Passw&ouml;rter sind nicht gleich."
 
-		# case if username is taken (checkUsername == user)
-		else:
-			error_reg_user_n = "Sorry, Username ist vergeben."
-			return render(request, 'ftu.html', { 'error_reg_user_n': error_reg_user_n, 'rActive': 'active' })
+            # context for html
+            context = {'active_page': 'index',
+                       'nav': Nav.nav,
+                       'error_reg_user': error_reg_user,
+                       'error_reg_userprofile_e': error_reg_userprofile_e,
+                       'error_reg_user_n': error_reg_user_n,
+                       'error_reg_user_p': error_reg_user_p,
+                       'error_reg_userprofile_ad': error_reg_userprofile_ad,
+                       'error_reg_userprofile_nr': error_reg_userprofile_nr,
+                       'rActive': 'active'
+                       }
+            # error?
+            if error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
+                return render(request, 'ftu.html', context)
 
+            # fill the rest for modal User and Userprofile
+            email = query_dict.get('email')
+            if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
+                studentNumber = query_dict.get('studentNumber')
+            academicDiscipline = query_dict.get('academicDiscipline')
+            first_name = query_dict.get('first_name')
+            last_name = query_dict.get('last_name')
 
-	
+            # create User and Userprofile
+            user = User.objects.create_user(username, email, password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+            user_profil = UserProfile(userprofile=user, studentNumber=studentNumber,
+                                      academicDiscipline=academicDiscipline, location="Irgendwo")
+            user_profil.save()
 
-	
+            # log user in and redirect to index page
+            user = authenticate(username=username, password=password)
+            auth.login(request, user)
+            return render(request, 'index.html', context)
 
-	context = { 'active_page' : 'ftu', 'nav': Nav.nav, 'message_list' : message_list}
-	return render(request, 'ftu.html', context)
+        # case if username is taken (checkUsername == user)
+        else:
+            error_reg_user_n = "Sorry, Username ist vergeben."
+            return render(request, 'ftu.html', {'error_reg_user_n': error_reg_user_n, 'rActive': 'active'})
+
+    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
+    return render(request, 'ftu.html', context)
 
 
 # logout
@@ -169,8 +159,6 @@ def profile(request, user):
     curUser = User.objects.get(username=user)
     curUserProfile = curUser.userprofile
     success_msg = None
-
-    print user
 
     if request.method == 'POST' and 'delMessage' in request.POST:
         curMsg = Message.objects.get(pk=request.POST['delMessage'])
@@ -311,7 +299,7 @@ def settings(request):
     }
     return render(request, 'settings.html', context)
 
-
+# messagebox clicked on pencil button
 def msgDialog(request):
     curUser = User.objects.get(pk=request.user.id)
 
@@ -319,23 +307,25 @@ def msgDialog(request):
         msgForm = MessageForm(request.POST)
         if msgForm.is_valid():
             text = msgForm.instance.text
-            '''
-            hashtags = [i for i in text.split() if i.startswith("#")]
-            attags = [i for i in text.split() if i.startswith("@")]
-            '''
-            # for debug
+
+            # for setting database later
             list = []
 
             # Step 1: replace all # and @ with link
             for word in text.split():
+
+                # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
                 if word[0] == "#":
                     if "/" in word:
                         pass
                     else:
                         list.append(word)
                         href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                        print "# Step 1: " + word.encode("utf-8")
                         msgForm.instance.text = msgForm.instance.text.replace(word, href)
+
+                # now find in text all words start with "@". Its important to find this user in database.
+                # if this user doesnt exist -> no need to set a link
+                # else we will set a link to his profile
                 if word[0] == "@":
                     try:
                         user = User.objects.get(username__exact=word[1:])
@@ -345,15 +335,12 @@ def msgDialog(request):
                         list.append(word)
                         href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                         msgForm.instance.text = msgForm.instance.text.replace(word, href)
-                        print "@ Step 1: " + word
-
             # save this shit for the next step
-            print msgForm.instance.text
-            print type(msgForm.instance.text)
             msgForm.save()
 
             # Step 2: add # and @ related with message in database
             for word in list:
+                # check first whether #word exist in database. true: add to message, false: create hashtag then add
                 if word[0] == "#":
                     try:
                         hashtag = Hashtag.objects.get(name__exact=str(word))
@@ -361,25 +348,23 @@ def msgDialog(request):
                         hashtag = Hashtag(name=str(word))
                         hashtag.save()
                     msgForm.instance.hashtags.add(hashtag)
-                    print "# Step 2: " + word
-            # Check list with @
+                # user exist in database so add it to message. we checked this in step 1 before
                 if word[0] == "@":
                     user = User.objects.get(username__exact=str(word[1:]))
                     msgForm.instance.attags.add(user)
-                    print "@ Step 2: " + word
             msgForm.save()
-            print msgForm.instance.attags.all()
-            print msgForm.instance.hashtags.all()
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
     return msgForm
 
 
+# search input
 def search(request):
     if request.method == 'GET':
         query_dict = request.GET
         search = query_dict.get('search')
 
+    # filter all messages contain the word  or all users contain the word
     message_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
         Q(text__contains=search) | Q(user__username__contains=search)
@@ -395,8 +380,11 @@ def search(request):
     return render(request, 'search.html', context)
 
 
+# click on hashtaglinks will redirect to this function.
 def hashtag(request, text):
     search = "#" + text
+
+    # filter all messages contain #
     message_list = Message.objects.all().filter(hashtags__name=search)
     print(message_list)
     context = {
