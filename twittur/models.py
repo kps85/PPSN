@@ -10,7 +10,6 @@ from django.db.models.signals import post_save
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
 
-<<<<<<< Updated upstream
     studentNumber = models.CharField( max_length = 6, default = '000000',
                                       help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')
     academicDiscipline = models.CharField( max_length = 200,
@@ -20,18 +19,7 @@ class UserProfile(models.Model):
                                 help_text = 'Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt.')
 
     location = models.CharField( max_length = 200, default='None', help_text='Lass Deine Kommilitoninnen Dich finden!' )
-    
-=======
-    studentNumber = models.IntegerField(default=000000)
-    academicDiscipline = models.CharField(max_length=200)
-    picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
-                                height_field=None, width_field=None, default='picture/default.gif',
-                                help_text='Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt.')
 
-    location = models.CharField(max_length=200, default='None')
-    followers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followers')
-
->>>>>>> Stashed changes
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
