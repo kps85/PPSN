@@ -180,7 +180,7 @@ def profile(request, user):
 
     message_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
-        Q(user__exact=request.user) | Q(text__contains='@' + request.user.username + ' ')
+        Q(user__exact=request.user) | Q(hashtags__name__exact="@"+request.user.username)
     ).order_by('-date')
 
     context = {'curUser': curUser,
@@ -343,9 +343,6 @@ def msgDialog(request):
                         print "@ Step 1: " + word
 
             # save this shit for the next step
-
-
-            msgForm.instance.text = unicodedata.normalize('NFKD', msgForm.instance.text).encode('ascii','ignore')
             print msgForm.instance.text
             print type(msgForm.instance.text)
             msgForm.save()
