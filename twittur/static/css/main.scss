@@ -88,7 +88,7 @@ header {
 		left:0;
 		height:100%;
 		width:100%;
-		z-index:3;
+		z-index:20;
 		background:$listBg;
 		left:-100%;
 	}
@@ -291,6 +291,12 @@ header {
 	min-height:$navWidthDesktop;
 	
 	
+	@include tablet {
+		position:fixed;
+		top:0;
+		z-index:10;
+	}
+	
 	
 	a.menuOpener {
 		text-indent:-9999px;
@@ -320,6 +326,7 @@ header {
 	#search {
 		margin-right: 3%;
 	    margin-top: 25px;
+		z-index:50;
 		
 		input {
 			padding:10px;
@@ -393,13 +400,16 @@ header {
 	
 	@include desktop {
 		width:80%;
+	}
+	
+	margin:30px auto;
+
+	@include tablet {
+		width:94%;
+		margin-top:$navWidthDesktop + 30;
 		
 	}
 	
-	@include tablet {
-		width:94%;
-	}
-	margin:30px auto;
 }
 
 $iconWidth:50px;

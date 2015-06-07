@@ -266,7 +266,7 @@ textarea, input {
     left: 0;
     height: 100%;
     width: 100%;
-    z-index: 3;
+    z-index: 20;
     background: #282B37;
     left: -100%; } }
 
@@ -415,6 +415,11 @@ header {
   display: block;
   width: 100%;
   min-height: 90px; }
+  @media screen and (max-width: 1023px) {
+    header {
+      position: fixed;
+      top: 0;
+      z-index: 10; } }
   header a.menuOpener {
     text-indent: -9999px;
     display: block;
@@ -437,7 +442,8 @@ header {
       border-bottom: 5px solid transparent; }
   header #search {
     margin-right: 3%;
-    margin-top: 25px; }
+    margin-top: 25px;
+    z-index: 50; }
     header #search input {
       padding: 10px;
       border: 1px solid #eee;
@@ -493,7 +499,8 @@ header {
       width: 80%; } }
   @media screen and (max-width: 1023px) {
     #content {
-      width: 94%; } }
+      width: 94%;
+      margin-top: 120px; } }
 
 .post {
   padding: 20px;
