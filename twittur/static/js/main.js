@@ -1,8 +1,22 @@
 // Fullpage Height
 
 function fph() { 
+	// Hax
+	var $as = $("#aside");
+	if(!$as.length) {
+		$as = $("<div>", {'id':'aside'});
+		$as.prependTo("body");
+	} 
     var vph = $(window).height();
+	// Elemente, die immer die volle Hoehe haben sollen
     $('.full-page').css({'minHeight':vph + "px"});
+	
+	// Elemente, die nur auf Desktops die voelle Hoehe haben sollen :)
+	if($as.is(":visible")) {
+		$(".full-page-nomobile").css({'minHeight':vph + "px"});
+	} else {
+		$(".full-page-nomobile").css({'minHeight':'inherit'});
+	}
 }
 
 var tspeed = 500;

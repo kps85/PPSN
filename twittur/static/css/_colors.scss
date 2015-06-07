@@ -67,14 +67,15 @@ header {
 	background-color:#fff;
 	background-size:cover;
 }
-
-.post {
-	border:1px solid $headerBorder;
-	background:#fff;
-	&:hover {
-		background:#fdfdfd;
-	}
-	.postTime {
-		color:#aaa;
+#content {
+	.post {
+		border:1px solid $headerBorder;
+		background:#fff;
+		&:hover {
+			background:#fdfdfd;
+		}
+		.postTime {
+			color:#aaa;
+		}
 	}
 }

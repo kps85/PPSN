@@ -36,34 +36,51 @@ header {
   background-color: #fff;
   background-size: cover; }
 
-.post {
+#content .post {
   border: 1px solid #E4E8EA;
   background: #fff; }
-  .post:hover {
+  #content .post:hover {
     background: #fdfdfd; }
-  .post .postTime {
+  #content .post .postTime {
     color: #aaa; }
 
-#ftu {
+#body_ftu {
   background: url("img/ftu_bg.png") center center;
-  color: #ddd;
-  padding: 30px 0;
-  padding-bottom: 100px; }
-  #ftu:after {
-    content: "";
-    display: table;
-    clear: both; }
-  #ftu .center {
+  background-attachment: fixed; }
+  #body_ftu .center {
     margin: 0 auto;
     width: 80%;
     min-width: 320px; }
     @media screen and (max-width: 639px) {
-      #ftu .center {
+      #body_ftu .center {
         width: 95%; } }
-    #ftu .center:after {
+    #body_ftu .center:after {
       content: "";
       display: table;
       clear: both; }
+  #body_ftu .column {
+    box-sizing: border-box; }
+    @media screen and (min-width: 1024px) {
+      #body_ftu .column:nth-child(even) {
+        padding-right: 2%; } }
+    @media screen and (max-width: 639px) {
+      #body_ftu .column {
+        margin-bottom: 20px; } }
+  @media screen and (min-width: 1024px) {
+    #body_ftu .column-left {
+      width: 55%;
+      float: left; }
+    #body_ftu .column-right {
+      width: 43%;
+      float: right; } }
+
+#ftu {
+  color: #ddd;
+  padding: 30px 0; }
+  #ftu:after {
+    content: "";
+    display: table;
+    clear: both; }
   #ftu a {
     color: #ddd; }
   #ftu h2 {
@@ -147,21 +164,6 @@ header {
     width: 100%;
     margin-bottom: 20px;
     border: none; }
-  #ftu .column {
-    box-sizing: border-box; }
-    @media screen and (min-width: 1024px) {
-      #ftu .column:nth-child(even) {
-        padding-right: 2%; } }
-    @media screen and (max-width: 639px) {
-      #ftu .column {
-        margin-bottom: 20px; } }
-  @media screen and (min-width: 1024px) {
-    #ftu .column-left {
-      width: 55%;
-      float: left; }
-    #ftu .column-right {
-      width: 43%;
-      float: right; } }
   #ftu .forgot, #ftu .forgotBack {
     padding: 10px;
     display: inline-block;
@@ -171,9 +173,37 @@ header {
 #ftuPosts {
   box-shadow: 0px -8px 90px 40px rgba(0, 0, 0, 0.9);
   background: #000;
+  opacity: 0.8;
+  margin-top: 40px;
+  padding: 20px 0;
   display: block;
   width: 100%;
   color: #fff; }
+  #ftuPosts .post {
+    background: #111;
+    width: 95%; }
+  #ftuPosts h2 {
+    font-weight: 100;
+    margin: 0 0 20px 0;
+    padding: 0; }
+  #ftuPosts .ftuTags ul li {
+    display: inline; }
+    #ftuPosts .ftuTags ul li a {
+      padding: 10px;
+      display: inline-block;
+      background: #111;
+      margin: 5px 0; }
+      #ftuPosts .ftuTags ul li a:hover {
+        background: #222; }
+
+#ftuFooter {
+  background: #000;
+  border-top: 1px solid #a00000;
+  padding: 20px; }
+  #ftuFooter a {
+    color: #fff; }
+    #ftuFooter a:hover {
+      text-decoration: underline; }
 
 /* Basics */
 body {
@@ -190,7 +220,8 @@ a {
   color: #a00000;
   text-decoration: none; }
   a:hover {
-    text-decoration: none; }
+    text-decoration: none;
+    color: #a00000; }
 
 textarea, input {
   outline: none; }

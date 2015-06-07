@@ -56,6 +56,11 @@ def login(request):
 
 	if request.user.is_authenticated():
 		return HttpResponseRedirect('/twittur/')
+		
+	active_page = "ftu"
+		
+	# Public Messages: TODO Filtern!
+	message_list = Message.objects.all().order_by('-date')
 
 	# login
 	if request.method == "GET":
@@ -73,7 +78,7 @@ def login(request):
 			else:
 				error_login = "- Ups, Username oder Passwort falsch."
 				active_toggle = "active_toggle"
-				return render(request, 'ftu.html', { 'error_login' : error_login } )
+				return render(request, 'ftu.html', { 'error_login' : error_login, 'message_list':message_list, 'active_page':active_page } )
 
 	# Registration
 	if request.method == 'POST':
@@ -140,7 +145,11 @@ def login(request):
 			return render(request, 'ftu.html', { 'error_reg_user_n': error_reg_user_n, 'rActive': 'active' })
 
 
-	context = { 'active_page' : 'ftu', 'nav': Nav.nav}
+	
+
+	
+
+	context = { 'active_page' : 'ftu', 'nav': Nav.nav, 'message_list' : message_list}
 	return render(request, 'ftu.html', context)
 
 # logout

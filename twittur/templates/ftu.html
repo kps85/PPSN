@@ -100,7 +100,37 @@
 		
 	</div>
 </div>
-<div id="ftuPosts" class="full-page">
-	Hier kommen dann die öffentlichen Posts rein.
+{% if message_list %}
+	<div id="ftuPosts" class="full-page-nomobile">
+		<div class="center">
+			<div class="column column-left">
+				<h2>&Ouml;ffentliche Nachrichten</h2>
+				<div class="messages">
+				    
+				      {% for message in message_list %}
+				        {% include "message_box.html" with message=message  %}
+				      {% endfor %}
+				    
+				</div>
+			</div>
+			<div class="column column-right ftuTags">
+				<h2>Beliebte Themen</h2>
+				<ul>
+					<li><a href="#">#yolo</a></li>
+					<li><a href="#">#swag</a></li>
+					<li><a href="#">#wprnervt</a></li>
+					<li><a href="#">#burgerindermensa</a></li>
+					<li><a href="#">#prokrastination</a></li>
+					<li><a href="#">#montag</a></li>
+					<li><a href="#">#telbrennt</a></li>
+			</div>
+		</div>
+	</div>
+{% endif %}
+<div id="ftuFooter">
+	<div class="center">
+		<a href="#">Impressum</a>
+	</div>
 </div>
+
 {% include 'footer.html' %}
