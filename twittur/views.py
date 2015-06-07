@@ -329,10 +329,13 @@ def msgDialog(request):
             # Step 1: replace all # and @ with link
             for word in text.split():
                 if word[0] == "#":
-                    list.append(word)
-                    href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                    print "# Step 1: " + word.encode("utf-8")
-                    msgForm.instance.text = msgForm.instance.text.replace(word, href)
+                    if "/" in word:
+                        pass
+                    else:
+                        list.append(word)
+                        href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
+                        print "# Step 1: " + word.encode("utf-8")
+                        msgForm.instance.text = msgForm.instance.text.replace(word, href)
                 if word[0] == "@":
                     try:
                         user = User.objects.get(username__exact=word[1:])
