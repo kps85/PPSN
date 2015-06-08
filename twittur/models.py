@@ -86,7 +86,7 @@ class IsInGroup(models.Model):
 
 
 class FAQ(models.Model):
-    author = models.CharField(max_length=25)
+    author = models.ForeignKey( settings.AUTH_USER_MODEL )
     question = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     answer = models.TextField(max_length=1000)
