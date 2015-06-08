@@ -11,11 +11,11 @@ from .models import User, UserProfile, Message, FAQ, Hashtag
 class RegistrationUserForm(forms.Form):
     class Meta:
         model = User
-        fields = [ 'firstname', 'username', 'email', 'password', 'ack_password', 'last_name' ]
+        fields = ['firstname', 'username', 'email', 'password', 'ack_password', 'last_name']
 
 
 class UserForm(ModelForm):
-	ack_password = forms.CharField(max_length=128, widget = forms.PasswordInput, required=False)
+	ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
 
 	class Meta:
 		model = User
@@ -105,7 +105,8 @@ class MessageForm(ModelForm):
 		self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
 		self.fields['text'].widget.attrs['class'] = 'form-control'
 
-class FAQForm (ModelForm):
+
+class FAQForm(ModelForm):
 	class Meta:
 		model = FAQ
 		fields = ['author', 'question', 'category', 'answer']

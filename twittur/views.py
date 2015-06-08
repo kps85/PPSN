@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate
 from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message, FAQ, Hashtag
 from .forms import UserForm, UserDataForm, MessageForm, FAQForm
+from django.db.models import Count
 
 
 # startpage
@@ -30,22 +31,26 @@ def index(request):
         else:
             success_msg = 'Nachricht erfolgreich gesendet!'
 
-    # print(request.user)
+
     current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
     user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
     atTag = '@' + request.user.username + ' '
-    # print (atTag)
+
     message_list = Message.objects.all().select_related('user__userprofile') \
         .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
 
-    # print(message_list)
+    print(message_list)
     message_list = Message.objects.all().order_by('-date')
 
     group_list = Group.objects.all()
+    hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')).order_by('-hashtag_count')[:5]
+
+    print("hello")
+    print (hashtag_list)
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgDialog(request),
-               'success_msg': success_msg}
+               'success_msg': success_msg, 'hashtag_list': hashtag_list }
     return render(request, 'index.html', context)
 
 
@@ -171,7 +176,8 @@ def profile(request, user):
     message_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
         Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
-    ).order_by('-date')
+    ).order_by('-date').distinct()
+    print(message_list)
 
     context = {'curUser': curUser,
                'curUserProfile': curUserProfile,
@@ -307,9 +313,10 @@ def msgDialog(request):
     if request.method == 'POST':
         msgForm = MessageForm(request.POST)
         if msgForm.is_valid():
+            msgForm.save()
             text = msgForm.instance.text
 
-            # for setting database later
+            # for debug
             list = []
 
             # Step 1: replace all # and @ with link
@@ -320,6 +327,15 @@ def msgDialog(request):
                     if "/" in word:
                         pass
                     else:
+
+                        try:
+                            hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
+                        except ObjectDoesNotExist:
+                            print("ich war hier")
+                            hashtag = Hashtag(name=str(word[1:]))
+                            hashtag.save()
+
+                        msgForm.instance.hashtags.add(hashtag)
                         list.append(word)
                         href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
                         msgForm.instance.text = msgForm.instance.text.replace(word, href)
@@ -333,12 +349,13 @@ def msgDialog(request):
                     except ObjectDoesNotExist:
                         pass
                     else:
+                        user = User.objects.get(username__exact=str(word[1:]))
+                        msgForm.instance.attags.add(user)
                         list.append(word)
                         href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                         msgForm.instance.text = msgForm.instance.text.replace(word, href)
             # save this shit for the next step
-            msgForm.save()
-
+            '''
             # Step 2: add # and @ related with message in database
             for word in list:
                 # check first whether #word exist in database. true: add to message, false: create hashtag then add
@@ -353,6 +370,7 @@ def msgDialog(request):
                 if word[0] == "@":
                     user = User.objects.get(username__exact=str(word[1:]))
                     msgForm.instance.attags.add(user)
+            '''
             msgForm.save()
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
@@ -369,8 +387,7 @@ def search(request):
     message_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
         Q(text__contains=search) | Q(user__username__contains=search)
-    ).order_by('-date')
-
+    ).order_by('-date').distinct('text')
     context = {
         'search': search,
         'message_list': message_list,
@@ -397,3 +414,5 @@ def hashtag(request, text):
         'msgForm': msgDialog(request),
     }
     return render(request, 'search.html', context)
+
+# @*.tu-berlin.de mailbox, mail,

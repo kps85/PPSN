@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block list %}
-	{% if group_list %}
+	{% if hashtag_list %}
     <ul class="groups">
-      <h3>Meine Gruppen</h3>
-      {% for group in group_list %}
+      <h3>Heiße Themen</h3>
+      {% for hashtag in hashtag_list %}
       <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-        <a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! --> 
-        <a class="dashicons dashicons-edit" href="#"></a> </li>
+        <a href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
+
       {% endfor %}
     </ul>
   {% endif %}
