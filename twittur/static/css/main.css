@@ -140,20 +140,19 @@ header {
       color: #fff; }
   #ftu .superDropdown .superDropdownList {
     box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     color: #333;
     margin-left: 0px;
     margin-top: -5px; }
     #ftu .superDropdown .superDropdownList .superSubOpener {
       padding: 10px; }
       #ftu .superDropdown .superDropdownList .superSubOpener:hover {
-        background: #555;
-        color: #fff;
+        background: #ddd;
         cursor: pointer; }
     #ftu .superDropdown .superDropdownList ul li {
       padding: 10px 30px; }
       #ftu .superDropdown .superDropdownList ul li:hover {
-        background: #555;
+        background: #eee;
         cursor: pointer; }
   #ftu .login:after {
     content: "";
