@@ -1,10 +1,10 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600);
 nav {
   background: #2F313F;
-  color: #697584;
+  color: #9da7b2;
   border-right: 1px solid #383C4C; }
   nav a {
-    color: #697584; }
+    color: #9da7b2; }
     nav a:hover {
       color: #fff; }
     nav a.active {
@@ -21,7 +21,7 @@ nav {
       color: #fff;
       background: #1F212E; }
     #list ul a {
-      color: #738090; }
+      color: #818d9b; }
       #list ul a:hover {
         color: #fff; }
 
@@ -89,13 +89,12 @@ header {
     padding: 0;
     margin-bottom: 20px;
     display: inline-block;
-    color: #333;
+    color: #888;
     margin-right: 15px;
     border-bottom: 1px solid transparent; }
     #ftu h2.active {
-      color: #fff; }
-      #ftu h2.active:hover {
-        border-bottom: 1px solid #fff; }
+      color: #fff;
+      border-bottom: 1px solid #222; }
     #ftu h2:hover {
       cursor: pointer;
       border-bottom: 1px solid #333; }
@@ -165,7 +164,7 @@ header {
     margin-bottom: 20px;
     border: none; }
   #ftu .forgot, #ftu .forgotBack {
-    padding: 10px;
+    padding: 12px;
     display: inline-block;
     float: right;
     margin-top: 5px; }
@@ -528,5 +527,21 @@ header {
 .profilePictures img {
   display: inline;
   vertical-align: bottom; }
+
+.copy {
+  font-size: .6em; }
+  .copy a {
+    color: #a00000;
+    font-size: 1.2em; }
+    .copy a:hover {
+      color: #F50000; }
+
+.infoMessage .glyphicon-remove:hover {
+  cursor: pointer; }
+
+.postFoot {
+  margin-top: 10px; }
+  .postFoot a {
+    margin-right: 15px; }
 
 /*# sourceMappingURL=main.css.map */

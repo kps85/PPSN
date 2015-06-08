@@ -458,3 +458,28 @@ $iconWidth:50px;
 	}
 }
 
+// ???
+
+.copy { 
+	font-size: .6em; 
+	a { 
+		color: #a00000; 
+		font-size: 1.2em; 
+		&:hover { 
+			color: #F50000; 
+		}
+	}
+}
+
+.infoMessage .glyphicon-remove:hover { 
+	cursor: pointer; 
+}
+
+.postFoot { 
+	margin-top: 10px; 
+	a { 
+		margin-right: 15px; 
+	}
+	
+}
+
