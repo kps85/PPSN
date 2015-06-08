@@ -13,6 +13,7 @@ from django.contrib import auth
 from .models import UserProfile, Group, Nav, Message, FAQ, Hashtag
 from .forms import UserForm, UserDataForm, MessageForm, FAQForm
 from django.db.models import Count
+import copy
 
 
 # startpage
@@ -36,17 +37,17 @@ def index(request):
     user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
     atTag = '@' + request.user.username + ' '
 
-    message_list = Message.objects.all().select_related('user__userprofile') \
+    dbmessage_list = Message.objects.all().select_related('user__userprofile') \
         .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
 
-    print(message_list)
-    message_list = Message.objects.all().order_by('-date')
-
-    group_list = Group.objects.all()
     hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')).order_by('-hashtag_count')[:5]
 
-    print("hello")
-    print (hashtag_list)
+    message_list = []
+    for message in dbmessage_list:
+        copy_message = copy.copy(message)
+        message_list.append(dbm_to_m(copy_message))
+    message_list = zip(message_list, dbmessage_list)
+
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgDialog(request),
@@ -88,7 +89,7 @@ def login(request):
 
         query_dict = request.POST
         error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
-        error_reg_userprofile_ad, error_reg_userprofile_nr = None, None, None, None, None, None, None
+        error_reg_userprofile_ad, error_reg_userprofile_nr, error_reg_mail = None, None, None, None, None, None, None, None
         studentNumber = 0
 
         try:
@@ -104,26 +105,32 @@ def login(request):
             if password != ack_password:
                 error_reg_user_p = " - Passw&ouml;rter sind nicht gleich."
 
+            email = query_dict.get('email')
+
+            mail = email.split('@')
+            if len(mail) == 1 or (not mail[1].endswith(".tu-berlin.de")):
+                    error_reg_mail = "Junge, gib Tu mail ein!"
+
+            if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
+                studentNumber = query_dict.get('studentNumber')
+
             # context for html
-            context = {'active_page': 'index',
-                       'nav': Nav.nav,
+            context = {
                        'error_reg_user': error_reg_user,
                        'error_reg_userprofile_e': error_reg_userprofile_e,
+                       'error_reg_mail': error_reg_mail,
                        'error_reg_user_n': error_reg_user_n,
                        'error_reg_user_p': error_reg_user_p,
                        'error_reg_userprofile_ad': error_reg_userprofile_ad,
                        'error_reg_userprofile_nr': error_reg_userprofile_nr,
-                       'rActive': 'active'
+                       'rActive': 'active',
+                       'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list
                        }
             # error?
-            if error_reg_userprofile_ad or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
+            if error_reg_userprofile_ad or error_reg_mail or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
                 return render(request, 'ftu.html', context)
 
             # fill the rest for modal User and Userprofile
-            email = query_dict.get('email')
-            if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
-                studentNumber = query_dict.get('studentNumber')
-            academicDiscipline = query_dict.get('academicDiscipline')
             first_name = query_dict.get('first_name')
             last_name = query_dict.get('last_name')
 
@@ -144,7 +151,7 @@ def login(request):
         # case if username is taken (checkUsername == user)
         else:
             error_reg_user_n = "Sorry, Username ist vergeben."
-            return render(request, 'ftu.html', {'error_reg_user_n': error_reg_user_n, 'rActive': 'active'})
+            return render(request, 'ftu.html', {'active_page': 'ftu', 'nav': Nav.nav, 'error_reg_user_n': error_reg_user_n, 'error_reg_mail': error_reg_mail, 'rActive': 'active'})
 
     context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
     return render(request, 'ftu.html', context)
@@ -173,16 +180,22 @@ def profile(request, user):
     user_list = User.objects.all()
     group_list = Group.objects.all()
 
-    message_list = Message.objects.all().select_related('user__userprofile') \
+    dbmessage_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
         Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
     ).order_by('-date').distinct()
-    print(message_list)
+
+    message_list = []
+    for message in dbmessage_list:
+        copy_message = copy.copy(message)
+        message_list.append(dbm_to_m(copy_message))
+    message_list = zip(message_list, dbmessage_list)
 
     context = {'curUser': curUser,
                'curUserProfile': curUserProfile,
                'active_page': 'profile',
                'profileUser': user,
+               'dbmessage_list': dbmessage_list,
                'user_list': user_list,
                'group_list': group_list,
                'nav': Nav.nav,
@@ -321,13 +334,11 @@ def msgDialog(request):
 
             # Step 1: replace all # and @ with link
             for word in text.split():
-
-                # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
+                # find all words starts with "#". No "/" allowed in hashtag.
                 if word[0] == "#":
                     if "/" in word:
                         pass
                     else:
-
                         try:
                             hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
                         except ObjectDoesNotExist:
@@ -337,23 +348,15 @@ def msgDialog(request):
 
                         msgForm.instance.hashtags.add(hashtag)
                         list.append(word)
-                        href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                        msgForm.instance.text = msgForm.instance.text.replace(word, href)
-
                 # now find in text all words start with "@". Its important to find this user in database.
-                # if this user doesnt exist -> no need to set a link
-                # else we will set a link to his profile
                 if word[0] == "@":
                     try:
-                        user = User.objects.get(username__exact=word[1:])
+                        user = User.objects.get(username__exact=str(word[1:]))
                     except ObjectDoesNotExist:
                         pass
                     else:
-                        user = User.objects.get(username__exact=str(word[1:]))
                         msgForm.instance.attags.add(user)
                         list.append(word)
-                        href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
-                        msgForm.instance.text = msgForm.instance.text.replace(word, href)
             # save this shit for the next step
             '''
             # Step 2: add # and @ related with message in database
@@ -403,8 +406,13 @@ def hashtag(request, text):
     search = text
 
     # filter all messages contain #
-    message_list = Message.objects.all().filter(hashtags__name=search)
-    print(message_list)
+    dbmessage_list = Message.objects.all().filter(hashtags__name=search)
+    message_list = []
+    for message in dbmessage_list:
+        copy_message = copy.copy(message)
+        message_list.append(dbm_to_m(copy_message))
+    message_list = zip(message_list, dbmessage_list)
+
     context = {
 
         'search': "#" + search,
@@ -415,4 +423,28 @@ def hashtag(request, text):
     }
     return render(request, 'search.html', context)
 
-# @*.tu-berlin.de mailbox, mail,
+def dbm_to_m(message):
+    # for debug
+    hashtag_list = message.hashtags.all()
+    attag_list = message.attags.all()
+    list =[]
+    print (hashtag_list)
+    print(attag_list)
+    if attag_list or hashtag_list:
+        for word in message.text.split():
+
+            # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
+            if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
+                list.append(word)
+                href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
+                message.text = message.text.replace(word, href)
+
+            # now find in text all words start with "@". Its important to find this user in database.
+            # if this user doesnt exist -> no need to set a link
+            # else we will set a link to his profile
+            if word[0] == "@" and (User.objects.get(username=word[1:]) in attag_list):
+                    list.append(word)
+                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+                    message.text = message.text.replace(word, href)
+        print(list)
+    return message
