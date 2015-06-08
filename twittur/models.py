@@ -3,12 +3,11 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models.signals import post_save
 
-
 #### Entitys
-
 # - user
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
+
 
     studentNumber = models.CharField( max_length = 6, default = '000000',
                                       help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')

@@ -7,6 +7,24 @@ from django.forms import ModelForm
 
 from .models import User, UserProfile, Message, FAQ, Hashtag
 
+AD_CHOICES = (
+    ('Fakult&auml;t I', 'Fakult&auml;t I'),
+    ('Fakult&auml;t II', 'Fakul&auml;t II'),
+    ('Fakult&auml;t III', 'Fakult&auml;t III'),
+    ('Fakult&auml;t IV', (
+        ('Automotive Systems', 'Automotive Systems'),
+        ('Computational Neuroscience', 'Computational Neuroscience'),
+        ('Elektrotechnik', 'Elektrotechnik'),
+        ('ICT Innovation', 'ICT Innovation'),
+        ('Informatik', 'Informatik'),
+        ('Medieninformatik', 'Medieninformatik'),
+        ('Technische Informatik', 'Technische Informatik'),
+        ('Wirtschaftsinformatik', 'Wirtschaftsinformatik'),
+    ),
+    ('Fakult&auml;t V', 'Fakult&auml;t V'),
+    ('Fakult&auml;t VI', 'Fakult&auml;t VI'),
+    ('Fakult&auml;t VII', 'Fakult&auml;t VII'),)
+)
 
 class RegistrationUserForm(forms.Form):
     class Meta:
@@ -64,13 +82,17 @@ class UserDataForm(ModelForm):
 		super(UserDataForm, self).__init__(*args, **kwargs)
 		self.fields['location'].required = False
 		self.fields['studentNumber'].widget = forms.TextInput()
+		self.fields['academicDiscipline'].widget = forms.ChoiceField( choices=AD_CHOICES, attrs=self.fields['academicDiscipline'].widget.attrs )
 		for field in self.fields:
 			if field != 'picture':
 				if field != 'studentNumber':
 					self.fields[field].widget.attrs['class'] = 'form-control'
 				else:
 					self.fields[field].widget.attrs['class'] = 'form-control checkNumeric'
-			self.fields[field].widget.attrs['value'] = getattr(instance, field)
+			if field != 'academicDiscipline':
+				self.fields[field].widget.attrs['value'] = getattr(instance, field)
+			else:
+				self.fields['academicDiscipline'].initial = getattr(instance, field)
 
 	# validation: check after submit before save
 	def clean_picture(self):

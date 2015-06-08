@@ -13,7 +13,6 @@ class FAQAdmin(admin.ModelAdmin):
         ('Autor',               {'fields': ['author']}),
     ]
     list_display = ('question', 'category', 'author')
-    form = FAQForm
 
 UserAdmin.list_display = ('username' ,'email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
 
