@@ -113,10 +113,10 @@ class FAQForm(ModelForm):
 
 	def __init__(self, *args, **kwargs):
 		super(FAQForm, self).__init__(*args, **kwargs)
-		self.fields['author'].widget = forms.HiddenInput()
 		if 'instance' in kwargs:
+			self.fields['author'].widget = forms.HiddenInput()
 			user = kwargs.get('instance')
-			self.fields['author'].widget.attrs['value'] = user.username
+			self.fields['author'].initial = user.id
 		self.fields['question'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Frage'})
 		catChoices = (
 			('Allgemeine Frage', 'Allgemeine Frage'),

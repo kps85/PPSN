@@ -237,12 +237,13 @@ def faq(request):
 
     faqForm = FAQForm(instance=request.user)
 
-    FAQs = FAQ.objects.all()
     faqMain = FAQ.objects.filter(category='Allgemeine Frage')
     faqStart = FAQ.objects.filter(category='Startseite')
     faqProfile = FAQ.objects.filter(category='Profilseite')
     faqInfo = FAQ.objects.filter(category='Infoseite')
     faqSettings = FAQ.objects.filter(category='Einstellungen')
+
+    FAQs = [faqMain, faqStart, faqProfile, faqInfo, faqSettings]
 
     context = {
         'active_page': 'info',
@@ -254,6 +255,7 @@ def faq(request):
         'faqProfile': faqProfile,
         'faqInfo': faqInfo,
         'faqSettings': faqSettings,
+        'FAQs': FAQs,
         'success_msg': success_msg,
         'error_msg': error_msg
     }
