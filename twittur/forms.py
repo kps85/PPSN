@@ -3,15 +3,16 @@ from django import forms
 from django.core.exceptions import ValidationError, FieldError
 from django.contrib.auth.hashers import make_password, is_password_usable
 from django.contrib.auth.models import User
-from django.forms import ModelForm
+from django.forms import ModelForm, ChoiceField
+from django.utils.safestring import mark_safe
 
 from .models import User, UserProfile, Message, FAQ, Hashtag
 
 AD_CHOICES = (
-    ('Fakult&auml;t I', 'Fakult&auml;t I'),
-    ('Fakult&auml;t II', 'Fakul&auml;t II'),
-    ('Fakult&auml;t III', 'Fakult&auml;t III'),
-    ('Fakult&auml;t IV', (
+    (mark_safe('Fakult&auml;t I'), ()),
+    (mark_safe('Fakult&auml;t II'), ()),
+    (mark_safe('Fakult&auml;t III'), ()),
+    (mark_safe('Fakult&auml;t IV'), (
         ('Automotive Systems', 'Automotive Systems'),
         ('Computational Neuroscience', 'Computational Neuroscience'),
         ('Elektrotechnik', 'Elektrotechnik'),
@@ -20,10 +21,10 @@ AD_CHOICES = (
         ('Medieninformatik', 'Medieninformatik'),
         ('Technische Informatik', 'Technische Informatik'),
         ('Wirtschaftsinformatik', 'Wirtschaftsinformatik'),
-    ),
-    ('Fakult&auml;t V', 'Fakult&auml;t V'),
-    ('Fakult&auml;t VI', 'Fakult&auml;t VI'),
-    ('Fakult&auml;t VII', 'Fakult&auml;t VII'),)
+    )),
+    (mark_safe('Fakult&auml;t V'), ()),
+    (mark_safe('Fakult&auml;t VI'), ()),
+    (mark_safe('Fakult&auml;t VII'), ()),
 )
 
 class RegistrationUserForm(forms.Form):
@@ -82,7 +83,7 @@ class UserDataForm(ModelForm):
 		super(UserDataForm, self).__init__(*args, **kwargs)
 		self.fields['location'].required = False
 		self.fields['studentNumber'].widget = forms.TextInput()
-		self.fields['academicDiscipline'].widget = forms.ChoiceField( choices=AD_CHOICES, attrs=self.fields['academicDiscipline'].widget.attrs )
+		self.fields['academicDiscipline'].widget = forms.Select(choices=AD_CHOICES)
 		for field in self.fields:
 			if field != 'picture':
 				if field != 'studentNumber':

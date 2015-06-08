@@ -1,19 +1,19 @@
-import datetime
+import copy, datetime
+from datetime import date
 
-from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from PPSN.settings import MEDIA_ROOT, MEDIA_URL
+from django.shortcuts import render
 
-from django.contrib.auth.models import User
-from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
-
-from django.contrib.auth import authenticate
 from django.contrib import auth
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.db.models import Count, Q
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
+
+from PPSN.settings import MEDIA_ROOT, MEDIA_URL
 from .models import UserProfile, Group, Nav, Message, FAQ, Hashtag
 from .forms import UserForm, UserDataForm, MessageForm, FAQForm
-from django.db.models import Count
-import copy
 
 
 # startpage
@@ -29,6 +29,11 @@ def index(request):
             curMsg = Message.objects.get(pk=request.POST['delMessage'])
             curMsg.delete()
             success_msg = 'Nachricht gel&ouml;scht!'
+        elif 'updateMsg' in request.POST:
+            curMsg = Message.objects.get(pk=request.POST['updateMsg'])
+            curMsg.text = request.POST['updatedText']
+            curMsg.save()
+            success_msg = 'Nachricht erfolgreich aktualisiert!'
         else:
             success_msg = 'Nachricht erfolgreich gesendet!'
 
@@ -37,13 +42,17 @@ def index(request):
     user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
     atTag = '@' + request.user.username + ' '
 
-    dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-        .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
+    #dbmessage_list = Message.objects.all().select_related('user__userprofile') \
+    #    .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
+    dbmessage_list = Message.objects.all().select_related('user__userprofile').order_by('-date')
 
     hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')).order_by('-hashtag_count')[:5]
 
+    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10), timezone.get_current_timezone());
     message_list = []
     for message in dbmessage_list:
+        if message.date > curDate:
+            message.editable = True
         copy_message = copy.copy(message)
         message_list.append(dbm_to_m(copy_message))
     message_list = zip(message_list, dbmessage_list)

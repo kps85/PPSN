@@ -64,7 +64,25 @@
 							<input type="text" name="first_name" placeholder="Vorname" id="first_name" /><br />
 							<input type="text" name="last_name" placeholder="Nachname" id="last_name" /><br />
 							<input type="text" name="email" placeholder="E-Mail *" id="email" required="required" /><br />
-							<input type="text" name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required" /><br />
+              <select name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required">
+              	<optgroup label="Fakult&auml;t I"></optgroup>
+              	<optgroup label="Fakult&auml;t II"></optgroup>
+              	<optgroup label="Fakult&auml;t III"></optgroup>
+              	<optgroup label="Fakult&auml;t IV">
+                	<option value="Automotive Systems">Automotive Systems</option>
+                  <option value="Computational Neuroscience">Computational Neuroscience</option>
+                  <option value="Elektrotechnik">Elektrotechnik</option>
+                  <option value="ICT Innovation">ICT Innovation</option>
+                  <option value="Informatik">Informatik</option>
+                  <option value="Medieninformatik">Medieninformatik</option>
+                  <option value="Technische Informatik">Technische Informatik</option>
+                  <option value="Wirtschaftsinformatik" selected="selected">Wirtschaftsinformatik</option>
+                </optgroup>
+              	<optgroup label="Fakult&auml;t V"></optgroup>
+              	<optgroup label="Fakult&auml;t VI"></optgroup>
+              	<optgroup label="Fakult&auml;t VII"></optgroup>
+              </select>
+							<!-- <input type="text" name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required" /><br /> -->
 							<input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" class="checkNumeric" /><br />
 						
 								{% if error_reg_userprofile_e %}

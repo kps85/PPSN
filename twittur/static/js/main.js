@@ -197,6 +197,18 @@ function initVarious() {
 	$(".hideInfo").click(function() {
 		$(this).parent("div").hide();
 	});
+	$(".showMsgEdit").click(function(e) {
+		var mID = $(this).attr("data-hint");
+		$(this).addClass("hidden");
+    $("#postText"+mID).addClass("hidden");
+    $("#postTextEdit"+mID).removeClass("hidden");    
+  });
+	$(".hideMsgEdit").click(function(e) {
+		var mID = $(this).attr("data-hint");
+		$(".showMsgEdit").removeClass("hidden");
+    $("#postText"+mID).removeClass("hidden");
+    $("#postTextEdit"+mID).addClass("hidden");
+  });
 }
 
 $(document).ready(function() {

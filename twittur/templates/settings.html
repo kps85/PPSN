@@ -51,26 +51,26 @@
         <h4>Accountverwaltung</h4>
       
           <div class="col-xs-12 form-group">
-              <label class="control-label" for="usernameInput">Username</label>
+              <label class="control-label" for="id_username">Username</label>
               {{ userForm.username }}
               <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
               {{ userForm.username.errors }}
           </div>
           
           <div class="col-xs-12 form-group">
-              <label class="control-label" for="emailInput">E-Mail</label>
+              <label class="control-label" for="id_email">E-Mail</label>
               {{ userForm.email }}
               {{ userForm.email.errors }}
           </div>
           
           <div class="col-xs-12 col-sm-6 form-group">
-              <label class="control-label" for="pw1Input">Passwort</label>
+              <label class="control-label" for="id_password">Passwort</label>
               {{ userForm.password }}
               {{ userForm.password.errors }}
           		<p class="help-block">Dein Passwort darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!</p>
           </div>    
           <div class="col-xs-12 col-sm-6 form-group pull-right">
-              <label class="control-label" for="pw2Input">Passwort bestätigen</label>
+              <label class="control-label" for="id_ack_password">Passwort bestätigen</label>
               {{ userForm.ack_password }}                
               {{ userForm.ack_password.errors }}
           </div>
@@ -82,31 +82,32 @@
         <h4>Pers&ouml;nliche Daten</h4>
           
           <div class="col-xs-12 col-sm-6 form-group">
-              <label class="control-label" for="vornameInput">Vorname</label>
+              <label class="control-label" for="id_first_name">Vorname</label>
               {{ userForm.first_name }}
               {{ userForm.first_name.errors }}
           </div>    
           <div class="col-xs-12 col-sm-6 form-group pull-right">
-              <label class="control-label" for="nachnameInput">Nachname</label>
+              <label class="control-label" for="id_last_name">Nachname</label>
               {{ userForm.last_name }}
               {{ userForm.last_name.errors }}
           </div>
       
           <div class="col-xs-12 form-group">
-			  {{ userDataForm.academicDiscipline }}
+              <label class="control-label" for="id_academicDiscipline">Studiengang</label>
+			  			{{ userDataForm.academicDiscipline }}
               <p class="help-block">{{ userDataForm.academicDiscipline.help_text|safe }}</p>
               {{ userDataForm.academicDiscipline.errors }}
           </div>
       
           <div class="col-xs-12 form-group">
-              <label class="control-label" for="matrikelNummerInput">Matrikel-Nummer</label>
+              <label class="control-label" for="id_studentNumber">Matrikel-Nummer</label>
               {{ userDataForm.studentNumber }}
               <p class="help-block">{{ userDataForm.studentNumber.help_text|safe }}</p>
               {{ userDataForm.studentNumber.errors }}
           </div>
       
           <div class="col-xs-12 form-group">
-              <label class="control-label" for="wohnortInput">Wohnort</label>
+              <label class="control-label" for="id_location">Wohnort</label>
               {{ userDataForm.location }}
               <p class="help-block">{{ userDataForm.location.help_text|safe }}</p>
               {{ userDataForm.location.errors }}
