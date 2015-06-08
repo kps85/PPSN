@@ -400,14 +400,14 @@ def search(request):
 
 # click on hashtaglinks will redirect to this function.
 def hashtag(request, text):
-    search = "#" + text
+    search = text
 
     # filter all messages contain #
     message_list = Message.objects.all().filter(hashtags__name=search)
     print(message_list)
     context = {
 
-        'search': search,
+        'search': "#" + search,
         'message_list': message_list,
         'active_page': 'settings',
         'nav': Nav.nav,
