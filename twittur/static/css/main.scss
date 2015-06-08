@@ -479,7 +479,27 @@ $iconWidth:50px;
 	margin-top: 10px; 
 	a { 
 		margin-right: 15px; 
+	}	
+}
+
+// Super Dropdown
+.superDropdown {
+	@include unselectable;
+	p {
+		margin:0;
+		padding:0;
 	}
 	
+	.superDropdownList {
+		cursor:default;
+		position:absolute;
+		z-index:4000;
+		background:transparent;
+		opacity:1.0;
+		ul li {
+			padding-left:20px;
+			
+		}
+	}
 }
 

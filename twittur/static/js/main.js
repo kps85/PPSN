@@ -44,7 +44,6 @@ function initFtu() {
 			$(".loginBox").fadeIn(tspeed);
 		});
 	})
-	
 }
 
 // Menue
@@ -192,6 +191,8 @@ function initSupport() {
 	}
 }
 
+
+
 function initVarious() {
 	// Hide Info Button
 	$(".hideInfo").click(function() {
@@ -209,6 +210,62 @@ function initVarious() {
     $("#postText"+mID).removeClass("hidden");
     $("#postTextEdit"+mID).addClass("hidden");
   });
+  
+  $(".superDropdown").each(function() {
+	  var $select = $(this);
+	  $(this).hide();
+	  var name = $(this).attr('placeholder');
+	  var $div = $("<div>", {'class':'superDropdown'});
+	  var $mainP = $("<p>", {'text':name});
+	  var $mainUl = $("<ul>", {'class':'superDropdownList'});
+	  $mainUl.hide();
+	  $mainP.appendTo($div);
+	  $mainUl.appendTo($div);
+	  
+	  
+	  // Hack fuer Loginbox
+	  $("#show_register").click(function() {
+		  
+	  });
+	  
+	  $(this).children("optgroup").each(function() {
+		  var $ul = $("<ul>", {'class':'superDropdownSub'});
+		  var $p = $("<p>", {'class':'superSubOpener', 'text':$(this).attr('label')});
+		  
+		  $ul.hide();
+		  $p.click(function() {
+			  
+			  var visible = $ul.is(":visible");
+			  $(".superDropdownSub").hide();
+			  if(!visible) {
+				  $ul.toggle();
+			  }
+		  })
+		  $(this).children("option").each(function() {
+			var $li = $("<li>", {'text': $(this).val()});
+			$li.click(function() {
+				$select.val($(this).text());
+				$mainUl.fadeOut(0);
+				$mainP.text($(this).text());
+				$mainP.addClass("active");
+				$mainP.removeClass("opened");
+			})
+			$li.appendTo($ul);
+		  });
+		  $p.appendTo($mainUl);
+		$ul.appendTo($mainUl);
+	  })
+	  $div.insertAfter($(this));
+	  
+	  $mainP.click(function() {
+		  var width = $mainP.innerWidth() +2;
+			$mainUl.width(width);
+		  $mainUl.fadeToggle(0);
+		  $(this).toggleClass("opened");
+	  })
+	  
+  });
+  
 }
 
 $(document).ready(function() {
