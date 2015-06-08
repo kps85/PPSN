@@ -33,7 +33,7 @@
     <h2>Suchergebnisse für "{{ search }}"</h2>
   </div>  
   {% if message_list  %}
-    {% for message in message_list %}
+    {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user  %}
     {% endfor %}
 
