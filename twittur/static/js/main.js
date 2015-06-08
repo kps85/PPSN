@@ -160,7 +160,6 @@ function initInputValidation() {
 	})
 
 
-	validateFtu();
 	if($("#ftu").length) {
 		validateFtu();
 	}
