@@ -133,6 +133,8 @@ def login(request):
             # fill the rest for modal User and Userprofile
             first_name = query_dict.get('first_name')
             last_name = query_dict.get('last_name')
+            academicDiscipline = query_dict.get('academicDiscipline')
+            studentNumber = query_dict.get('studentNumber')
 
             # create User and Userprofile
             user = User.objects.create_user(username, email, password)
