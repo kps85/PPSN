@@ -222,12 +222,6 @@ function initVarious() {
 	  $mainP.appendTo($div);
 	  $mainUl.appendTo($div);
 	  
-	  
-	  // Hack fuer Loginbox
-	  $("#show_register").click(function() {
-		  
-	  });
-	  
 	  $(this).children("optgroup").each(function() {
 		  var $ul = $("<ul>", {'class':'superDropdownSub'});
 		  var $p = $("<p>", {'class':'superSubOpener', 'text':$(this).attr('label')});

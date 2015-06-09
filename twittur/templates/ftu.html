@@ -5,7 +5,7 @@
 
 		<div class="column column-left">
 			<div class="headline">
-				twit<span>tu</span>r ist ein soziales Netzwerk f&uuml;r die TU Berlin.
+				twit<span>tu</span>r ist das soziale Netzwerk f&uuml;r die TU Berlin.
 			</div>
 			<div class="subline">
 				<p>Es hilft Dir, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Du den &Uuml;berblick verlierst. </p>
@@ -35,6 +35,7 @@
 							{% endif %}
 							<input type="submit" value="Los geht's!" name="login" />
 							<input type="reset" value="Zurücksetzen" />
+							<a class="forgot" href="javascript:;">Passwort vergessen?</a>
 						</form>
 						
 						
@@ -64,7 +65,7 @@
 							<input type="text" name="first_name" placeholder="Vorname" id="first_name" /><br />
 							<input type="text" name="last_name" placeholder="Nachname" id="last_name" /><br />
 							<input type="text" name="email" placeholder="E-Mail *" id="email" required="required" /><br />
-              <select name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required">
+              <select name="academicDiscipline" class="superDropdown" placeholder="Studiengang *" id="academicDiscipline" required="required">
               	<optgroup label="Fakult&auml;t I"></optgroup>
               	<optgroup label="Fakult&auml;t II"></optgroup>
               	<optgroup label="Fakult&auml;t III"></optgroup>
