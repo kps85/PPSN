@@ -28,6 +28,13 @@ $desktopWidth:1366px;
   }
 }
 
+@mixin tabletDesktop {
+    @media screen and (min-width:#{$phoneWidth}) {
+      @content;
+    }
+	
+}
+
 @mixin shadow($p) {
 	-webkit-box-shadow:$p;
 	-moz-box-shadow: $p;

@@ -258,7 +258,7 @@
 	
 	width:100%;
 	height:100%;
-	@include desktop {
+	@include tabletDesktop {
 		width:80%;
 		margin:0 auto;
 		margin-top:5%;
@@ -286,6 +286,10 @@
 	
 	
 	.superDropdown {
+		@include tablet {
+			margin-bottom:5px;
+		}
+		
 		
 		p {
 			color:#555;
