@@ -1,5 +1,12 @@
 
 <h3 class="text-uppercase" id="{{ list.0.category|lower }}">{{ list.0.category }}</h3>
+
+<ul class="faqList">
+{% for faq in list %}
+	<li><span class="glyphicon glyphicon-question-sign"></span> <a href="#{{ faq.question }}">{{ faq.question }}</a></li>
+{% endfor %}
+</ul>
+
 <div class="faqContainer container-fluid">
 {% for faq in list %}
   <div class="post">

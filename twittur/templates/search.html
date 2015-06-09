@@ -29,20 +29,47 @@
 {% endblock %}
 
 {% block content %}
-  <div class="post">
-    <h2>Suchergebnisse für "{{ search }}"</h2>
-  </div>  
+  <h2>Suchergebnisse für "{{ search }}"</h2>
+  {% if user_list %}
+  <h4> Folgende User wurden gefunden:</h4>
+  <div class="container-fluid">
+    {% for user in user_list %}
+<<<<<<< HEAD
+    <p class="search_user_result pull-left text-center">
+    	<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/><br />
+      {{ user.first_name }} {{ user.last_name }}<br />
+      (<a href="/twittur/profile/{{ user.username }}" >@{{ user.username }}</a>)
+=======
+    <p>
+        {{ user.first_name }} {{ user.last_name }}(<a href="/twittur/profile/{{ user.username }}" >@{{ user.username }}</a>)
+    </p>
+    {% endfor %}
+  {% endif  %}
+  {% if hashtag_list %}
+    <p> Folgende Hashtags wurden gefunden:</p>
+    {% for hashtag in hashtag_list %}
+    <p>
+        <a href="/twittur/hashtag/{{ hashtag }}">#{{ hashtag }}</a>
+>>>>>>> origin/dev
+    </p>
+    {% endfor %}
+  </div>
+  {% endif  %}
   {% if message_list  %}
+  <h4> Folgende Nachrichten wurden gefunden:</h4>
+  <div class="container-fluid">
     {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user  %}
     {% endfor %}
-
+  </div>
   {% elif hashtag_list %}
+  <h4> Folgende Hashtags wurden gefunden:</h4>
+  <div class="container-fluid">
     {% for message in hashtag_list %}
       {% include "message_box.html" with message=hashtag page=active_page user=user  %}
     {% endfor %}
+  </div>
   {% else %}
-
-    <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+  <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
   {% endif %}
 {% endblock %}
