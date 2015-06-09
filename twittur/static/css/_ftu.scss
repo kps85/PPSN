@@ -232,9 +232,23 @@
 	background:#F8F8F8;
 	display:none;
 	z-index:5000;
+	
+	@include desktop {
+		.column-left {
+			width:48%;
+			float:left;
+		}
+		.column-right {
+			width:48%;
+			float:right;
+		}
+	}
+	
+	
 	&.active {
 		display:block !important;
 	}
+	
 	position:fixed;
 	top:0;
 	left:0;
