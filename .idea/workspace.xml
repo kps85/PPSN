@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="88ab18aa-0f46-4975-a197-48b0dc6c1483" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/ftu.html" afterPath="$PROJECT_DIR$/twittur/templates/ftu.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/info_faq_box.html" afterPath="$PROJECT_DIR$/twittur/templates/info_faq_box.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/views.py" afterPath="$PROJECT_DIR$/twittur/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -30,8 +28,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/twittur/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.48306012">
-              <caret line="116" column="37" selection-start-line="116" selection-start-column="37" selection-end-line="116" selection-end-column="37" />
+            <state vertical-scroll-proportion="0.50163937">
+              <caret line="252" column="54" selection-start-line="252" selection-start-column="54" selection-end-line="252" selection-end-column="54" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -844,8 +842,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/twittur/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.48306012">
-          <caret line="116" column="37" selection-start-line="116" selection-start-column="37" selection-end-line="116" selection-end-column="37" />
+        <state vertical-scroll-proportion="0.50163937">
+          <caret line="252" column="54" selection-start-line="252" selection-start-column="54" selection-end-line="252" selection-end-column="54" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>

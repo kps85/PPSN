@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from django.contrib import auth
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -250,6 +250,11 @@ def settings(request):
             if userDataForm.is_valid():
                 userForm.save()
                 userDataForm.save()
+                if 'password' in request.POST and len(request.POST['password']) > 0:
+                    username = request.POST['username']
+                    password = request.POST['password']
+                    user = authenticate(username=username, password=password)
+                    auth.login(request, user)
                 success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
             else:
                 # return errors if userDataForm is not valid
