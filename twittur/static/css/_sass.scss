@@ -28,6 +28,12 @@ $desktopWidth:1366px;
   }
 }
 
+@mixin shadow($p) {
+	-webkit-box-shadow:$p;
+	-moz-box-shadow: $p;
+	box-shadow: $p;
+}
+
 // Clearfix
 @mixin clear {
   &:after {

@@ -95,15 +95,8 @@ header {
     padding: 0;
     margin-bottom: 20px;
     display: inline-block;
-    color: #888;
-    margin-right: 15px;
-    border-bottom: 1px solid transparent; }
-    #ftu h2.active {
-      color: #fff;
-      border-bottom: 1px solid #555; }
-    #ftu h2:hover {
-      cursor: pointer;
-      border-bottom: 1px solid #666; }
+    color: #fff;
+    margin-right: 15px; }
   #ftu #register {
     display: none; }
   #ftu input, #ftu .superDropdown > p {
@@ -134,38 +127,10 @@ header {
     margin-top: 5px; }
     #ftu input[type="submit"]:hover {
       opacity: 0.9; }
-  #ftu .superDropdown p {
-    color: #777; }
-  #ftu .superDropdown > p {
-    cursor: pointer; }
-    #ftu .superDropdown > p.opened {
-      color: #333 !important;
-      background: rgba(255, 255, 255, 0.99);
-      border: 1px solid rgba(255, 255, 255, 0.99); }
-    #ftu .superDropdown > p.active {
-      color: #fff; }
-  #ftu .superDropdown .superDropdownList {
-    box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.95);
-    color: #333;
-    margin-left: 0px;
-    margin-top: -5px; }
-    #ftu .superDropdown .superDropdownList .superSubOpener {
-      padding: 10px; }
-      #ftu .superDropdown .superDropdownList .superSubOpener:hover {
-        background: #ddd;
-        cursor: pointer; }
-    #ftu .superDropdown .superDropdownList ul li {
-      padding: 10px 30px; }
-      #ftu .superDropdown .superDropdownList ul li:hover {
-        background: #eee;
-        cursor: pointer; }
   #ftu .login:after {
     content: "";
     display: table;
     clear: both; }
-  #ftu .registerButton {
-    background: #00C88D !important; }
   #ftu .forgotSendButton {
     color: #333;
     background: #F8F8F8; }
@@ -202,17 +167,124 @@ header {
     #ftu .forgotBox a {
       color: #333; }
   #ftu .title {
-    float: none !important;
+    float: left !important;
     margin-left: 0 !important;
     background-image: url("img/logo_white.png") !important;
-    width: 100%;
+    width: 50%;
     margin-bottom: 20px;
-    border: none; }
+    border: none;
+    display: inline-block; }
+  #ftu .showRegister {
+    width: 50%;
+    display: inline-block;
+    text-align: right;
+    float: left;
+    font-size: 2em;
+    padding-right: 2%;
+    margin-top: 25px;
+    font-weight: 100; }
   #ftu .forgot, #ftu .forgotBack {
     padding: 12px;
     display: inline-block;
     float: right;
     margin-top: 5px; }
+
+#register {
+  -webkit-box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.66);
+  -moz-box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.66);
+  box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.66);
+  background: #F8F8F8;
+  display: none;
+  z-index: 5000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%; }
+  #register.active {
+    display: block !important; }
+  @media screen and (min-width: 1024px) {
+    #register {
+      width: 80%;
+      margin: 0 10%;
+      margin-top: 5%;
+      height: 80%; } }
+  #register input, #register .superDropdown > p {
+    padding: 10px;
+    border: 1px solid #E3E8EA;
+    margin-bottom: 5px;
+    background: #fff;
+    color: #333; }
+    #register input::-webkit-input-placeholder, #register .superDropdown > p::-webkit-input-placeholder {
+      /* WebKit browsers */
+      color: #555; }
+    #register input:-moz-placeholder, #register .superDropdown > p:-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: #555;
+      opacity: 1; }
+    #register input::-moz-placeholder, #register .superDropdown > p::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: #555;
+      opacity: 1; }
+    #register input:-ms-input-placeholder, #register .superDropdown > p:-ms-input-placeholder {
+      /* Internet Explorer 10+ */
+      color: #555; }
+  #register input[disabled] {
+    opacity: 0.6; }
+    #register input[disabled]:hover {
+      cursor: no-drop; }
+  #register .superDropdown p {
+    color: #555; }
+  #register .superDropdown > p {
+    background: #fff;
+    color: #555;
+    cursor: pointer; }
+    #register .superDropdown > p.opened {
+      color: #333 !important;
+      background: rgba(255, 255, 255, 0.99); }
+    #register .superDropdown > p.active {
+      color: #333; }
+  #register .superDropdown .superDropdownList {
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #E3E8EA;
+    border-top: none;
+    color: #333;
+    margin-left: 0px;
+    margin-top: -6px; }
+    #register .superDropdown .superDropdownList .superSubOpener {
+      padding: 10px; }
+      #register .superDropdown .superDropdownList .superSubOpener:hover {
+        background: #ddd;
+        cursor: pointer; }
+    #register .superDropdown .superDropdownList ul li {
+      padding: 10px 30px; }
+      #register .superDropdown .superDropdownList ul li:hover {
+        background: #eee;
+        cursor: pointer; }
+  #register input[type="submit"] {
+    color: #fff;
+    background: #FF0000;
+    margin-top: 5px; }
+    #register input[type="submit"]:hover {
+      opacity: 0.9; }
+  #register #registerButtons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px; }
+  #register .registerButton {
+    background: #00C88D !important; }
+  #register input[type="text"], #register input[type="password"] {
+    width: 100%; }
+  #register h1 {
+    margin: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    font-weight: 100; }
 
 #ftuPosts {
   box-shadow: 0px -8px 90px 40px rgba(0, 0, 0, 0.9);

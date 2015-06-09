@@ -65,22 +65,8 @@
 		padding:0;
 		margin-bottom:20px;
 		display:inline-block;
-		color:#888;
+		color:#fff;
 		margin-right:15px;
-		border-bottom:1px solid transparent;
-		&.active {
-			color:#fff;
-			border-bottom:1px solid #555;
-		}
-		
-		&:hover {
-			cursor:pointer;
-			border-bottom:1px solid #666;
-		}
-		
-		&:nth-child(even) {
-			
-		}
 	}
 
 	
@@ -112,51 +98,6 @@
 		}
 	}
 	
-	.superDropdown {
-		p {
-			color:#777;
-		}
-		
-		& > p {
-			
-			cursor:pointer;
-			&.opened {
-				color:#333 !important;
-				background:rgba(255,255,255,0.99);
-				border:1px solid rgba(255,255,255,0.99);
-			}
-			
-			&.active {
-				color:#fff;
-			}
-		}
-		.superDropdownList {
-			box-sizing:border-box;
-			background:rgba(255,255,255,0.95);
-			color:#333;
-			margin-left:0px;
-			margin-top:-5px;
-			
-			.superSubOpener {
-				padding:10px;
-				&:hover {
-					background:#ddd;
-					cursor:pointer;
-				}
-			}
-			
-			ul li {
-				padding:10px 30px;
-				&:hover {
-					background:#eee;
-					cursor:pointer;
-				}
-			}
-			
-		
-		}
-	}
-	
 	
 	
 	
@@ -164,9 +105,7 @@
 		@include clear;
 	}
 	
-	.registerButton {
-		background:#00C88D !important;
-	}
+
 	
 	.forgotSendButton {
 		color:#333;
@@ -223,12 +162,24 @@
 	}
 	
 	.title {
-		float:none !important;
+		float:left !important;
 		margin-left:0 !important;
 		background-image:url('img/logo_white.png') !important;
-		width:100%;
+		width:50%;
 		margin-bottom:20px;
 		border:none;
+		display:inline-block;
+	}
+	
+	.showRegister {
+		width:50%;
+		display:inline-block;
+		text-align:right;
+		float:left;
+		font-size:2em;
+		padding-right:2%;
+		margin-top:25px;
+		font-weight:100;
 	}
 	
 
@@ -239,6 +190,132 @@
 		float:right;
 		margin-top:5px;
 	}
+}
+
+
+#register {
+	@include shadow(0px 0px 0px 500px rgba(0,0,0,0.66));
+	background:#F8F8F8;
+	display:none;
+	z-index:5000;
+	&.active {
+		display:block !important;
+	}
+	position:fixed;
+	top:0;
+	left:0;
+	padding:20px;
+	overflow-y:scroll;
+	
+	width:100%;
+	height:100%;
+	@include desktop {
+		width:80%;
+		margin:0 10%;
+		margin-top:5%;
+		height:80%;
+	}
+	
+	
+	
+	input, .superDropdown > p {
+		padding:10px;
+		border:1px solid #E3E8EA;
+		margin-bottom:5px;
+		background:#fff;
+		color:#333;
+		@include placeholder(#555);
+	}
+	
+	input[disabled] {
+		opacity:0.6;
+		&:hover {
+			cursor:no-drop;
+		}
+	}
+	
+	
+	.superDropdown {
+		
+		p {
+			color:#555;
+		}
+		
+		& > p {
+			background:#fff;
+			color:#555;
+			cursor:pointer;
+			&.opened {
+				color:#333 !important;
+				background:rgba(255,255,255,0.99);
+				
+			}
+			
+			&.active {
+				color:#333;
+			}
+		}
+		.superDropdownList {
+			box-sizing:border-box;
+			background:rgba(255,255,255,0.95);
+			border:1px solid #E3E8EA;
+			border-top:none;
+			color:#333;
+			margin-left:0px;
+			margin-top:-6px;
+			
+			.superSubOpener {
+				padding:10px;
+				&:hover {
+					background:#ddd;
+					cursor:pointer;
+				}
+			}
+			
+			ul li {
+				padding:10px 30px;
+				&:hover {
+					background:#eee;
+					cursor:pointer;
+				}
+			}
+		}
+		
+		}
+	
+	input[type="submit"] {
+		color:#fff;
+		background:#FF0000;
+		margin-top:5px;
+		&:hover {
+			opacity:0.9
+		}
+	}
+	
+	#registerButtons {
+		position:absolute;
+		bottom:0;
+		right:0;
+		padding:10px;
+	}
+	
+	.registerButton {
+		background:#00C88D !important;
+	}
+	
+	
+	input[type="text"], input[type="password"] {
+		width:100%;
+	}
+	
+	h1 {
+		margin:0;
+		margin-bottom:20px;
+		padding-bottom:10px;
+		border-bottom:1px solid #eee;
+		font-weight:100;
+	}
+	
 }
 
 #ftuPosts {
