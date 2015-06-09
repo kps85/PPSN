@@ -23,10 +23,8 @@ def index(request):
 
     success_msg = None
 
-    user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
-    print(user)
+    current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
-    print(user_list)
     #    atTag = '@' + request.user.username + ' '
 
     if request.method == 'POST':
@@ -49,7 +47,7 @@ def index(request):
         message_list.append(dbm_to_m(copy_message))
     message_list = zip(message_list, dbmessage_list)
 
-    context = {'active_page': 'index', 'current_user': user, 'user_list': user_list,
+    context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgDialog(request),
                'success_msg': success_msg, 'hashtag_list': hashtag_list}
     return render(request, 'index.html', context)

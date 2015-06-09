@@ -70,20 +70,22 @@ def msgDialog(request):
 
 # edit or update Message
 def editMessage(request):
-    if 'delMessage' in request.POST:                                    # if Message should be deleted
-        curMsg = Message.objects.get(pk=request.POST['delMessage'])     # select Message
-        curMsg.delete()                                                 # delete selected Message
-        return 'Nachricht gel&ouml;scht!'                               # return info
+    if 'delMessage' in request.POST:                                        # if Message should be deleted
+        if Message.objects.filter(pk=request.POST['delMessage']).exists():  # if Message exists
+            curMsg = Message.objects.get(pk=request.POST['delMessage'])     # select Message
+            curMsg.delete()                                                 # delete selected Message
+        return 'Nachricht gel&ouml;scht!'                                   # return info
 
-    elif 'updateMsg' in request.POST:                                   # if Message should be updated
-        curMsg = Message.objects.get(pk=request.POST['updateMsg'])      # select Message
-        curMsg.text = request.POST['updatedText']                       # set Message text
-        msg_to_db(curMsg)                                               # ???
-        curMsg.save()                                                   # save and update Message
-        return 'Nachricht erfolgreich aktualisiert!'                    # return info
+    elif 'updateMsg' in request.POST:                                       # if Message should be updated
+        if Message.objects.filter(pk=request.POST['updateMsg']).exists():   # if Message exists
+            curMsg = Message.objects.get(pk=request.POST['updateMsg'])      # select Message
+            curMsg.text = request.POST['updatedText']                       # set Message text
+            msg_to_db(curMsg)                                               # ???
+            curMsg.save()                                                   # save and update Message
+        return 'Nachricht erfolgreich aktualisiert!'                        # return info
 
-    else:                                                               # if Message should be posted
-        return 'Nachricht erfolgreich gesendet!'                        # return info, cause post is in msgDialog()
+    else:                                                                   # if Message should be posted
+        return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
 
 
 # Message to database, save hashtags and attags in text into database

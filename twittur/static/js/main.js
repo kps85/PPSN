@@ -179,19 +179,27 @@ function initInputValidation() {
 }
 
 
-function initSupport() {
-	// ???
-	if ($('.supportCont').length > 0) {
-		var activeForm = (window.location.href.split("#"))[1];
-		$("#"+activeForm).removeClass('hidden');
+function initInfo() {
+	// Wechselt die Info Navi und blendet relevante Formulare (Nachricht, Kontaktformular) ein.
+	// Reagiert auf den hash in der aktiven URL	
+	if ($('#body_info').length > 0) {
+		
+		infoChange((window.location.href.split("#"))[1]);
+		
 		$(window).on("hashchange", function() {
-			var form = (window.location.href.split("#"))[1];
-			$(".supportCont").addClass('hidden');
-			$("#"+form).removeClass('hidden');
+			infoChange((window.location.href.split("#"))[1]);
 		});
+		
+	}
+	
+	function infoChange(hash) {		
+		$('.ullink.active').removeClass('active');
+		$('.'+hash).addClass('active');
+	
+		$(".supportCont").addClass('hidden');
+		$("#"+hash).removeClass('hidden');
 	}
 }
-
 
 
 function initVarious() {
@@ -199,6 +207,11 @@ function initVarious() {
 	$(".hideInfo").click(function() {
 		$(this).parent("div").hide();
 	});
+	$(".newMsg").click(function(e) {
+    setTimeout(function() {
+			$("#id_text").focus();
+		}, 500);
+  });
 	$(".showMsgEdit").click(function(e) {
 		var mID = $(this).attr("data-hint");
 		$(this).addClass("hidden");
@@ -273,7 +286,7 @@ $(document).ready(function() {
 	initMenu();
 	initList();
 	initFtu();
-	initSupport();
+	initInfo();
 	initInputValidation();
 	initVarious();
 	
