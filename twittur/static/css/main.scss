@@ -237,9 +237,10 @@ nav {
 		}
 		li {
 			display:block;
-			padding:4px 10px;
-			border-radius:5px;
+			
 			a {
+				padding:4px 10px;
+				border-radius:5px;
 				display:inline-block;
 				&:hover {
 					text-decoration:none;

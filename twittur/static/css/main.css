@@ -17,13 +17,13 @@ nav {
   color: #fff; }
   #list ul {
     border-color: #1F212E !important; }
-    #list ul li.active {
-      color: #fff;
-      background: #1F212E; }
     #list ul a {
       color: #818d9b; }
       #list ul a:hover {
         color: #fff; }
+      #list ul a.active {
+        color: #fff;
+        background: #1F212E; }
 
 .menuOpener .patty {
   border-color: #6D6D6E !important; }
@@ -499,10 +499,10 @@ nav a.menuCloser {
       font-weight: inherit;
       margin-bottom: 10px; }
     #list ul li {
-      display: block;
-      padding: 4px 10px;
-      border-radius: 5px; }
+      display: block; }
       #list ul li a {
+        padding: 4px 10px;
+        border-radius: 5px;
         display: inline-block; }
         #list ul li a:hover {
           text-decoration: none; }

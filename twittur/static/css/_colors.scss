@@ -29,15 +29,15 @@ nav {
 	
 	ul {
 		border-color:$listActive !important;
-		li.active {
-			color:#fff;
-			background:$listActive;
-		}
 		
 		a {
 			color:$listColor;
 			&:hover {
 				color:#fff;
+			}
+			&.active {
+				color:#fff;
+				background:$listActive;
 			}
 		}
 	}
