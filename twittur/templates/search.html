@@ -34,10 +34,23 @@
   <h4> Folgende User wurden gefunden:</h4>
   <div class="container-fluid">
     {% for user in user_list %}
+<<<<<<< HEAD
     <p class="search_user_result pull-left text-center">
     	<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/><br />
       {{ user.first_name }} {{ user.last_name }}<br />
       (<a href="/twittur/profile/{{ user.username }}" >@{{ user.username }}</a>)
+=======
+    <p>
+        {{ user.first_name }} {{ user.last_name }}(<a href="/twittur/profile/{{ user.username }}" >@{{ user.username }}</a>)
+    </p>
+    {% endfor %}
+  {% endif  %}
+  {% if hashtag_list %}
+    <p> Folgende Hashtags wurden gefunden:</p>
+    {% for hashtag in hashtag_list %}
+    <p>
+        <a href="/twittur/hashtag/{{ hashtag }}">#{{ hashtag }}</a>
+>>>>>>> origin/dev
     </p>
     {% endfor %}
   </div>

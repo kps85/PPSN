@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from .functions import dbm_to_m
-from .models import Message, Nav, UserProfile
+from .models import Message, Nav, UserProfile, Hashtag
 from .views import msgDialog
 from django.contrib.auth.models import User
 
@@ -22,6 +22,8 @@ def search(request):
     # search_input contains @ -> cut @ off and set flag
     # the reason behind this is we save username instead of @username, so if someone is looking for
     # @kps for example, we wont find him, because the database don't know him
+    if search_input[0] == "#":
+        hashtag(request, search_input)
     if search_input[0] == "@":
         attag = True
         search_input = search_input[1:]
@@ -41,6 +43,7 @@ def search(request):
                 | Q(first_name__contains=search_input)
                 | Q(last_name__contains=search_input)
                 )
+    hashtag_list = Hashtag.objects.all().filter(Q(name__contains=search_input))
     # flag was set -> back to normal input
     if attag:
         search_input = '@'+search_input
@@ -48,8 +51,9 @@ def search(request):
     context = {
         'user_list': user_list,
         'search': search_input,
+        'hashtag_list': hashtag_list,
         'message_list': message_list,
-        'active_page': 'settings',
+        'active_page': 'index',
         'nav': Nav.nav,
         'msgForm': msgDialog(request),
     }
@@ -71,7 +75,7 @@ def hashtag(request, text):
     context = {
         'search': "#" + search_input,
         'message_list': message_list,
-        'active_page': 'settings',
+        'active_page': 'index',
         'nav': Nav.nav,
         'msgForm': msgDialog(request),
     }
