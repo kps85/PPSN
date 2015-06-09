@@ -388,13 +388,10 @@ textarea, input {
 
 /* Bootstrap */
 .btn-primary, .btn-primary[disabled] {
-  background-color: #F50000;
   background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
   background-image: -o-linear-gradient(top, #F50000 0%, #990000 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#F50000), to(#990000));
   background-image: linear-gradient(to bottom, #F50000 0%, #990000 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffF50000', endColorstr='#ff990000', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   background-repeat: repeat-x;
   border-color: #990000; }
 
@@ -411,6 +408,28 @@ textarea, input {
   outline: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(245, 0, 0, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(245, 0, 0, 0.6); }
+
+.scrollTop {
+  height: 25px;
+  width: 45px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: block;
+  padding: 0;
+  border-color: #111;
+  background-image: -webkit-linear-gradient(top, #30303F 0%, #282A37 100%);
+  background-image: -o-linear-gradient(top, #30303F 0%, #282A37 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#30303F), to(#282A37));
+  background-image: linear-gradient(to bottom, #30303F 0%, #282A37 100%); }
+  .scrollTop .glyphicon {
+    font-size: 1em;
+    line-height: 0.5em;
+    padding: 0;
+    margin-top: -10px; }
+  .scrollTop:hover {
+    background: #30303F;
+    border-color: #111; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -547,7 +566,7 @@ nav a.menuCloser {
         #list ul li a:hover {
           text-decoration: none; }
       #list ul li a.ullink {
-        width: 80%; }
+        width: 100%; }
       #list ul li a.dashicons {
         float: right; }
 
@@ -641,7 +660,7 @@ header {
     @media screen and (min-width: 1024px) {
       header .newMsg {
         position: fixed;
-        bottom: 20px;
+        bottom: 50px;
         right: 20px; } }
     header .newMsg textarea {
       width: 100%; }

@@ -41,6 +41,14 @@ $desktopWidth:1366px;
 	box-shadow: $p;
 }
 
+@mixin gradient($s, $e) {
+	background-image: -webkit-linear-gradient(top, $s 0%, $e 100%);
+	background-image:      -o-linear-gradient(top, $s 0%, $e 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, from($s), to($e));
+	background-image:         linear-gradient(to bottom, $s 0%, $e 100%);
+}
+
+
 // Clearfix
 @mixin clear {
   &:after {
