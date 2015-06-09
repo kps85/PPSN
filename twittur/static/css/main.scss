@@ -484,22 +484,52 @@ $iconWidth:50px;
 
 // Super Dropdown
 .superDropdown {
+	
+	.default {
+		display:none;
+	}
+	
+	
 	@include unselectable;
 	p {
 		margin:0;
 		padding:0;
 	}
 	
-	.superDropdownList {
+	.superDropdownDiv {
+		overflow-x:hidden;
 		cursor:default;
 		position:absolute;
+		overflow-y:visible;
+		height:auto;
 		z-index:4000;
 		background:transparent;
 		opacity:1.0;
+	}
+	
+	.superDropdownContent {
+		position:relative;
+		left:0;
+	}
+	
+	ul {
+		width:100%;
+		display:block;
+	}
+	
+	.superDropdownList {
+		
 		ul li {
 			padding-left:20px;
 			
 		}
 	}
+	
+	.superDropdownSub {
+		position:absolute;
+		left:100%;
+		top:0;
+	}
+	
 }
 
