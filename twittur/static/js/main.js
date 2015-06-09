@@ -327,16 +327,12 @@ function initVarious() {
   
 	/* Smoothes Scrollen */
 	$(function() {
-	  $('a[href*=#]:not([href=#])').click(function() {
-	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
-	      var target = $(this.hash);
-	      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-	      if (target.length) {
+	  $('a.scrollTop[href*=#]:not([href=#])').click(function() {
+	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {     
 	        $('html,body').animate({
-	          scrollTop: target.offset().top
+	          scrollTop: 0
 	        }, 200);
 	        return false;
-	      }
 	    }
 	  });
 	});
