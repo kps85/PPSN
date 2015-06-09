@@ -1,5 +1,6 @@
 {% include 'header.html' %}
 <div id="ftu" class="full-page">
+<<<<<<< HEAD
 	<div class="center">
 		<a class="title" href="#">twittur</a>
 		<a class="showRegister" href="#">
@@ -137,6 +138,123 @@
 
 >>>>>>> origin/dev
 
+=======
+<div class="center">
+<a class="title" href="#">twittur</a> <a class="showRegister" href="#"> <span class="default">Registrieren</span> <span class="mobile">Jetzt bei twittur registrieren!</span> </a>
+<div class="column column-left">
+  <div class="headline"> twit<span>tu</span>r ist das soziale Netzwerk f&uuml;r die TU Berlin. </div>
+  <div class="subline">
+    <p>Es hilft Dir, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Du den &Uuml;berblick verlierst. </p>
+    <p>Erstelle gleich ein Konto und folge Nachrichten, die Dich interessieren. Oder sieh dir an, was die Nutzer von twit<span>tu</span>r der <a href="#ftuPosts">Welt</a> mitzuteilen haben.</p>
+  </div>
+</div>
+<div class="column column-right">
+<div class="box loginBox">
+  <h2 class="{% if not rActive %}active {% endif %}">Anmelden</h2>
+  <div class="{% if not rActive %}active {% endif %}" id="login">
+    <form method="GET">
+      {% csrf_token %}
+      <input type="text" name="username" id="username" placeholder="Username"  />
+      <br />
+      <input type="password" name="password" name="password" placeholder="Passwort" autocomplete="off" />
+      <br />
+      {% if error_login %}
+      <p><font color="#FF0000"> &nbsp; {{ error_login|safe }}</font></p>
+      {% else %}
+      <p></p>
+      {% endif %}
+      <input type="submit" value="Los geht's!" name="login" />
+      <input type="reset" value="Zurücksetzen" />
+      <a class="forgot" href="javascript:;">Passwort vergessen?</a>
+    </form>
+  </div>
+</div>
+<div class="box forgotBox">
+<h2>Passiert jedem mal ...</h2>
+<form method="POST">
+<input type="text" name="password_reset" placeholder="Deine Mailadresse" />
+<br />
+<input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
+<a href="#" class="forgotBack">Zur&uuml;ck</a>
+</div>
+</div>
+</div>
+</div>
+<div class="{% if rActive %}active {% endif %} scrollfix" id="register">
+<h1>Registrieren</h1>
+<form method="POST" action="">
+  {% csrf_token %}
+  <div class="column column-left">
+    <p>Deine Login Daten</p>
+    <input type="text" name="name" placeholder="Username *" id="name"/>
+    <br />
+    <input type="password" name="password" placeholder="Passwort *" id="password" />
+    <br />
+    <input type="password" name="ack_password" placeholder="Passwort bestätigen *" id="ack_password" />
+    <br />
+    {% if error_reg_user_p or error_reg_user_n %}
+    
+    {% if error_reg_user_n %}
+    <p><font color="#FF0000"> &nbsp; {{ error_reg_user_n|safe }}</font></p>
+    {% endif %}
+    {% if error_reg_user_p %}
+    <p><font color="#FF0000"> &nbsp; {{ error_reg_user_p|safe }}</font></p>
+    {% endif %}
+    {% else %}
+    <p></p>
+    {% endif %} <br />
+    <p>Deine persönliche Daten</p>
+    <input type="text" name="first_name" placeholder="Vorname" id="first_name" />
+    <br />
+    <input type="text" name="last_name" placeholder="Nachname" id="last_name" />
+    <br />
+    <input type="text" name="email" placeholder="E-Mail *" id="email" required="required" />
+    <br />
+  </div>
+  <div class="column column-right">
+    <p>Deine T&auml;tigkeit an der TU Berlin</p>
+    <select class="superDropdown" id="academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
+      <optgroup label="Fakult&auml;t I"></optgroup>
+      <optgroup label="Fakult&auml;t II"></optgroup>
+      <optgroup label="Fakult&auml;t III"></optgroup>
+      <optgroup label="Fakult&auml;t IV">
+      <option value="Automotive Systems">Automotive Systems</option>
+      <option value="Computational Neuroscience">Computational Neuroscience</option>
+      <option value="Elektrotechnik">Elektrotechnik</option>
+      <option value="ICT Innovation">ICT Innovation</option>
+      <option value="Informatik">Informatik</option>
+      <option value="Medieninformatik">Medieninformatik</option>
+      <option value="Technische Informatik">Technische Informatik</option>
+      <option value="Wirtschaftsinformatik" selected="selected">Wirtschaftsinformatik</option>
+      </optgroup>
+      <optgroup label="Fakult&auml;t V"></optgroup>
+      <optgroup label="Fakult&auml;t VI"></optgroup>
+      <optgroup label="Fakult&auml;t VII"></optgroup>
+    </select>
+    <!-- <input type="text" name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required" /><br /> -->
+    <input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" class="checkNumeric" />
+    <br />
+    {% if error_reg_userprofile_e %}
+    <p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_e|safe }}</font></p>
+    {% endif %}
+    {% if error_reg_userprofile_nr %}
+    <p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_nr|safe }}</font></p>
+    {% endif %}
+    {% if error_reg_userprofile_ad %}
+    <p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_ad|safe }}</font></p>
+    {% endif %}
+    {% if error_reg_mail %}
+    <p><font color="#FF0000"> &nbsp; {{ error_reg_mail|safe }}</font></p>
+    {% endif %}
+    <p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
+  </div>
+  <div id="registerButtons">
+    <input type="reset" value="Abbrechen" />
+    <input type="submit" class="registerButton" value="Registrieren" name="submit" />
+  </div>
+</form>
+</div>
+>>>>>>> 6a74bd15b9394e28cbdc07a17db62034e0bc1582
 {% if message_list %}
 <div id="ftuPosts" class="full-page-nomobile">
 <div class="center">
