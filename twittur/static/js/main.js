@@ -33,6 +33,18 @@ function initFtu() {
 		$(this).addClass("active");
 	});
 	
+	
+	$(".showRegister").click(function() {
+		$("#register").fadeIn(tspeed);
+	});
+	
+	$("#register input[type='reset']").click(function() {
+		$(".active").removeClass("active");
+		$("#register").fadeOut(tspeed);
+		
+		
+	})
+	
 	$(".box .forgot").click(function() {
 		$(this).closest(".box").fadeOut(tspeed, function() {
 			$(".forgotBox").fadeIn(tspeed);
@@ -105,7 +117,7 @@ function initMenu() {
 function initList() {
 	
 	// Hauptfenster nicht mitscrollen
-	$('#list').bind('mousewheel DOMMouseScroll', function(e) {
+	$('#list, .scrollfix').bind('mousewheel DOMMouseScroll', function(e) {
 	    var scrollTo = null;
 
 	    if (e.type == 'mousewheel') {
@@ -160,10 +172,10 @@ function initInputValidation() {
 	})
 
 
-	if($("#ftu").length) {
+	if($("#ftu, #register").length) {
 		validateFtu();
 	}
-	$("#ftu input").on("keyup", function() {
+	$("#ftu input, #register input").on("keyup", function() {
 		validateFtu();
 	});
 
@@ -266,7 +278,7 @@ function initVarious() {
 	  $div.insertAfter($(this));
 	  
 	  $mainP.click(function() {
-		  var width = $mainP.innerWidth() +2;
+		  var width = $mainP.innerWidth() - 1;
 			$mainUl.width(width);
 		  $mainUl.fadeToggle(0);
 		  $(this).toggleClass("opened");

@@ -17,52 +17,6 @@ def msgDialog(request):
             msgForm.save()
             msg_to_db(msgForm.instance)
             msgForm.save()
-            '''
-            text = msgForm.instance.text
-            # for debug
-            hashtaglist = []
-            attaglist = []
-
-            # Step 1: replace all # and @ with link
-            for word in text.split():
-                # find all words starts with "#". No "/" allowed in hashtag.
-                if word[0] == "#":
-                    if "/" in word:
-                        pass
-                    else:
-                        try:
-                            hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
-                        except ObjectDoesNotExist:
-                            hashtag = Hashtag(name=str(word[1:]))
-                            hashtag.save()
-
-                        msgForm.instance.hashtags.add(hashtag)
-                        hashtaglist.append(hashtag)
-                # now find in text all words start with "@". Its important to find this user in database.
-                if word[0] == "@":
-                    try:
-                        user = User.objects.get(username__exact=str(word[1:]))
-                    except ObjectDoesNotExist:
-                        pass
-                    else:
-                        msgForm.instance.attags.add(user)
-                        attaglist.append(user)
-            print(hashtaglist)
-            print(attaglist)
-            print(msgForm.instance.hashtags.all())
-            print(msgForm.instance.attags.all())
-            for dbhashtag in msgForm.instance.hashtags.all():
-                if dbhashtag not in hashtaglist:
-                    msgForm.instance.hashtags.remove(dbhashtag)
-            for dbattag in msgForm.instance.attags.all():
-                if dbattag not in attaglist:
-                    msgForm.instance.attags.remove(dbattag)
-
-            print(hashtaglist)
-            print(attaglist)
-            print(msgForm.instance.hashtags.all())
-            print(msgForm.instance.attags.all())
-            '''
             # save this shit for the next step
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
