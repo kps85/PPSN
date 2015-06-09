@@ -374,6 +374,11 @@ header {
 	    width: 45px;
 		margin-top: 22.5px;
 		margin-left: 3%;
+		@include desktop {
+			position:fixed;
+			bottom:20px;
+			right:20px;
+		}
 		textarea { 
 			width: 100%; 
 		}

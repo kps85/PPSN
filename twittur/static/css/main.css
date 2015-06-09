@@ -598,6 +598,11 @@ header {
     width: 45px;
     margin-top: 22.5px;
     margin-left: 3%; }
+    @media screen and (min-width: 1024px) {
+      header .newMsg {
+        position: fixed;
+        bottom: 20px;
+        right: 20px; } }
     header .newMsg textarea {
       width: 100%; }
     header .newMsg .msgDiaDate {
