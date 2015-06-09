@@ -62,3 +62,5 @@ nav a:focus { color: #fff; }
 .search_headline { clear: both; display: block; width: 100%; margin-top: 10px; }
 .search_user_result, .search_hash_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 5px 5px 0; padding: 5px 10px; }
 .search_user_result img { width: 50px; }
+
+body.modal-open { overflow: visible; padding-right: 0px !important; }
