@@ -3,8 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 from .models import UserProfile, Message, Group, ToGroup, Hashtag, FAQ
-from .forms import FAQForm
-# Register your models here.
 
 # initialize admin view for FAQs
 class FAQAdmin(admin.ModelAdmin):

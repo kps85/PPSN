@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block list %}
-	{% if hashtag_list %}
+<!--	{% if hashtag_list %}
     <ul class="groups">
       <h3>Heiße Themen</h3>
       {% for hashtag in hashtag_list %}
-      <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-        <a href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
+      <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting 
+        <a href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! 
 
-      {% endfor %}
+      {% endfor %} 
     </ul>
   {% endif %}
 	
@@ -19,7 +19,7 @@
       <li><a class="ullink" href="#">@{{ user.nickname }}</a></li>
       {% endfor %}
     </ul>
-  {% endif %}
+  {% endif %} -->
   
   {% include 'layout/nav_foot.html' %}
 {% endblock %}

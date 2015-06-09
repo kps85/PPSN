@@ -1,13 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.db.models.signals import post_save
 
 #### Entitys
 # - user
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
-
 
     studentNumber = models.CharField( max_length = 6, default = '000000',
                                       help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')
@@ -58,8 +56,6 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
-
-
 # Relationships
 
 # - message directed to group or user or both
@@ -71,8 +67,6 @@ class ToGroup(models.Model):
         return "Message from '" + self.message.user.username + "' to group " + self.group.name
 
 
-
-
 class IsInGroup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     group = models.ForeignKey(Group)
@@ -82,14 +76,12 @@ class IsInGroup(models.Model):
         return self.user.name + ' joint the group ' + self.group.name
 
 
-
-
+# FAQ model
+# - author: FAQ respondent REFERENCES User
+# - question: a frequently asked question
+# - category: a category the question is assigned to by the respondent
+# - answer: an answer the respondent has given
 class FAQ(models.Model):
-    # FAQ model
-    # - author: FAQ respondent REFERENCES User
-    # - question: a frequently asked question
-    # - category: a category the question is assigned to by the respondent
-    # - answer: an answer the respondent has given
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
     question = models.CharField(max_length=100)
     category = models.CharField(max_length=100)

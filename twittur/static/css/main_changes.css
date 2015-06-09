@@ -9,6 +9,7 @@ a { color: #F50000; }
     .copy a:hover {
       color: #F50000; }
 */
+.copy { margin-top: 15px; }
 .copy a { color: #f50000; }
 .copy a:hover { color: #a00000; }
 

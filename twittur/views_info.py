@@ -7,7 +7,6 @@ from .models import Nav, FAQ
 from .forms import FAQForm
 from .views import msgDialog
 
-
 # Page: 'Info'
 # - shows: Impressum, Projekt-Team, Projekt (Aufgabenstellung, Ziel)
 # - template: info.html
@@ -18,7 +17,7 @@ def info(request):
         return HttpResponseRedirect('/twittur/login/')
 
     # select admin users as Projekt-Team
-    projektTeam = User.objects.filter(is_superuser=True).order_by('last_name');
+    projektTeam = User.objects.filter(is_superuser=True).order_by('last_name')
 
     # return relevant information to render info.html
     context = {
