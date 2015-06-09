@@ -106,8 +106,8 @@ def login(request):
             email = query_dict.get('email')
 
             mail = email.split('@')
-            if len(mail) == 1 or (not mail[1].endswith(".tu-berlin.de")):
-                error_reg_mail = "Junge, gib Tu mail ein!"
+            if len(mail) == 1 or not (mail[1].endswith(".tu-berlin.de") or mail[1].endswith("tu-berlin.de")):
+                error_reg_mail = "Junge, gib TU Mail ein!"
 
             if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
                 studentNumber = query_dict.get('studentNumber')
