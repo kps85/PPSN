@@ -413,7 +413,7 @@ textarea, input {
   height: 25px;
   width: 45px;
   position: fixed;
-  bottom: 20px;
+  bottom: 70px;
   right: 20px;
   display: block;
   display: none;
@@ -431,6 +431,21 @@ textarea, input {
   .scrollTop:hover {
     background: #30303F;
     border-color: #111; }
+
+.newMsg {
+  height: 45px;
+  width: 45px;
+  margin-top: 22.5px;
+  margin-left: 3%; }
+  @media screen and (min-width: 1024px) {
+    .newMsg {
+      position: fixed;
+      bottom: 20px;
+      right: 20px; } }
+  .newMsg textarea {
+    width: 100%; }
+  .newMsg .msgDiaDate {
+    padding: 6px 12px; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -653,22 +668,6 @@ header {
     @media screen and (max-width: 1023px) {
       header #infoBar {
         width: 94%; } }
-  header .newMsg {
-    height: 45px;
-    width: 45px;
-    margin-top: 22.5px;
-    margin-left: 3%; }
-    @media screen and (min-width: 1024px) {
-      header .newMsg {
-        position: fixed;
-        bottom: 20px;
-        right: 20px; }
-        header .newMsg.scrolled {
-          bottom: 50px; } }
-    header .newMsg textarea {
-      width: 100%; }
-    header .newMsg .msgDiaDate {
-      padding: 6px 12px; }
 
 @media screen and (min-width: 1024px) {
   #main {
