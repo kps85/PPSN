@@ -50,7 +50,7 @@ def search(request):
 
     context = {
         'user_list': user_list,
-        'search': search_input,
+        'search': 'Suchergebnisse f&uuml;r "' + search_input + '"',
         'hashtag_list': hashtag_list,
         'message_list': message_list,
         'active_page': 'index',
@@ -73,9 +73,10 @@ def hashtag(request, text):
     message_list = zip(message_list, dbmessage_list)
 
     context = {
-        'search': "#" + search_input,
+        'search': 'Beitr&auml;ge zum Thema "#' + search_input + '"',
         'message_list': message_list,
         'active_page': 'index',
+        'is_hash': True,
         'nav': Nav.nav,
         'msgForm': msgDialog(request),
     }
