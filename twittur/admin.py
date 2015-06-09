@@ -6,7 +6,9 @@ from .models import UserProfile, Message, Group, ToGroup, Hashtag, FAQ
 from .forms import FAQForm
 # Register your models here.
 
+# initialize admin view for FAQs
 class FAQAdmin(admin.ModelAdmin):
+    # set fields and order of them for FAQ overview
     fieldsets = [
         ('Kategorie', {'fields': ['category']}),
         ('Frage',               {'fields': ['question', 'answer']}),
@@ -23,4 +25,4 @@ admin.site.register(Message)
 admin.site.register(Group)
 admin.site.register(ToGroup)
 admin.site.register(Hashtag)
-admin.site.register(FAQ, FAQAdmin)
+admin.site.register(FAQ, FAQAdmin) # register FAQ for admin page

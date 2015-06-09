@@ -27,7 +27,7 @@
 						<form method="GET">
 							{% csrf_token %} 
 							<input type="text" name="username" id="username" placeholder="Username"  /><br />
-							<input type="password" name="password" name="password" placeholder="Passwort"  /><br />
+							<input type="password" name="password" name="password" placeholder="Passwort" autocomplete="off" /><br />
 							{% if error_login %}
 								<p><font color="#FF0000"> &nbsp; {{ error_login|safe }}</font></p>
 							{% else %}
@@ -64,7 +64,7 @@
 							<input type="text" name="first_name" placeholder="Vorname" id="first_name" /><br />
 							<input type="text" name="last_name" placeholder="Nachname" id="last_name" /><br />
 							<input type="text" name="email" placeholder="E-Mail *" id="email" required="required" /><br />
-              <select name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required">
+              <select class="superDropdown" id="academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
               	<optgroup label="Fakult&auml;t I"></optgroup>
               	<optgroup label="Fakult&auml;t II"></optgroup>
               	<optgroup label="Fakult&auml;t III"></optgroup>
