@@ -65,3 +65,9 @@ nav a:focus { color: #fff; }
 #list ul li a.active { background-color: #f50000; }
 
 .infoMessage .glyphicon-remove:hover { cursor: pointer; }
+
+.faqList { list-style: inside square; }
+.faqList li { }
+
+.search_headline { clear: both; display: block; width: 100%; margin-top: 10px; }
+.search_user_result { margin: 5px; }
