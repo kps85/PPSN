@@ -246,7 +246,7 @@ header {
       background: rgba(255, 255, 255, 0.99); }
     #register .superDropdown > p.active {
       color: #333; }
-  #register .superDropdown .superDropdownList {
+  #register .superDropdown .superDropdownDiv {
     box-sizing: border-box;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #E3E8EA;
@@ -254,16 +254,19 @@ header {
     color: #333;
     margin-left: 0px;
     margin-top: -6px; }
-    #register .superDropdown .superDropdownList .superSubOpener {
+    #register .superDropdown .superDropdownDiv .superSubOpener {
       padding: 10px; }
-      #register .superDropdown .superDropdownList .superSubOpener:hover {
+      #register .superDropdown .superDropdownDiv .superSubOpener:hover {
         background: #ddd;
         cursor: pointer; }
-    #register .superDropdown .superDropdownList ul li {
+    #register .superDropdown .superDropdownDiv ul li, #register .superDropdown .superDropdownDiv span {
       padding: 10px 30px; }
-      #register .superDropdown .superDropdownList ul li:hover {
+      #register .superDropdown .superDropdownDiv ul li:hover, #register .superDropdown .superDropdownDiv span:hover {
         background: #eee;
         cursor: pointer; }
+    #register .superDropdown .superDropdownDiv span {
+      font-weight: bold;
+      display: block; }
   #register input[type="submit"] {
     color: #fff;
     background: #FF0000;
@@ -305,6 +308,7 @@ header {
   #ftuPosts .ftuTags ul li {
     display: inline; }
     #ftuPosts .ftuTags ul li a {
+      color: #fff;
       padding: 10px;
       display: inline-block;
       background: #111;
@@ -668,16 +672,31 @@ header {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
+  .superDropdown .default {
+    display: none; }
   .superDropdown p {
     margin: 0;
     padding: 0; }
-  .superDropdown .superDropdownList {
+  .superDropdown .superDropdownDiv {
+    overflow-x: hidden;
     cursor: default;
     position: absolute;
+    overflow-y: visible;
+    height: auto;
     z-index: 4000;
     background: transparent;
     opacity: 1.0; }
-    .superDropdown .superDropdownList ul li {
-      padding-left: 20px; }
+  .superDropdown .superDropdownContent {
+    position: relative;
+    left: 0; }
+  .superDropdown ul {
+    width: 100%;
+    display: block; }
+  .superDropdown .superDropdownList ul li {
+    padding-left: 20px; }
+  .superDropdown .superDropdownSub {
+    position: absolute;
+    left: 100%;
+    top: 0; }
 
 /*# sourceMappingURL=main.css.map */

@@ -41,6 +41,9 @@ function initFtu() {
 	$("#register input[type='reset']").click(function() {
 		$(".active").removeClass("active");
 		$("#register").fadeOut(tspeed);
+		$("#register").find(".superDropdown").each(function() {
+			$(this).find("p.id").text($(this).attr('default'));
+		});
 		
 		
 	})
@@ -242,23 +245,45 @@ function initVarious() {
 	  $(this).hide();
 	  var name = $(this).attr('placeholder');
 	  var $div = $("<div>", {'class':'superDropdown'});
-	  var $mainP = $("<p>", {'text':name});
+	  var $mainDiv = $("<div>", {'class':'superDropdownDiv'});
+	  var $mainP = $("<p>", {'class':'id', 'text':name});
+	  $(this).attr('default', name);
 	  var $mainUl = $("<ul>", {'class':'superDropdownList'});
+	  
+	  var $content = $("<div>", {'class':'superDropdownContent'});
+	  
 	  $mainUl.hide();
 	  $mainP.appendTo($div);
-	  $mainUl.appendTo($div);
+	  $content.appendTo($mainDiv);
+	  $mainUl.appendTo($content);
+	  $mainDiv.appendTo($div);
+	  
+	  
 	  
 	  $(this).children("optgroup").each(function() {
 		  var $ul = $("<ul>", {'class':'superDropdownSub'});
 		  var $p = $("<p>", {'class':'superSubOpener', 'text':$(this).attr('label')});
+		  var $span = $("<span>", {'class':'superBack', 'html':'&larr; Zur&uuml;ck'});
+		  
+		  
+		  
+		  $span.click(function() {
+			  $ul.fadeOut("slow");
+		  	$content.animate({'left':'0'});
+			$mainDiv.height("inherit");
+		  });
 		  
 		  $ul.hide();
 		  $p.click(function() {
 			  
 			  var visible = $ul.is(":visible");
 			  $(".superDropdownSub").hide();
+			  
+			  $mainDiv.height($ul.outerHeight(true));
+			  
 			  if(!visible) {
 				  $ul.toggle();
+				  $content.animate({'left':'-100%'});
 			  }
 		  })
 		  $(this).children("option").each(function() {
@@ -267,19 +292,26 @@ function initVarious() {
 				$select.val($(this).text());
 				$mainUl.fadeOut(0);
 				$mainP.text($(this).text());
+				$content.animate({'left':'0'});
+				$(".superDropdownSub").hide();
+				$mainDiv.height("inherit");
 				$mainP.addClass("active");
 				$mainP.removeClass("opened");
+				
 			})
 			$li.appendTo($ul);
 		  });
+		  
+		  $span.appendTo($ul);
 		  $p.appendTo($mainUl);
-		$ul.appendTo($mainUl);
+		$ul.appendTo($content);
 	  })
 	  $div.insertAfter($(this));
 	  
 	  $mainP.click(function() {
 		  var width = $mainP.innerWidth() - 1;
-			$mainUl.width(width);
+			$mainDiv.width(width);
+			$mainDiv.height("inherit");
 		  $mainUl.fadeToggle(0);
 		  $(this).toggleClass("opened");
 	  })
