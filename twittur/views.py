@@ -1,5 +1,4 @@
 import copy, datetime
-from datetime import date
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -11,44 +10,36 @@ from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
-from PPSN.settings import MEDIA_ROOT, MEDIA_URL
-from .models import UserProfile, Group, Nav, Message, FAQ, Hashtag
-from .forms import UserForm, UserDataForm, MessageForm, FAQForm
+from .models import UserProfile, Group, Nav, Message, Hashtag
+from .forms import UserForm, UserDataForm
+from .functions import dbm_to_m, editMessage, msgDialog
 
 
 # startpage
 def index(request):
-    # redirect, if user is not authenticated
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
     success_msg = None
 
+    current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
+    user_list = UserProfile.objects.filter(userprofile__exact=request.user)
+    #    atTag = '@' + request.user.username + ' '
+
     if request.method == 'POST':
-        if 'delMessage' in request.POST:
-            curMsg = Message.objects.get(pk=request.POST['delMessage'])
-            curMsg.delete()
-            success_msg = 'Nachricht gel&ouml;scht!'
-        elif 'updateMsg' in request.POST:
-            curMsg = Message.objects.get(pk=request.POST['updateMsg'])
-            curMsg.text = request.POST['updatedText']
-            curMsg.save()
-            success_msg = 'Nachricht erfolgreich aktualisiert!'
-        else:
-            success_msg = 'Nachricht erfolgreich gesendet!'
+        success_msg = editMessage(request)
 
-
-    current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
-    user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
-    atTag = '@' + request.user.username + ' '
-
-    #dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-    #    .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
+    #    dbmessage_list = Message.objects.all().select_related('user__userprofile') \
+    #        .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
     dbmessage_list = Message.objects.all().select_related('user__userprofile').order_by('-date')
 
-    hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')).order_by('-hashtag_count')[:5]
+    hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                       .order_by('-hashtag_count')[:5]
 
-    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10), timezone.get_current_timezone());
+    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
+                                  timezone.get_current_timezone())
     message_list = []
     for message in dbmessage_list:
         if message.date > curDate:
@@ -57,10 +48,9 @@ def index(request):
         message_list.append(dbm_to_m(copy_message))
     message_list = zip(message_list, dbmessage_list)
 
-
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgDialog(request),
-               'success_msg': success_msg, 'hashtag_list': hashtag_list }
+               'success_msg': success_msg, 'hashtag_list': hashtag_list}
     return render(request, 'index.html', context)
 
 
@@ -68,8 +58,6 @@ def index(request):
 def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/')
-
-    active_page = "ftu"
 
     # Public Messages: TODO Filtern!
     message_list = Message.objects.all().order_by('-date')
@@ -91,7 +79,7 @@ def login(request):
                 error_login = "- Ups, Username oder Passwort falsch."
                 active_toggle = "active_toggle"
                 return render(request, 'ftu.html',
-                              {'error_login': error_login, 'message_list': message_list, 'active_page': active_page})
+                              {'error_login': error_login, 'message_list': message_list, 'active_page': 'ftu'})
 
     # Registration
     if request.method == 'POST':
@@ -99,10 +87,11 @@ def login(request):
         query_dict = request.POST
         error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
         error_reg_userprofile_ad, error_reg_userprofile_nr, error_reg_mail = None, None, None, None, None, None, None, None
+
+        username = query_dict.get('name')
         studentNumber = 0
 
         try:
-            username = query_dict.get('name')
             checkUsername = User.objects.get(username__exact=username)
 
         # case if username is available (checkUsername = None)
@@ -118,23 +107,25 @@ def login(request):
 
             mail = email.split('@')
             if len(mail) == 1 or (not mail[1].endswith(".tu-berlin.de")):
-                    error_reg_mail = "Junge, gib Tu mail ein!"
+                error_reg_mail = "Junge, gib Tu mail ein!"
 
             if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
                 studentNumber = query_dict.get('studentNumber')
 
             # context for html
             context = {
-                       'error_reg_user': error_reg_user,
-                       'error_reg_userprofile_e': error_reg_userprofile_e,
-                       'error_reg_mail': error_reg_mail,
-                       'error_reg_user_n': error_reg_user_n,
-                       'error_reg_user_p': error_reg_user_p,
-                       'error_reg_userprofile_ad': error_reg_userprofile_ad,
-                       'error_reg_userprofile_nr': error_reg_userprofile_nr,
-                       'rActive': 'active',
-                       'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list
-                       }
+                'error_reg_user': error_reg_user,
+                'error_reg_userprofile_e': error_reg_userprofile_e,
+                'error_reg_mail': error_reg_mail,
+                'error_reg_user_n': error_reg_user_n,
+                'error_reg_user_p': error_reg_user_p,
+                'error_reg_userprofile_ad': error_reg_userprofile_ad,
+                'error_reg_userprofile_nr': error_reg_userprofile_nr,
+                'active_page': 'ftu',
+                'rActive': 'active',
+                'nav': Nav.nav,
+                'message_list': message_list
+            }
             # error?
             if error_reg_userprofile_ad or error_reg_mail or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
                 return render(request, 'ftu.html', context)
@@ -157,12 +148,14 @@ def login(request):
             # log user in and redirect to index page
             user = authenticate(username=username, password=password)
             auth.login(request, user)
-            return render(request, 'index.html', context)
+            return HttpResponseRedirect('/twittur/')
 
         # case if username is taken (checkUsername == user)
         else:
             error_reg_user_n = "Sorry, Username ist vergeben."
-            return render(request, 'ftu.html', {'active_page': 'ftu', 'nav': Nav.nav, 'error_reg_user_n': error_reg_user_n, 'error_reg_mail': error_reg_mail, 'rActive': 'active'})
+            return render(request, 'ftu.html',
+                          {'active_page': 'ftu', 'nav': Nav.nav, 'error_reg_user_n': error_reg_user_n,
+                           'error_reg_mail': error_reg_mail, 'rActive': 'active'})
 
     context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
     return render(request, 'ftu.html', context)
@@ -176,6 +169,8 @@ def logout(request):
 
 # profilpage
 def profile(request, user):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
@@ -183,21 +178,22 @@ def profile(request, user):
     curUserProfile = curUser.userprofile
     success_msg = None
 
-    if request.method == 'POST' and 'delMessage' in request.POST:
-        curMsg = Message.objects.get(pk=request.POST['delMessage'])
-        curMsg.delete()
-        success_msg = 'Nachricht gel&ouml;scht!'
+    if request.method == 'POST':
+        success_msg = editMessage(request)
 
     user_list = User.objects.all()
     group_list = Group.objects.all()
 
     dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-        .filter(
-        Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
-    ).order_by('-date').distinct()
+        .filter(Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
+                ).order_by('-date').distinct()
 
+    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
+                                  timezone.get_current_timezone())
     message_list = []
     for message in dbmessage_list:
+        if message.date > curDate:
+            message.editable = True
         copy_message = copy.copy(message)
         message_list.append(dbm_to_m(copy_message))
     message_list = zip(message_list, dbmessage_list)
@@ -206,7 +202,6 @@ def profile(request, user):
                'curUserProfile': curUserProfile,
                'active_page': 'profile',
                'profileUser': user,
-               'dbmessage_list': dbmessage_list,
                'user_list': user_list,
                'group_list': group_list,
                'nav': Nav.nav,
@@ -217,93 +212,36 @@ def profile(request, user):
     return render(request, 'profile.html', context)
 
 
-# infopage
-def info(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
-
-    projektTeam = User.objects.filter(is_superuser=True).order_by('last_name');
-
-    context = {
-        'active_page': 'info',
-        'nav': Nav.nav,
-        'msgForm': msgDialog(request),
-        'team': projektTeam
-    }
-    return render(request, 'info.html', context)
-
-
-# infopage
-def faq(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
-
-    success_msg, error_msg = None, None
-
-    if request.method == 'POST':
-        faqForm = FAQForm(request.POST)
-        if faqForm.is_valid():
-            faqForm.save()
-            success_msg = "Neuer FAQ Eintrag hinzugef&uuml;gt!"
-
-    faqForm = FAQForm(instance=request.user)
-
-    faqMain = FAQ.objects.filter(category='Allgemeine Frage')
-    faqStart = FAQ.objects.filter(category='Startseite')
-    faqProfile = FAQ.objects.filter(category='Profilseite')
-    faqInfo = FAQ.objects.filter(category='Infoseite')
-    faqSettings = FAQ.objects.filter(category='Einstellungen')
-
-    FAQs = [faqMain, faqStart, faqProfile, faqInfo, faqSettings]
-
-    context = {
-        'active_page': 'info',
-        'nav': Nav.nav,
-        'msgForm': msgDialog(request),
-        'faqForm': faqForm,
-        'faqMain': faqMain,
-        'faqStart': faqStart,
-        'faqProfile': faqProfile,
-        'faqInfo': faqInfo,
-        'faqSettings': faqSettings,
-        'FAQs': FAQs,
-        'success_msg': success_msg,
-        'error_msg': error_msg
-    }
-    return render(request, 'info_faq.html', context)
-
-
-# infopage
-def support(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
-
-    context = {
-        'active_page': 'info',
-        'nav': Nav.nav,
-        'msgForm': msgDialog(request)
-    }
-    return render(request, 'info_support.html', context)
-
-
-# settingspage
+# Page: 'Einstellungen'
+# - allows: editing editable user information and deleting account
+# -- picture, email, password, first_name, last_name,
+#    academicDiscipline, studentNumber, location
+# - template: info_support.html
 def settings(request):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    # get current users information and initialize return messages
     curUser = User.objects.get(pk=request.user.id)
     curUserProfile = curUser.userprofile
     success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
+    # check if account should be deleted
+    # if true: delete account, return to FTU
     if request.method == 'POST' and request.POST['delete'] == 'true':
         curUser.userprofile.delete()
         curUser.delete()
         return HttpResponseRedirect('/twittur/')
+    # else: validate userForm and userDataForm and save changes
     elif request.method == 'POST':
         userForm = UserForm(request.POST, instance=curUser)
         if userForm.is_valid():
             userDataForm = UserDataForm(request.POST, request.FILES, instance=curUserProfile)
             userDataForm.oldPicture = curUserProfile.picture
+            # if picture has changed, delete old picture
+            # do not, if old picture was default picture
             if 'picture' in request.FILES or 'picture-clear' in request.POST:
                 if userDataForm.oldPicture != 'picture/default.gif':
                     userDataForm.oldPicture.delete()
@@ -312,13 +250,17 @@ def settings(request):
                 userDataForm.save()
                 success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
             else:
+                # return errors if userDataForm is not valid
                 error_msg = userDataForm.errors
         else:
+            # return errors if userForm is not valid
             error_msg = userForm.errors
 
+    # initialize UserForm and UserDataForm with current users information
     userForm = UserForm(instance=curUser)
     userDataForm = UserDataForm(instance=curUserProfile)
 
+    # return relevant information to render settings.html
     context = {
         'active_page': 'settings',
         'nav': Nav.nav,
@@ -330,134 +272,3 @@ def settings(request):
         'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)
-
-
-# messagebox clicked on pencil button
-def msgDialog(request):
-    curUser = User.objects.get(pk=request.user.id)
-
-    if request.method == 'POST':
-        msgForm = MessageForm(request.POST)
-        if msgForm.is_valid():
-            msgForm.save()
-            text = msgForm.instance.text
-
-            # for debug
-            list = []
-
-            # Step 1: replace all # and @ with link
-            for word in text.split():
-                # find all words starts with "#". No "/" allowed in hashtag.
-                if word[0] == "#":
-                    if "/" in word:
-                        pass
-                    else:
-                        try:
-                            hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
-                        except ObjectDoesNotExist:
-                            print("ich war hier")
-                            hashtag = Hashtag(name=str(word[1:]))
-                            hashtag.save()
-
-                        msgForm.instance.hashtags.add(hashtag)
-                        list.append(word)
-                # now find in text all words start with "@". Its important to find this user in database.
-                if word[0] == "@":
-                    try:
-                        user = User.objects.get(username__exact=str(word[1:]))
-                    except ObjectDoesNotExist:
-                        pass
-                    else:
-                        msgForm.instance.attags.add(user)
-                        list.append(word)
-            # save this shit for the next step
-            '''
-            # Step 2: add # and @ related with message in database
-            for word in list:
-                # check first whether #word exist in database. true: add to message, false: create hashtag then add
-                if word[0] == "#":
-                    try:
-                        hashtag = Hashtag.objects.get(name__exact=str(word))
-                    except ObjectDoesNotExist:
-                        hashtag = Hashtag(name=str(word))
-                        hashtag.save()
-                    msgForm.instance.hashtags.add(hashtag)
-                # user exist in database so add it to message. we checked this in step 1 before
-                if word[0] == "@":
-                    user = User.objects.get(username__exact=str(word[1:]))
-                    msgForm.instance.attags.add(user)
-            '''
-            msgForm.save()
-
-    msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
-    return msgForm
-
-
-# search input
-def search(request):
-    if request.method == 'GET':
-        query_dict = request.GET
-        search = query_dict.get('search')
-
-    # filter all messages contain the word  or all users contain the word
-    message_list = Message.objects.all().select_related('user__userprofile') \
-        .filter(
-        Q(text__contains=search) | Q(user__username__contains=search)
-    ).order_by('-date').distinct('text')
-    context = {
-        'search': search,
-        'message_list': message_list,
-        'active_page': 'settings',
-        'nav': Nav.nav,
-        'msgForm': msgDialog(request),
-    }
-    return render(request, 'search.html', context)
-
-
-# click on hashtaglinks will redirect to this function.
-def hashtag(request, text):
-    search = text
-
-    # filter all messages contain #
-    dbmessage_list = Message.objects.all().filter(hashtags__name=search)
-    message_list = []
-    for message in dbmessage_list:
-        copy_message = copy.copy(message)
-        message_list.append(dbm_to_m(copy_message))
-    message_list = zip(message_list, dbmessage_list)
-
-    context = {
-
-        'search': "#" + search,
-        'message_list': message_list,
-        'active_page': 'settings',
-        'nav': Nav.nav,
-        'msgForm': msgDialog(request),
-    }
-    return render(request, 'search.html', context)
-
-def dbm_to_m(message):
-    # for debug
-    hashtag_list = message.hashtags.all()
-    attag_list = message.attags.all()
-    list =[]
-    print (hashtag_list)
-    print(attag_list)
-    if attag_list or hashtag_list:
-        for word in message.text.split():
-
-            # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-            if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
-                list.append(word)
-                href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                message.text = message.text.replace(word, href)
-
-            # now find in text all words start with "@". Its important to find this user in database.
-            # if this user doesnt exist -> no need to set a link
-            # else we will set a link to his profile
-            if word[0] == "@" and (User.objects.get(username=word[1:]) in attag_list):
-                    list.append(word)
-                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
-                    message.text = message.text.replace(word, href)
-        print(list)
-    return message

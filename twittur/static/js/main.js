@@ -124,19 +124,20 @@ function initList() {
 
 function validateFtu() {
 	// Validiert die Daten der Login/Registrierungsseite
-	// TODO: Einfacher gestalten...
-	var loginFilledCorrectly = $('#login input[type=text]').val().replace( /\s/g, "") != '' 
-	&& $('#login input[type=password]').val().replace( /\s/g, "") != '';
-	console.log(loginFilledCorrectly);
+	// TODO: Einfacher gestalten...	
+	// das .replace hier war überflüssig. Wenn autofill, dann nur mit validen Daten. valide Daten = Passwort ohne Leerzeichen.
+	var loginFilledCorrectly = $('#login input[type=text]').val() != '' 
+	&& $('#login input[type=password]').val() != '';
 	
-	var registerFilledCorrectly = $('#name').val().replace( /\s/g, "") != '' && $('#email').val().replace( /\s/g, "") != '' &&
+	// console.log(loginFilledCorrectly);
+	
+	var registerFilledCorrectly = $('#name').val().replace(/\s/g, "") != '' 
+	&& $('#email').val().replace( /\s/g, "") != '' &&
 	$('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '' &&
 	$('#academicDiscipline').val().replace( /\s/g, "") != '';
 	
 	(loginFilledCorrectly) ? $('#login input[type=submit]').prop("disabled", false) : $('#login input[type=submit]').prop("disabled", true);
-	(registerFilledCorrectly) ? $('#register input[type=submit]').prop("disabled", false) : $('#register input[type=submit]').prop("disabled", true);
-	
-	
+	(registerFilledCorrectly) ? $('#register input[type=submit]').prop("disabled", false) : $('#register input[type=submit]').prop("disabled", true);	
 }
 
 
@@ -178,19 +179,27 @@ function initInputValidation() {
 }
 
 
-function initSupport() {
-	// ???
-	if ($('.supportCont').length > 0) {
-		var activeForm = (window.location.href.split("#"))[1];
-		$("#"+activeForm).removeClass('hidden');
+function initInfo() {
+	// Wechselt die Info Navi und blendet relevante Formulare (Nachricht, Kontaktformular) ein.
+	// Reagiert auf den hash in der aktiven URL	
+	if ($('#body_info').length > 0) {
+		
+		infoChange((window.location.href.split("#"))[1]);
+		
 		$(window).on("hashchange", function() {
-			var form = (window.location.href.split("#"))[1];
-			$(".supportCont").addClass('hidden');
-			$("#"+form).removeClass('hidden');
+			infoChange((window.location.href.split("#"))[1]);
 		});
+		
+	}
+	
+	function infoChange(hash) {		
+		$('.ullink.active').removeClass('active');
+		$('.'+hash).addClass('active');
+	
+		$(".supportCont").addClass('hidden');
+		$("#"+hash).removeClass('hidden');
 	}
 }
-
 
 
 function initVarious() {
@@ -198,6 +207,11 @@ function initVarious() {
 	$(".hideInfo").click(function() {
 		$(this).parent("div").hide();
 	});
+	$(".newMsg").click(function(e) {
+    setTimeout(function() {
+			$("#id_text").focus();
+		}, 500);
+  });
 	$(".showMsgEdit").click(function(e) {
 		var mID = $(this).attr("data-hint");
 		$(this).addClass("hidden");
@@ -266,13 +280,12 @@ $(document).ready(function() {
 	initMenu();
 	initList();
 	initFtu();
-	initSupport();
+	initInfo();
 	initInputValidation();
 	initVarious();
 	
 	fph();
 	$(window).resize(function() {
 		fph();
-	});
-	
+	});	
 });
