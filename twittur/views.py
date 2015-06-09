@@ -272,3 +272,194 @@ def settings(request):
         'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)
+<<<<<<< HEAD
+=======
+
+
+# messagebox clicked on pencil button
+def msgDialog(request):
+    curUser = User.objects.get(pk=request.user.id)
+
+    if request.method == 'POST':
+        msgForm = MessageForm(request.POST)
+        if msgForm.is_valid():
+            msgForm.save()
+            msg_to_db(msgForm.instance)
+            msgForm.save()
+            '''
+            text = msgForm.instance.text
+            # for debug
+            hashtaglist = []
+            attaglist = []
+
+            # Step 1: replace all # and @ with link
+            for word in text.split():
+                # find all words starts with "#". No "/" allowed in hashtag.
+                if word[0] == "#":
+                    if "/" in word:
+                        pass
+                    else:
+                        try:
+                            hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
+                        except ObjectDoesNotExist:
+                            hashtag = Hashtag(name=str(word[1:]))
+                            hashtag.save()
+
+                        msgForm.instance.hashtags.add(hashtag)
+                        hashtaglist.append(hashtag)
+                # now find in text all words start with "@". Its important to find this user in database.
+                if word[0] == "@":
+                    try:
+                        user = User.objects.get(username__exact=str(word[1:]))
+                    except ObjectDoesNotExist:
+                        pass
+                    else:
+                        msgForm.instance.attags.add(user)
+                        attaglist.append(user)
+            print(hashtaglist)
+            print(attaglist)
+            print(msgForm.instance.hashtags.all())
+            print(msgForm.instance.attags.all())
+            for dbhashtag in msgForm.instance.hashtags.all():
+                if dbhashtag not in hashtaglist:
+                    msgForm.instance.hashtags.remove(dbhashtag)
+            for dbattag in msgForm.instance.attags.all():
+                if dbattag not in attaglist:
+                    msgForm.instance.attags.remove(dbattag)
+
+            print(hashtaglist)
+            print(attaglist)
+            print(msgForm.instance.hashtags.all())
+            print(msgForm.instance.attags.all())
+            '''
+            # save this shit for the next step
+
+
+    msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
+    return msgForm
+
+# edit or update Message
+def editMessage(request):
+    curMsg = Message.objects.get(pk=request.POST['delMessage'])         # select Message
+
+    if 'delMessage' in request.POST:                                    # if Message should be deleted
+        curMsg.delete()                                                 # delete selected Message
+        return 'Nachricht gel&ouml;scht!'                               # return info
+
+    elif 'updateMsg' in request.POST:                                   # if Message should be updated
+        curMsg.text = request.POST['updatedText']                       # set Message text
+        curMsg.save()                                                   # save and update Message
+        return 'Nachricht erfolgreich aktualisiert!'                    # return info
+
+    else:                                                               # if Message should be posted
+        return 'Nachricht erfolgreich gesendet!'                        # return info, cause post is in msgDialog()
+
+
+# search input
+def search(request):
+    if request.method == 'GET':
+        query_dict = request.GET
+        search = query_dict.get('search')
+
+    # filter all messages contain the word  or all users contain the word
+    message_list = Message.objects.all().select_related('user__userprofile') \
+        .filter(
+        Q(text__contains=search) | Q(user__username__contains=search)
+    ).order_by('-date').distinct('text')
+    context = {
+        'search': search,
+        'message_list': message_list,
+        'active_page': 'settings',
+        'nav': Nav.nav,
+        'msgForm': msgDialog(request),
+    }
+    return render(request, 'search.html', context)
+
+
+# click on hashtaglinks will redirect to this function.
+def hashtag(request, text):
+    search = text
+
+    # filter all messages contain #
+    dbmessage_list = Message.objects.all().filter(hashtags__name=search)
+    message_list = []
+    for message in dbmessage_list:
+        copy_message = copy.copy(message)
+        message_list.append(dbm_to_m(copy_message))
+    message_list = zip(message_list, dbmessage_list)
+
+    context = {
+
+        'search': "#" + search,
+        'message_list': message_list,
+        'active_page': 'settings',
+        'nav': Nav.nav,
+        'msgForm': msgDialog(request),
+    }
+    return render(request, 'search.html', context)
+
+# Message to database, save hashtags and attags in text into database
+# (2) edit: changed message may contains other hashtags and attags or hashtags and attags may removed
+def msg_to_db(message):
+    hashtaglist = []
+    attaglist = []
+
+    # Step 1: replace all # and @ with link
+    for word in message.text.split():
+        # find all words starts with "#". No "/" allowed in hashtag.
+        if word[0] == "#":
+            if "/" in word:
+                pass
+            else:
+                # database will save hashtag instead of #hashtag
+                try:
+                    hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
+                except ObjectDoesNotExist:
+                    hashtag = Hashtag(name=str(word[1:]))
+                    hashtag.save()
+
+                message.hashtags.add(hashtag)
+                hashtaglist.append(hashtag)
+        # now find in text all words start with "@". Its important to find this user in database.
+        if word[0] == "@":
+            # database will save user instead of @user
+            try:
+                user = User.objects.get(username__exact=str(word[1:]))
+            except ObjectDoesNotExist:
+                pass
+            else:
+                message.attags.add(user)
+                attaglist.append(user)
+
+    # (2) check for hashtags and attags in database (remove if no reference), only for edit
+    for dbhashtag in message.hashtags.all():
+        if dbhashtag not in hashtaglist:
+            message.hashtags.remove(dbhashtag)
+    for dbattag in message.attags.all():
+        if dbattag not in attaglist:
+            message.attags.remove(dbattag)
+
+    return message
+
+
+# Database message to message (in template), replace all hashtags and attags in message with links
+def dbm_to_m(message):
+    # get hashtags and attags (models.ManyToMany) in message from database
+    hashtag_list = message.hashtags.all()
+    attag_list = message.attags.all()
+
+    # message contains hashtags or atttags
+    if attag_list or hashtag_list:
+        for word in message.text.split():
+            # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
+            if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
+                href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
+                message.text = message.text.replace(word, href)
+            # now find in text all words start with "@". Its important to find this user in database.
+            # if this user doesnt exist -> no need to set a link
+            # else we will set a link to his profile
+            if word[0] == "@" and (User.objects.get(username=word[1:]) in attag_list):
+                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+                    message.text = message.text.replace(word, href)
+    return message
+>>>>>>> origin/dev
