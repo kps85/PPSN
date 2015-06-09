@@ -169,6 +169,11 @@ function initInputValidation() {
 	$(".faqContainer .post").click(function() {
 		// Blendet Infotext ein und wechselt + zu - 
 		var isActive = $(this).hasClass("active");
+		
+		// Alles zuruecksetzen
+		$(".faqContainer").find(".active").removeClass("active");
+		$(".faqContainer").find("p").addClass("hidden");
+		$(".faqContainer").find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
 		$(this).toggleClass("active", !isActive);
 		$(this).find("p").toggleClass("hidden", isActive);
 		$(this).find("h4 span").toggleClass('glyphicon-minus', !isActive).toggleClass('glyphicon-plus', isActive);
