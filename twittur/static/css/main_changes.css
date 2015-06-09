@@ -53,16 +53,6 @@ nav a:focus { color: #fff; }
 	nav a:hover { background-color: rgba(255,255,255,0.1); }
 	nav a.active:hover { background-color: #f50000; }
 
-#list ul li {
-	display: block;
-	/* padding: 4px 10px; */
-	padding: 0;
-	border-radius: 5px; }
-#list ul a { color: #fff; padding: 2px 5px; }
-#list ul a:hover { background-color: rgba(255,255,255,0.1); }
-#list ul li a.ullink {
-	width: 100%; }
-#list ul li a.active { background-color: #f50000; }
 
 .infoMessage .glyphicon-remove:hover { cursor: pointer; }
 
@@ -70,4 +60,5 @@ nav a:focus { color: #fff; }
 .faqList li { }
 
 .search_headline { clear: both; display: block; width: 100%; margin-top: 10px; }
-.search_user_result { margin: 5px; }
+.search_user_result, .search_hash_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 5px 5px 0; padding: 5px 10px; }
+.search_user_result img { width: 50px; }

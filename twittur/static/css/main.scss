@@ -237,9 +237,10 @@ nav {
 		}
 		li {
 			display:block;
-			padding:4px 10px;
-			border-radius:5px;
+			
 			a {
+				padding:4px 10px;
+				border-radius:5px;
 				display:inline-block;
 				&:hover {
 					text-decoration:none;
@@ -374,6 +375,11 @@ header {
 	    width: 45px;
 		margin-top: 22.5px;
 		margin-left: 3%;
+		@include desktop {
+			position:fixed;
+			bottom:20px;
+			right:20px;
+		}
 		textarea { 
 			width: 100%; 
 		}
