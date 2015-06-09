@@ -1,2 +1,52 @@
+/* Wenn dann einheitlich. *gg* */
+#ftuFooter { border-top: 1px solid #F50000; }
+a { color: #F50000; }
 
+/* Hier kann die Farbe entfernt werden.
+  .copy a {
+    color: #a00000;
+    font-size: 1.2em; }
+    .copy a:hover {
+      color: #F50000; }
+*/
+.copy a { color: #f50000; }
+.copy a:hover { color: #a00000; }
 
+/* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
+
+  #ftu input[type="submit"][disabled] {
+		pointer-events: none;
+		cursor: not-allowed;
+		filter: alpha(opacity=50);
+		-webkit-box-shadow: none;
+						box-shadow: none;
+		opacity: .5;
+  }
+
+	#ftu .toggleItem { display: none; }
+	#ftu .toggleItem.active { display: block; }
+	#ftu #register.active { display: block; }
+	
+	
+
+/* Kontrast, Kontrast, Kontrast ... */
+#ftu h2 { color: #fff; }
+#ftu h2:hover { border-bottom: 1px solid #fff; }
+#ftu h2.active { color: #f50000; border-bottom: 1px solid #f50000; }
+
+nav a { color: #fff; }
+	nav a:hover { background-color: rgba(255,255,255,0.1); }
+	nav a.active:hover { background-color: #f50000; }
+
+#list ul li {
+	display: block;
+	/* padding: 4px 10px; */
+	padding: 0;
+	border-radius: 5px; }
+#list ul a { color: #fff; padding: 2px 5px; }
+#list ul a:hover { background-color: rgba(255,255,255,0.1); }
+#list ul li a.ullink {
+	width: 100%; }
+#list ul li a.active { background-color: #f50000; }
+
+.infoMessage .glyphicon-remove:hover { cursor: pointer; }

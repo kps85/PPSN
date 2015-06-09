@@ -18,12 +18,15 @@ from .forms import UserForm, UserDataForm, MessageForm, FAQForm
 
 # startpage
 def index(request):
-    # redirect, if user is not authenticated
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
     success_msg = None
 
+<<<<<<< HEAD
+=======
     if request.method == 'POST':
         if 'delMessage' in request.POST:
             curMsg = Message.objects.get(pk=request.POST['delMessage'])
@@ -39,9 +42,13 @@ def index(request):
             success_msg = 'Nachricht erfolgreich gesendet!'
 
 
+>>>>>>> origin/dev
     current_user = User.objects.all().filter(username__exact=request.user.username).select_related('userprofile')
     user_list = UserProfile.objects.all().filter(userprofile__exact=request.user)
     atTag = '@' + request.user.username + ' '
+
+    if request.method == 'POST':
+        success_msg = editMessage(request)
 
     #dbmessage_list = Message.objects.all().select_related('user__userprofile') \
     #    .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
@@ -69,8 +76,6 @@ def index(request):
 def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/')
-
-    active_page = "ftu"
 
     # Public Messages: TODO Filtern!
     message_list = Message.objects.all().order_by('-date')
@@ -174,9 +179,10 @@ def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('/twittur/')
 
-
 # profilpage
 def profile(request, user):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
@@ -184,21 +190,22 @@ def profile(request, user):
     curUserProfile = curUser.userprofile
     success_msg = None
 
-    if request.method == 'POST' and 'delMessage' in request.POST:
-        curMsg = Message.objects.get(pk=request.POST['delMessage'])
-        curMsg.delete()
-        success_msg = 'Nachricht gel&ouml;scht!'
+    if request.method == 'POST':
+        success_msg = editMessage(request)
 
     user_list = User.objects.all()
     group_list = Group.objects.all()
 
     dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-        .filter(
-        Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
+        .filter(Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
     ).order_by('-date').distinct()
 
+    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
+                                  timezone.get_current_timezone());
     message_list = []
     for message in dbmessage_list:
+        if message.date > curDate:
+            message.editable = True
         copy_message = copy.copy(message)
         message_list.append(dbm_to_m(copy_message))
     message_list = zip(message_list, dbmessage_list)
@@ -218,13 +225,19 @@ def profile(request, user):
     return render(request, 'profile.html', context)
 
 
-# infopage
+# Page: 'Info'
+# - shows: Impressum, Projekt-Team, Projekt (Aufgabenstellung, Ziel)
+# - template: info.html
 def info(request):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    # select admin users as Projekt-Team
     projektTeam = User.objects.filter(is_superuser=True).order_by('last_name');
 
+    # return relevant information to render info.html
     context = {
         'active_page': 'info',
         'nav': Nav.nav,
@@ -234,29 +247,41 @@ def info(request):
     return render(request, 'info.html', context)
 
 
-# infopage
+# Page: 'FAQ'
+# - shows: frequently asked questions
+# - allows: adding and deleting FAQ entries
+# - template: info_faq.html
 def faq(request):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    # initialize return information
     success_msg, error_msg = None, None
 
+    # adding a FAQ entry
+    # form: FAQform from forms.py
     if request.method == 'POST':
         faqForm = FAQForm(request.POST)
         if faqForm.is_valid():
             faqForm.save()
             success_msg = "Neuer FAQ Eintrag hinzugef&uuml;gt!"
 
+    # initialize FAQForm with current user as respondent
     faqForm = FAQForm(instance=request.user)
 
+    # initialize FAQ list for each category
     faqMain = FAQ.objects.filter(category='Allgemeine Frage')
     faqStart = FAQ.objects.filter(category='Startseite')
     faqProfile = FAQ.objects.filter(category='Profilseite')
     faqInfo = FAQ.objects.filter(category='Infoseite')
     faqSettings = FAQ.objects.filter(category='Einstellungen')
 
+    # sum FAQs into one list
     FAQs = [faqMain, faqStart, faqProfile, faqInfo, faqSettings]
 
+    # return relevant information to render info_faq.html
     context = {
         'active_page': 'info',
         'nav': Nav.nav,
@@ -274,11 +299,16 @@ def faq(request):
     return render(request, 'info_faq.html', context)
 
 
-# infopage
+# Page: 'Support'
+# - allows: submitting diverse requests TODO: implement data processing
+# - template: info_support.html
 def support(request):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    # return relevant information to render info_faq.html
     context = {
         'active_page': 'info',
         'nav': Nav.nav,
@@ -287,24 +317,36 @@ def support(request):
     return render(request, 'info_support.html', context)
 
 
-# settingspage
+# Page: 'Einstellungen'
+# - allows: editing editable user information and deleting account
+# -- picture, email, password, first_name, last_name,
+#    academicDiscipline, studentNumber, location
+# - template: info_support.html
 def settings(request):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    # get current users information and initialize return messages
     curUser = User.objects.get(pk=request.user.id)
     curUserProfile = curUser.userprofile
     success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
+    # check if account should be deleted
+    # if true: delete account, return to FTU
     if request.method == 'POST' and request.POST['delete'] == 'true':
         curUser.userprofile.delete()
         curUser.delete()
         return HttpResponseRedirect('/twittur/')
+    # else: validate userForm and userDataForm and save changes
     elif request.method == 'POST':
         userForm = UserForm(request.POST, instance=curUser)
         if userForm.is_valid():
             userDataForm = UserDataForm(request.POST, request.FILES, instance=curUserProfile)
             userDataForm.oldPicture = curUserProfile.picture
+            # if picture has changed, delete old picture
+            # do not, if old picture was default picture
             if 'picture' in request.FILES or 'picture-clear' in request.POST:
                 if userDataForm.oldPicture != 'picture/default.gif':
                     userDataForm.oldPicture.delete()
@@ -313,13 +355,17 @@ def settings(request):
                 userDataForm.save()
                 success_msg = 'Benutzerdaten wurden erfolgreich aktualisiert.'
             else:
+                # return errors if userDataForm is not valid
                 error_msg = userDataForm.errors
         else:
+            # return errors if userForm is not valid
             error_msg = userForm.errors
 
+    # initialize UserForm and UserDataForm with current users information
     userForm = UserForm(instance=curUser)
     userDataForm = UserDataForm(instance=curUserProfile)
 
+    # return relevant information to render settings.html
     context = {
         'active_page': 'settings',
         'nav': Nav.nav,
@@ -394,6 +440,22 @@ def msgDialog(request):
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
     return msgForm
+
+# edit or update Message
+def editMessage(request):
+    curMsg = Message.objects.get(pk=request.POST['delMessage'])         # select Message
+
+    if 'delMessage' in request.POST:                                    # if Message should be deleted
+        curMsg.delete()                                                 # delete selected Message
+        return 'Nachricht gel&ouml;scht!'                               # return info
+
+    elif 'updateMsg' in request.POST:                                   # if Message should be updated
+        curMsg.text = request.POST['updatedText']                       # set Message text
+        curMsg.save()                                                   # save and update Message
+        return 'Nachricht erfolgreich aktualisiert!'                    # return info
+
+    else:                                                               # if Message should be posted
+        return 'Nachricht erfolgreich gesendet!'                        # return info, cause post is in msgDialog()
 
 
 # search input

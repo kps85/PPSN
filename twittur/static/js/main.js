@@ -124,19 +124,20 @@ function initList() {
 
 function validateFtu() {
 	// Validiert die Daten der Login/Registrierungsseite
-	// TODO: Einfacher gestalten...
-	var loginFilledCorrectly = $('#login input[type=text]').val().replace( /\s/g, "") != '' 
-	&& $('#login input[type=password]').val().replace( /\s/g, "") != '';
-	console.log(loginFilledCorrectly);
+	// TODO: Einfacher gestalten...	
+	// das .replace hier war überflüssig. Wenn autofill, dann nur mit validen Daten. valide Daten = Passwort ohne Leerzeichen.
+	var loginFilledCorrectly = $('#login input[type=text]').val() != '' 
+	&& $('#login input[type=password]').val() != '';
 	
-	var registerFilledCorrectly = $('#name').val().replace( /\s/g, "") != '' && $('#email').val().replace( /\s/g, "") != '' &&
+	// console.log(loginFilledCorrectly);
+	
+	var registerFilledCorrectly = $('#name').val().replace(/\s/g, "") != '' 
+	&& $('#email').val().replace( /\s/g, "") != '' &&
 	$('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '' &&
 	$('#academicDiscipline').val().replace( /\s/g, "") != '';
 	
 	(loginFilledCorrectly) ? $('#login input[type=submit]').prop("disabled", false) : $('#login input[type=submit]').prop("disabled", true);
-	(registerFilledCorrectly) ? $('#register input[type=submit]').prop("disabled", false) : $('#register input[type=submit]').prop("disabled", true);
-	
-	
+	(registerFilledCorrectly) ? $('#register input[type=submit]').prop("disabled", false) : $('#register input[type=submit]').prop("disabled", true);	
 }
 
 
@@ -279,6 +280,5 @@ $(document).ready(function() {
 	fph();
 	$(window).resize(function() {
 		fph();
-	});
-	
+	});	
 });

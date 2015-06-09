@@ -85,6 +85,11 @@ class IsInGroup(models.Model):
 
 
 class FAQ(models.Model):
+    # FAQ model
+    # - author: FAQ respondent REFERENCES User
+    # - question: a frequently asked question
+    # - category: a category the question is assigned to by the respondent
+    # - answer: an answer the respondent has given
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
     question = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
