@@ -281,15 +281,14 @@ function initVarious() {
 		  $ul.hide();
 		  $p.click(function() {
 			  
-			  var visible = $ul.is(":visible");
 			  $(".superDropdownSub").hide();
 			  
 			  $mainDiv.height($ul.outerHeight(true));
+			  $content.css({'left':'0'});
 			  
-			  if(!visible) {
-				  $ul.toggle();
-				  $content.animate({'left':'-100%'});
-			  }
+			  $ul.show();
+			  $content.animate({'left':'-100%'});
+
 		  })
 		  $(this).children("option").each(function() {
 			var $li = $("<li>", {'text': $(this).val()});
@@ -316,6 +315,7 @@ function initVarious() {
 	  $mainP.click(function() {
 		  var width = $mainP.innerWidth() - 1;
 			$mainDiv.width(width);
+			$content.css({'left':'0'});
 			$mainDiv.height("inherit");
 		  $mainUl.fadeToggle(0);
 		  $(this).toggleClass("opened");
