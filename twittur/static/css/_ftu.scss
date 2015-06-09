@@ -204,6 +204,7 @@
 	position:fixed;
 	top:0;
 	left:0;
+	right:0;
 	padding:20px;
 	overflow-y:scroll;
 	
@@ -211,9 +212,10 @@
 	height:100%;
 	@include desktop {
 		width:80%;
-		margin:0 10%;
+		margin:0 auto;
 		margin-top:5%;
 		height:80%;
+		max-width:800px;
 	}
 	
 	

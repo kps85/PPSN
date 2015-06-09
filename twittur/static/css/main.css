@@ -199,6 +199,7 @@ header {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   padding: 20px;
   overflow-y: scroll;
   width: 100%;
@@ -208,9 +209,10 @@ header {
   @media screen and (min-width: 1024px) {
     #register {
       width: 80%;
-      margin: 0 10%;
+      margin: 0 auto;
       margin-top: 5%;
-      height: 80%; } }
+      height: 80%;
+      max-width: 800px; } }
   #register input, #register .superDropdown > p {
     padding: 10px;
     border: 1px solid #E3E8EA;
