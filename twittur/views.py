@@ -32,6 +32,7 @@ def index(request):
         elif 'updateMsg' in request.POST:
             curMsg = Message.objects.get(pk=request.POST['updateMsg'])
             curMsg.text = request.POST['updatedText']
+            msg_to_db(curMsg)
             curMsg.save()
             success_msg = 'Nachricht erfolgreich aktualisiert!'
         else:
@@ -340,10 +341,13 @@ def msgDialog(request):
         msgForm = MessageForm(request.POST)
         if msgForm.is_valid():
             msgForm.save()
+            msg_to_db(msgForm.instance)
+            msgForm.save()
+            '''
             text = msgForm.instance.text
-
             # for debug
-            list = []
+            hashtaglist = []
+            attaglist = []
 
             # Step 1: replace all # and @ with link
             for word in text.split():
@@ -355,12 +359,11 @@ def msgDialog(request):
                         try:
                             hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
                         except ObjectDoesNotExist:
-                            print("ich war hier")
                             hashtag = Hashtag(name=str(word[1:]))
                             hashtag.save()
 
                         msgForm.instance.hashtags.add(hashtag)
-                        list.append(word)
+                        hashtaglist.append(hashtag)
                 # now find in text all words start with "@". Its important to find this user in database.
                 if word[0] == "@":
                     try:
@@ -369,25 +372,25 @@ def msgDialog(request):
                         pass
                     else:
                         msgForm.instance.attags.add(user)
-                        list.append(word)
+                        attaglist.append(user)
+            print(hashtaglist)
+            print(attaglist)
+            print(msgForm.instance.hashtags.all())
+            print(msgForm.instance.attags.all())
+            for dbhashtag in msgForm.instance.hashtags.all():
+                if dbhashtag not in hashtaglist:
+                    msgForm.instance.hashtags.remove(dbhashtag)
+            for dbattag in msgForm.instance.attags.all():
+                if dbattag not in attaglist:
+                    msgForm.instance.attags.remove(dbattag)
+
+            print(hashtaglist)
+            print(attaglist)
+            print(msgForm.instance.hashtags.all())
+            print(msgForm.instance.attags.all())
+            '''
             # save this shit for the next step
-            '''
-            # Step 2: add # and @ related with message in database
-            for word in list:
-                # check first whether #word exist in database. true: add to message, false: create hashtag then add
-                if word[0] == "#":
-                    try:
-                        hashtag = Hashtag.objects.get(name__exact=str(word))
-                    except ObjectDoesNotExist:
-                        hashtag = Hashtag(name=str(word))
-                        hashtag.save()
-                    msgForm.instance.hashtags.add(hashtag)
-                # user exist in database so add it to message. we checked this in step 1 before
-                if word[0] == "@":
-                    user = User.objects.get(username__exact=str(word[1:]))
-                    msgForm.instance.attags.add(user)
-            '''
-            msgForm.save()
+
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
     return msgForm
@@ -436,13 +439,57 @@ def hashtag(request, text):
     }
     return render(request, 'search.html', context)
 
+def msg_to_db(message):
+    hashtaglist = []
+    attaglist = []
+
+    # Step 1: replace all # and @ with link
+    for word in message.text.split():
+        # find all words starts with "#". No "/" allowed in hashtag.
+        if word[0] == "#":
+            if "/" in word:
+                pass
+            else:
+                try:
+                    hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
+                except ObjectDoesNotExist:
+                    hashtag = Hashtag(name=str(word[1:]))
+                    hashtag.save()
+
+                message.hashtags.add(hashtag)
+                hashtaglist.append(hashtag)
+        # now find in text all words start with "@". Its important to find this user in database.
+        if word[0] == "@":
+            try:
+                user = User.objects.get(username__exact=str(word[1:]))
+            except ObjectDoesNotExist:
+                pass
+            else:
+                message.attags.add(user)
+                attaglist.append(user)
+    print(hashtaglist)
+    print(attaglist)
+    print(message.hashtags.all())
+    print(message.attags.all())
+    for dbhashtag in message.hashtags.all():
+        if dbhashtag not in hashtaglist:
+            message.hashtags.remove(dbhashtag)
+    for dbattag in message.attags.all():
+        if dbattag not in attaglist:
+            message.attags.remove(dbattag)
+
+    print(hashtaglist)
+    print(attaglist)
+    print(message.hashtags.all())
+    print(message.attags.all())
+    # save this shit for the next step
+    return message
+
 def dbm_to_m(message):
     # for debug
     hashtag_list = message.hashtags.all()
     attag_list = message.attags.all()
-    list =[]
-    print (hashtag_list)
-    print(attag_list)
+    list = []
     if attag_list or hashtag_list:
         for word in message.text.split():
 
@@ -459,5 +506,4 @@ def dbm_to_m(message):
                     list.append(word)
                     href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
-        print(list)
     return message
