@@ -439,6 +439,8 @@ def hashtag(request, text):
     }
     return render(request, 'search.html', context)
 
+# Message to database, save hashtags and attags in text into database
+# (2) edit: changed message may contains other hashtags and attags or hashtags and attags may removed
 def msg_to_db(message):
     hashtaglist = []
     attaglist = []
@@ -450,6 +452,7 @@ def msg_to_db(message):
             if "/" in word:
                 pass
             else:
+                # database will save hashtag instead of #hashtag
                 try:
                     hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
                 except ObjectDoesNotExist:
@@ -460,6 +463,7 @@ def msg_to_db(message):
                 hashtaglist.append(hashtag)
         # now find in text all words start with "@". Its important to find this user in database.
         if word[0] == "@":
+            # database will save user instead of @user
             try:
                 user = User.objects.get(username__exact=str(word[1:]))
             except ObjectDoesNotExist:
@@ -467,10 +471,8 @@ def msg_to_db(message):
             else:
                 message.attags.add(user)
                 attaglist.append(user)
-    print(hashtaglist)
-    print(attaglist)
-    print(message.hashtags.all())
-    print(message.attags.all())
+
+    # (2) check for hashtags and attags in database (remove if no reference), only for edit
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
             message.hashtags.remove(dbhashtag)
@@ -478,32 +480,26 @@ def msg_to_db(message):
         if dbattag not in attaglist:
             message.attags.remove(dbattag)
 
-    print(hashtaglist)
-    print(attaglist)
-    print(message.hashtags.all())
-    print(message.attags.all())
-    # save this shit for the next step
     return message
 
+
+# Database message to message (in template), replace all hashtags and attags in message with links
 def dbm_to_m(message):
-    # for debug
+    # get hashtags and attags (models.ManyToMany) in message from database
     hashtag_list = message.hashtags.all()
     attag_list = message.attags.all()
-    list = []
+
+    # message contains hashtags or atttags
     if attag_list or hashtag_list:
         for word in message.text.split():
-
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
             if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
-                list.append(word)
                 href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
                 message.text = message.text.replace(word, href)
-
             # now find in text all words start with "@". Its important to find this user in database.
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
             if word[0] == "@" and (User.objects.get(username=word[1:]) in attag_list):
-                    list.append(word)
                     href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
     return message
