@@ -73,6 +73,12 @@ header {
     #body_ftu .column-right {
       width: 43%;
       float: right; } }
+  #body_ftu #aside {
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0; }
 
 #ftu {
   color: #ddd;
