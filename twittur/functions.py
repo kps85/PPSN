@@ -68,6 +68,7 @@ def msgDialog(request):
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
     return msgForm
 
+
 # edit or update Message
 def editMessage(request):
     if 'delMessage' in request.POST:                                        # if Message should be deleted

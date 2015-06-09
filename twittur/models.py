@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 #### Entitys
+
+
 # - user
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
@@ -26,11 +28,13 @@ class UserProfile(models.Model):
             self.picture.delete()
         super(UserProfile, self).delete()
 
+
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
+
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
@@ -56,7 +60,9 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
+
 # Relationships
+
 
 # - message directed to group or user or both
 class ToGroup(models.Model):

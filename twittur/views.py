@@ -14,6 +14,7 @@ from .models import UserProfile, Group, Nav, Message, Hashtag
 from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, editMessage, msgDialog
 
+
 # startpage
 def index(request):
     # check if user is logged in
@@ -120,8 +121,10 @@ def login(request):
                 'error_reg_user_p': error_reg_user_p,
                 'error_reg_userprofile_ad': error_reg_userprofile_ad,
                 'error_reg_userprofile_nr': error_reg_userprofile_nr,
+                'active_page': 'ftu',
                 'rActive': 'active',
-                'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list
+                'nav': Nav.nav,
+                'message_list': message_list
             }
             # error?
             if error_reg_userprofile_ad or error_reg_mail or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
@@ -145,7 +148,7 @@ def login(request):
             # log user in and redirect to index page
             user = authenticate(username=username, password=password)
             auth.login(request, user)
-            return render(request, 'index.html', context)
+            return HttpResponseRedirect('/twittur/')
 
         # case if username is taken (checkUsername == user)
         else:
@@ -199,7 +202,6 @@ def profile(request, user):
                'curUserProfile': curUserProfile,
                'active_page': 'profile',
                'profileUser': user,
-               'dbmessage_list': dbmessage_list,
                'user_list': user_list,
                'group_list': group_list,
                'nav': Nav.nav,

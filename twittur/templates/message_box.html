@@ -23,7 +23,7 @@
 		</div>
 		<div class="postText" id="postText{{ message.id }}">
       {% if message.text %}
-      {{ message.text | safe }}
+      {{ message.text|safe }}
       {% endif %}
 		</div>
     {% if message.editable %}

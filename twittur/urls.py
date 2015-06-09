@@ -2,6 +2,7 @@ from django.conf.urls import url
 
 from . import views, views_info, views_search
 
+
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^info/$', views_info.info, name='info'),

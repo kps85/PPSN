@@ -7,6 +7,7 @@ from .models import Nav, FAQ
 from .forms import FAQForm
 from .views import msgDialog
 
+
 # Page: 'Info'
 # - shows: Impressum, Projekt-Team, Projekt (Aufgabenstellung, Ziel)
 # - template: info.html

@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 
 from .models import User, UserProfile, Message, FAQ
 
+
 AD_CHOICES = (
     (mark_safe('Fakult&auml;t I'), ()),
     (mark_safe('Fakult&auml;t II'), ()),

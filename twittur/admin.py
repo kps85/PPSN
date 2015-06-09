@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from .models import UserProfile, Message, Group, ToGroup, Hashtag, FAQ
 
+
 # initialize admin view for FAQs
 class FAQAdmin(admin.ModelAdmin):
     # set fields and order of them for FAQ overview
@@ -13,6 +14,7 @@ class FAQAdmin(admin.ModelAdmin):
         ('Autor',               {'fields': ['author']}),
     ]
     list_display = ('question', 'category', 'author')
+
 
 UserAdmin.list_display = ('username' ,'email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
 
