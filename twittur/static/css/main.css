@@ -87,6 +87,9 @@ header {
     content: "";
     display: table;
     clear: both; }
+  @media screen and (max-width: 1023px) {
+    #ftu {
+      padding-top: 60px; } }
   #ftu a {
     color: #ddd; }
   #ftu h2 {
@@ -169,22 +172,43 @@ header {
     #ftu .forgotBox a {
       color: #333; }
   #ftu .title {
-    float: left !important;
-    margin-left: 0 !important;
     background-image: url("img/logo_white.png") !important;
+    margin-left: 0 !important;
     width: 50%;
-    margin-bottom: 20px;
-    border: none;
-    display: inline-block; }
+    float: none; }
+    @media screen and (min-width: 1024px) {
+      #ftu .title {
+        float: left !important;
+        margin-bottom: 20px;
+        border: none;
+        display: inline-block; } }
   #ftu .showRegister {
-    width: 50%;
-    display: inline-block;
-    text-align: right;
-    float: left;
     font-size: 2em;
-    padding-right: 2%;
-    margin-top: 25px;
     font-weight: 100; }
+    @media screen and (min-width: 1024px) {
+      #ftu .showRegister {
+        width: 50%;
+        display: inline-block;
+        text-align: right;
+        float: left;
+        padding-right: 2%;
+        margin-top: 25px; }
+        #ftu .showRegister .mobile {
+          display: none; } }
+    @media screen and (max-width: 1023px) {
+      #ftu .showRegister {
+        background: #000;
+        display: block;
+        position: fixed;
+        z-index: 400;
+        left: 0;
+        width: 100%;
+        top: 0;
+        padding: 10px;
+        color: #fff;
+        font-size: 1.2em; }
+        #ftu .showRegister .default {
+          display: none; } }
   #ftu .forgot, #ftu .forgotBack {
     padding: 12px;
     display: inline-block;
@@ -192,9 +216,9 @@ header {
     margin-top: 5px; }
 
 #register {
-  -webkit-box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.66);
-  -moz-box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.66);
-  box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.66);
+  -webkit-box-shadow: 0px 0px 0px 1000px rgba(0, 0, 0, 0.66);
+  -moz-box-shadow: 0px 0px 0px 1000px rgba(0, 0, 0, 0.66);
+  box-shadow: 0px 0px 0px 1000px rgba(0, 0, 0, 0.66);
   background: #F8F8F8;
   display: none;
   z-index: 5000;
@@ -278,10 +302,12 @@ header {
     #register input[type="submit"]:hover {
       opacity: 0.9; }
   #register #registerButtons {
-    position: absolute;
-    bottom: 0;
-    right: 0;
     padding: 10px; }
+    @media screen and (min-width: 1024px) {
+      #register #registerButtons {
+        position: absolute;
+        bottom: 0;
+        right: 0; } }
   #register .registerButton {
     background: #00C88D !important; }
   #register input[type="text"], #register input[type="password"] {
@@ -688,13 +714,15 @@ header {
     padding: 0; }
   .superDropdown .superDropdownDiv {
     overflow-x: hidden;
-    cursor: default;
-    position: absolute;
-    overflow-y: visible;
-    height: auto;
-    z-index: 4000;
-    background: transparent;
-    opacity: 1.0; }
+    cursor: default; }
+    @media screen and (min-width: 1024px) {
+      .superDropdown .superDropdownDiv {
+        position: absolute;
+        overflow-y: visible;
+        height: auto;
+        z-index: 4000;
+        background: transparent;
+        opacity: 1.0; } }
   .superDropdown .superDropdownContent {
     position: relative;
     left: 0; }
