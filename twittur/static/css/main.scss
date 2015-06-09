@@ -505,12 +505,15 @@ $iconWidth:50px;
 	.superDropdownDiv {
 		overflow-x:hidden;
 		cursor:default;
-		position:absolute;
-		overflow-y:visible;
-		height:auto;
-		z-index:4000;
-		background:transparent;
-		opacity:1.0;
+		@include desktop {
+			position:absolute;
+			overflow-y:visible;
+			height:auto;
+			z-index:4000;
+		
+			background:transparent;
+			opacity:1.0;
+		}
 	}
 	
 	.superDropdownContent {

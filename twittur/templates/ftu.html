@@ -2,7 +2,10 @@
 <div id="ftu" class="full-page">
 	<div class="center">
 		<a class="title" href="#">twittur</a>
-		<a class="showRegister" href="#">Registrieren</a>
+		<a class="showRegister" href="#">
+			<span class="default">Registrieren</span>
+			<span class="mobile">Jetzt bei twittur registrieren!</span>
+		</a>
 
 		<div class="column column-left">
 			<div class="headline">
@@ -58,7 +61,7 @@
 </div>
 
 				<div class="{% if rActive %}active {% endif %} scrollfix" id="register">
-					<h1>Registrieren</h2>
+					<h1>Registrieren</h1>
 					<form method="POST" action="">
 						{% csrf_token %} 
 						<div class="column column-left">
