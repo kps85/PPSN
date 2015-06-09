@@ -13,6 +13,21 @@ a { color: #F50000; }
 .copy a { color: #f50000; }
 .copy a:hover { color: #a00000; }
 
+#main.infoGuest {
+	width: auto;
+	margin-left: auto;
+}
+
+.cit-logo { width: 75px; }
+.post .cit-logo { width: 150px; margin: 10px; }
+
+#body_info_guest #aside {
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0; }
+
 /* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
 
   #ftu input[type="submit"][disabled] {

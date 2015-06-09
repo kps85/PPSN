@@ -18,7 +18,8 @@ def info(request):
     # check if user is logged in
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
-        return render(request, 'info_guest.html', {'team': projektTeam})
+        return render(request, 'info_guest.html', {'active_page': 'info_guest',
+                                                   'team': projektTeam})
 
     # return relevant information to render info.html
     context = {

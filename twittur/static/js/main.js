@@ -179,10 +179,10 @@ function initInputValidation() {
 }
 
 
-function initInfo() {
+function initInfoSettings() {
 	// Wechselt die Info Navi und blendet relevante Formulare (Nachricht, Kontaktformular) ein.
 	// Reagiert auf den hash in der aktiven URL	
-	if ($('#body_info').length > 0) {
+	if ($('#body_info').length > 0 || $('#body_settings').length > 0) {
 		
 		infoChange((window.location.href.split("#"))[1]);
 		
@@ -191,14 +191,14 @@ function initInfo() {
 		});
 		
 	}
-	
-	function infoChange(hash) {		
-		$('.ullink.active').removeClass('active');
-		$('.'+hash).addClass('active');
-	
-		$(".supportCont").addClass('hidden');
-		$("#"+hash).removeClass('hidden');
-	}
+}
+
+function infoChange(hash) {		
+	$('.ullink.active').removeClass('active');
+	$('.'+hash).addClass('active');
+
+	$(".supportCont").addClass('hidden');
+	$("#"+hash).removeClass('hidden');
 }
 
 
@@ -280,7 +280,7 @@ $(document).ready(function() {
 	initMenu();
 	initList();
 	initFtu();
-	initInfo();
+	initInfoSettings();
 	initInputValidation();
 	initVarious();
 	

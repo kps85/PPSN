@@ -1,7 +1,10 @@
 {% include 'header.html' %}
 
-<div id="content">
-	{% include 'info_projekt.html' with team=team %}
+<div class="infoGuest" id="main">
+	<div id="content">
+  	<a href="{% url 'twittur:login' %}" class="text-uppercase"><strong><span class="glyphicon glyphicon-arrow-left"></span> zur&uuml;ck</strong></a>
+		{% include 'info_projekt.html' with team=team %}
+	</div>
 </div>
 
 {% include 'footer.html' %}
