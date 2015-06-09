@@ -12,11 +12,19 @@ from django.contrib.auth.models import User
 # search input
 def search(request):
     search_input = None
+    # special case: flag for @
+    attag = False
 
     if request.method == 'GET':
         query_dict = request.GET
         search_input = query_dict.get('search_input')
     # filter all messages contain the word  or all users contain the word
+    # search_input contains @ -> cut @ off and set flag
+    # the reason behind this is we save username instead of @username, so if someone is looking for
+    # @kps for example, we wont find him, because the database don't know him
+    if search_input[0] == "@":
+        attag = True
+        search_input = search_input[1:]
     dbmessage_list = Message.objects.all().select_related('user__userprofile') \
         .filter(
         Q(text__contains=search_input) | Q(user__username__contains=search_input)
@@ -29,10 +37,13 @@ def search(request):
     message_list = zip(message_list, dbmessage_list)
 
     user_list = User.objects.all() \
-        .filter(Q(username__contains='@'+search_input)
+        .filter(Q(username__contains=search_input)
                 | Q(first_name__contains=search_input)
                 | Q(last_name__contains=search_input)
                 )
+    # flag was set -> back to normal input
+    if attag:
+        search_input = '@'+search_input
 
     context = {
         'user_list': user_list,
