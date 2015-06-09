@@ -255,7 +255,7 @@
 				color:#333;
 			}
 		}
-		.superDropdownList {
+		.superDropdownDiv {
 			box-sizing:border-box;
 			background:rgba(255,255,255,0.95);
 			border:1px solid #E3E8EA;
@@ -272,12 +272,17 @@
 				}
 			}
 			
-			ul li {
+			ul li, span {
 				padding:10px 30px;
 				&:hover {
 					background:#eee;
 					cursor:pointer;
 				}
+			}
+			
+			span {
+				font-weight:bold;
+				display:block;
 			}
 		}
 		
@@ -343,6 +348,7 @@
 		ul li {
 			display:inline;
 			 a {
+				 color:#fff;
 				padding:10px;
 				display:inline-block;
 				background:#111;
