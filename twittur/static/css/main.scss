@@ -69,6 +69,7 @@ textarea, input { outline: none; }
 	bottom:20px;
 	right:20px;
 	display:block;
+	display:none;
 	padding:0;
 	border-color:#111;
 	@include gradient(#30303F,#282A37);
@@ -400,8 +401,11 @@ header {
 		margin-left: 3%;
 		@include desktop {
 			position:fixed;
-			bottom:50px;
+			bottom:20px;
 			right:20px;
+			&.scrolled {
+				bottom:50px;
+			}
 		}
 		textarea { 
 			width: 100%; 

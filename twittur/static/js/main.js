@@ -342,6 +342,17 @@ function initVarious() {
 	});
   
   
+/* Scrollevent */
+	$(window).scroll(function() {
+		if($(window).scrollTop() > 0) {
+			$(".newMsg").addClass("scrolled");
+			$(".scrollTop").fadeIn("slow");
+		} else {
+			$(".newMsg").removeClass("scrolled");
+			$(".scrollTop").fadeOut("slow");
+		}
+	});
+  
 }
 
 $(document).ready(function() {
