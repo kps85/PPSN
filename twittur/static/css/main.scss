@@ -83,11 +83,11 @@ textarea, input { outline: none; }
 		margin-top:-10px;
 	}
 	
-	&:hover {
+	&:hover, &:focus {
 		background:#30303F;
 		border-color:#111;
-		
 	}
+	
 }
 
 .newMsg {
