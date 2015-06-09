@@ -413,7 +413,7 @@ textarea, input {
   height: 25px;
   width: 45px;
   position: fixed;
-  bottom: 70px;
+  bottom: 20px;
   right: 20px;
   display: block;
   display: none;
@@ -423,6 +423,9 @@ textarea, input {
   background-image: -o-linear-gradient(top, #30303F 0%, #282A37 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#30303F), to(#282A37));
   background-image: linear-gradient(to bottom, #30303F 0%, #282A37 100%); }
+  @media screen and (min-width: 1024px) {
+    .scrollTop {
+      bottom: 70px; } }
   .scrollTop .glyphicon {
     font-size: 1em;
     line-height: 0.5em;
