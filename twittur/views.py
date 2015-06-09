@@ -88,8 +88,7 @@ def login(request):
         error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
         error_reg_userprofile_ad, error_reg_userprofile_nr, error_reg_mail = None, None, None, None, None, None, None, None
 
-        username = query_dict.get('name')
-        studentNumber = 0
+        username, academicDiscipline, studentNumber = query_dict.get('name'), None, 0
 
         try:
             checkUsername = User.objects.get(username__exact=username)
@@ -104,13 +103,18 @@ def login(request):
                 error_reg_user_p = " - Passw&ouml;rter sind nicht gleich."
 
             email = query_dict.get('email')
-
             mail = email.split('@')
-            if len(mail) == 1 or not (mail[1].endswith(".tu-berlin.de") or mail[1].endswith("tu-berlin.de")):
+            if len(mail) == 1 or not (
+                mail[1].endswith(".tu-berlin.de") or
+                (email[(len(email)-13):len(email)] == '@tu-berlin.de')
+            ):
                 error_reg_mail = "Junge, gib TU Mail ein!"
 
             if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
                 studentNumber = query_dict.get('studentNumber')
+
+            academicDiscipline = query_dict.get('academicDiscipline')
+            print(academicDiscipline)
 
             # context for html
             context = {
@@ -133,8 +137,6 @@ def login(request):
             # fill the rest for modal User and Userprofile
             first_name = query_dict.get('first_name')
             last_name = query_dict.get('last_name')
-            academicDiscipline = query_dict.get('academicDiscipline')
-            studentNumber = query_dict.get('studentNumber')
 
             # create User and Userprofile
             user = User.objects.create_user(username, email, password)
