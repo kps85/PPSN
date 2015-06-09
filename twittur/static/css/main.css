@@ -160,6 +160,8 @@ header {
     display: none;
     background: #fff;
     color: #333; }
+    #ftu .forgotBox h2 {
+      color: #333; }
     #ftu .forgotBox input {
       background: #eee;
       border: 1px solid #ddd;
