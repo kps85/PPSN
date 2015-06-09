@@ -1,49 +1,15 @@
 {% extends 'base.html' %}
 
 {% block list %}
-	{% include 'layout/nav_info.html' %}
+  {% include 'layout/nav_info.html' %}
   {% include 'layout/nav_foot.html' %}
 {% endblock %}
 
 {% block nav %}
-	{% include 'layout/nav.html' %}
+  {% include 'layout/nav.html' %}
 {% endblock %}
 
+
 {% block content %}
-<h3 class="text-uppercase" id="impressum">Impressum</h3>
-<div class="container-fluid">
-	<div class="col-xs-12 post">
-    <p class="text-justify">Inhaltlich verantwortlich gemäß &sect;5 TMG ist <a href="#team">das Team 'twittur'</a>.<br>
-      <br>
-      Trotz sorgf&auml;ltiger inhaltlicher Kontrolle &uuml;bernehmen wir keine Haftung f&uuml;r die Inhalte externer Links. F&uuml;r den Inhalt der verlinkten Seiten sind ausschlie&szlig;lich deren Betreiber verantwortlich. Mit dem Urteil vom 12. Mai 1998 hat das Landgericht Hamburg entschieden, dass man durch die Anbringung eines Links die Inhalte der gelinkten Seiten ggf. mit zu verantworten hat. Dies kann nur dadurch verhindert werden, dass man sich ausdr&uuml;cklich von diesem Inhalt distanziert. F&uuml;r alle Links auf dieser Homepage gilt: Wir distanzieren uns hiermit ausdr&uuml;cklich von allen Inhalten aller gelinkten Seiten auf dieser Homepage und machen uns diese Inhalte nicht zu Eigen.</p>
-  </div>
-</div>
-
-<h3 class="text-uppercase" id="team">Das Projekt-Team <small>Gruppe 2: 'twittur'</small></h3>
-<div class="teamContainer container-fluid">
-{% for ma in team %}
-	<div class="col-xs-12 col-sm-6 post">
-    <div class="col-xs-4 col-sm-4 text-center">
-      <img src="{{ ma.userprofile.picture.url }}" class="img-thumbnail">
-    </div>
-    <div class="col-xs-8 col-sm-8">
-    	<dt>Name</dt><dd>{{ ma.first_name }} {{ ma.last_name }} (@<a href="{% url 'twittur:profile' user=ma %}">{{ ma.username }}</a>)</dd>
-    	<dt>Studiengang</dt><dd>{{ ma.userprofile.academicDiscipline }}</dd>
-    	<dt>E-Mail</dt><dd>{{ ma.email }}</dd>
-    </div>
-  </div>
-{% endfor %}
-</div>
-
-<h3 class="text-uppercase" id="projekt">Unser Projekt <small>Gruppe 2: 'twittur'</small></h3>
-<div class="container-fluid">
-	<div class="col-xs-12 post">
-  	<h4>Aufgabenstellung</h4>
-    <p>Die SeminarteilnehmerInnen entwickelen eine social-networking Plattform basierend auf einem Webframework einer objekt-orientierten Sprache. Das Projektmanagement basiert auf modernen Praktiken agiler Softwareentwicklung und es sollen typische Werkzeuge aus der Welt der Open Source Entwicklung verwendet werden.</p>
-  </div>
-	<div class="col-xs-12 post">
-  	<h4>Ziel des Projekts</h4>
-    <p>Das Team entwickelt im Rahmen eines CIT-Moduls an der TU Berlin binnen neun Wochen ein Social-Network. Das System basiert im Allgemeinen auf der Struktur der TU Berlin und achtet auf festgelegte Sicherheitsrichtlinien. Es wird unter zu Hilfe nahme der Programmiersprache Python, dem Web-Framework Django und Twitter Bootstrap umgesetzt.</p>
-  </div>
-</div>
+{% include 'info_projekt.html' with team=team %}
 {% endblock %}

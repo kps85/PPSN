@@ -12,13 +12,13 @@ from .views import msgDialog
 # - shows: Impressum, Projekt-Team, Projekt (Aufgabenstellung, Ziel)
 # - template: info.html
 def info(request):
+    # select admin users as Projekt-Team
+    projektTeam = User.objects.filter(is_superuser=True).order_by('last_name')
+
     # check if user is logged in
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
-
-    # select admin users as Projekt-Team
-    projektTeam = User.objects.filter(is_superuser=True).order_by('last_name')
+        return render(request, 'info_guest.html', {'team': projektTeam})
 
     # return relevant information to render info.html
     context = {
