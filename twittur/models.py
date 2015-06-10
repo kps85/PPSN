@@ -9,6 +9,7 @@ from django.conf import settings
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
 
+    follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow')
     studentNumber = models.CharField( max_length = 6, default = '000000',
                                       help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')
     academicDiscipline = models.CharField( max_length = 200,

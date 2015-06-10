@@ -25,6 +25,8 @@ def index(request):
     success_msg = None
 
     current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
+    curUser = User.objects.get(username__exact=request.user)
+    follow_list = curUser.userprofile.follow.all()
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
     #    atTag = '@' + request.user.username + ' '
 
@@ -33,7 +35,7 @@ def index(request):
 
     #    dbmessage_list = Message.objects.all().select_related('user__userprofile') \
     #        .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
-    dbmessage_list = Message.objects.all().select_related('user__userprofile').order_by('-date')
+    dbmessage_list = Message.objects.all().filter(Q(user__exact=current_user) | Q(user__exact=curUser.userprofile.follow.all()) ).order_by('-date')
 
     hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                        .order_by('-hashtag_count')[:5]
@@ -50,7 +52,7 @@ def index(request):
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgDialog(request),
-               'success_msg': success_msg, 'hashtag_list': hashtag_list}
+               'success_msg': success_msg, 'hashtag_list': hashtag_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
 
@@ -176,14 +178,35 @@ def profile(request, user):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    curUser = User.objects.get(username=user)
+    curUser = User.objects.get(username=user) # this is the user displayed in html
     curUserProfile = curUser.userprofile
     success_msg = None
+
+    cuUser = UserProfile.objects.get(userprofile=request.user) # this is the login user
+
+    # follow
+    if request.method == "GET" and 'follow' in request.GET:
+
+        print(cuUser.follow.all())
+        if curUser in cuUser.follow.all():
+            print("remove")
+            cuUser.follow.remove(curUser)
+            cuUser.save()
+        else:
+            print("add")
+            cuUser.follow.add(curUser)
+            cuUser.save()
+
+    follow_list = cuUser.follow.all()
+    if curUser in follow_list:
+        follow_text = 'In Ruhe lassen'
+    else:
+        follow_text = 'Stalken!'
 
     if request.method == 'POST':
         success_msg = editMessage(request)
 
-    user_list = User.objects.all()
+
     group_list = Group.objects.all()
 
     dbmessage_list = Message.objects.all().select_related('user__userprofile') \
@@ -200,11 +223,12 @@ def profile(request, user):
         message_list.append(dbm_to_m(copy_message))
     message_list = zip(message_list, dbmessage_list)
 
-    context = {'curUser': curUser,
+    context = {'follow_list': follow_list,
+               'follow_text': follow_text,
+               'curUser': curUser,
                'curUserProfile': curUserProfile,
                'active_page': 'profile',
                'profileUser': user,
-               'user_list': user_list,
                'group_list': group_list,
                'nav': Nav.nav,
                'message_list': message_list,
@@ -279,3 +303,13 @@ def settings(request):
         'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)
+'''
+def follow(request, user):
+
+    if request.method == 'GET':
+        print("hello")
+        print(request)
+
+    profile(request, user)
+    return HttpResponseRedirect('')
+    '''

@@ -1,9 +1,9 @@
 <div class="post">
 	<div class="icon">
-  	<a href="{% url 'twittur:profile' user=message.user %}">
-    	<img src="{{ message.user.userprofile.picture.url }}" class="img-thumbnail">
-    </a>
-  </div>
+      <a href="{% url 'twittur:profile' user=message.user %}">
+          <img src="{{ message.user.userprofile.picture.url }}" class="img-thumbnail">
+      </a>
+    </div>
 	<div class="postContent">
 		<div class="postMeta">
 			<div class="postAuthor">@<a href="{% url 'twittur:profile' user=message.user %}">{{ message.user.username }}</a></div>

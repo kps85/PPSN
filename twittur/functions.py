@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-
+from .views import *
 from .models import Message, Hashtag
 from .forms import MessageForm
 
@@ -107,3 +107,5 @@ def dbm_to_m(message):
                     href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
     return message
+
+

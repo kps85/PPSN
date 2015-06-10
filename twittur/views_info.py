@@ -13,6 +13,7 @@ from .views import msgDialog
 # - template: info.html
 def info(request):
     # select admin users as Projekt-Team
+    print("hello")
     projektTeam = User.objects.filter(is_superuser=True).order_by('last_name')
 
     # check if user is logged in

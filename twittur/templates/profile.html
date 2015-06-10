@@ -13,13 +13,17 @@
 	</ul>
 	{% endif %}
 	
-	{% if user_list %}
+	{% if follow_list %}
 	<ul class="following">
 		<h3>Folgend</h3>
-		 {% for user in user_list %}
-		<li><a class="ullink" href="#">@{{ user.nickname }}</a></li>
+		 {% for follow in follow_list %}
+		<li><a class="ullink" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
 		{% endfor %}
 	</ul>
+      {% else %}
+      <ul class="following">
+      <h3>Forever alone</h3>
+      </ul>
 	{% endif %}
   
   {% include 'layout/nav_foot.html' %}
@@ -46,6 +50,11 @@
           <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  studiert {{ curUserProfile.academicDiscipline }} </div>
           <div class="profilStadt"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
           <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  {{ curUser.date_joined }}</div>
+          {% if request.user != curUser %}
+          <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
+            <input class="btn btn-danger" id="follow" name="follow" type="submit" value="{{ follow_text }}" />
+          </form>
+          {% endif %}
 
           <!--
           <div class="profilLink"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Nachricht senden</div>

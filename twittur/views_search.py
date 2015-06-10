@@ -15,21 +15,21 @@ def search(request):
     # special case: flag for @
     attag = False
     search_error = {}
-	
+
     if request.method == 'GET':
         query_dict = request.GET
         search_input = query_dict.get('search_input')
-        
+
     if search_input is None or search_input == "":
         search_error["no_term"] = "Kein Suchbegriff eingegeben!"
         context_error = {
             'active_page': 'index',
             'nav': Nav.nav,
             'msgForm': msgDialog(request),
-    		'error_msg': search_error
+            'error_msg': search_error
         }
         return render(request, 'index.html', context_error)
-		
+
     # filter all messages contain the word  or all users contain the word
     # search_input contains @ -> cut @ off and set flag
     # the reason behind this is we save username instead of @username, so if someone is looking for
@@ -58,7 +58,7 @@ def search(request):
     hashtag_list = Hashtag.objects.all().filter(Q(name__contains=search_input))
     # flag was set -> back to normal input
     if attag:
-        search_input = '@'+search_input
+        search_input = '@' + search_input
 
     context = {
         'user_list': user_list,
