@@ -28,9 +28,8 @@
     color: red;}
     
 .profil {
-  border-radius: 5px;
-  padding: 20px;
-  margin-bottom: 20px; }
+  border-radius: 5px 5px 0px 0px;
+  padding: 20px; }
   .profil .icon {
     background: #eee;
     width: 183px;
@@ -57,3 +56,8 @@
     content: "";
     display: table;
     clear: both; }
+
+.profileButton {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}

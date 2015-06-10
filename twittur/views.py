@@ -199,9 +199,9 @@ def profile(request, user):
 
     follow_list = cuUser.follow.all()
     if curUser in follow_list:
-        follow_text = 'In Ruhe lassen'
+        follow_text = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
     else:
-        follow_text = 'Stalken!'
+        follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
 
     if request.method == 'POST':
         success_msg = editMessage(request)

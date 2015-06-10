@@ -2,29 +2,28 @@
 
 {% block list %}
 	{% if group_list %}
-	<ul class="groups">
-		<h3>Meine Gruppen</h3>
-		{% for group in group_list %}
-		<li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting -->
-			<a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
-			<a class="dashicons dashicons-edit" href="#"></a>
-		</li>
-		{% endfor %}
-	</ul>
-	{% endif %}
+<ul class="groups">
+  <h3>Meine Gruppen</h3>
+  {% for group in group_list %}
+  <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
+    <a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! --> 
+    <a class="dashicons dashicons-edit" href="#"></a> </li>
+  {% endfor %}
+</ul>
+{% endif %}
 	
 	{% if follow_list %}
-	<ul class="following">
-		<h3>Folgend</h3>
-		 {% for follow in follow_list %}
-		<li><a class="ullink" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
-		{% endfor %}
-	</ul>
-      {% else %}
-      <ul class="following">
-      <h3>Forever alone</h3>
-      </ul>
-	{% endif %}
+<ul class="following">
+  <h3>Folgend</h3>
+  {% for follow in follow_list %}
+  <li><a class="ullink" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+<ul class="following">
+  <h3>Forever alone</h3>
+</ul>
+{% endif %}
   
   {% include 'layout/nav_foot.html' %}
 {% endblock %}
@@ -33,52 +32,49 @@
 	{% include 'layout/nav.html' %}
 {% endblock %}
 
-{% block content %}      
-  <div class="profil">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-3 hidden-sm hidden-md hidden-lg">
+{% block content %}
+<div class="container-fluid">
+	<div class="profil">
+    <div class="col-xs-12 col-sm-4 killme"> <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/> </div>
+    <div class="col-xs-12 col-sm-8">
+      <div class="killme">
+        <div class="profilAuthor">{{ curUser.first_name }} {{ curUser.last_name }}</div>
+        <div class="profilNick">@{{ curUser.username }}</div>
+      </div>
+      <div>
+        <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> studiert {{ curUserProfile.academicDiscipline }} </div>
+        <div class="profilStadt"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
+        <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ curUser.date_joined }}</div>
+        <!--{% if request.user != curUser %}
+        <div class="profilButton">
+          <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
+            <button class="btn btn-primary" id="follow" name="follow" type="submit" value=""> {{ follow_text|safe }} </button>
+          </form>
         </div>
-        <div class="col-xs-7 col-sm-4 col-md-4 col-lg-5 killme">
-          <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/>
-        </div>
-        <div class="col-xs-3 hidden-sm hidden-md hidden-lg">
-        </div>        
-        <div class="col-xs-9 col-sm-5 col-md-5 col-lg-5">
-        <div class="row">
-          <div class="killme col-xs-9 col-sm-9 col-md-9 col-lg-9">
-            <div class="profilAuthor">{{ curUser.first_name }} {{ curUser.last_name }}</div>
-            <div class="profilNick">@{{ curUser.username }}</div>
-          </div>	
-          <div class="col-xs-9 col-sm-5 col-md-9 col-lg-9">
-            <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  studiert {{ curUserProfile.academicDiscipline }} </div>
-            <div class="profilStadt"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
-            <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  {{ curUser.date_joined }}</div>
-		  	 {% if request.user != curUser %}
-          	<div class="profilButton">
-          		<form action="{% url 'twittur:profile' user=curUser %}" method="GET">
-            		<button class="btn btn-primary" id="follow" name="follow" type="submit" value="">
-            			{{ follow_text }}
-            		</button>
-         		</form>
-         	</div>	
-          {% endif %}
-		            <!--
-          <div class="profilLink"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Nachricht senden</div>
-          <div class="profilLink"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nachfolgen</div>
-          -->
-		  </div>
-          </div>
-        </div>
+        {% endif %}
+        <div class="profilLink"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Nachricht senden</div>
+        <div class="profilLink"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nachfolgen</div>
+        --> 
       </div>
     </div>
   </div>
-
+  {% if request.user != curUser %}
+  <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
+    <button class="col-xs-6 text-center btn btn-default profileButton" id="follow" name="follow" type="submit" value=""> <strong>{{ follow_text|safe }}</strong> </button>
+  </form>
+  <form action="" method="GET">
+    <button class="col-xs-6 text-center btn btn-default profileButton" type="submit" value=""> <strong><span class="glyphicon glyphicon-edit"></span> {{ curUser|upper }} schreiben</strong> </button>
+  </form>
+  {% endif %}
+</div>
+<br />
+<div class="container-fluid">
   {% if message_list %}
     {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user %}
     {% endfor %}
   {% else %}
-  	<div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+    <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
   {% endif %}
+</div>
 {% endblock %}
