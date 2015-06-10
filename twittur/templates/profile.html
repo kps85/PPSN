@@ -39,32 +39,40 @@
       <div class="row">
         <div class="col-xs-3 hidden-sm hidden-md hidden-lg">
         </div>
-        <div class="col-xs-7 col-sm-4 col-md-4 col-lg-5">
+        <div class="col-xs-7 col-sm-4 col-md-4 col-lg-5 killme">
           <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/>
         </div>
         <div class="col-xs-3 hidden-sm hidden-md hidden-lg">
         </div>        
         <div class="col-xs-9 col-sm-5 col-md-5 col-lg-5">
-          <div class="profilAuthor">{{ curUser.first_name }} {{ curUser.last_name }}</div>
-          <div class="profilNick">@{{ curUser.username }}</div>
-          <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  studiert {{ curUserProfile.academicDiscipline }} </div>
-          <div class="profilStadt"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
-          <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  {{ curUser.date_joined }}</div>
-          {% if request.user != curUser %}
-          <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
-            <input class="btn btn-danger" id="follow" name="follow" type="submit" value="{{ follow_text }}" />
-          </form>
+        <div class="row">
+          <div class="killme col-xs-9 col-sm-9 col-md-9 col-lg-9">
+            <div class="profilAuthor">{{ curUser.first_name }} {{ curUser.last_name }}</div>
+            <div class="profilNick">@{{ curUser.username }}</div>
+          </div>	
+          <div class="col-xs-9 col-sm-5 col-md-9 col-lg-9">
+            <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  studiert {{ curUserProfile.academicDiscipline }} </div>
+            <div class="profilStadt"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
+            <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>  {{ curUser.date_joined }}</div>
+		  	 {% if request.user != curUser %}
+          	<div class="profilButton">
+          		<form action="{% url 'twittur:profile' user=curUser %}" method="GET">
+            		<button class="btn btn-primary" id="follow" name="follow" type="submit" value="">
+            			{{ follow_text }}
+            		</button>
+         		</form>
+         	</div>	
           {% endif %}
-
-          <!--
+		            <!--
           <div class="profilLink"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Nachricht senden</div>
           <div class="profilLink"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nachfolgen</div>
           -->
+		  </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-			
 
   {% if message_list %}
     {% for message, dbmessage in message_list %}

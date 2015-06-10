@@ -38,11 +38,21 @@ header {
 
 #content .post {
   border: 1px solid #E4E8EA;
+  border-radius: 5px;
   background: #fff; }
   #content .post:hover {
-    background: #fdfdfd; }
+    border-color: #d3d3d3;}
   #content .post .postTime {
     color: #aaa; }
+    
+  #content a {
+  color: #a00000;
+  font-weight: bold;}
+  
+  #content a:hover {
+  color: #f50000;
+  text-decoration: underline;
+  font-weight: bold;}
 
 #body_ftu {
   background: url("img/ftu_bg.png") center center;

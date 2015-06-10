@@ -1,3 +1,10 @@
+/* Small devices (tablets, 768px and up) */
+@media (max-width: 767px) {
+    .killme {
+        text-align: center;
+    }
+}
+
 .profil {
   border: 1px solid #E4E8EA;
   background: #fff; }
@@ -9,6 +16,8 @@
     margin-top: 10px;}
     .profil .profilStadt {
     margin-top: 10px;}
+        .profil .profilButton {
+    margin-top: 20px;}
     .profil .profilNick:hover{
     cursor: pointer;}
     
@@ -48,14 +57,3 @@
     content: "";
     display: table;
     clear: both; }
-    
-.post .postTime:hover{ 
-    text-decoration: underline;
-    cursor: pointer;
-    color: red;}
-
-.post:hover {
-    border-color: #d3d3d3;}
-    
-.post .icon:hover{
-	cursor: pointer;}
