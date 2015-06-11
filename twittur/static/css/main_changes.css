@@ -19,6 +19,8 @@ a:focus { color: #a00000; text-decoration: none; }
 	margin-left: auto;
 }
 
+#content a:hover { text-decoration: none; }
+	
 .cit-logo { width: 75px; }
 .post .cit-logo { width: 150px; margin: 10px; }
 

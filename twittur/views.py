@@ -30,6 +30,7 @@ def index(request):
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
     #    atTag = '@' + request.user.username + ' '
 
+    msgForm = msgDialog(request);
     if request.method == 'POST':
         success_msg = editMessage(request)
 
@@ -51,7 +52,7 @@ def index(request):
     message_list = zip(message_list, dbmessage_list)
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
-               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgDialog(request),
+               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,
                'success_msg': success_msg, 'hashtag_list': hashtag_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
@@ -116,7 +117,6 @@ def login(request):
                 studentNumber = query_dict.get('studentNumber')
 
             academicDiscipline = query_dict.get('academicDiscipline')
-            print(academicDiscipline)
 
             # context for html
             context = {
