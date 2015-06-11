@@ -1,0 +1,20 @@
+<h3 class="text-uppercase" id="{{ list.0.category|slugify }}">{{ list.0.category }}</h3>
+
+<ul class="faqList">
+{% for faq in list %}
+	<li><span class="glyphicon glyphicon-question-sign"></span> <a href="#{{ faq.question|slugify }}">{{ faq.question }}</a></li>
+{% endfor %}
+</ul>
+
+<div class="faqContainer container-fluid">
+{% for faq in list %}
+  <div class="post">
+    <h4 id="{{ faq.question|slugify }}">
+    	{{ faq.question }}
+        <small> beantwortet von @<a href="{% url 'twittur:profile' user=faq.author %}">{{ faq.author.username }}</a></small>
+    	<span class="glyphicon glyphicon-plus pull-right" aria-hidden="true"></span>
+    </h4>    
+    <p class="hidden text-justify">{{ faq.answer }}</p>
+  </div>
+{% endfor %}
+</div>

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block list %}  
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+  
+  {% if message_list %}
+    {% for message, dbmessage in message_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage page=active_page user=user  %}
+    {% endfor %}
+  {% else %}
+    <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+  {% endif %}
+{% endblock %}

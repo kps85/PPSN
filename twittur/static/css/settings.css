@@ -1,0 +1,8 @@
+.alert .errorlist { display: inline-block }
+
+.profilbild-l { width: 200px; margin-right: 15px; }
+.profilbild-s { width: 50px; }
+
+#profBildUpdate { font-size: 0em; }
+#profBildUpdate > a, #profBildUpdate > input, #profBildUpdate > label, #profBildUpdate > span  { font-size: 14px; }
+#profBildUpdate > a:after { clear: both; display: block; width: 100%; content: ''; }

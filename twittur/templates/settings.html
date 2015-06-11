@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block list %}	
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+	{% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+  <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+    <input name="delete" type="hidden" value="false" />
+    
+      {{ userForm.non_field_errors | safe }}
+      {{ userDataForm.non_field_errors | safe }}
+            
+      <div class="post" id="profilbild">
+        
+          <h4>Profilbild auswählen</h4>
+          
+          <div class="col-xs-12 form-group">
+            <div class="col-xs-12 text-center profilePictures">
+              <a href="{{ user.userprofile.picture.url }}" target="_blank">
+                <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail">
+                <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">
+              </a>
+              <p class="help-block">{{ userDataForm.picture.help_text | safe }}</p>
+            </div>
+            <div id="profBildUpdate">
+              {% if user.userprofile.picture %}<span>Aktuelles Profilbild: </span>{% endif %}
+              {{ userDataForm.picture }}
+              {{ userDataForm.picture.errors }}
+            </div>                
+          </div>            
+      </div>
+      
+      <div class="post" id="account">
+      
+        <h4>Accountverwaltung</h4>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="id_username">Username</label>
+              {{ userForm.username }}
+              <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
+              {{ userForm.username.errors }}
+          </div>
+          
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="id_email">E-Mail</label>
+              {{ userForm.email }}
+              {{ userForm.email.errors }}
+          </div>
+          
+          <div class="col-xs-12 col-sm-6 form-group">
+              <label class="control-label" for="id_password">Passwort</label>
+              {{ userForm.password }}
+              {{ userForm.password.errors }}
+          		<p class="help-block">Dein Passwort darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!</p>
+          </div>    
+          <div class="col-xs-12 col-sm-6 form-group pull-right">
+              <label class="control-label" for="id_ack_password">Passwort bestätigen</label>
+              {{ userForm.ack_password }}                
+              {{ userForm.ack_password.errors }}
+          </div>
+  
+      </div>  
+      
+      <div class="post" id="daten">
+      
+        <h4>Pers&ouml;nliche Daten</h4>
+          
+          <div class="col-xs-12 col-sm-6 form-group">
+              <label class="control-label" for="id_first_name">Vorname</label>
+              {{ userForm.first_name }}
+              {{ userForm.first_name.errors }}
+          </div>    
+          <div class="col-xs-12 col-sm-6 form-group pull-right">
+              <label class="control-label" for="id_last_name">Nachname</label>
+              {{ userForm.last_name }}
+              {{ userForm.last_name.errors }}
+          </div>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="id_academicDiscipline">Studiengang</label>
+			  			{{ userDataForm.academicDiscipline }}
+              <p class="help-block">{{ userDataForm.academicDiscipline.help_text|safe }}</p>
+              {{ userDataForm.academicDiscipline.errors }}
+          </div>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="id_studentNumber">Matrikel-Nummer</label>
+              {{ userDataForm.studentNumber }}
+              <p class="help-block">{{ userDataForm.studentNumber.help_text|safe }}</p>
+              {{ userDataForm.studentNumber.errors }}
+          </div>
+      
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="id_location">Wohnort</label>
+              {{ userDataForm.location }}
+              <p class="help-block">{{ userDataForm.location.help_text|safe }}</p>
+              {{ userDataForm.location.errors }}
+          </div>
+  
+      </div>  
+            
+      <div class="post" id="seite">
+        
+          <h4>Seiteneinstellungen</h4>
+          
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
+              <select class="form-control" id="stdSafetylevelSelect" name="safety">
+                  <option>public</option>
+                  <option>Uni</option>
+                  <option>Fakultät</option>
+                  <option selected>Studiengang</option>
+              </select>
+          </div>
+          
+      </div>
+            
+      <div class="post" id="delete">
+        
+          <h4>Account vollst&auml;ndig l&ouml;schen</h4>
+          
+          <div class="col-xs-12 form-group text-center">
+              <p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
+              <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#delAccModal" id="deleteButton">Account löschen</button>
+          </div>
+          
+      </div>
+          
+      <div class="col-xs-12 form-group text-center">
+          <button type="submit" class="btn btn-primary" id="submitSettButton">Speichern</button>
+          <button type="reset" class="btn btn-default" id="resetSettButton">Zur&uuml;cksetzen</button>
+      </div>
+  
+  </form>
+  
+  <div class="modal fade" id="delAccModal" tabindex="-1" role="dialog" aria-labelledby="delAccModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Account l&ouml;schen?</h4>
+        </div>
+        <div class="modal-body">
+          Willst Du deinen Account wirklich l&ouml;schen?
+        </div>
+        <div class="modal-footer">
+          <form action="{% url 'twittur:settings' %}" method="POST">
+        {% csrf_token %}
+            <input name="delete" type="hidden" value="true" />
+            <button type="button" class="btn btn-default" data-dismiss="modal">Ok, doch nicht.</button>
+            <button type="submit" class="btn btn-primary">Ja, ich will!</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

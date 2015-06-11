@@ -1,0 +1,82 @@
+{% include 'header.html' %}
+  {% if active_page != 'ftu' %}<a href="#main" class="scrollTop btn btn-primary btn-grey"><span class="glyphicon glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>{% endif %}
+  
+  <div id="aside">
+    <nav>
+    	{% block nav %} 
+      {% endblock %}
+    </nav>
+    <div id="list">
+    	{% block list %} 
+      {% endblock %}
+    </div>
+  </div>
+  <div id="main">
+    <header>
+      <div id="head">
+        <button type="button" class="newMsg btn btn-primary pull-left" data-toggle="modal" data-target="#newMessage" title="Neue Nachricht verfassen">
+        	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+        </button>
+        <a class="title" href="{% url 'twittur:index' %}">twittur</a>
+        <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm pull-right">
+          <div class="form-group pull-left">
+            <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
+          </div>
+          <button type="submit" class="btn btn-primary pull-right" title="Suche starten">
+          	<span class="glyphicon glyphicon-search"></span>
+          </button>
+        </form>
+      </div>
+      <div id="infoBar">
+      	{% block infobar %} 
+        {% endblock %}
+      </div>
+    </header>
+    <div id="content">
+      {% if success_msg %}
+        <div class="infoMessage alert alert-success" role="alert">
+          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+          {{ success_msg|safe }}
+          <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
+        </div>
+      {% endif %}
+    
+      {% if error_msg %}
+        {% for key, value in error_msg.items %}
+        <div class="infoMessage alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+          {{ value|safe }} ({{ key }})
+          <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
+        </div>
+        {% endfor %}
+      {% endif %}
+      
+    	{% block content %}	
+      {% endblock %}
+    </div>
+    <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content"> 
+          <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="msgDialog" type="hidden" value="true" />
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
+            </div>
+            <div class="modal-body">{{ msgForm.text }}</div>
+            <div class="modal-footer">
+              <div class="msgDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
+              {{ msgForm.user }}
+              {{ msgForm.date }}
+              <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+              <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% include 'footer.html' %}

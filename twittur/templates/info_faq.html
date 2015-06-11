@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+	{% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+
+{% if user.is_superuser %}
+	<h3 class="text-uppercase" id="faq-hinzufuegen">FAQ Hinzuf&uuml;gen</h3>
+  
+  <form action="{% url 'twittur:faq' %}" method="POST">
+    {% csrf_token %}
+    {{ faqForm.author }}
+  	<div class="col-xs-6 form-group">
+    	<label for="questionInput">Frage eintragen</label>
+      {{ faqForm.question }}
+    </div>
+  	<div class="col-xs-6 form-group pull-right">
+    	<label for="katSelect">Kategorie w&auml;hlen</label>
+      {{ faqForm.category }}
+    </div>
+  	<div class="col-xs-12 form-group">
+    	<label for="answerInput">Antwort eintragen</label>
+    	{{ faqForm.answer }}
+    </div>
+    <div class="col-xs-12 form-group text-right">
+      <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
+      <button class="btn btn-primary" type="submit">Speichern</button>
+    </div>
+  </form>
+{% endif %}
+
+    {% for faq in FAQs %}
+        {% include 'info_faq_box.html' with list=faq %}	
+	{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+	{% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="supportCont hidden" id="nachricht">
+	<h3 class="text-uppercase" id="nachricht">Nachricht an Teammitglied schicken</h3>
+  <form action="{% url 'twittur:support' %}" method="POST">
+    {% csrf_token %}
+    <input name="user" type="hidden" value="text" />
+  	<div class="col-xs-6 form-group">
+    	<label for="questionInput">Betreff</label>
+      <input class="form-control" type="text" />
+    </div>
+  	<div class="col-xs-6 form-group pull-right">
+    	<label for="katSelect">Ansprechpartner w&auml;hlen</label>
+      <select class="form-control">
+      	<option>Lilia Butenkova</option>
+      	<option>William Cai</option>
+      	<option>Yiming Chen</option>
+      	<option>Karl P. Schmidt</option>
+      	<option>Thomas Tietz</option>
+      	<option>Steffen Zerbe</option>
+      </select>
+    </div>
+  	<div class="col-xs-12 form-group">
+    	<label for="answerInput">Nachtricht schreiben</label>
+    	<textarea class="form-control" rows="5"></textarea>
+    </div>
+    <div class="col-xs-12 form-group text-right">
+      <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
+      <button class="btn btn-primary" type="submit">Absenden</button>
+    </div>
+  </form>
+</div>
+
+<div class="supportCont hidden" id="kontaktformular">
+	<h3 class="text-uppercase" id="nachricht">Supportanfrage senden</h3>
+  <form action="{% url 'twittur:support' %}" method="POST">
+    {% csrf_token %}
+    <input name="user" type="hidden" value="text" />
+  	<div class="col-xs-6 form-group">
+    	<label for="questionInput">Betreff</label>
+      <input class="form-control" type="text" />
+    </div>
+  	<div class="col-xs-6 form-group pull-right">
+    	<label for="katSelect">Thema w&auml;hlen</label>
+      <select class="form-control">
+      	<option>Thema #1</option>
+      	<option>Thema #1</option>
+      	<option>Thema #1</option>
+      </select>
+    </div>
+  	<div class="col-xs-12 form-group">
+    	<label for="answerInput">Nachtricht schreiben</label>
+    	<textarea class="form-control" rows="5"></textarea>
+    </div>
+    <div class="col-xs-12 form-group text-right">
+      <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
+      <button class="btn btn-primary" type="submit">Absenden</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

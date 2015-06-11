@@ -1,0 +1,431 @@
+#body_ftu {
+	background:url('img/ftu_bg.png') center center;
+	background-attachment:fixed;
+	
+	
+	.center {
+		margin:0 auto;
+		width:80%;
+		min-width:320px;
+		@include phone {
+			width:95%;	
+			
+		}
+		@include clear;
+	}
+	
+	
+	.column {
+		box-sizing:border-box;
+		@include desktop {
+			
+			&:nth-child(even) {
+				padding-right:2%;
+			}
+		}
+		
+		@include phone {
+			margin-bottom:20px;
+		}
+		
+	}	
+	@include desktop {
+		.column-left {
+			width:55%;
+			float:left;
+		}
+		.column-right {
+			width:43%;
+			float:right;
+		}
+	}
+	
+	
+	#aside {
+		width:0;
+		height:0;
+		position:absolute;
+		bottom:0;
+		right:0;
+	}
+}
+
+#ftu {
+	color:#ddd;
+	padding:30px 0;
+	@include clear;
+	@include tablet {
+		padding-top:60px;
+	}
+
+	a {
+		color:#ddd;
+	}
+	
+	h2 {
+		font-weight:100;
+		margin:0;
+		padding:0;
+		margin-bottom:20px;
+		display:inline-block;
+		color:#fff;
+		margin-right:15px;
+	}
+
+	
+	#register {
+		display:none;
+	}
+	
+	input, .superDropdown > p {
+		background:rgba(10,10,10,0.6);
+		color:#fff;
+		border:1px solid #000;
+		padding:10px;
+		
+		margin-bottom:5px;
+		
+		@include placeholder(#777);
+	}
+	
+	input[type="text"], input[type="password"] {
+		width:100%;
+	}
+	
+	input[type="submit"] {
+		color:#fff;
+		background:#FF0000;
+		margin-top:5px;
+		&:hover {
+			opacity:0.9
+		}
+	}
+	
+	
+	
+	
+	.login {
+		@include clear;
+	}
+	
+
+	
+	.forgotSendButton {
+		color:#333;
+		background:#F8F8F8
+	}
+	
+	.headline {
+		font-size:4em;
+		font-weight:100;
+		line-height:1.2em;
+		span {
+			color:#F50000;
+		}	
+	}
+	
+	.subline {
+		margin-top:30px;
+		span {
+			color:#F50000;
+		}	
+		font-size:1.2em;
+		font-weight:200;
+		a {
+			border-bottom:1px solid #aaa;
+			&:hover {
+				text-decoration:none;
+				border-color:#F50000;
+			}
+		}
+	}
+
+	
+	.box {
+		background:rgba(0,0,0,0.6);
+		padding:20px;
+		
+		color:#fff;
+		margin-top:20px;
+	}
+	
+	.forgotBox {
+		display:none;
+		background:#fff;
+		color:#333;
+		
+		h2 {
+			color:#333;
+		}
+		
+		input {
+			background:#eee;
+			border:1px solid #ddd;
+			color:#333;
+		}
+		
+		a {
+			color:#333;
+		}
+	}
+	
+	.title {
+		background-image:url('img/logo_white.png') !important;
+		margin-left:0 !important;
+		width:50%;
+		float:none;
+		@include desktop {
+			float:left !important;
+		
+		
+		
+			margin-bottom:20px;
+			border:none;
+			display:inline-block;
+		}
+	}
+	
+	.showRegister {
+		@include desktop {
+			width:50%;
+			display:inline-block;
+			text-align:right;
+			float:left;
+		
+			padding-right:2%;
+			margin-top:25px;
+			
+			.mobile { display:none; }
+			
+		}
+		
+		@include tablet {
+			background:#000;
+			display:block;
+			position:fixed;
+			z-index:400;
+			left:0;
+			width:100%;
+			top:0;
+			padding:10px;
+			color:#fff;
+			font-size:1.2em;
+			.default { display:none; }
+		}
+		font-size:2em;
+		font-weight:100;
+	}
+	
+
+	
+	.forgot, .forgotBack {
+		padding:12px;
+		display:inline-block;
+		float:right;
+		margin-top:5px;
+	}
+}
+
+
+#register {
+	@include shadow(0px 0px 0px 1000px rgba(0,0,0,0.66));
+	background:#F8F8F8;
+	display:none;
+	z-index:5000;
+	
+	@include desktop {
+		.column-left {
+			width:48%;
+			float:left;
+		}
+		.column-right {
+			width:48%;
+			float:right;
+		}
+	}
+	
+	
+	&.active {
+		display:block !important;
+	}
+	
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	padding:20px;
+	overflow-y:scroll;
+	
+	width:100%;
+	height:100%;
+	@include tabletDesktop {
+		width:80%;
+		margin:0 auto;
+		margin-top:5%;
+		height:80%;
+		max-width:800px;
+	}
+	
+	
+	
+	input, .superDropdown > p {
+		padding:10px;
+		border:1px solid #E3E8EA;
+		margin-bottom:5px;
+		background:#fff;
+		color:#333;
+		@include placeholder(#555);
+	}
+	
+	input[disabled] {
+		opacity:0.6;
+		&:hover {
+			cursor:no-drop;
+		}
+	}
+	
+	
+	.superDropdown {
+		@include tablet {
+			margin-bottom:5px;
+		}
+		
+		
+		p {
+			color:#555;
+		}
+		
+		& > p {
+			background:#fff;
+			color:#555;
+			cursor:pointer;
+			&.opened {
+				color:#333 !important;
+				background:rgba(255,255,255,0.99);
+				
+			}
+			
+			&.active {
+				color:#333;
+			}
+		}
+		.superDropdownDiv {
+			box-sizing:border-box;
+			background:rgba(255,255,255,0.95);
+			border:1px solid #E3E8EA;
+			border-top:none;
+			color:#333;
+			margin-left:0px;
+			margin-top:-6px;
+			
+			.superSubOpener {
+				padding:10px;
+				&:hover {
+					background:#ddd;
+					cursor:pointer;
+				}
+			}
+			
+			ul li, span {
+				padding:10px 30px;
+				&:hover {
+					background:#eee;
+					cursor:pointer;
+				}
+			}
+			
+			span {
+				font-weight:bold;
+				display:block;
+			}
+		}
+		
+		}
+	
+	input[type="submit"] {
+		color:#fff;
+		background:#FF0000;
+		margin-top:5px;
+		&:hover {
+			opacity:0.9
+		}
+	}
+	
+	#registerButtons {
+		@include desktop {
+			position:absolute;
+			bottom:0;
+			right:0;
+		}
+		padding:10px;
+	}
+	
+	.registerButton {
+		background:#00C88D !important;
+	}
+	
+	
+	input[type="text"], input[type="password"] {
+		width:100%;
+	}
+	
+	h1 {
+		margin:0;
+		margin-bottom:20px;
+		padding-bottom:10px;
+		border-bottom:1px solid #eee;
+		font-weight:100;
+	}
+	
+}
+
+#ftuPosts {
+	box-shadow: 0px -8px 90px 40px rgba(0,0,0,0.9);
+	background:#000;
+		opacity:0.8;
+	margin-top:40px;
+	padding:20px 0;
+	display:block;
+	width:100%;
+	color:#fff;
+	
+	.post {
+		background:#111;
+		width:95%;
+	}
+	
+	h2 {
+		font-weight:100;
+		margin:0 0 20px 0;
+		padding:0;
+	}
+	
+	.ftuTags {
+		ul li {
+			display:inline;
+			 a {
+				 color:#fff;
+				padding:10px;
+				display:inline-block;
+				background:#111;
+				margin:0 0 10px 5px;
+				&:hover {
+					background:#222;
+				}
+			}
+		}
+	}
+}
+
+#ftuFooter {
+	background:#000;
+	border-top:1px solid #a00000;
+	padding:20px;
+	a {
+		color:#fff;
+		&:hover {
+			text-decoration:underline;
+		}
+	}
+}
+

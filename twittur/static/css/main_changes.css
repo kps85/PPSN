@@ -1,0 +1,68 @@
+/* Wenn dann einheitlich. *gg* */
+#ftuFooter { border-top: 1px solid #F50000; }
+a { color: #F50000; }
+a:focus { color: #a00000; text-decoration: none; }
+
+/* Hier kann die Farbe entfernt werden.
+  .copy a {
+    color: #a00000;
+    font-size: 1.2em; }
+    .copy a:hover {
+      color: #F50000; }
+*/
+.copy { margin-top: 15px; }
+.copy a { color: #f50000; }
+.copy a:hover { color: #a00000; }
+
+#main.infoGuest {
+	width: auto;
+	margin-left: auto;
+}
+
+#content a:hover { text-decoration: none; }
+	
+.cit-logo { width: 75px; }
+.post .cit-logo { width: 150px; margin: 10px; }
+
+#body_info_guest #aside {
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0; }
+
+/* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
+
+  #ftu input[type="submit"][disabled] {
+		pointer-events: none;
+		cursor: not-allowed;
+		filter: alpha(opacity=50);
+		-webkit-box-shadow: none;
+						box-shadow: none;
+		opacity: .5;
+  }
+
+	#ftu .toggleItem { display: none; }
+	#ftu .toggleItem.active { display: block; }
+	#ftu #register.active { display: block; }
+	
+	
+
+/* Kontrast, Kontrast, Kontrast ... */
+
+nav a { color: #fff; }
+nav a:focus { color: #fff; }
+	nav a:hover { background-color: rgba(255,255,255,0.1); }
+	nav a.active:hover { background-color: #f50000; }
+
+
+.infoMessage .glyphicon-remove:hover { cursor: pointer; }
+
+.faqList { list-style: inside square; }
+.faqList li { }
+
+.search_headline { clear: both; display: block; width: 100%; margin-top: 10px; }
+.search_user_result, .search_hash_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 5px 5px 0; padding: 5px 10px; }
+.search_user_result img { width: 50px; }
+
+body.modal-open { overflow: visible; padding-right: 0px !important; }

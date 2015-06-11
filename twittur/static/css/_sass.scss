@@ -1,0 +1,95 @@
+// Breakpoints 
+$phoneWidth: 640px;
+$tabletWidth: 1024px;
+$desktopWidth:1366px;
+
+// Mixins fuer Breakpoints
+@mixin phone {
+  @media screen and (max-width:#{$phoneWidth - 1}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (max-width:#{$tabletWidth - 1}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (min-width:#{$tabletWidth}) {
+    @content;
+  }
+}
+
+@mixin landscape {
+  @media screen and (min-width:#{$desktopWidth}) {
+    @content;
+  }
+}
+
+@mixin tabletDesktop {
+    @media screen and (min-width:#{$phoneWidth}) {
+      @content;
+    }
+	
+}
+
+@mixin shadow($p) {
+	-webkit-box-shadow:$p;
+	-moz-box-shadow: $p;
+	box-shadow: $p;
+}
+
+@mixin gradient($s, $e) {
+	background-image: -webkit-linear-gradient(top, $s 0%, $e 100%);
+	background-image:      -o-linear-gradient(top, $s 0%, $e 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, from($s), to($e));
+	background-image:         linear-gradient(to bottom, $s 0%, $e 100%);
+}
+
+
+// Clearfix
+@mixin clear {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin placeholder($color) {
+	&::-webkit-input-placeholder { /* WebKit browsers */
+	    color:    $color;
+	}
+	&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	   color:    $color;
+	   opacity:  1;
+	}
+	&::-moz-placeholder { /* Mozilla Firefox 19+ */
+	   color:    $color;
+	   opacity:  1;
+	}
+	&:-ms-input-placeholder { /* Internet Explorer 10+ */
+	   color:    $color;
+	}
+}
+
+@mixin clearBefore {
+  &:before {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+
+@mixin unselectable {
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	
+}

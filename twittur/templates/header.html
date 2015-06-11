@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>twittur | Your TUcial Network!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <link href="{% static 'favicon.ico' %}" rel="shortcut icon" type="image/x-icon">
+    <link href="{% static 'favicon.ico' %}" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"  />
+    <link rel="stylesheet" href="{% static 'css/main_changes.css' %}"  />
+    
+    
+    {% if active_page == 'profile' %}<link rel="stylesheet" href="{% static 'css/profil.css' %}"  />{% endif %}
+    {% if active_page == 'info' %}<link rel="stylesheet" href="{% static 'css/info.css' %}"  />{% endif %}
+    {% if active_page == 'settings' %}<link rel="stylesheet" href="{% static 'css/settings.css' %}"  />{% endif %}
+    
+    <link rel="stylesheet" href="{% static 'css/dashicons/css/dashicons.css' %}" />
+  </head>
+  <body id="body_{{ active_page }}">

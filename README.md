@@ -1,7 +1,7 @@
 <p align="center">
- <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="TwitTUr - A social-networking platform" width="200">
+ <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="twittur - your TUcial network" width="200">
 </p>
-##**TwitTUr** - *A social-networking platform*
+##**twittur** - *your TUcial network*
 
 ######**AUFGABENSTELLUNG**
 >*Die SeminarteilnehmerInnen entwickelen eine social-networking Plattform basierend auf einem Webframework einer objekt-orientierten Sprache. Das Projektmanagement basiert auf modernen Praktiken agiler Softwareentwicklung und es sollen typische Werkzeuge aus der Welt der Open Source Entwicklung verwendet werden.*
