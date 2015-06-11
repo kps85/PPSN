@@ -112,7 +112,7 @@ def hashtag(request, text):
     return render(request, 'search.html', context)
 
 
-# Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurück
+# Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurueck
 def elimDups(list):
     dups, final = [], []
     for sub in list:
