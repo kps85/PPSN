@@ -1,10 +1,10 @@
-import copy, datetime
+import copy, datetime, re
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from django.contrib import auth
-from django.contrib.auth import authenticate, update_session_auth_hash
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,6 +27,8 @@ def index(request):
     current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
     curUser = User.objects.get(username__exact=request.user)
     follow_list = curUser.userprofile.follow.all()
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
     #    atTag = '@' + request.user.username + ' '
 
@@ -34,12 +36,10 @@ def index(request):
     if request.method == 'POST':
         success_msg = editMessage(request)
 
-    #    dbmessage_list = Message.objects.all().select_related('user__userprofile') \
+    # dbmessage_list = Message.objects.all().select_related('user__userprofile') \
     #        .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
-    dbmessage_list = Message.objects.all().filter(Q(user__exact=current_user) | Q(user__exact=curUser.userprofile.follow.all()) ).order_by('-date')
-
-    hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                       .order_by('-hashtag_count')[:5]
+    dbmessage_list = Message.objects.all().filter(Q(user__exact=current_user)
+                                                  | Q(user__exact=curUser.userprofile.follow.all())).order_by('-date')
 
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
@@ -53,7 +53,7 @@ def index(request):
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,
-               'success_msg': success_msg, 'hashtag_list': hashtag_list, 'follow_list': follow_list}
+               'success_msg': success_msg, 'hot_list': hot_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
 
@@ -79,7 +79,7 @@ def login(request):
                     auth.login(request, user)
                     return HttpResponseRedirect('/twittur/')
             else:
-                error_login = "- Ups, Username oder Passwort falsch."
+                error_login = "Ups, Username oder Passwort falsch."
                 active_toggle = "active_toggle"
                 return render(request, 'ftu.html',
                               {'error_login': error_login, 'message_list': message_list, 'active_page': 'ftu'})
@@ -88,78 +88,79 @@ def login(request):
     if request.method == 'POST':
 
         query_dict = request.POST
-        error_reg_user, error_reg_userprofil, error_reg_user_n, error_reg_user_p, error_reg_userprofile_e, \
-        error_reg_userprofile_ad, error_reg_userprofile_nr, error_reg_mail = None, None, None, None, None, None, None, None
+        userList, username, academicDiscipline, studentNumber, data, errors \
+            = User.objects.all(), query_dict.get('name'), None, 0, {}, {}
 
-        username, academicDiscipline, studentNumber = query_dict.get('name'), None, 0
+        # case if username is available
+        for user in userList:
+            if username.lower() == user.username.lower():
+                errors['error_reg_user_n'] = "Sorry, Username ist vergeben."
+        if not 'error_reg_user_n' in errors:
+            if re.match("^[a-zA-Z0-9-_._]*$", username):
+                data['username'] = username
+            else:
+                errors['error_reg_user_n'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' im Usernamen erlaubt!"
 
-        try:
-            checkUsername = User.objects.get(username__exact=username)
+        # Password validation
+        password = query_dict.get('password')
+        ack_password = query_dict.get('ack_password')
+        if password != ack_password:
+            errors['error_reg_user_p'] = "Passw&ouml;rter sind nicht gleich."
 
-        # case if username is available (checkUsername = None)
-        except ObjectDoesNotExist:
-            password = query_dict.get('password')
-            ack_password = query_dict.get('ack_password')
-
-            # Password validation
-            if password != ack_password:
-                error_reg_user_p = " - Passw&ouml;rter sind nicht gleich."
-
-            email = query_dict.get('email')
-            mail = email.split('@')
-            if len(mail) == 1 or not (
-                mail[1].endswith(".tu-berlin.de") or
-                (email[(len(email)-13):len(email)] == '@tu-berlin.de')
-            ):
-                error_reg_mail = "Junge, gib TU Mail ein!"
-
-            if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
-                studentNumber = query_dict.get('studentNumber')
-
-            academicDiscipline = query_dict.get('academicDiscipline')
-
-            # context for html
-            context = {
-                'error_reg_user': error_reg_user,
-                'error_reg_userprofile_e': error_reg_userprofile_e,
-                'error_reg_mail': error_reg_mail,
-                'error_reg_user_n': error_reg_user_n,
-                'error_reg_user_p': error_reg_user_p,
-                'error_reg_userprofile_ad': error_reg_userprofile_ad,
-                'error_reg_userprofile_nr': error_reg_userprofile_nr,
-                'active_page': 'ftu',
-                'rActive': 'active',
-                'nav': Nav.nav,
-                'message_list': message_list
-            }
-            # error?
-            if error_reg_userprofile_ad or error_reg_mail or error_reg_userprofile_nr or error_reg_user or error_reg_userprofil or error_reg_user_p or error_reg_userprofile_e:
-                return render(request, 'ftu.html', context)
-
-            # fill the rest for modal User and Userprofile
-            first_name = query_dict.get('first_name')
-            last_name = query_dict.get('last_name')
-
-            # create User and Userprofile
-            user = User.objects.create_user(username, email, password)
-            user.first_name = first_name
-            user.last_name = last_name
-            user.save()
-            user_profil = UserProfile(userprofile=user, studentNumber=studentNumber,
-                                      academicDiscipline=academicDiscipline, location="Irgendwo")
-            user_profil.save()
-
-            # log user in and redirect to index page
-            user = authenticate(username=username, password=password)
-            auth.login(request, user)
-            return HttpResponseRedirect('/twittur/')
-
-        # case if username is taken (checkUsername == user)
+        # EMail validation
+        email = query_dict.get('email')
+        mail = email.split('@')
+        if len(mail) == 1 or not (
+                    mail[1].endswith(".tu-berlin.de") or
+                    (email[(len(email) - 13):len(email)] == '@tu-berlin.de')
+        ):
+            errors['error_reg_mail'] = "Keine g&uuml;tige TU E-Mail Adresse!"
         else:
-            error_reg_user_n = "Sorry, Username ist vergeben."
-            return render(request, 'ftu.html',
-                          {'active_page': 'ftu', 'nav': Nav.nav, 'error_reg_user_n': error_reg_user_n,
-                           'error_reg_mail': error_reg_mail, 'rActive': 'active'})
+            data['email'] = email
+
+        # fill the rest for modal User and Userprofile
+        first_name = query_dict.get('first_name')
+        if len(first_name) > 0:
+            data['first_name'] = first_name
+        last_name = query_dict.get('last_name')
+        if len(last_name) > 0:
+            data['last_name'] = last_name
+        if len(query_dict.get('studentNumber')) > 0:  # if input is empty, keep default (0)
+            studentNumber = query_dict.get('studentNumber')
+            data['studentNumber'] = studentNumber
+        academicDiscipline = query_dict.get('academicDiscipline')
+        if len(academicDiscipline) > 0:
+            data['academicDiscipline'] = academicDiscipline
+        else:
+            errors['error_reg_userprofile_ad'] = "Bitte Studiengang ausw&auml;hlen!"
+
+        # context for html
+        context = {
+            'active_page': 'ftu',
+            'rActive': 'active',
+            'nav': Nav.nav,
+            'message_list': message_list,
+            'data': data,
+            'errors': errors
+        }
+
+        # error?
+        if len(errors) > 0:
+            return render(request, 'ftu.html', context)
+
+        # create User and Userprofile
+        user = User.objects.create_user(username, email, password)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        user_profil = UserProfile(userprofile=user, studentNumber=studentNumber,
+                                  academicDiscipline=academicDiscipline, location="Irgendwo")
+        user_profil.save()
+
+        # log user in and redirect to index page
+        user = authenticate(username=username, password=password)
+        auth.login(request, user)
+        return HttpResponseRedirect('/twittur/')
 
     context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
     return render(request, 'ftu.html', context)
@@ -178,11 +179,11 @@ def profile(request, user):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    curUser = User.objects.get(username=user) # this is the user displayed in html
+    curUser = User.objects.get(username=user)  # this is the user displayed in html
     curUserProfile = curUser.userprofile
     success_msg = None
 
-    cuUser = UserProfile.objects.get(userprofile=request.user) # this is the login user
+    cuUser = UserProfile.objects.get(userprofile=request.user)  # this is the login user
 
     # follow
     if request.method == "GET" and 'follow' in request.GET:
@@ -205,7 +206,6 @@ def profile(request, user):
 
     if request.method == 'POST':
         success_msg = editMessage(request)
-
 
     group_list = Group.objects.all()
 
@@ -303,6 +303,8 @@ def settings(request):
         'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)
+
+
 '''
 def follow(request, user):
 

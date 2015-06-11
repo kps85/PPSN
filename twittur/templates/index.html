@@ -1,30 +1,7 @@
 {% extends 'base.html' %}
 
-{% block list %}
-	{% if hashtag_list %}
-    <ul class="groups">
-      <h3>Heiße Themen</h3>
-      {% for hashtag in hashtag_list %}
-      <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-        <a href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
-      {% endfor %} 
-    </ul>
-  {% endif %}
-	
-	{% if follow_list %}
-	<ul class="following">
-		<h3>Folgend</h3>
-		 {% for follow in follow_list %}
-		<li><a class="ullink" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
-		{% endfor %}
-	</ul>
-      {% else %}
-      <ul class="following">
-      <h3>Forever alone</h3>
-      </ul>
-	{% endif %}
-  
-  {% include 'layout/nav_foot.html' %}
+{% block list %}  
+  {% include 'layout/sidebar.html' %}
 {% endblock %}
 
 {% block nav %}
