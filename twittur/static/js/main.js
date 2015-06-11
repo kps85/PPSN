@@ -115,6 +115,11 @@ function initMenu() {
 			menuOpenerWasVisible = true;
 		}
 	})
+	
+	if ($("ul.following").length > 0 || $("ul.hashs").length > 0) {
+		var name = (window.location.href.split("/"))[5];
+		$(".ullink."+name).addClass("active");
+	}
 }
 
 function initList() {

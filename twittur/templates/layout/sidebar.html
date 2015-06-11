@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% if active_page == 'index' %}
+{% if active_page == 'index' or active_page == 'profile' %}
   {% if group_list %}
     <ul class="groups">
       <h3>Meine Gruppen</h3>
@@ -11,11 +11,11 @@
     </ul>
   {% endif %}
   {% if hot_list %}
-    <ul class="groups">
+    <ul class="hashs">
       <h3>Heiße Themen</h3>
       {% for hashtag in hot_list %}
       <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-        <a href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
+        <a class="ullink {{ hashtag.name }}" href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
       {% endfor %} 
     </ul>
   {% endif %}  
@@ -23,7 +23,7 @@
   <ul class="following">
     <h3>Folgend</h3>
      {% for follow in follow_list %}
-    <li><a class="ullink" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
+    <li><a class="ullink {{ follow.username }}" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
     {% endfor %}
   </ul>
   {% else %}
