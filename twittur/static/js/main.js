@@ -148,8 +148,7 @@ function validateFtu() {
 	
 	var registerFilledCorrectly = $('#name').val().replace(/\s/g, "") != '' 
 	&& $('#email').val().replace( /\s/g, "") != '' &&
-	$('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '' &&
-	$('#academicDiscipline').val().replace( /\s/g, "") != '';
+	$('#password').val().replace( /\s/g, "") != '' && $('#ack_password').val().replace( /\s/g, "") != '';
 	
 	(loginFilledCorrectly) ? $('#login input[type=submit]').prop("disabled", false) : $('#login input[type=submit]').prop("disabled", true);
 	(registerFilledCorrectly) ? $('#register input[type=submit]').prop("disabled", false) : $('#register input[type=submit]').prop("disabled", true);	
@@ -227,7 +226,12 @@ function initVarious() {
 	$(".hideInfo").click(function() {
 		$(this).parent("div").hide();
 	});
-	$(".newMsg").click(function(e) {
+	$(".newMsg, .postToUser").click(function(e) {
+		if ($(this).is(".postToUser")) {
+			var user = $(this).attr("data-hint");
+			var val = $("#id_text").val().replace("@" + user + " ", '');
+			$("#id_text").val("@" + user + " " + val);			
+		}
     setTimeout(function() {
 			$("#id_text").focus();
 		}, 500);

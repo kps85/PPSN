@@ -1,31 +1,7 @@
 {% extends 'base.html' %}
 
 {% block list %}
-	{% if group_list %}
-<ul class="groups">
-  <h3>Meine Gruppen</h3>
-  {% for group in group_list %}
-  <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-    <a class="ullink" href="#">#{{ group.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! --> 
-    <a class="dashicons dashicons-edit" href="#"></a> </li>
-  {% endfor %}
-</ul>
-{% endif %}
-	
-	{% if follow_list %}
-<ul class="following">
-  <h3>Folgend</h3>
-  {% for follow in follow_list %}
-  <li><a class="ullink" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
-  {% endfor %}
-</ul>
-{% else %}
-<ul class="following">
-  <h3>Forever alone</h3>
-</ul>
-{% endif %}
-  
-  {% include 'layout/nav_foot.html' %}
+  {% include 'layout/sidebar.html' %}
 {% endblock %}
 
 {% block nav %}
@@ -60,11 +36,13 @@
   </div>
   {% if request.user != curUser %}
   <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
-    <button class="col-xs-6 text-center btn btn-default profileButton" id="follow" name="follow" type="submit" value=""> <strong>{{ follow_text|safe }}</strong> </button>
+    <button class="col-xs-6 text-center btn btn-default profileButton" id="follow" name="follow" type="submit">
+    	<strong>{{ follow_text|safe }}</strong>
+    </button>
   </form>
-  <form action="" method="GET">
-    <button class="col-xs-6 text-center btn btn-default profileButton" type="submit" value=""> <strong><span class="glyphicon glyphicon-edit"></span> {{ curUser|upper }} schreiben</strong> </button>
-  </form>
+  <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ curUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ curUser|upper }} schreiben" type="button">
+  	<strong><span class="glyphicon glyphicon-edit"></span> {{ curUser|upper }} schreiben</strong>
+  </button>
   {% endif %}
 </div>
 <br />

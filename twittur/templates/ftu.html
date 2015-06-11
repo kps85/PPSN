@@ -47,37 +47,35 @@
   {% csrf_token %}
   <div class="column column-left">
     <h4>Deine Login Daten</h4>
-    <input type="text" name="name" placeholder="Username *" id="name"/>
+    <input type="text" name="name" placeholder="Username *" id="name" {% if data.username %} value="{{ data.username }}"{% endif %}/>
     <br />
     <input type="password" name="password" placeholder="Passwort *" id="password" />
     <br />
     <input type="password" name="ack_password" placeholder="Passwort bestätigen *" id="ack_password" />
     <br />
-    {% if error_reg_user_p or error_reg_user_n %}
-    
-    {% if error_reg_user_n %}
-    <p><font color="#FF0000"> &nbsp; {{ error_reg_user_n|safe }}</font></p>
+    {% if errors.error_reg_user_p or errors.error_reg_user_n %}    
+      {% if errors.error_reg_user_n %}
+      <p><font color="#FF0000"> &nbsp; {{ errors.error_reg_user_n|safe }}</font></p>
+      {% endif %}
+      {% if errors.error_reg_user_p %}
+      <p><font color="#FF0000"> &nbsp; {{ errors.error_reg_user_p|safe }}</font></p>
+      {% endif %}
     {% endif %}
-    {% if error_reg_user_p %}
-    <p><font color="#FF0000"> &nbsp; {{ error_reg_user_p|safe }}</font></p>
-    {% endif %}
-    {% else %}
-    <p></p>
-    {% endif %} <br />
+    <br />
     <h4>Deine persönliche Daten</h4>
-    <input type="text" name="first_name" placeholder="Vorname" id="first_name" />
+    <input type="text" name="first_name" placeholder="Vorname" id="first_name" {% if data.first_name %} value="{{ data.first_name }}"{% endif %}/>
     <br />
-    <input type="text" name="last_name" placeholder="Nachname" id="last_name" />
+    <input type="text" name="last_name" placeholder="Nachname" id="last_name" {% if data.last_name %} value="{{ data.last_name }}"{% endif %}/>
     <br />
-    <input type="text" name="email" placeholder="E-Mail *" id="email" required="required" />
+    <input type="text" name="email" placeholder="E-Mail *" id="email" required="required" {% if data.email %} value="{{ data.email }}"{% endif %}/>
     <br />
-    {% if error_reg_mail %}
-    <p><font color="#FF0000"> &nbsp; {{ error_reg_mail|safe }}</font></p>
+    {% if errors.error_reg_mail %}
+    	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_mail|safe }}</font></p>
     {% endif %}
   </div>
   <div class="column column-right">
     <h4>Deine T&auml;tigkeit an der TU Berlin</h4>
-    <select class="superDropdown" id="academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
+    <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
       <optgroup label="Fakult&auml;t I"></optgroup>
       <optgroup label="Fakult&auml;t II"></optgroup>
       <optgroup label="Fakult&auml;t III"></optgroup>
@@ -95,17 +93,11 @@
       <optgroup label="Fakult&auml;t VI"></optgroup>
       <optgroup label="Fakult&auml;t VII"></optgroup>
     </select>
-    <!-- <input type="text" name="academicDiscipline" placeholder="Studiengang *" id="academicDiscipline" required="required" /><br /> -->
-    <input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" class="checkNumeric" />
+    
+    <input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" class="checkNumeric" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
     <br />
-    {% if error_reg_userprofile_e %}
-    <p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_e|safe }}</font></p>
-    {% endif %}
-    {% if error_reg_userprofile_nr %}
-    <p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_nr|safe }}</font></p>
-    {% endif %}
-    {% if error_reg_userprofile_ad %}
-    <p><font color="#FF0000"> &nbsp; {{ error_reg_userprofile_ad|safe }}</font></p>
+    {% if errors.error_reg_userprofile_ad %}
+    	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>
     {% endif %}
     <p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
   </div>

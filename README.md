@@ -1,7 +1,7 @@
 <p align="center">
- <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="TwitTUr - A social-networking platform" width="200">
+ <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="twittur - your TUcial network" width="200">
 </p>
-##**TwitTUr** - *A social-networking platform*
+##**twittur** - *your TUcial network*
 
 ######**AUFGABENSTELLUNG**
 >*Die SeminarteilnehmerInnen entwickelen eine social-networking Plattform basierend auf einem Webframework einer objekt-orientierten Sprache. Das Projektmanagement basiert auf modernen Praktiken agiler Softwareentwicklung und es sollen typische Werkzeuge aus der Welt der Open Source Entwicklung verwendet werden.*
@@ -21,11 +21,11 @@ Wissenschaftlicher Mitarbeiter | Projekt-Koordination | Tim Jungnickel
 Wissenschaftlicher Mitarbeiter | Projekt-Unterstützung | Anton Gulenko
  |  | 
 Wirtschaftsinformatiker | Scrum-Master, Produkt-Entwicklung | Karl Schmidt
-Wirtschaftsinformatiker | Produkt-Entwicklung, Dokumentation | Lilia Butenkova
+Wirtschaftsinformatiker | Produkt-Entwicklung | Lilia Butenkova
 Wirtschaftsinformatiker | Produkt-Entwicklung, Dokumentation | Thomas Tietz
-Wirtschaftsinformatiker | Produkt-Entwicklung, Frontend | Steffen Zerbe
+Wirtschaftsinformatiker | Produkt-Entwicklung | Steffen Zerbe
 Informatiker | Produkt-Entwicklung, Backend | Willy Cai
-Wirtschaftsinformatiker | Produkt-Entwicklung, Tests | Yiming Chen
+Wirtschaftsinformatiker | Produkt-Entwicklung, Dokumentation | Yiming Chen
  |  | 
 Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen, Studenten
 
@@ -37,6 +37,7 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
  - Dokumentation (Protokoll Meetings)
  - Stakeholderliste
  - Anforderungskatalog
+  - `REQ Nr.` entspricht der `Issue ID` in Waffle.io
  - Datenobjektliste (still empty)
  - Glossar (still empty)
 * [GitHub Repository 'PPSN'] (https://goo.gl/pAsqLV)
@@ -46,6 +47,8 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 * [Waffle.io Issue Organisation] (https://goo.gl/reOBQO)
  - Backlog column dient als Product Backlog
  - Ready column dient als Sprint Backlog
+ - `Issue ID` entspricht der `REQ NR.` im Google Sheet
+ - **Issue Struktur**: `Titel` = Story = Anforderung aus dem Google Sheet; `Description` = Tasks; `Comments` = Changelog (erledigte Tasks, Änderungen an Story und / oder Tasks)
  - entsprechende Meilensteine sind die zweiwöchigen Präsentationen
 * Zur Kommunikation wird 'slack.com' verwendet
 
