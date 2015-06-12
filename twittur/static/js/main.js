@@ -230,6 +230,16 @@ function initInfoSettings() {
         $(element).find('button[type=submit]').prop("disabled", true);
       });
     });
+		
+		$("#profBildUpdate").each(function(index, element) {
+      var userImg = $(element).find("a").text().replace('"', '');
+			if (userImg == 'picture/default.gif') {
+				$(element).find("input[type=checkbox]").addClass("hidden");
+				$(element).find("label").addClass("hidden");
+			} else {
+				$(element).find("label").html("&nbsp; Bild l&ouml;schen?");				
+			}
+    });
 	}
 }
 function infoChange(hash) {		

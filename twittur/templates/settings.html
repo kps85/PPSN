@@ -30,7 +30,7 @@
               <p class="help-block">{{ userDataForm.picture.help_text | safe }}</p>
             </div>
             <div id="profBildUpdate">
-              {% if user.userprofile.picture %}<span>Aktuelles Profilbild: </span>{% endif %}
+              {% if user.userprofile.picture %}<span><strong>Aktuelles Profilbild</strong>: </span>{% endif %}
               {{ userDataForm.picture }}
               {{ userDataForm.picture.errors }}
             </div>                

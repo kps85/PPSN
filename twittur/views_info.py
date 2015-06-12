@@ -125,9 +125,9 @@ def support(request):
                     + "--------------------------------------------------\n" \
                     + "\n" \
                     + "Von " + sender.first_name + " " + sender.last_name + " (@" + sender.username \
-                    + ") auf twittur&auml;.\n" \
+                    + ") auf twittur.\n" \
                     + "Antworten an " + sender.email
-        send_mail(subject, mark_safe(message), sender.email, ['schmidt.karl@live.com'])
+        send_mail(subject, mark_safe(message), sender.email, recipient)
         success_msg = "Ihre Nachricht wurde erfolgreich abgeschickt!"
 
 

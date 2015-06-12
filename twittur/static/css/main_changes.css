@@ -57,8 +57,9 @@ nav a:focus { color: #fff; }
 	nav a:hover { background-color: rgba(255,255,255,0.1); }
 	nav a.active:hover { background-color: #f50000; }
 
-
 .infoMessage .glyphicon-remove:hover { cursor: pointer; }
+.postFoot a { margin: 0; }
+.postFoot a:hover { cursor: pointer; }
 
 .faqList { list-style: inside square; }
 .faqList li { }

@@ -52,7 +52,7 @@
     {% endif %}
     <br />
     <input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
-  	<a href="#" class="forgotBack">Zur&uuml;ck</a>
+  	<a class="forgotBack">Zur&uuml;ck</a>
   </form>
 </div>
 </div>
@@ -111,7 +111,7 @@
       <optgroup label="Fakult&auml;t VII"></optgroup>
     </select>
     
-    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
+    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentnumber %} value="{{ data.studentNumber }}"{% endif %}/>
     <br />
     {% if errors.error_reg_userprofile_ad %}
     	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>
@@ -129,25 +129,28 @@
 </div>
 {% if message_list %}
 <div id="ftuPosts" class="full-page-nomobile">
-<div class="center">
-<div class="column column-left">
-  <h2>&Ouml;ffentliche Nachrichten</h2>
-  <div class="messages"> {% for message in message_list %}
-    {% include "message_box.html" with message=message %}
-    {% endfor %} </div>
-</div>
-<div class="column column-right ftuTags">
-<h2>Beliebte Themen</h2>
-<ul>
-<li><a href="#">#yolo</a></li>
-<li><a href="#">#swag</a></li>
-<li><a href="#">#wprnervt</a></li>
-<li><a href="#">#burgerindermensa</a></li>
-<li><a href="#">#prokrastination</a></li>
-<li><a href="#">#montag</a></li>
-<li><a href="#">#telbrennt</a></li>
-</div>
-</div>
+  <div class="center">
+    <div class="column column-right ftuTags">
+      <h2>Beliebte Themen</h2>
+      <ul>
+        <li><a href="#">#yolo</a></li>
+        <li><a href="#">#swag</a></li>
+        <li><a href="#">#wprnervt</a></li>
+        <li><a href="#">#burgerindermensa</a></li>
+        <li><a href="#">#prokrastination</a></li>
+        <li><a href="#">#montag</a></li>
+        <li><a href="#">#telbrennt</a></li>
+      </ul>
+    </div>
+    <div class="column column-left">
+      <h2>&Ouml;ffentliche Nachrichten</h2>
+      <div class="messages">
+      	{% for message in message_list %}
+        	{% include "message_box.html" with message=message %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 <div id="ftuFooter">
