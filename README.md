@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/kps85/PPSN/blob/master/img/twittur_logo.JPG" alt="twittur - your TUcial network" width="200">
+ <img src="https://github.com/kps85/PPSN/blob/master/twittur/static/img/twittur_logo.JPG" alt="twittur - your TUcial network" width="200">
 </p>
 ##**twittur** - *your TUcial network*
 
@@ -55,7 +55,7 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 --
 
 <p align="center">
- <img src="https://github.com/kps85/PPSN/blob/master/img/cit_logo.jpg" alt="Complex and Distributed IT Systems" width="100">
+ <img src="https://github.com/kps85/PPSN/blob/master/twittur/static/img/cit_logo.jpg" alt="Complex and Distributed IT Systems" width="100">
 </p>
 
 Ein Projekt im Rahmen des [Fachgebiet Komplexe und verteilte IT-Systeme] (https://www.cit.tu-berlin.de/) der TU Berlin. Geplant und entwickelt im Sommersemester 2015.
