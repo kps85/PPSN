@@ -10,9 +10,9 @@
   </div>
 </div>
 <div class="column column-right">
-<div class="box loginBox">
-  <h2 class="{% if not rActive %}active {% endif %}">Anmelden</h2>
-  <div class="{% if not rActive %}active {% endif %}" id="login">
+<div class="box loginBox {% if not pActive %}active {% endif %}">
+  <h2>Anmelden</h2>
+  <div id="login">
     <form method="GET">
       {% csrf_token %}
       <input type="text" name="username" id="username" placeholder="Username"  />
@@ -30,13 +30,30 @@
     </form>
   </div>
 </div>
-<div class="box forgotBox">
-<h2>Passiert jedem mal ...</h2>
-<form method="POST">
-<input type="text" name="password_reset" placeholder="Deine Mailadresse" />
-<br />
-<input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
-<a href="#" class="forgotBack">Zur&uuml;ck</a>
+<div class="box forgotBox {% if pActive %}active{% endif %}">
+  <h2>Passiert jedem mal ...</h2>
+  {% if success_msg %}
+    <div class="infoMessage alert alert-success" role="alert">
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      {{ success_msg|safe }}
+      <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
+    </div>
+  {% endif %}
+  <form method="POST" action="{% url 'twittur:login' %}">
+	{% csrf_token %}
+    <input id="id_password_reset" name="password_reset" type="hidden" />
+    <input id="id_pwRestMail" name="pwResetMail" placeholder="Deine Mailadresse" type="text" />
+    {% if errors.error_not_registered %}
+    	<p><font color="#FF0000">{{ errors.error_not_registered|safe }}</font></p>
+    {% endif %}
+    <input class="checkNumeric" id="id_pwResetStudNumb" name="pwResetStudNumb" placeholder="Deine Matrikel-Nummer zur Sicherheit" type="text" />
+    {% if errors.error_number_not_identic %}
+    	<p><font color="#FF0000">{{ errors.error_number_not_identic|safe }}</font></p>
+    {% endif %}
+    <br />
+    <input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
+  	<a href="#" class="forgotBack">Zur&uuml;ck</a>
+  </form>
 </div>
 </div>
 </div>
@@ -94,10 +111,13 @@
       <optgroup label="Fakult&auml;t VII"></optgroup>
     </select>
     
-    <input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" class="checkNumeric" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
+    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
     <br />
     {% if errors.error_reg_userprofile_ad %}
     	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>
+    {% endif %}
+    {% if errors.error_student_number %}
+    	<p><font color="#FF0000"> &nbsp; {{ errors.error_student_number|safe }}</font></p>
     {% endif %}
     <p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
   </div>

@@ -130,3 +130,10 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AUTH_PROFILE_MODULE = 'twittur.UserProfile'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'twittur.sn@gmail.com'
+EMAIL_HOST_PASSWORD = 'twittur@ppsnSoSe15'
+EMAIL_PORT = 587

@@ -18,9 +18,9 @@
         <div class="profilNick">@{{ curUser.username }}</div>
       </div>
       <div>
-        <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> studiert {{ curUserProfile.academicDiscipline }} </div>
-        <div class="profilStadt"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
-        <div class="profilStadt"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ curUser.date_joined }}</div>
+        <div class="profilStadt" title="Studiengang"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ curUserProfile.academicDiscipline }} </div>
+        <div class="profilStadt" title="Wohnort"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
+        <div class="profilStadt" title="registriert seit"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ curUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}</div>
         <!--{% if request.user != curUser %}
         <div class="profilButton">
           <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
@@ -47,7 +47,7 @@
 </div>
 <br />
 <div class="container-fluid">
-  {% if message_list %}
+  {% if has_msg %}
     {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user %}
     {% endfor %}

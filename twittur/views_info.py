@@ -1,5 +1,7 @@
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
 
@@ -85,7 +87,7 @@ def faq(request):
 
 
 # Page: 'Support'
-# - allows: submitting diverse requests TODO: implement data processing
+# - allows: submitting diverse requests
 # - template: info_support.html
 def support(request):
     # check if user is logged in
@@ -93,10 +95,51 @@ def support(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    success_msg, hash = None, None
+    team_list = User.objects.filter(is_superuser=True).order_by('last_name')
+    cat_list = FAQ.objects.all().values('category').distinct()
+
+    if request.method == 'POST':
+        sender, recipient, subject, hash = request.user, [], request.POST['subject'], request.POST['hash']
+        if 'staff' in request.POST:
+            recipient.append(request.POST['staff'])
+            message = sender.first_name + " " + sender.last_name + " (@" + sender.username + ") hat eine " \
+                    + "Supportanfrage gestellt: \n" \
+                    + "\n" \
+                    + request.POST['message'] + "\n" \
+                    + "\n" \
+                    + "--------------------------------------------------\n" \
+                    + "\n" \
+                    + "von " + sender.first_name + " " + sender.last_name + " (@" + sender.username \
+                    + ") auf twittur\n" \
+                    + "Antworten an " + sender.email
+        else:
+            for member in team_list:
+                recipient.append(member.email)
+            topic = request.POST['topic']
+            message = sender.first_name + " " + sender.last_name + " (@" + sender.username + ") hat eine " \
+                    + "Frage zum Thema: " + topic + "\n" \
+                    + "\n" \
+                    + request.POST['message'] + "\n" \
+                    + "\n" \
+                    + "--------------------------------------------------\n" \
+                    + "\n" \
+                    + "Von " + sender.first_name + " " + sender.last_name + " (@" + sender.username \
+                    + ") auf twittur&auml;.\n" \
+                    + "Antworten an " + sender.email
+        send_mail(subject, mark_safe(message), sender.email, ['schmidt.karl@live.com'])
+        success_msg = "Ihre Nachricht wurde erfolgreich abgeschickt!"
+
+
     # return relevant information to render info_faq.html
     context = {
         'active_page': 'info',
         'nav': Nav.nav,
-        'msgForm': msgDialog(request)
+        'msgForm': msgDialog(request),
+        'curUser': request.user,
+        'team_list': team_list,
+        'cat_list': cat_list,
+        'success_msg': success_msg,
+        'hash': hash
     }
     return render(request, 'info_support.html', context)

@@ -10,7 +10,7 @@
 
 {% block content %}
   
-  {% if message_list %}
+  {% if has_msg %}
     {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message dbmessage=dbmessage page=active_page user=user  %}
     {% endfor %}

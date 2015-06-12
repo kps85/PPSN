@@ -11,19 +11,16 @@ from django.contrib.auth.models import User
 
 # search input
 def search(request):
-    search_input = None
-    # special case: flag for @
-    search_error = {}
-    msgForm = msgDialog(request)
+
+    search_input, search_error, msgForm = None, {}, msgDialog(request)
     hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                        .order_by('-hashtag_count')[:5]
     follow_list = request.user.userprofile.follow.all()
 
     if request.method == 'GET':
-        query_dict = request.GET
-        search_input = query_dict.get('search_input').split(" ")
-
-    if search_input is None or search_input == "":
+        search_input = request.GET['search_input'].strip().split(" ")
+        
+    if search_input is None or search_input[0] == "":
         search_error["no_term"] = "Kein Suchbegriff eingegeben!"
         context_error = {
             'active_page': 'index',
@@ -41,11 +38,11 @@ def search(request):
     message_list, user_list, hashtag_list = [], [], []
 
     for term in search_input:
-        #print(term)
+        # special case: flag for @
         attag = False
-        if term[0] == "#":
+        if term[:1] == "#":
             hashtag(request, term)
-        elif term[0] == "@":
+        elif term[:1] == "@":
             attag = True
             term = term[1:]
 
@@ -70,16 +67,23 @@ def search(request):
         if attag:
             term = '@' + term
 
+    user_list = elimDups(user_list)
+    hashtag_list = elimDups(hashtag_list)
+    message_list = elimDups(message_list)
+
     context = {
         'active_page': 'index',
         'nav': Nav.nav,
         'msgForm': msgForm,
         'hot_list': hot_list,
         'follow_list': follow_list,
-        'search': 'Suchergebnisse f&uuml;r "' + ' '.join(search_input) + '"',
-        'user_list': elimDups(user_list),
-        'hashtag_list': elimDups(hashtag_list),
-        'message_list': elimDups(message_list),
+        'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
+        'user_list': user_list,
+        'user_list_length': len(user_list),
+        'hashtag_list': hashtag_list,
+        'hashtag_list_length': len(hashtag_list),
+        'message_list': message_list,
+        'message_list_length': len(message_list),
     }
     return render(request, 'search.html', context)
 

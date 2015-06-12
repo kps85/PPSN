@@ -10,36 +10,57 @@
 
 {% block content %}
   <h2>{{ search|safe }}</h2>
+  <div class="container-fluid">
+    <a href="#searchUser" class="col-xs-4 btn btn-default searchResultButton searchUser" data-hint="{{ user_list_length }}">
+      <span class="glyphicon glyphicon-user"></span>&nbsp;
+      {{ user_list_length }} Benutzer
+    </a>
+    <a href="#searchHash" class="col-xs-4 btn btn-default searchResultButton searchHash" data-hint="{{ hashtag_list_length }}">
+      <span class="glyphicon glyphicon-tags"></span>&nbsp;
+      {{ hashtag_list_length }} {% if hashtag_list_length > 1 or hashtag_list_length = 0 %}Themen{% else %}Thema{% endif %}
+    </a>
+    <a href="#searchMsg" class="col-xs-4 btn btn-default searchResultButton searchMsg" data-hint="{{ message_list_length }}">
+      <span class="glyphicon glyphicon-envelope"></span>&nbsp;
+      {{ message_list_length }} {% if message_list_length > 1 or message_list_length = 0 %}Nachrichten{% else %}Nachricht{% endif %}
+    </a>
+  </div>
   {% if user_list %}
-    <h4> Folgende User wurden gefunden:</h4>
-    <div class="container-fluid">
+    <div class="container-fluid searchResultBox searchUser" id="searchUser">
+    <h4> Folgende Benutzer wurden gefunden:</h4>
   	{% for user in user_list %}
+      <a href="/twittur/profile/{{ user.username }}" >
       <p class="search_user_result pull-left text-center">
         <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/><br />
         {{ user.first_name }} {{ user.last_name }}<br />
-        (<a href="/twittur/profile/{{ user.username }}" >@{{ user.username }}</a>)
+        (@{{ user.username }})
       </p>
+      </a>
     {% endfor %}
     </div>
   {% endif  %}
   {% if hashtag_list %}
-    <h4> Folgende Hashtags wurden gefunden:</h4>
-    <div class="container-fluid">
+    <div class="container-fluid searchResultBox searchHash" id="searchHash">
+    <h4> Folgende Themen wurden gefunden:</h4>
   	{% for hashtag in hashtag_list %}
+      <a href="/twittur/hashtag/{{ hashtag }}">
       <p class="search_hash_result pull-left text-center">
-        <a href="/twittur/hashtag/{{ hashtag }}">#{{ hashtag }}</a>
+        #{{ hashtag }}
       </p>
+      </a>
     {% endfor %}
     </div>
   {% endif %}
   {% if message_list  %}
+    <div class="container-fluid searchResultBox searchMsg" id="searchMsg">
     {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
-    <div class="container-fluid">
   	{% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user  %}
     {% endfor %}
     </div>
   {% else %}
-  <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+  <div class="container-fluid text-center">
+  	<br />
+  	<em>Keine Nachrichten zum Anzeigen gefunden!</em>
+  </div>
   {% endif %}
 {% endblock %}

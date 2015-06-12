@@ -2,7 +2,6 @@
 #ftuFooter { border-top: 1px solid #F50000; }
 a { color: #F50000; }
 a:focus { color: #a00000; text-decoration: none; }
-
 /* Hier kann die Farbe entfernt werden.
   .copy a {
     color: #a00000;
@@ -13,6 +12,8 @@ a:focus { color: #a00000; text-decoration: none; }
 .copy { margin-top: 15px; }
 .copy a { color: #f50000; }
 .copy a:hover { color: #a00000; }
+
+.scrollTop { z-index: 99; }
 
 #main.infoGuest {
 	width: auto;
@@ -46,7 +47,8 @@ a:focus { color: #a00000; text-decoration: none; }
 	#ftu .toggleItem.active { display: block; }
 	#ftu #register.active { display: block; }
 	
-	
+	#ftu .box { display: none; }
+	#ftu .box.active { display: block; }
 
 /* Kontrast, Kontrast, Kontrast ... */
 
@@ -66,3 +68,9 @@ nav a:focus { color: #fff; }
 .search_user_result img { width: 50px; }
 
 body.modal-open { overflow: visible; padding-right: 0px !important; }
+
+.searchResultButton { border-radius: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.searchResultButton.searchUser { border-radius: 4px 0 0 4px; }
+.searchResultButton.searchMsg { border-radius: 0 4px 4px 0; }
+.searchResultBox { display: none; }
+.searchResultBox.active { display: block; }

@@ -116,7 +116,7 @@ function initMenu() {
 		}
 	})
 	
-	if ($("ul.following").length > 0 || $("ul.hashs").length > 0) {
+	if ((window.location.href.split("/"))[4] == "profile" || (window.location.href.split("/"))[4] == "hashtag") {
 		var name = (window.location.href.split("/"))[5];
 		$(".ullink."+name).addClass("active");
 	}
@@ -146,8 +146,7 @@ function validateFtu() {
 	// Validiert die Daten der Login/Registrierungsseite
 	// TODO: Einfacher gestalten...	
 	// das .replace hier war überflüssig. Wenn autofill, dann nur mit validen Daten. valide Daten = Passwort ohne Leerzeichen.
-	var loginFilledCorrectly = $('#login input[type=text]').val() != '' 
-	&& $('#login input[type=password]').val() != '';
+	var loginFilledCorrectly = $('#login input[type=text]').val() != '' && $('#login input[type=password]').val() != '';
 	
 	// console.log(loginFilledCorrectly);
 	
@@ -163,9 +162,9 @@ function validateFtu() {
 function initInputValidation() {
 	$(".checkNumeric").keypress(function(e) {
 		// Erlaubt nur numerische Eingaben
-		if((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 8) {
+		if( ( (e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 8 ) || $(this).val().length > 5) {
 			e.preventDefault();
-			 e.returnValue = false;
+			e.returnValue = false;
 			return false;
 		}
 	});
@@ -198,25 +197,41 @@ function initInputValidation() {
 		} else {
 			$('#newMessage button[type=submit]').prop("disabled", true);
 		}
-	});
-	
+	});	
 }
-
 
 function initInfoSettings() {
 	// Wechselt die Info Navi und blendet relevante Formulare (Nachricht, Kontaktformular) ein.
 	// Reagiert auf den hash in der aktiven URL	
 	if ($('#body_info').length > 0 || $('#body_settings').length > 0) {
+		($("#hash").length > 0) ? window.location.hash = $("#hash").attr("data-hint") : 
+			(window.location.hash == '' && (window.location.href.split("/"))[5] == 'support') ? window.location.hash = 'nachricht' : '';
 		
 		infoChange((window.location.href.split("#"))[1]);
 		
 		$(window).on("hashchange", function() {
 			infoChange((window.location.href.split("#"))[1]);
-		});
+		});		
 		
+		$(".supportCont").each(function(index, element) {
+      $(element).find('input[type=text]').keyup(function(e) {
+				var mailRdy = $(element).find('input[type=text]').val().replace(/\s/g, "") != '' && 
+											$(element).find('textarea').val().replace(/\s/g, "") != '';
+        (mailRdy) ? $(element).find('button[type=submit]').prop("disabled", false) : 
+										$(element).find('button[type=submit]').prop("disabled", true);
+      });
+      $(element).find('textarea').keyup(function(e) {
+				var mailRdy = $(element).find('input[type=text]').val().replace(/\s/g, "") != '' && 
+											$(element).find('textarea').val().replace(/\s/g, "") != '';
+        (mailRdy) ? $(element).find('button[type=submit]').prop("disabled", false) : 
+										$(element).find('button[type=submit]').prop("disabled", true);
+      });
+			$(element).find('button[type=reset]').click(function(e) {
+        $(element).find('button[type=submit]').prop("disabled", true);
+      });
+    });
 	}
 }
-
 function infoChange(hash) {		
 	$('.ullink.active').removeClass('active');
 	$('.'+hash).addClass('active');
@@ -225,6 +240,27 @@ function infoChange(hash) {
 	$("#"+hash).removeClass('hidden');
 }
 
+function initSearchResults() {
+	if ($('.searchResultBox').length > 0) {
+		showResults((window.location.href.split("#"))[1]);
+		$(window).on("hashchange", function() {
+			$(".searchResultButton.active").removeClass('active');
+			$(".searchResultBox.active").removeClass('active');
+			showResults((window.location.href.split("#"))[1]);
+		});		
+	}	
+}
+function showResults(hash) {
+	if (!hash) {
+		var countUser = $(".searchResultButton.searchUser").attr("data-hint");
+		var countHash = $(".searchResultButton.searchHash").attr("data-hint");
+		var countMsg = $(".searchResultButton.searchMsg").attr("data-hint");
+		hash = (countUser > 0) ? "searchUser" : (countHash > 0) ? "searchHash" : (countMsg > 0) ? "searchMsg" : "";				
+	}
+	$('.'+hash).each(function(index, element) {
+		$(element).addClass('active');
+	});	
+}
 
 function initVarious() {
 	// Hide Info Button
@@ -365,6 +401,7 @@ $(document).ready(function() {
 	initList();
 	initFtu();
 	initInfoSettings();
+	initSearchResults();
 	initInputValidation();
 	initVarious();
 	
