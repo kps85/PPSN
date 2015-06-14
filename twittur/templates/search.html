@@ -10,6 +10,7 @@
 
 {% block content %}
   <h2>{{ search|safe }}</h2>
+  {% if not is_hash %}
   <div class="container-fluid">
     <a href="#searchUser" class="col-xs-4 btn btn-default searchResultButton searchUser" data-hint="{{ user_list_length }}">
       <span class="glyphicon glyphicon-user"></span>&nbsp;
@@ -24,6 +25,7 @@
       {{ message_list_length }} {% if message_list_length > 1 or message_list_length = 0 %}Nachrichten{% else %}Nachricht{% endif %}
     </a>
   </div>
+  {% endif %}
   {% if user_list %}
     <div class="container-fluid searchResultBox searchUser" id="searchUser">
     <h4> Folgende Benutzer wurden gefunden:</h4>
@@ -51,9 +53,9 @@
     </div>
   {% endif %}
   {% if message_list  %}
-    <div class="container-fluid searchResultBox searchMsg" id="searchMsg">
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
     {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
-  	{% for message, dbmessage in message_list %}
+    {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user  %}
     {% endfor %}
     </div>

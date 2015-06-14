@@ -258,7 +258,7 @@ function initSearchResults() {
 			$(".searchResultBox.active").removeClass('active');
 			showResults((window.location.href.split("#"))[1]);
 		});		
-	}	
+	}
 }
 function showResults(hash) {
 	if (!hash) {
@@ -267,9 +267,11 @@ function showResults(hash) {
 		var countMsg = $(".searchResultButton.searchMsg").attr("data-hint");
 		hash = (countUser > 0) ? "searchUser" : (countHash > 0) ? "searchHash" : (countMsg > 0) ? "searchMsg" : "";				
 	}
-	$('.'+hash).each(function(index, element) {
-		$(element).addClass('active');
-	});	
+	if (hash != '') {
+		$('.'+hash).each(function(index, element) {
+			$(element).addClass('active');
+		});	
+	}
 }
 
 function initVarious() {
