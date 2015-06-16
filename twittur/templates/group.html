@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar_group.html' %}
+{% endblock %}
+
+{% block nav %}
+	{% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+{% if not error_msg %}
+  <div class="container-fluid">
+    <div class="profil">
+      <div class="col-xs-12 col-sm-4 killme"> <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/> </div>
+      <div class="col-xs-12 col-sm-8">
+        <div class="killme">
+          <div class="profilAuthor">Programmieren Praktikum</div>
+          <div class="profilNick">&gruppe3</div>
+        </div>
+        <div>
+          <div class="profilStadt" title="registriert seit"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ curUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}</div>
+          <div class="profilStadt" title="registriert seit"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Teilnehmeranzahl: 6</div>
+          <div class="profilStadt" title="registriert seit"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Admin: @<a href="/twittur/profile/lilia">lilia</a></div>
+        </div>
+      </div>
+    </div>
+    <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
+      <button class="col-xs-6 text-center btn btn-default profileButton" id="follow" name="follow" type="submit">
+        <strong><span class="glyphicon glyphicon-log-in"></span> Gruppe3 eintreten</strong>
+      </button>
+    </form>
+    <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ curUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ curUser|upper }} schreiben" type="button">
+      <strong><span class="glyphicon glyphicon-edit"></span> Gruppe3 schreiben</strong>
+    </button>
+  </div>
+  <br />
+<div class="container-fluid">
+    
+      
+        <div class="post">
+	<div class="icon">
+    <a href="/twittur/profile/group/kps">
+        <img src="/media/picture/twittur_logo.JPG" class="img-thumbnail">
+    </a>
+  </div>
+	<div class="postContent">
+		<div class="postMeta">
+			<div class="postAuthor">
+      
+      	@<a href="/twittur/profile/group/kps">kps</a>      
+      
+      </div>
+			<small class="postTime">am 11. Juni 2015, um 00:19 Uhr</small>
+		</div>
+		<div class="postText" id="postText95">
+      
+      <a href="/twittur/profile/lilia">&gruppe3</a> Hallo Zusammen!
+      
+		</div>
+    
+    
+    <div class="postFoot clearfix">
+      <a>
+    		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
+      </a>
+      
+    </div>
+    
+	</div>
+</div>
+
+
+      
+    
+  </div>
+
+
+    </div>
+    <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content"> 
+          <form action="/twittur/" method="post" enctype="multipart/form-data">
+            <input type='hidden' name='csrfmiddlewaretoken' value='wOoIoTi7lBddHmfeMepVeBttbUVzuQ9Z' />
+            <input name="msgDialog" type="hidden" value="true" />
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
+            </div>
+            <div class="modal-body"><textarea class="form-control" cols="40" id="id_text" maxlength="254" name="text" rows="10">
+</textarea></div>
+            <div class="modal-footer">
+              <div class="msgDiaDate pull-left">15. Juni 2015, 22:26 Uhr</div>
+              <input id="id_user" name="user" type="hidden" value="2" />
+              <input id="id_date" name="date" type="hidden" value="2015-06-15 22:26:40.835033" />
+              <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+              <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

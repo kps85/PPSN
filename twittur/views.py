@@ -303,6 +303,83 @@ def profile(request, user):
         }
     return render(request, 'profile.html', context)
 
+# profilpage
+def group(request, user):
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
+    has_msg, error_msg, success_msg = None, {}, None
+    # this is the login user
+    cuUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = cuUser.follow.all()
+
+    try:
+        curUser = User.objects.get(username=user)  # this is the user displayed in html
+        curUserProfile = curUser.userprofile
+
+        # follow
+        if request.method == "GET" and 'follow' in request.GET:
+            print(cuUser.follow.all())
+            if curUser in cuUser.follow.all():
+                print("remove")
+                cuUser.follow.remove(curUser)
+                cuUser.save()
+            else:
+                print("add")
+                cuUser.follow.add(curUser)
+                cuUser.save()
+
+        if curUser in follow_list:
+            follow_text = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
+        else:
+            follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
+
+        if request.method == 'POST':
+            success_msg = editMessage(request)
+
+        group_list = Group.objects.all()
+
+        dbmessage_list = Message.objects.all().select_related('user__userprofile') \
+            .filter(Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
+                    ).order_by('-date').distinct()
+
+        curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
+                                      timezone.get_current_timezone())
+        message_list = []
+        for message in dbmessage_list:
+            if message.date > curDate:
+                message.editable = True
+            copy_message = copy.copy(message)
+            message_list.append(dbm_to_m(copy_message))
+        if len(message_list) > 0:
+            has_msg = True
+        message_list = zip(message_list, dbmessage_list)
+
+        context = {'follow_list': follow_list,
+                   'follow_text': follow_text,
+                   'curUser': curUser,
+                   'curUserProfile': curUserProfile,
+                   'active_page': 'profile',
+                   'profileUser': user,
+                   'group_list': group_list,
+                   'nav': Nav.nav,
+                   'message_list': message_list,
+                   'msgForm': msgDialog(request),
+                   'has_msg': has_msg,
+                   'success_msg': success_msg
+                   }
+    except:
+        error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
+        context = {
+            'active_page': 'profile',
+            'nav': Nav.nav,
+            'curUser': None,
+            'error_msg': error_msg,
+            'follow_list': follow_list,
+        }
+    return render(request, 'group.html', context)
 
 # Page: 'Einstellungen'
 # - allows: editing editable user information and deleting account

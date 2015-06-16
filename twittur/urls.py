@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^search/$', views_search.search, name='search'),
+    url(r'^profile/group/(?P<user>\w+)$', views.group, name='profile'),
 ]
