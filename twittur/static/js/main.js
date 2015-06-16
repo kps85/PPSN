@@ -23,29 +23,17 @@ var tspeed = 500;
 
 // First Time Use
 function initFtu() {
-	if($("#ftu").length <= 0) return;
-	
-	$(".box h2.toggle").click(function() {
-		var show = $(this).attr('id').replace("show_","");
-		$(".toggleItem").hide();
-		$("#" + show).show();
-		$("h2.active").removeClass("active");
-		$(this).addClass("active");
-	});
-	
+	if($("#ftu").length <= 0) return;	
 	
 	$(".showRegister").click(function() {
 		$("#register").fadeIn(tspeed);
 	});
 	
-	$("#register input[type='reset']").click(function() {
-		$(".active").removeClass("active");
+	$("#register input[type='reset']").click(function(e) {
 		$("#register").fadeOut(tspeed);
 		$("#register").find(".superDropdown").each(function() {
 			$(this).find("p.id").text($(this).attr('default'));
-		});
-		
-		
+		});		
 	})
 	
 	$(".box .forgot").click(function() {
@@ -263,9 +251,10 @@ function initSearchResults() {
 function showResults(hash) {
 	if (!hash) {
 		var countUser = $(".searchResultButton.searchUser").attr("data-hint");
+		var countGrp = $(".searchResultButton.searchGroup").attr("data-hint");
 		var countHash = $(".searchResultButton.searchHash").attr("data-hint");
 		var countMsg = $(".searchResultButton.searchMsg").attr("data-hint");
-		hash = (countUser > 0) ? "searchUser" : (countHash > 0) ? "searchHash" : (countMsg > 0) ? "searchMsg" : "";				
+		hash = (countUser > 0) ? "searchUser" : (countGrp > 0) ? "searchGroup" : (countHash > 0) ? "searchHash" : (countMsg > 0) ? "searchMsg" : "";				
 	}
 	if (hash != '') {
 		$('.'+hash).each(function(index, element) {

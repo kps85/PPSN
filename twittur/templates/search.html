@@ -12,17 +12,21 @@
   <h2>{{ search|safe }}</h2>
   {% if not is_hash %}
   <div class="container-fluid">
-    <a href="#searchUser" class="col-xs-4 btn btn-default searchResultButton searchUser" data-hint="{{ user_list_length }}">
-      <span class="glyphicon glyphicon-user"></span>&nbsp;
-      {{ user_list_length }} Benutzer
+    <a href="#searchUser" class="col-xs-3 btn btn-default searchResultButton searchUser" data-hint="{{ user_list_length }}" title="Benutzer-Ergebnisse">
+      <span class="glyphicon glyphicon-user"></span>&nbsp; {{ user_list_length }}
+      <span class="hidden-xs">Benutzer</span>
     </a>
-    <a href="#searchHash" class="col-xs-4 btn btn-default searchResultButton searchHash" data-hint="{{ hashtag_list_length }}">
-      <span class="glyphicon glyphicon-tags"></span>&nbsp;
-      {{ hashtag_list_length }} {% if hashtag_list_length > 1 or hashtag_list_length = 0 %}Themen{% else %}Thema{% endif %}
+    <a href="#searchGroup" class="col-xs-3 btn btn-default searchResultButton searchGroup" data-hint="{{ group_list_length }}" title="Gruppen-Ergebnisse">
+      <span class="glyphicon glyphicon-briefcase"></span>&nbsp; {{ group_list_length }}
+      <span class="hidden-xs">{% if group_list_length > 1 or hashtag_list_length = 0 %}Gruppen{% else %}Gruppe{% endif %}</span>
     </a>
-    <a href="#searchMsg" class="col-xs-4 btn btn-default searchResultButton searchMsg" data-hint="{{ message_list_length }}">
-      <span class="glyphicon glyphicon-envelope"></span>&nbsp;
-      {{ message_list_length }} {% if message_list_length > 1 or message_list_length = 0 %}Nachrichten{% else %}Nachricht{% endif %}
+    <a href="#searchHash" class="col-xs-3 btn btn-default searchResultButton searchHash" data-hint="{{ hashtag_list_length }}" title="Thema-Ergebnisse">
+      <span class="glyphicon glyphicon-tags"></span>&nbsp; {{ hashtag_list_length }}
+      <span class="hidden-xs">{% if hashtag_list_length > 1 or hashtag_list_length = 0 %}Themen{% else %}Thema{% endif %}</span>
+    </a>
+    <a href="#searchMsg" class="col-xs-3 btn btn-default searchResultButton searchMsg" data-hint="{{ message_list_length }}" title="Nachrichten-Ergebnisse">
+      <span class="glyphicon glyphicon-envelope"></span>&nbsp; {{ message_list_length }}
+      <span class="hidden-xs">{% if message_list_length > 1 or message_list_length = 0 %}Nachrichten{% else %}Nachricht{% endif %}</span>
     </a>
   </div>
   {% endif %}
