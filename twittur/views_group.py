@@ -9,6 +9,9 @@ from .forms import GroupProfileForm
 
 def addgroup(request):
 
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
     error = None
     if request.POST:
         groupProfileForm = GroupProfileForm(request.POST)
