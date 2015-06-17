@@ -7,12 +7,31 @@ from .models import Nav, GroupProfile
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import GroupProfileForm
 
+# this is the basic view for group (para: groupname)
+def group(request, groupname):
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
+    group = GroupProfile.objects.get(name__exact=groupname)
+    member_list = group.member.all()
+    curUser = request.user
+    context = {
+        'group': group,
+        'member_list': member_list,
+        'curUser': curUser,
+        'nav': Nav.nav,
+    }
+    return render(request, 'group.html', context)
+
+# view for add a new group
 def addgroup(request):
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
     error = None
+
     if request.POST:
         groupProfileForm = GroupProfileForm(request.POST)
         print(groupProfileForm.is_valid())
@@ -20,6 +39,15 @@ def addgroup(request):
             try:
                 group = GroupProfile.objects.get(name__exact=groupProfileForm.instance.name)
             except ObjectDoesNotExist:
+                if (request.POST.get('password') != request.POST.get('ack_password')):
+                    error = "Passwoerter sind nicht gleich!"
+                    context = {
+                                'error': error,
+                                'groupProfileForm': groupProfileForm,
+                                'nav': Nav.nav,
+                                }
+                    return render(request, 'addgroup.html', context)
+
                 groupProfileForm.instance.groupprofile = groupProfileForm.instance
                 groupProfileForm.instance.admin = request.user
                 groupProfileForm.save()
@@ -39,16 +67,5 @@ def addgroup(request):
 
     return render(request, 'addgroup.html', context)
 
-def group(request, groupname):
-
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
-
-    group = GroupProfile.objects.get(name__exact=groupname)
-    curUser = request.user
-    context = {
-        'group': group,
-        'curUser': curUser,
-        'nav': Nav.nav,
-    }
-    return render(request, 'group.html', context)
+def logingroup(request, groupname):
+    return 0

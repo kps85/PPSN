@@ -1,7 +1,7 @@
 from django import forms
 
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
+from django.forms import ModelForm, Textarea
 from django.utils.safestring import mark_safe
 
 from .models import User, UserProfile, Message, FAQ, GroupProfile
@@ -34,14 +34,19 @@ class RegistrationUserForm(forms.Form):
 
 
 class GroupProfileForm(ModelForm):
+    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
     class Meta:
         model = GroupProfile
-        fields = ['name', 'desc', 'picture']
+        fields = ['name', 'desc', 'picture', 'password']
+        widgets = {
+            'desc': Textarea(attrs={'cols': 100, 'rows': 5}),
+            'password': forms.PasswordInput(),
+        }
 
 # form to update user's account information
 class UserForm(ModelForm):
     # initialize second pw input for confirmation
-    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
+    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput)
 
     # referencing User model as basis for the form
     # initializing form input fields

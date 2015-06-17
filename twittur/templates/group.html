@@ -22,6 +22,16 @@
           <div class="profilStadt" title="Wohnort"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>Beschreibung: {{ group.desc }}</div>
           <div class="profilStadt" title="registriert seit"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>Erstellt am: {{ group.date }}</div>
         <div class="profilStadt" title="Wohnort"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>Erstellt von: {{ group.admin.username }}</div>
+        {% if member_list %}
+          <h3>Teilnehmer</h3>
+          {% for member in member_list %}
+            {% if member == group.admin %}
+            <p>{{ member.first_name }} {{ member.last_name }}, <a href="{% url "twittur:profile" member.username %}"> @{{ member.username }}</a> (Admin)</p>
+            {% else %}
+            <p>{{ member.first_name }} {{ member.last_name }}, <a href="{% url "twittur:profile" member.username %}"> @{{ member.username }}</a>  (Teilnehmer)</p>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
           <!--{% if request.user != curUser %}
           <div class="profilButton">
             <form action="{% url 'twittur:profile' user=curUser %}" method="GET">

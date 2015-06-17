@@ -36,6 +36,7 @@ class UserProfile(models.Model):
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
     admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
+    password = models.CharField(max_length=50, blank=True, help_text='Passwort ist optional!')
     desc = models.CharField(max_length=200)
     picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
                                 height_field=None, width_field=None, default='picture/gdefault.gif',

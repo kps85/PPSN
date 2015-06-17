@@ -8,10 +8,10 @@ from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
+
 
 from .models import UserProfile, Nav, Message, Hashtag, GroupProfile
-from .forms import UserForm, UserDataForm, GroupProfileForm
+from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, editMessage, msgDialog
 
 
@@ -47,7 +47,7 @@ def index(request):
     # Group
     group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
 
-
+    # Message
     message_list = []
     for message in dbmessage_list:
         if message.date > curDate:
