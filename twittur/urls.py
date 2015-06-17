@@ -14,4 +14,6 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^search/$', views_search.search, name='search'),
+    url(r'^addgroup/$', views.addgroup, name='addgroup'),
+    url(r'^group/(?P<groupname>\w+)$', views.group, name='group'),
 ]

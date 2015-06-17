@@ -8,9 +8,10 @@ from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
-from .models import UserProfile, Group, Nav, Message, Hashtag
-from .forms import UserForm, UserDataForm
+from .models import UserProfile, Nav, Message, Hashtag, GroupProfile
+from .forms import UserForm, UserDataForm, GroupProfileForm
 from .functions import dbm_to_m, editMessage, msgDialog
 
 
@@ -261,7 +262,6 @@ def profile(request, user):
         if request.method == 'POST':
             success_msg = editMessage(request)
 
-        group_list = Group.objects.all()
 
         dbmessage_list = Message.objects.all().select_related('user__userprofile') \
             .filter(Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
@@ -285,7 +285,6 @@ def profile(request, user):
                    'curUserProfile': curUserProfile,
                    'active_page': 'profile',
                    'profileUser': user,
-                   'group_list': group_list,
                    'nav': Nav.nav,
                    'message_list': message_list,
                    'msgForm': msgDialog(request),
@@ -384,3 +383,44 @@ def follow(request, user):
 
 def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
     return ''.join(random.choice(chars) for _ in range(size))
+
+def addgroup(request):
+
+    error = None
+    if request.POST:
+        groupProfileForm = GroupProfileForm(request.POST)
+        print(groupProfileForm.is_valid())
+        if groupProfileForm.is_valid():
+            try:
+                group = GroupProfile.objects.get(name__exact=groupProfileForm.instance.name)
+            except ObjectDoesNotExist:
+                groupProfileForm.instance.groupprofile = groupProfileForm.instance
+                groupProfileForm.instance.admin = request.user
+                groupProfileForm.save()
+                return HttpResponseRedirect('/twittur/group/' + groupProfileForm.instance.name)
+            else:
+                error = "Gruppenname ist schon vergeben, bitch!"
+
+    groupProfileForm = GroupProfileForm()
+    context = {
+        'error': error,
+        'groupProfileForm': groupProfileForm,
+        'nav': Nav.nav,
+
+    }
+
+    return render(request, 'addgroup.html', context)
+
+def group(request, groupname):
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
+    group = GroupProfile.objects.get(name__exact=groupname)
+    curUser = request.user
+    context = {
+        'group': group,
+        'curUser': curUser,
+        'nav': Nav.nav,
+    }
+    return render(request, 'group.html', context)

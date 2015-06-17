@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+from datetime import date
 
 #### Entitys
 
@@ -32,6 +33,20 @@ class UserProfile(models.Model):
             self.picture.delete()
         super(UserProfile, self).delete()
 
+class GroupProfile(models.Model):
+    name = models.CharField(max_length=50)
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL)
+    desc = models.CharField(max_length=200)
+    picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
+                                height_field=None, width_field=None, default='picture/gdefault.gif',
+                                help_text='Geben sie ein Foto ein!')
+    date = models.DateField(default=date.today)
+
+    def __str__(self):
+        return self.name
+
+
+
 
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
@@ -52,38 +67,6 @@ class Message(models.Model):
     def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
-
-# - groups
-class Group(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=256)
-    picture = models.ImageField(upload_to='picture/', blank=True, default='defaultG.gif')
-    date = models.DateTimeField('date published')
-    superGroup = models.ForeignKey('self', blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-
-# Relationships
-
-
-# - message directed to group or user or both
-class ToGroup(models.Model):
-    group = models.ForeignKey(Group)
-    message = models.ForeignKey(Message)
-
-    def __str__(self):
-        return "Message from '" + self.message.user.username + "' to group " + self.group.name
-
-
-class IsInGroup(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    group = models.ForeignKey(Group)
-    # isInGroup_superuser = models.Boolean( default = False )
-
-    def __str__(self):
-        return self.user.name + ' joint the group ' + self.group.name
 
 
 # FAQ model

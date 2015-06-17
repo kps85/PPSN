@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+    <h2>Gruppe hinzufügen</h2><br><br>
+    <form action="{% url 'twittur:addgroup' %}" method="POST">
+    {% csrf_token %}
+    {% if groupProfileForm %}
+        {{ groupProfileForm.as_p }}
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
+        <br>
+
+    <button type="submit" class="btn btn-primary">Gruppe erstellen!</button>
+    </form>
+    {% endif %}
+{% endblock %}

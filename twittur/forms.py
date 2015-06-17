@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 
-from .models import User, UserProfile, Message, FAQ
+from .models import User, UserProfile, Message, FAQ, GroupProfile
 
 
 AD_CHOICES = (
@@ -32,6 +32,11 @@ class RegistrationUserForm(forms.Form):
         model = User
         fields = ['firstname', 'username', 'email', 'password', 'ack_password', 'last_name']
 
+
+class GroupProfileForm(ModelForm):
+    class Meta:
+        model = GroupProfile
+        fields = ['name', 'desc', 'picture']
 
 # form to update user's account information
 class UserForm(ModelForm):
