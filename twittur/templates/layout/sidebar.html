@@ -6,8 +6,7 @@
       <h3>Meine Gruppen</h3>
       {% for group in group_list %}
       <li class="{% if false %}active{% endif %}">
-        <a class="ullink" href="#">#{{ group.name }}</a>
-        <a class="dashicons dashicons-edit" href="#"></a> </li>
+        <a class="ullink" href="{% url 'twittur:group' group.name %}">&{{ group.name }}</a>
       {% endfor %}
       {% endif %}
       <a href="{% url 'twittur:addgroup' %}"> Gruppe hinzufügen</a>

@@ -35,12 +35,13 @@ class UserProfile(models.Model):
 
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL)
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
     desc = models.CharField(max_length=200)
     picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
                                 height_field=None, width_field=None, default='picture/gdefault.gif',
                                 help_text='Geben sie ein Foto ein!')
     date = models.DateField(default=date.today)
+    member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
 
     def __str__(self):
         return self.name

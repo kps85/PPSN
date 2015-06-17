@@ -43,6 +43,11 @@ def index(request):
 
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
+
+    # Group
+    group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+
+
     message_list = []
     for message in dbmessage_list:
         if message.date > curDate:
@@ -55,7 +60,7 @@ def index(request):
     message_list = zip(message_list, dbmessage_list)
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
-               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,
+               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,'group_list': group_list,
                'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
@@ -238,6 +243,9 @@ def profile(request, user):
     cuUser = UserProfile.objects.get(userprofile=request.user)
     follow_list = cuUser.follow.all()
 
+    # Group
+    group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+
     try:
         curUser = User.objects.get(username=user)  # this is the user displayed in html
         curUserProfile = curUser.userprofile
@@ -289,7 +297,8 @@ def profile(request, user):
                    'message_list': message_list,
                    'msgForm': msgDialog(request),
                    'has_msg': has_msg,
-                   'success_msg': success_msg
+                   'success_msg': success_msg,
+                   'group_list': group_list
                    }
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
@@ -299,6 +308,7 @@ def profile(request, user):
             'curUser': None,
             'error_msg': error_msg,
             'follow_list': follow_list,
+            'group_list': group_list,
         }
     return render(request, 'profile.html', context)
 
@@ -397,6 +407,8 @@ def addgroup(request):
                 groupProfileForm.instance.groupprofile = groupProfileForm.instance
                 groupProfileForm.instance.admin = request.user
                 groupProfileForm.save()
+                groupProfileForm.instance.member.add(request.user)
+
                 return HttpResponseRedirect('/twittur/group/' + groupProfileForm.instance.name)
             else:
                 error = "Gruppenname ist schon vergeben, bitch!"
