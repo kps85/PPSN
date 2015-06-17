@@ -3,6 +3,9 @@
   <a href="#main" class="scrollTop btn btn-primary btn-grey">
   	<span class="glyphicon glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
   </a>
+  <button type="button" class="newMsg btn btn-primary pull-left" data-toggle="modal" data-target="#newMessage" title="Neue Nachricht verfassen">
+    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+  </button>
   {% endif %}
   
   <div id="aside">
@@ -16,26 +19,35 @@
     </div>
   </div>
   <div id="main">
-    <header>
-      <div id="head">
-        <button type="button" class="newMsg btn btn-primary pull-left" data-toggle="modal" data-target="#newMessage" title="Neue Nachricht verfassen">
-        	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+    <header id="head">
+      <a class="title" href="{% url 'twittur:index' %}">twittur</a>
+      <!-- OLD SEARCH FORM
+      <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm pull-right">
+        <div class="form-group pull-left">
+          <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
+        </div>
+        <button type="submit" class="btn btn-primary pull-right" title="Suche starten">
+          <span class="glyphicon glyphicon-search"></span>
         </button>
-        <a class="title" href="{% url 'twittur:index' %}">twittur</a>
-        <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm pull-right">
-          <div class="form-group pull-left">
-            <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
-          </div>
-          <button type="submit" class="btn btn-primary pull-right" title="Suche starten">
-          	<span class="glyphicon glyphicon-search"></span>
-          </button>
-        </form>
-      </div>
+      </form>
+      -->
+      <!-- WAS IST DAS?
       <div id="infoBar">
       	{% block infobar %} 
         {% endblock %}
       </div>
+      -->
     </header>
+    <div class="container-fluid searchBar">
+      <form action="{% url 'twittur:search' %}" class="searchForm" id="search" method="GET">
+        <div class="col-xs-10 col-sm-11 form-group pull-left">
+          <input class="form-control" id="search_input" name="search_input" type="text" placeholder="Suche" title="Suchbegriff eingeben">
+        </div>
+        <button type="submit" class="col-xs-2 col-sm-1 btn btn-default pull-right" title="Suche starten">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </form>      
+    </div>
     <div id="content">
       {% if success_msg %}
         <div class="infoMessage alert alert-success" role="alert">

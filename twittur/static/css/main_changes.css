@@ -13,7 +13,8 @@ a:focus { color: #a00000; text-decoration: none; }
 .copy a { color: #f50000; }
 .copy a:hover { color: #a00000; }
 
-.scrollTop { z-index: 99; }
+.forgotBack:hover { cursor: pointer; }
+.scrollTop { bottom: 65px; z-index: 99; }
 
 #main.infoGuest {
 	width: auto;
@@ -31,6 +32,27 @@ a:focus { color: #a00000; text-decoration: none; }
     position: absolute;
     bottom: 0;
     right: 0; }
+
+.searchBar {
+	padding: 5px 15px;
+	background-color: rgba(238,238,238,1);
+	border-bottom: 1px solid rgba(228,232,234,1);
+}
+	.searchBar .form-group { margin-bottom: 0px; padding: 0px; }
+	.searchBar input {
+		border-right-width: 0px;
+		border-radius: 4px 0px 0px 4px;
+	}
+	.searchBar button {
+		border-radius: 0px 4px 4px 0px;
+	}
+
+.newMsg {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	z-index: 99;
+}
 
 /* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
 
@@ -75,3 +97,17 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 .searchResultButton.searchMsg { border-radius: 0 4px 4px 0; }
 .searchResultBox { display: none; }
 .searchResultBox.active { display: block; }
+
+@media screen and (min-width: 1024px) {
+	a.title {
+		float: none;
+		margin: 0 auto;
+		position: relative;
+		width: 144px;
+	}
+}
+@media screen and (max-width: 1023px) {
+	#main { padding-top: 90px !important; }
+	#content { margin-top: 30px; }
+	#aside { z-index: 99; }
+}
