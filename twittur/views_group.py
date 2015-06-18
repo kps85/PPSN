@@ -89,6 +89,35 @@ def addgroup(request):
     }
     return render(request, 'addgroup.html', context)
 
-
-def logingroup(request, groupname):
+def joingroup(request, groupname):
     return 0
+
+# function for delete/join/leave group
+def djlgroup(request, groupshort):
+
+    # Be sure this is the right function, true -> get group object
+    if 'delete_join_group' in request.POST:
+        group = GroupProfile.objects.get(short=groupshort)
+
+        # Admin function: delete group
+        if group.admin == request.user:
+            print("is admin")
+            group.delete()
+
+        # Member function:
+        else:
+            print('is member')
+            # check if user is in group or not
+            try:
+                group.member.get(username__exact=request.user.username)
+            # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
+            except ObjectDoesNotExist:
+                # TODO and discuss!!! case: if password is required here -> redirect to loginsite (not implement yet)
+                group.member.add(request.user)
+                return HttpResponseRedirect('/twittur/group/'+groupshort)
+            # User exists -> delete him from group
+            else:
+                group.member.remove(request.user)
+
+        return HttpResponseRedirect('/twittur/')
+

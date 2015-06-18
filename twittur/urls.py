@@ -21,8 +21,7 @@ urlpatterns = [
     url(r'^search/$', views_search.search, name='search'),
 
     # views_group
-    url(r'^addgroup/$', views_group.addgroup, name='addgroup'),
-    url(r'^group/(?P<groupshort>\w\S+)$', views_group.group, name='group'),
-    url(r'^group/(?P<groupshort>\w+)/login$', views_group.logingroup, name='logingroup'),
-
+    url(r'^add/group$', views_group.addgroup, name='addgroup'),
+    url(r'^group/(?P<groupshort>\w+)$', views_group.group, name='group'),
+    url(r'^djln/group/(?P<groupshort>\w+)$', views_group.djlgroup, name='djlgroup'),  # delete, join, leave
 ]

@@ -20,9 +20,10 @@
         <li class="{% if false %}active{% endif %}">
           <a class="ullink {{ group.short }}" href="{% url 'twittur:group' group.short %}">&{{ group.short }}</a>
       {% endfor %}
-    {% endif %}
-    <a href="{% url 'twittur:addgroup' %}"> Neue Gruppe erstellen</a>
-  </ul>
+      {% endif %}
+      <a href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen</a>
+    </ul>
+
 
   {% if hot_list %}
     <ul class="hashs">

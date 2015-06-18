@@ -67,7 +67,7 @@
       </div>
     </div>
     {% if request.user != curUser and not group %}
-    <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
+    <form action="{% url 'twittur:profile' user=curUser %}" method="GET" >
     	<input name="follow" type="hidden" value="follow" />
       <button class="col-xs-6 text-center btn btn-default profileButton" id="id_follow" type="submit">
         <strong>{{ follow_text|safe }}</strong>
@@ -78,8 +78,9 @@
     </button>
     {% endif %}
     {% if group %}
-    <form action="{% url 'twittur:group' groupshort=group.short %}" method="GET">
-    	<input name="join_group" type="hidden" value="join_group" />
+    <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
+        {% csrf_token %}
+    	<input name="delete_join_group" type="hidden" value="delete_group" />
       <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
         <strong>{{ button_text|safe }}</strong>
       </button>

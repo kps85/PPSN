@@ -32,6 +32,10 @@
             {% endif %}
           {% endfor %}
         {% endif %}
+        <form name="helloman" action="{% url 'twittur:deletegroup'  group.name %}" method="POST">
+          {% csrf_token %}
+           <button type="submit" name="hello" class="btn btn-primary">Gruppe Löschen</button>
+         </form>
           <!--{% if request.user != curUser %}
           <div class="profilButton">
             <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
