@@ -38,7 +38,7 @@
     {% endif %}
     {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
-      <a>
+      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
     		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
       </a>
       {% if message.user == user %}

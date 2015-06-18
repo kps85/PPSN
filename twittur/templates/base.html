@@ -92,5 +92,33 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="newComment" tabindex="-1" role="dialog" aria-labelledby="newCommentLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content"> 
+          <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="cmtDialog" type="hidden" value="true" />
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="newCommentTitle"></h4>
+            </div>
+            <div class="modal-body">
+            	<textarea class="form-control" id="id_reply_text" name="reply_text" rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+              <div class="cmtDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
+              <!-- hier müssten HiddenInputs rein für User und Date
+              {{ msgForm.user }}
+              {{ msgForm.date }}
+              -->
+              <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+              <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 {% include 'footer.html' %}

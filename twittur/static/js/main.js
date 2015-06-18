@@ -180,12 +180,12 @@ function initInputValidation() {
 		validateFtu();
 	});
 
-	$('#newMessage').on("keyup", function(e) {
+	$('#newMessage, #newComment').on("keyup", function(e) {
 		// Ueberprueft ob Textfeld leer ist oder nur Leerzeichen enthaelt
 		if($(this).find("textarea").val().replace( /\s/g, "") != '') {
-			$('#newMessage button[type=submit]').prop("disabled", false);
+			$(this).find('button[type=submit]').prop("disabled", false);
 		} else {
-			$('#newMessage button[type=submit]').prop("disabled", true);
+			$(this).find('button[type=submit]').prop("disabled", true);
 		}
 	});	
 }
@@ -370,9 +370,14 @@ function initVarious() {
 			$mainDiv.height("inherit");
 		  $mainUl.fadeToggle(0);
 		  $(this).toggleClass("opened");
-	  })
+	  });
 	  
   });
+	  
+	$(".reply_link").click(function(e) {
+      var data = $(this).attr("data-hint").split(" ");
+	  $("#newCommentTitle").html("Antwort an " + data[1] + " verfassen");  
+    });
   
 	/* Smoothes Scrollen */
 	$(function() {
