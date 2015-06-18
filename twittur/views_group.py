@@ -1,5 +1,3 @@
-__author__ = 'willycai'
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -33,6 +31,8 @@ def group(request, groupshort):
             button_text = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
     else:
         button_text = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
+
+    # TODO Message
 
     context = {
         'active_page': 'profile',
@@ -103,6 +103,7 @@ def djlgroup(request, groupshort):
         if group.admin == request.user:
             print("is admin")
             group.delete()
+            return HttpResponseRedirect('/twittur/')
 
         # Member function:
         else:
@@ -119,5 +120,7 @@ def djlgroup(request, groupshort):
             else:
                 group.member.remove(request.user)
 
-        return HttpResponseRedirect('/twittur/')
+        return HttpResponseRedirect('/twittur/group/'+groupshort)
 
+# TODO
+# - Sichtbarkeit von Nachrichten? (Passwort required oder nicht)
