@@ -14,7 +14,7 @@ a:focus { color: #a00000; text-decoration: none; }
 .copy a:hover { color: #a00000; }
 
 .forgotBack:hover { cursor: pointer; }
-.scrollTop { bottom: 65px; z-index: 99; }
+.scrollTop { bottom: 70px; z-index: 99; }
 
 #main.infoGuest {
 	width: auto;
@@ -103,14 +103,7 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 .searchResultBox { display: none; }
 .searchResultBox.active { display: block; }
 
-@media screen and (min-width: 1024px) {
-	a.title {
-		float: none;
-		margin: 0 auto;
-		position: relative;
-		width: 144px;
-	}
-}
+
 @media screen and (max-width: 1023px) {
 	#main { padding-top: 90px !important; }
 	#content { margin-top: 30px; }

@@ -21,7 +21,6 @@
   <div id="main">
     <header id="head">
       <a class="title" href="{% url 'twittur:index' %}">twittur</a>
-      <!-- OLD SEARCH FORM
       <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm pull-right">
         <div class="form-group pull-left">
           <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
@@ -30,7 +29,6 @@
           <span class="glyphicon glyphicon-search"></span>
         </button>
       </form>
-      -->
       <!-- WAS IST DAS?
       <div id="infoBar">
       	{% block infobar %} 
@@ -38,7 +36,7 @@
       </div>
       -->
     </header>
-    <div class="container-fluid searchBar">
+   <!-- <div class="container-fluid searchBar">
       <form action="{% url 'twittur:search' %}" class="searchForm" id="search" method="GET">
         <div class="col-xs-10 col-sm-11 form-group pull-left">
           <input class="form-control" id="search_input" name="search_input" type="text" placeholder="Suche" title="Suchbegriff eingeben">
@@ -47,7 +45,7 @@
           <span class="glyphicon glyphicon-search"></span>
         </button>
       </form>      
-    </div>
+    </div> -->
     <div id="content">
       {% if success_msg %}
         <div class="infoMessage alert alert-success" role="alert">
