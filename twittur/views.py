@@ -8,8 +8,9 @@ from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
+from copy import deepcopy
 
-from .models import UserProfile, Nav, Message, Hashtag, GroupProfile
+from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, Notification
 from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, editMessage, msgDialog
 
@@ -58,9 +59,12 @@ def index(request):
         has_msg = True
     message_list = zip(message_list, dbmessage_list)
 
+    # Notification
+    new = Notification.objects.filter(Q(read=False) & Q(user=request.user)).count()
+
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,'group_list': group_list,
-               'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
+               'new': new, 'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
 
@@ -394,3 +398,33 @@ def follow(request, user):
 
 def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
     return ''.join(random.choice(chars) for _ in range(size))
+
+def notification(request):
+
+    # for context
+    notification_list = Notification.objects.all().filter(user=request.user).order_by('-message__date')
+    boolean_list = []
+
+    # saving boolean extra, because it will deleted by next for loop
+    for no in notification_list:
+        if no.read == False:
+            boolean_list.append('False')
+        else:
+            boolean_list.append('True')
+
+    notification_list = zip(notification_list,boolean_list)
+    new = Notification.objects.filter(Q(read=False) & Q(user=request.user)).count()
+
+    context = {
+        'nav': Nav.nav,
+        'user': request.user,
+        'notification_list': notification_list,
+        'new': new
+    }
+
+    # update -> set all notification to true
+    for n in Notification.objects.filter(Q(read=False) & Q(user=request.user)):
+        n.read = True
+        n.save()
+
+    return render(request, 'notification.html', context)

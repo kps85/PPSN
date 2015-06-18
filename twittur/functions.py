@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from .views import *
-from .models import Message, Hashtag
+from .models import Message, Hashtag, Notification
 from .forms import MessageForm
 
 
@@ -70,7 +70,9 @@ def msg_to_db(message):
             except ObjectDoesNotExist:
                 pass
             else:
-                message.attags.add(user)
+                notification = Notification(user=user, message=message, read=False)
+                notification.save()
+                print(message.attags.all())
                 attaglist.append(user)
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
@@ -80,6 +82,7 @@ def msg_to_db(message):
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
             message.attags.remove(dbattag)
+
 
     return message
 

@@ -44,6 +44,17 @@
       <h3>Forever alone</h3>
     {% endif %}
   </ul>
+
+
+  <ul class="following">
+
+    <li><a href="{% url 'twittur:notification' %}">Mitteilungen {% if new > 0 %}({{ new }}){% endif %}</a></li>
+
+  </ul>
+
+
+
+
 {% elif active_page == 'info' %}  
   <ul>
     <li><h3 class="text-uppercase"> Über uns </h3></li>

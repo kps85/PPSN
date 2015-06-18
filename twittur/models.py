@@ -9,6 +9,24 @@ from django.contrib.auth.hashers import (
 
 #### Entitys
 
+class Hashtag(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+# - message from User (message_from_self) to User (message_to_user)
+class Message(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
+    text = models.CharField(max_length=254)
+    picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
+    date = models.DateTimeField('date published')
+    hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
+    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='Notification')
+
+    def __str__(self):
+        return self.user.username + ': ' + '"' + self.text + '"'
+
 
 # - user
 class UserProfile(models.Model):
@@ -28,6 +46,7 @@ class UserProfile(models.Model):
 
     location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
 
+
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
@@ -36,6 +55,17 @@ class UserProfile(models.Model):
         if self.picture != 'picture/default.gif':
             self.picture.delete()
         super(UserProfile, self).delete()
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
+    message = models.ForeignKey(Message, related_name='message')
+    read = models.BooleanField(default=True)
+    class Meta:
+        auto_created = True
+
+    def __str__(self):
+        return self.user.username + ' (' + str(self.read) + ') '
 
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
@@ -55,24 +85,6 @@ class GroupProfile(models.Model):
         return self.name
 
 
-class Hashtag(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-# - message from User (message_from_self) to User (message_to_user)
-class Message(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
-    text = models.CharField(max_length=254)
-    picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
-    date = models.DateTimeField('date published')
-    hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
-    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags')
-
-    def __str__(self):
-        return self.user.username + ': ' + '"' + self.text + '"'
 
 
 
