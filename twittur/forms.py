@@ -27,16 +27,21 @@ AD_CHOICES = (
 )
 
 
-class RegistrationUserForm(forms.Form):
-    class Meta:
-        model = User
-        fields = ['firstname', 'username', 'email', 'password', 'ack_password', 'last_name']
-
-
 class GroupProfileForm(ModelForm):
     class Meta:
         model = GroupProfile
-        fields = ['name', 'desc', 'picture']
+        fields = ['name', 'short', 'desc', 'password', 'picture']
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4}),
+            'password': forms.PasswordInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(GroupProfileForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if field != 'picture':
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
 
 # form to update user's account information
 class UserForm(ModelForm):

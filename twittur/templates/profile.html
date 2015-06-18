@@ -10,18 +10,49 @@
 
 {% block content %}
 {% if not error_msg %}
+
   <div class="container-fluid">
-    <div class="profil">
-      <div class="col-xs-12 col-sm-4 killme"> <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/> </div>
-      <div class="col-xs-12 col-sm-8">
-        <div class="killme">
-          <div class="profilAuthor">{{ curUser.first_name }} {{ curUser.last_name }}</div>
-          <div class="profilNick">@{{ curUser.username }}</div>
-        </div>
-        <div>
-          <div class="profilStadt" title="Studiengang"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ curUserProfile.academicDiscipline }} </div>
-          <div class="profilStadt" title="Wohnort"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ curUserProfile.location }}</div>
-          <div class="profilStadt" title="registriert seit"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ curUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}</div>
+    <div class="profil clearfix">
+      <div class="col-xs-12 col-sm-4 text-center">
+      	{% if group %}
+          <img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/>
+        {% else %}
+          <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/>
+        {% endif %}
+      </div>
+      <div class="col-xs-12 col-sm-8 clearfix">
+        <div class="profilMeta">
+          <h3 class="profilAuthor">
+          	{% if group %}{{ group.name }}{% else %}{{ curUser.first_name }} {{ curUser.last_name }}{% endif %}
+          </h3>
+          <h5 class="profilNick">
+          	{% if group %}&{{ group.short }}{% else %}@{{ curUser.username }}{% endif %}
+          </h5>          
+          <div class="profilAcaDis" title="Studiengang">
+          	{% if group %}
+              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+              {{ group.admin.first_name }} {{ group.admin.last_name }} (@<a href="{% url 'twittur:profile' user=group.admin %}">{{ group.admin.username }}</a>)
+            {% else %}
+              <span class="glyphicon glyphicon-education" aria-hidden="true"></span>             
+              {{ curUserProfile.academicDiscipline }} 
+            {% endif %}
+          </div>
+          {% if not group %}
+          <div class="profilLocation" title="Wohnort">
+          	<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
+            {{ curUserProfile.location }}
+          </div>
+          {% endif %}
+          <div class="profilJoined" title="{% if group %}registriert seit{% else %}erstellt am{% endif %}">
+          	<span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
+            {% if group %}{{ group.date }}{% else %}{{ curUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}{% endif %}
+          </div>
+          {% if group %}
+          <div class="profilDesc" title="Beschreibung der Gruppe">
+          	<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
+            {{ group.desc }}
+          </div>
+          {% endif %}
           <!--{% if request.user != curUser %}
           <div class="profilButton">
             <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
@@ -35,14 +66,26 @@
         </div>
       </div>
     </div>
-    {% if request.user != curUser %}
+    {% if request.user != curUser and not group %}
     <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
-      <button class="col-xs-6 text-center btn btn-default profileButton" id="follow" name="follow" type="submit">
+    	<input name="follow" type="hidden" value="follow" />
+      <button class="col-xs-6 text-center btn btn-default profileButton" id="id_follow" type="submit">
         <strong>{{ follow_text|safe }}</strong>
       </button>
     </form>
     <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ curUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ curUser|upper }} schreiben" type="button">
       <strong><span class="glyphicon glyphicon-edit"></span> {{ curUser|upper }} schreiben</strong>
+    </button>
+    {% endif %}
+    {% if group %}
+    <form action="{% url 'twittur:group' groupshort=group.short %}" method="GET">
+    	<input name="join_group" type="hidden" value="join_group" />
+      <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
+        <strong>{{ button_text|safe }}</strong>
+      </button>
+    </form>
+    <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
+      <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
     </button>
     {% endif %}
   </div>

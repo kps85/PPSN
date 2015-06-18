@@ -22,6 +22,7 @@ urlpatterns = [
 
     # views_group
     url(r'^addgroup/$', views_group.addgroup, name='addgroup'),
-    url(r'^group/(?P<groupname>\w+)$', views_group.group, name='group'),
+    url(r'^group/(?P<groupshort>\w\S+)$', views_group.group, name='group'),
+    url(r'^group/(?P<groupshort>\w+)/login$', views_group.logingroup, name='logingroup'),
 
 ]

@@ -104,8 +104,10 @@ function initMenu() {
 		}
 	})
 	
-	if ((window.location.href.split("/"))[4] == "profile" || (window.location.href.split("/"))[4] == "hashtag") {
-		var name = (window.location.href.split("/"))[5];
+	if ((window.location.href.split("/"))[4] == "profile" 
+		 || (window.location.href.split("/"))[4] == "hashtag"
+		 || (window.location.href.split("/"))[4] == "group") {
+		var name = ((window.location.href.split("/"))[5]).split("?")[0];
 		$(".ullink."+name).addClass("active");
 	}
 }
@@ -268,11 +270,12 @@ function initVarious() {
 	$(".hideInfo").click(function() {
 		$(this).parent("div").hide();
 	});
-	$(".newMsg, .postToUser").click(function(e) {
-		if ($(this).is(".postToUser")) {
-			var user = $(this).attr("data-hint");
-			var val = $("#id_text").val().replace("@" + user + " ", '');
-			$("#id_text").val("@" + user + " " + val);			
+	$(".newMsg, .postToUser, .postToGroup").click(function(e) {
+		var target = $(this).attr("data-hint");
+		var symbol = ($(this).is(".postToUser")) ? "@" : "&";
+		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {
+			var val = $("#id_text").val().replace(symbol + target + " ", '');
+			$("#id_text").val(symbol + target + " " + val);			
 		}
     setTimeout(function() {
 			$("#id_text").focus();

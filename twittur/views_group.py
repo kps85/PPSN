@@ -1,21 +1,63 @@
 __author__ = 'willycai'
 
-
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from .models import Nav, GroupProfile
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+
 from .forms import GroupProfileForm
+from .functions import msgDialog
+from .models import Nav, GroupProfile, UserProfile
+
+
+def group(request, groupshort):
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
+    is_member, button_text = False, None
+
+    # Follows
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+
+    # Groups
+    group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+
+    group = GroupProfile.objects.get(short__exact=groupshort)
+    member_list = group.member.all()
+    if request.user in member_list:
+        if group.admin == request.user:
+            button_text = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' aufl&ouml;sen'
+        else:
+            button_text = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
+    else:
+        button_text = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
+
+    context = {
+        'active_page': 'profile',
+        'curUser': request.user,
+        'nav': Nav.nav,
+        'msgForm': msgDialog(request),
+        'follow_list': follow_list,
+        'group_list': group_list,
+        'group': group,
+        'member_list': member_list,
+        'is_member': is_member,
+        'button_text': button_text
+    }
+    return render(request, 'profile.html', context)
+
 
 def addgroup(request):
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    error = None
+    error_msg = {}
     if request.POST:
         groupProfileForm = GroupProfileForm(request.POST)
-        print(groupProfileForm.is_valid())
+
         if groupProfileForm.is_valid():
             try:
                 group = GroupProfile.objects.get(name__exact=groupProfileForm.instance.name)
@@ -25,30 +67,18 @@ def addgroup(request):
                 groupProfileForm.save()
                 groupProfileForm.instance.member.add(request.user)
 
-                return HttpResponseRedirect('/twittur/group/' + groupProfileForm.instance.name)
+                return HttpResponseRedirect('/twittur/group/' + groupProfileForm.instance.short)
             else:
-                error = "Gruppenname ist schon vergeben, bitch!"
+                error_msg['error_grp_name_exist'] = "Gruppenname ist schon vergeben!"
 
     groupProfileForm = GroupProfileForm()
     context = {
-        'error': error,
-        'groupProfileForm': groupProfileForm,
         'nav': Nav.nav,
-
+        'error_msg': error_msg,
+        'groupProfileForm': groupProfileForm,
     }
-
     return render(request, 'addgroup.html', context)
 
-def group(request, groupname):
 
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
-
-    group = GroupProfile.objects.get(name__exact=groupname)
-    curUser = request.user
-    context = {
-        'group': group,
-        'curUser': curUser,
-        'nav': Nav.nav,
-    }
-    return render(request, 'group.html', context)
+def logingroup(request, groupname):
+    return 0

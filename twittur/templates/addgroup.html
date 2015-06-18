@@ -9,17 +9,33 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Gruppe hinzufügen</h2><br><br>
-    <form action="{% url 'twittur:addgroup' %}" method="POST">
-    {% csrf_token %}
-    {% if groupProfileForm %}
-        {{ groupProfileForm.as_p }}
-        {% if error %}
-            <p>{{ error }}</p>
+    <div class="container-fluid">
+    	<div class="post">
+        <h4>Gruppe hinzufügen</h4>
+        {% if groupProfileForm %}
+        <form action="{% url 'twittur:addgroup' %}" method="POST">
+        {% csrf_token %}
+          <div class="col-xs-12 col-sm-6 form-group">
+            <label class="control-label" for="id_name">Gruppenname</label>
+          	{{ groupProfileForm.name }}
+          </div>
+          <div class="col-xs-12 col-sm-6 form-group">
+            <label class="control-label" for="id_short">Abk&uuml;rzung</label>
+          	{{ groupProfileForm.short }}
+          </div>
+          <div class="col-xs-12 form-group">
+            <label class="control-label" for="id_desc">Beschreibung</label>
+          	{{ groupProfileForm.desc }}
+          </div>
+          <div class="col-xs-12 form-group">
+            <label class="control-label" for="id_password">Passwort</label>
+          	{{ groupProfileForm.password }}
+          </div>
+          <button type="submit" class="btn btn-primary pull-right">Gruppe erstellen!</button>
+        </form>
+        {% else %}
+        <p>Formular existiert nicht!</p>
         {% endif %}
-        <br>
-
-    <button type="submit" class="btn btn-primary">Gruppe erstellen!</button>
-    </form>
-    {% endif %}
+	    </div>
+    </div>
 {% endblock %}

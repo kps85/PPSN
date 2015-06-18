@@ -1,16 +1,28 @@
 {% load staticfiles %}
+{% if group %}
+  {% if member_list %}
+    <ul>
+      <h3>{{ group.short }}-Teilnehmer</h3>
+      {% for member in member_list %}
+        <li>
+          <a class="ullink" href="{% url 'twittur:profile' user=member.username %}">@{{ member.username }}
+          {% if member == group.admin %}[admin]{% endif %}</a>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
 {% if active_page == 'index' or active_page == 'profile' %}
 
-    <ul class="groups">
+  <ul class="groups">
     {% if group_list %}
       <h3>Meine Gruppen</h3>
       {% for group in group_list %}
-      <li class="{% if false %}active{% endif %}">
-        <a class="ullink" href="{% url 'twittur:group' group.name %}">&{{ group.name }}</a>
+        <li class="{% if false %}active{% endif %}">
+          <a class="ullink {{ group.short }}" href="{% url 'twittur:group' group.short %}">&{{ group.short }}</a>
       {% endfor %}
-      {% endif %}
-      <a href="{% url 'twittur:addgroup' %}"> Gruppe hinzufügen</a>
-    </ul>
+    {% endif %}
+    <a href="{% url 'twittur:addgroup' %}"> Neue Gruppe erstellen</a>
+  </ul>
 
   {% if hot_list %}
     <ul class="hashs">
@@ -21,18 +33,16 @@
       {% endfor %} 
     </ul>
   {% endif %}  
-  {% if follow_list %}
   <ul class="following">
-    <h3>Folgend</h3>
-     {% for follow in follow_list %}
-    <li><a class="ullink {{ follow.username }}" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
-    {% endfor %}
+    {% if follow_list %}
+      <h3>Folgend</h3>
+       {% for follow in follow_list %}
+        <li><a class="ullink {{ follow.username }}" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
+      {% endfor %}
+    {% else %}
+      <h3>Forever alone</h3>
+    {% endif %}
   </ul>
-  {% else %}
-  <ul class="following">
-  	<h3>Forever alone</h3>
-  </ul>
-  {% endif %}
 {% elif active_page == 'info' %}  
   <ul>
     <li><h3 class="text-uppercase"> Über uns </h3></li>

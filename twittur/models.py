@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from datetime import date
 
+from django.contrib.auth.hashers import (
+    check_password, is_password_usable, make_password,
+)
+
 #### Entitys
 
 
@@ -35,8 +39,11 @@ class UserProfile(models.Model):
 
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
+    short = models.CharField(max_length=10)
     desc = models.CharField(max_length=200)
+    password = models.CharField(max_length=128, blank=True,
+                                help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
     picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
                                 height_field=None, width_field=None, default='picture/gdefault.gif',
                                 help_text='Geben sie ein Foto ein!')
@@ -45,8 +52,6 @@ class GroupProfile(models.Model):
 
     def __str__(self):
         return self.name
-
-
 
 
 class Hashtag(models.Model):
