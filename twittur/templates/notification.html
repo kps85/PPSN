@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+    {% if notification %}
+        {% for n in notification %}
+            <p>{{ n.user.first_name }} {{ n.user.last_name }} hat dich erwähnt! Message: {{ n.text }}</p>
+        {% endfor %}
+  {% endif %}
+{% endblock %}

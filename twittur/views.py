@@ -14,6 +14,8 @@ from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, editMessage, msgDialog
 
 
+
+
 # startpage
 def index(request):
     # check if user is logged in
@@ -46,6 +48,11 @@ def index(request):
     # Group
     group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
 
+    notification = request.user.userprofile.notification.all()
+    request.user.userprofile.total = len(notification)
+    request.user.userprofile.save()
+    new = request.user.userprofile.total - request.user.userprofile.read
+
     # Messages
     message_list = []
     for message in dbmessage_list:
@@ -59,9 +66,26 @@ def index(request):
     message_list = zip(message_list, dbmessage_list)
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
-               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,'group_list': group_list,
-               'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
-    return render(request, 'index.html', context)
+               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm, 'group_list': group_list,
+               'new': new, 'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
+    return render(request, 'index.html', context, )
+
+# Notification
+def notification(request):
+
+    notification = request.user.userprofile.notification.all()
+    request.user.userprofile.read = len(notification)
+    print(request.user.userprofile.read)
+    print(request.user.userprofile.total)
+    request.user.userprofile.save()
+
+    context = {
+        ''
+        'notification': notification,
+        'nav': Nav.nav,
+
+    }
+    return render(request, 'notification.html', context)
 
 
 # login/registration page
@@ -107,14 +131,14 @@ def login(request):
                               "Du hast ein neues Passwort fuer deinen Account bei twittur beantragt.\n" \
                               "\n" \
                               "Dein neues Passwort lautet: " + password + "\n" \
-                              "\n" \
-                              "Bitte aendere Dein Passwort schnellstmoeglich, indem Du dich mit dem oben genannten " \
-                              "Passwort einloggst und unter Einstellungen ein neues Passwort festlegst.\n" \
-                              "\n" \
-                              "Wir freuen uns auf Deinen Besuch!\n" \
-                              "\n" \
-                              "Mit freundlichen Gruessen,\n" \
-                              "Dein twittur Team!"
+                                                                          "\n" \
+                                                                          "Bitte aendere Dein Passwort schnellstmoeglich, indem Du dich mit dem oben genannten " \
+                                                                          "Passwort einloggst und unter Einstellungen ein neues Passwort festlegst.\n" \
+                                                                          "\n" \
+                                                                          "Wir freuen uns auf Deinen Besuch!\n" \
+                                                                          "\n" \
+                                                                          "Mit freundlichen Gruessen,\n" \
+                                                                          "Dein twittur Team!"
                     send_mail("PW Reset", message, "twittur.sn@gmail.com", [request.POST['pwResetMail']])
                     user.set_password(password)
                     user.save()
@@ -271,7 +295,6 @@ def profile(request, user):
         if request.method == 'POST':
             success_msg = editMessage(request)
 
-
         dbmessage_list = Message.objects.all().select_related('user__userprofile') \
             .filter(Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
                     ).order_by('-date').distinct()
@@ -392,5 +415,6 @@ def follow(request, user):
     return HttpResponseRedirect('')
     '''
 
-def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
+
+def pw_generator(size=6, chars=string.ascii_uppercase + string.digits):  # found on http://goo.gl/RH995X
     return ''.join(random.choice(chars) for _ in range(size))
