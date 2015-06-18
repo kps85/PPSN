@@ -7,29 +7,8 @@ from django.contrib.auth.hashers import (
     check_password, is_password_usable, make_password,
 )
 
-# Hashtagzzz
-class Hashtag(models.Model):
-    name = models.CharField(max_length=50)
+#### Entitys
 
-    def __str__(self):
-        return self.name
-
-# Messages
-class Message(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
-    text = models.CharField(max_length=254)
-    picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
-    date = models.DateTimeField('date published')
-    hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
-    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags')
-
-    def __str__(self):
-        return self.user.username + ': ' + '"' + self.text + '"'
-
-# Comments reference to message
-class Comment(models.Model):
-    text = models.CharField(max_length=254)
-    message = models.ForeignKey(Message)
 
 # - user
 class UserProfile(models.Model):
@@ -49,9 +28,6 @@ class UserProfile(models.Model):
 
     location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
 
-    # Notification
-    # notification = models.ManyToManyField(Message, related_name='notification')
-
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
@@ -60,12 +36,7 @@ class UserProfile(models.Model):
         if self.picture != 'picture/default.gif':
             self.picture.delete()
         super(UserProfile, self).delete()
-'''
-class Read(models.Model):
-    user = models.ForeignKey(UserProfile)
-    message = models.ForeignKey(Message)
-    read = models.BooleanField(default=False)
-'''
+
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
     short = models.CharField(max_length=10)
@@ -82,6 +53,27 @@ class GroupProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Hashtag(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+# - message from User (message_from_self) to User (message_to_user)
+class Message(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
+    text = models.CharField(max_length=254)
+    picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
+    date = models.DateTimeField('date published')
+    hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
+    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags')
+
+    def __str__(self):
+        return self.user.username + ': ' + '"' + self.text + '"'
+
 
 
 # FAQ model

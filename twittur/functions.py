@@ -70,7 +70,6 @@ def msg_to_db(message):
             except ObjectDoesNotExist:
                 pass
             else:
-                user.userprofile.notification.add(message)
                 message.attags.add(user)
                 attaglist.append(user)
 

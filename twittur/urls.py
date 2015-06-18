@@ -10,7 +10,6 @@ urlpatterns = [
     url(r'^profile/(?P<user>\w+)$', views.profile, name='profile'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
-    url(r'^notification/$', views.notification, name='notification'),
 
     # views_into
     url(r'^info/$', views_info.info, name='info'),

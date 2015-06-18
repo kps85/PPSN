@@ -113,6 +113,7 @@ def djlgroup(request, groupshort):
                 group.member.get(username__exact=request.user.username)
             # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
             except ObjectDoesNotExist:
+                # TODO and discuss!!! case: if password is required here -> redirect to loginsite (not implement yet)
                 group.member.add(request.user)
                 return HttpResponseRedirect('/twittur/group/'+groupshort)
             # User exists -> delete him from group
@@ -120,3 +121,6 @@ def djlgroup(request, groupshort):
                 group.member.remove(request.user)
 
         return HttpResponseRedirect('/twittur/group/'+groupshort)
+
+# TODO
+# - Sichtbarkeit von Nachrichten? (Passwort required oder nicht)
