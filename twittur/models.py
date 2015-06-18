@@ -50,10 +50,7 @@ class UserProfile(models.Model):
     location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
 
     # Notification
-    notification = models.ManyToManyField(Message)
-    read = 0
-    total = 0
-
+    # notification = models.ManyToManyField(Message, related_name='notification')
 
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
@@ -63,7 +60,12 @@ class UserProfile(models.Model):
         if self.picture != 'picture/default.gif':
             self.picture.delete()
         super(UserProfile, self).delete()
-
+'''
+class Read(models.Model):
+    user = models.ForeignKey(UserProfile)
+    message = models.ForeignKey(Message)
+    read = models.BooleanField(default=False)
+'''
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
     short = models.CharField(max_length=10)
