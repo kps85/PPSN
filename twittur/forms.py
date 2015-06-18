@@ -28,6 +28,8 @@ AD_CHOICES = (
 
 
 class GroupProfileForm(ModelForm):
+    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
+
     class Meta:
         model = GroupProfile
         fields = ['name', 'short', 'desc', 'password', 'picture']

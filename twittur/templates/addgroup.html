@@ -27,9 +27,13 @@
             <label class="control-label" for="id_desc">Beschreibung</label>
           	{{ groupProfileForm.desc }}
           </div>
-          <div class="col-xs-12 form-group">
+          <div class="col-xs-12 col-sm-6 form-group">
             <label class="control-label" for="id_password">Passwort</label>
           	{{ groupProfileForm.password }}
+          </div>
+          <div class="col-xs-12 col-sm-6 form-group">
+            <label class="control-label" for="id_ack_password">Passwort best&auml;tigen</label>
+          	{{ groupProfileForm.ack_password }}
           </div>
           <button type="submit" class="btn btn-primary pull-right">Gruppe erstellen!</button>
         </form>

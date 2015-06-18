@@ -48,13 +48,14 @@ def group(request, groupshort):
     }
     return render(request, 'profile.html', context)
 
-
+# view for add a new group
 def addgroup(request):
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
     error_msg = {}
+
     if request.POST:
         groupProfileForm = GroupProfileForm(request.POST)
 
@@ -62,6 +63,15 @@ def addgroup(request):
             try:
                 group = GroupProfile.objects.get(name__exact=groupProfileForm.instance.name)
             except ObjectDoesNotExist:
+                if (request.POST.get('password') != request.POST.get('ack_password')):
+                    error_msg['error_passwords_diff'] = "Passwoerter sind nicht gleich!"
+                    context = {
+                                'error_msg': error_msg,
+                                'groupProfileForm': groupProfileForm,
+                                'nav': Nav.nav,
+                                }
+                    return render(request, 'addgroup.html', context)
+
                 groupProfileForm.instance.groupprofile = groupProfileForm.instance
                 groupProfileForm.instance.admin = request.user
                 groupProfileForm.save()

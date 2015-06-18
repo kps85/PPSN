@@ -40,6 +40,7 @@ class UserProfile(models.Model):
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
     short = models.CharField(max_length=10)
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
     desc = models.CharField(max_length=200)
     password = models.CharField(max_length=128, blank=True,
                                 help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
