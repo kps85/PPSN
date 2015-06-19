@@ -12,17 +12,26 @@
     {% if new > 0 %}
     <h2>Du hast {{ new }} neue Benachrichtigung</h2>
     {% else %}
-    <h2>Du keine neue Benachrichtugung</h2>
+    <h2>Du hast keine neue Benachrichtugung</h2>
     {% endif %}
     <br>
     <br>
     {% if notification_list %}
     {% for notification, boolean in notification_list %}
-        {% if boolean == 'False' %}
-        <p>NEW: {{ notification.message.user.first_name }} {{ notification.message.user.last_name }} hat dich in seiner Nachricht: " {{ notification.message.text }} " erwähnt (am {{ notification.message.date }}).</p>
+        {% if notification.get_model_name == 'NotificationF' %}
+            {% if boolean == 'False' %}
+            <p>NEW: {{ notification.me.userprofile.username }} folgt dir jetzt! ({{ notification.date }})</p>
+            {% else %}
+            <p>{{ notification.me.userprofile.username }} folgt dir jetzt! ({{ notification.date }})</p>
+            {% endif %}
         {% else %}
-        <p> {{ notification.message.user.first_name }} {{ notification.message.user.last_name }} hat dich in seiner Nachricht: " {{ notification.message.text }} " erwähnt (am {{ notification.message.date }}).</p>
+            {% if boolean == 'False' %}
+            <p>NEW: {{ notification.message.user.first_name }} {{ notification.message.user.last_name }} hat dich in seiner Nachricht: " {{ notification.message.text }} " erwähnt (am {{ notification.message.date }}).</p>
+            {% else %}
+            <p> {{ notification.message.user.first_name }} {{ notification.message.user.last_name }} hat dich in seiner Nachricht: " {{ notification.message.text }} " erwähnt (am {{ notification.message.date }}).</p>
+            {% endif %}
         {% endif %}
+
     {% endfor %}
     {% endif %}
 

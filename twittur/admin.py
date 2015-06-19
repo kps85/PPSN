@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import UserProfile, Message, Hashtag, FAQ, GroupProfile, Notification
+from .models import UserProfile, Message, Hashtag, FAQ, GroupProfile, NotificationF, NotificationM
 
 
 # initialize admin view for FAQs
@@ -24,5 +24,6 @@ admin.site.register(UserProfile)
 admin.site.register(Message)
 admin.site.register(Hashtag)
 admin.site.register(GroupProfile)
-admin.site.register(Notification)
+admin.site.register(NotificationF)
+admin.site.register(NotificationM)
 admin.site.register(FAQ, FAQAdmin) # register FAQ for admin page

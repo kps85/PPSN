@@ -8,9 +8,10 @@ from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
-from copy import deepcopy
+from itertools import chain
+from operator import attrgetter
 
-from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, Notification
+from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
 from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, editMessage, msgDialog
 
@@ -27,6 +28,7 @@ def index(request):
     current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
     curUser = User.objects.get(username__exact=request.user)
     follow_list = curUser.userprofile.follow.all()
+
     hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5]
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
@@ -60,8 +62,9 @@ def index(request):
     message_list = zip(message_list, dbmessage_list)
 
     # Notification
-    new = Notification.objects.filter(Q(read=False) & Q(user=request.user)).count()
-
+    newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
+    newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
+    new = newM + newF
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,'group_list': group_list,
                'new': new, 'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
@@ -251,20 +254,21 @@ def profile(request, user):
 
     try:
         curUser = User.objects.get(username=user)  # this is the user displayed in html
+        print (curUser.username)
         curUserProfile = curUser.userprofile
 
         # follow
         if request.method == "GET" and 'follow' in request.GET:
-            print(cuUser.follow.all())
             if curUser in cuUser.follow.all():
                 print("remove")
-                cuUser.follow.remove(curUser)
-                cuUser.save()
+                follow = NotificationF.objects.get(Q(me__exact=request.user.userprofile) & Q(you__exact=curUser))
+                follow.delete()
                 success_msg = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
             else:
                 print("add")
-                cuUser.follow.add(curUser)
                 cuUser.save()
+                notification = NotificationF(me=request.user.userprofile, you=curUser, read=False)
+                notification.save()
                 success_msg = 'Du folgst ' + user.upper() + ' jetzt.'
 
         if curUser in follow_list:
@@ -402,7 +406,11 @@ def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found 
 def notification(request):
 
     # for context
-    notification_list = Notification.objects.all().filter(user=request.user).order_by('-message__date')
+    notificationM_list = NotificationM.objects.all().filter(user=request.user)#.order_by('-message__date')
+    notificationF_list = NotificationF.objects.all().filter(you=request.user)#.order_by('-message__date')
+
+    notification_list = sorted(chain(notificationM_list, notificationF_list), key=attrgetter('date') ,
+    reverse=True)
     boolean_list = []
 
     # saving boolean extra, because it will deleted by next for loop
@@ -413,7 +421,9 @@ def notification(request):
             boolean_list.append('True')
 
     notification_list = zip(notification_list,boolean_list)
-    new = Notification.objects.filter(Q(read=False) & Q(user=request.user)).count()
+    newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
+    newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
+    new = newF + newM
 
     context = {
         'nav': Nav.nav,
@@ -423,7 +433,10 @@ def notification(request):
     }
 
     # update -> set all notification to true
-    for n in Notification.objects.filter(Q(read=False) & Q(user=request.user)):
+    for n in NotificationM.objects.filter(Q(read=False) & Q(user=request.user)):
+        n.read = True
+        n.save()
+    for n in NotificationF.objects.filter(Q(read=False) & Q(you=request.user)):
         n.read = True
         n.save()
 

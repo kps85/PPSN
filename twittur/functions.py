@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from .views import *
-from .models import Message, Hashtag, Notification
+from .models import Message, Hashtag, NotificationM
 from .forms import MessageForm
 
 
@@ -70,7 +70,7 @@ def msg_to_db(message):
             except ObjectDoesNotExist:
                 pass
             else:
-                notification = Notification(user=user, message=message, read=False)
+                notification = NotificationM(user=user, message=message, read=False)
                 notification.save()
                 print(message.attags.all())
                 attaglist.append(user)

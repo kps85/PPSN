@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from django.conf import settings
 import datetime
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('desc', models.CharField(max_length=200)),
                 ('password', models.CharField(help_text=b'Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)', max_length=128, blank=True)),
                 ('picture', models.ImageField(default=b'picture/gdefault.gif', upload_to=b'picture/', blank=True, help_text=b'Geben sie ein Foto ein!', verbose_name=b'Profilbild')),
-                ('date', models.DateField(default=datetime.date.today)),
+                ('date', models.DateField(default=datetime.date.today, blank=True)),
                 ('admin', models.ForeignKey(related_name='admin', to=settings.AUTH_USER_MODEL)),
                 ('member', models.ManyToManyField(related_name='member', to=settings.AUTH_USER_MODEL)),
             ],
@@ -60,10 +60,19 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Notification',
+            name='NotificationF',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('read', models.BooleanField(default=True)),
+                ('date', models.DateTimeField(default=datetime.datetime.now, blank=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='NotificationM',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('read', models.BooleanField(default=True)),
+                ('date', models.DateTimeField(default=datetime.datetime.now, blank=True)),
                 ('message', models.ForeignKey(related_name='message', to='twittur.Message')),
                 ('user', models.ForeignKey(related_name='user', to=settings.AUTH_USER_MODEL)),
             ],
@@ -76,14 +85,24 @@ class Migration(migrations.Migration):
                 ('academicDiscipline', models.CharField(help_text=b'&Uuml;ber deinen Studiengang wirst Du bestimmten Gruppen zugeordnet.', max_length=200)),
                 ('picture', models.ImageField(default=b'picture/default.gif', upload_to=b'picture/', blank=True, help_text=b'Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt.', verbose_name=b'Profilbild')),
                 ('location', models.CharField(default=b'None', help_text=b'Lass Deine KommilitonInnen Dich finden!', max_length=200)),
-                ('follow', models.ManyToManyField(related_name='follow', to=settings.AUTH_USER_MODEL)),
+                ('follow', models.ManyToManyField(related_name='follow', through='twittur.NotificationF', to=settings.AUTH_USER_MODEL)),
                 ('userprofile', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
+            model_name='notificationf',
+            name='me',
+            field=models.ForeignKey(related_name='me', to='twittur.UserProfile'),
+        ),
+        migrations.AddField(
+            model_name='notificationf',
+            name='you',
+            field=models.ForeignKey(related_name='you', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
             model_name='message',
             name='attags',
-            field=models.ManyToManyField(related_name='attags', through='twittur.Notification', to=settings.AUTH_USER_MODEL),
+            field=models.ManyToManyField(related_name='attags', through='twittur.NotificationM', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='message',

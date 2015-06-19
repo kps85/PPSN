@@ -2,12 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from datetime import date
+from datetime import datetime
+
 
 from django.contrib.auth.hashers import (
     check_password, is_password_usable, make_password,
 )
 
 #### Entitys
+
 
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
@@ -22,7 +25,8 @@ class Message(models.Model):
     picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
     date = models.DateTimeField('date published')
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
-    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='Notification')
+    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='NotificationM')
+    comment = models.ForeignKey('self', related_name='comments', blank=True, null=True)
 
     def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
@@ -32,7 +36,7 @@ class Message(models.Model):
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
 
-    follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow')
+    follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='NotificationF')
     studentNumber = models.CharField(max_length=6, default='000000',
                                      help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der '
                                                'TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')
@@ -56,16 +60,28 @@ class UserProfile(models.Model):
             self.picture.delete()
         super(UserProfile, self).delete()
 
+class NotificationF(models.Model):
+    me = models.ForeignKey(UserProfile, related_name='me')
+    you = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='you')
+    read = models.BooleanField(default=True)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+    def __str__(self):
+        return self.me.userprofile.username + ' to ' + self.you.username
 
-class Notification(models.Model):
+    def get_model_name(self):
+                return self.__class__.__name__
+
+class NotificationM(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
     message = models.ForeignKey(Message, related_name='message')
     read = models.BooleanField(default=True)
-    class Meta:
-        auto_created = True
-
+    date = models.DateTimeField(default=datetime.now, blank=True)
     def __str__(self):
-        return self.user.username + ' (' + str(self.read) + ') '
+        return self.user.username + ' mentioned in message: "' + self.message.text + '".'
+
+    def get_model_name(self):
+                return self.__class__.__name__
+
 
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
@@ -78,7 +94,7 @@ class GroupProfile(models.Model):
     picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
                                 height_field=None, width_field=None, default='picture/gdefault.gif',
                                 help_text='Geben sie ein Foto ein!')
-    date = models.DateField(default=date.today)
+    date = models.DateField(default=date.today, blank=True)
     member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
 
     def __str__(self):
