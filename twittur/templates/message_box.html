@@ -10,10 +10,10 @@
       {% if active_page == 'ftu' %}
       	@{{ message.user.username }}
       {% else %}
-      	@<a href="{% url 'twittur:profile' user=message.user %}">{{ message.user.username }}</a>      
+      	@<a href="{% url 'twittur:profile' user=message.user %}">{{ message.user.username }}</a>
       {% endif %}
       </div>
-			<small class="postTime">am {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}</small>
+          <small class="postTime">am {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}</small>
 		</div>
 		<div class="postText" id="postText{{ message.id }}">
       {% if message.text %}
@@ -36,9 +36,15 @@
       </form>
     </div>
     {% endif %}
+
+
+
+
+
+
     {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
-      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
+      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}"  data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
     		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
       </a>
       {% if message.user == user %}
@@ -56,7 +62,50 @@
     </div>
     {% endif %}
 	</div>
+
+
+{% if comments %}
+     {% for comment in comments %}
+<div class="post">
+<!-- comments -->
+    <div class="icon">
+    <a href="{% url 'twittur:profile' user=message.user %}">
+        <img src="{{ comment.user.userprofile.picture.url }}" class="img-thumbnail">
+    </a>
+    </div>
+
+      <div class="postContent">
+		<div class="postMeta">
+			<div class="postAuthor">
+      {% if active_page == 'ftu' %}
+      	@{{ comment.user.username }}
+      {% else %}
+      	@<a href="{% url 'twittur:profile' user=comment.user %}">{{ comment.user.username }}</a>
+      {% endif %}
+      </div>
+          <small class="postTime">am {{ comment.date|date:"j. F Y, \u\m H:i \U\h\r" }}</small>
+		</div>
+		<div class="postText" id="postText{{ comment.id }}">
+      {% if comment.text %}
+      {{ comment.text|safe }}
+      {% endif %}
+		</div>
 </div>
+</div>
+
+      {% endfor %}
+      {% endif %}
+
+
+
+
+
+
+
+</div>
+
+
+
 
 {% if message.user == user %}
 <div class="modal fade bs-example-modal-sm" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
@@ -81,4 +130,7 @@
     </div>
   </div>
 </div>
+
+
+
 {% endif %}

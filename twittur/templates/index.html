@@ -11,8 +11,8 @@
 {% block content %}
   
   {% if has_msg %}
-    {% for message, dbmessage in message_list %}
-      {% include "message_box.html" with message=message dbmessage=dbmessage page=active_page user=user  %}
+    {% for message, dbmessage, comments in message_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments page=active_page user=user  %}
     {% endfor %}
   {% else %}
     <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>

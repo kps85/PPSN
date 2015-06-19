@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^notification/$', views.notification, name='notification'),
 
+
     # views_into
     url(r'^info/$', views_info.info, name='info'),
     url(r'^info/faq/$', views_info.faq, name='faq'),

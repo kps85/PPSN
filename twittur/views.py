@@ -12,8 +12,8 @@ from itertools import chain
 from operator import attrgetter
 
 from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
-from .forms import UserForm, UserDataForm
-from .functions import dbm_to_m, editMessage, msgDialog
+from .forms import UserForm, UserDataForm #,CommentForm
+from .functions import dbm_to_m, editMessage, msgDialog #, commentMessage
 
 
 # startpage
@@ -35,14 +35,16 @@ def index(request):
     #    atTag = '@' + request.user.username + ' '
 
     msgForm = msgDialog(request)
+    #cmForm = commentMessage(request)
     if request.method == 'POST':
         success_msg = editMessage(request)
 
     # dbmessage_list = Message.objects.all().select_related('user__userprofile') \
     #        .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
-    dbmessage_list = Message.objects.all().filter(Q(user__exact=current_user)
-                                                  | Q(user__exact=curUser.userprofile.follow.all())).order_by('-date')
-
+    dbmessage_list = Message.objects.all().filter((Q(user__exact=current_user)
+                                                  | Q(user__exact=curUser.userprofile.follow.all()))
+                                                  & Q(comment = None)
+                                                  ).order_by('-date')
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
@@ -51,22 +53,29 @@ def index(request):
 
     # Messages
     message_list = []
+    comment_list = []
     for message in dbmessage_list:
         if message.date > curDate:
             message.editable = True
         copy_message = copy.copy(message)
+        comments = Message.objects.filter(comment=message)
+        c = []
+        if comments:
+            for co in comments:
+                c.append(dbm_to_m(co))
+        comment_list.append(c)
         message_list.append(dbm_to_m(copy_message))
 
     if len(message_list) > 0:
         has_msg = True
-    message_list = zip(message_list, dbmessage_list)
+    message_list = zip(message_list, dbmessage_list, comment_list)
 
     # Notification
     newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
     newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
     new = newM + newF
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
-               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,'group_list': group_list,
+               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,  'group_list': group_list,
                'new': new, 'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
@@ -125,7 +134,7 @@ def login(request):
                     send_mail("PW Reset", message, "twittur.sn@gmail.com", [request.POST['pwResetMail']])
                     user.set_password(password)
                     user.save()
-                    success_msg = 'Dein neues Passwort hast Du per E-Mail erhalten!'
+                    success_msg = 'Dein neues Passwort hast du per E-Mail erhalten!'
                 else:
                     errors['error_number_not_identic'] = "Die eingegebene Matrikel-Nummer stimmt nicht mit der " \
                                                          "Matrikel-Nummer &uuml;berein, die uns bekannt ist.<br>" \

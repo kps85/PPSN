@@ -7,8 +7,11 @@ from .forms import MessageForm
 # messagebox clicked on pencil button
 def msgDialog(request):
     curUser = User.objects.get(pk=request.user.id)
+    print(request.POST.get('codename'))
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get('codename') == 'message':
+        print(request.POST.get('codename') == 'message')
+        print('message')
         msgForm = MessageForm(request.POST)
         if msgForm.is_valid():
             msgForm.save()
@@ -16,7 +19,20 @@ def msgDialog(request):
             msgForm.save()
             # save this shit for the next step
 
+    if request.method == 'POST' and request.POST.get('codename') == 'comment':
+
+        msgForm = MessageForm(request.POST)
+        if msgForm.is_valid():
+            msgForm.save()
+            message = Message.objects.get(id=request.POST.get('cmtToId'))
+            msgForm.instance.comment = message
+            msg_to_db(msgForm.instance)
+            msgForm.save()
+            # save this shit for the next step
+
+
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
+    print(msgForm.instance.text)
     return msgForm
 
 
