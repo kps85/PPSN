@@ -375,9 +375,10 @@ function initVarious() {
   });
 	  
 	$(".reply_link").click(function(e) {
-      var data = $(this).attr("data-hint").split(" ");
-	  $("#newCommentTitle").html("Antwort an " + data[1] + " verfassen");  
-    });
+    var data = $(this).attr("data-hint").split(" ");
+	  $("#newCommentTitle").html("Antwort an " + data[1] + " verfassen"); 
+	  $("#id_cmtToId").val(data[0]);  
+  });
   
 	/* Smoothes Scrollen */
 	$(function() {
