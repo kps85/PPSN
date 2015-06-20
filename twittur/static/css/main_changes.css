@@ -100,6 +100,10 @@ a:focus { color: #a00000; text-decoration: none; }
 	.cmtText { margin: 5px 10px; }
 	.comments a:hover { cursor: pointer; }
 
+.notification:hover {
+	background-color: rgba(0,0,0,.03);
+}
+
 /* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
 
   #ftu input[type="submit"][disabled] {
