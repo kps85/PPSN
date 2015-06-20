@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^profile/(?P<user>\w+)$', views.profile, name='profile'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
+    url(r'^message/(?P<msg>[0-9]+)$', views.showMessage, name='message'),
     url(r'^notification/$', views.notification, name='notification'),
 
 

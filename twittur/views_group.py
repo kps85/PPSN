@@ -1,11 +1,11 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import GroupProfileForm
 from .functions import msgDialog
-from .models import Nav, GroupProfile, UserProfile
+from .models import GroupProfile, Hashtag, Nav, UserProfile
 
 
 def group(request, groupshort):
@@ -15,12 +15,14 @@ def group(request, groupshort):
 
     is_member, button_text = False, None
 
-    # Follows
+    # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
     follow_list = curUser.follow.all()
-
-    # Groups
-    group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
 
     group = GroupProfile.objects.get(short__exact=groupshort)
     member_list = group.member.all()
@@ -40,7 +42,7 @@ def group(request, groupshort):
         'nav': Nav.nav,
         'msgForm': msgDialog(request),
         'follow_list': follow_list,
-        'group_list': group_list,
+        'group_sb_list': group_sb_list,
         'group': group,
         'member_list': member_list,
         'is_member': is_member,

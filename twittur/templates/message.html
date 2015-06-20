@@ -9,16 +9,15 @@
 {% endblock %}
 
 {% block content %}
+  
   {% if has_msg %}
     {% for message, dbmessage, comments in message_list %}
       {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments page=active_page user=user  %}
     {% endfor %}
-    </div>
-    <div class="text-center">
-    	<button class="load_more btn btn-default" data-hint="{% url 'twittur:index' %}" title="Mehr Beitr&auml;ge laden">
-      	<span class="glyphicon glyphicon-refresh"></span>
-      </button>
   {% else %}
-    <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+    <div class="text-center">
+    	<em>Keine Nachricht zum Anzeigen gefunden!</em><br />
+      <a href="{% url 'twittur:index' %}">&laquo; zur Startseite</a>
+    </div>
   {% endif %}
 {% endblock %}

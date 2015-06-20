@@ -1,4 +1,8 @@
+import copy, datetime, string, random
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
+
 from .views import *
 from .models import Message, Hashtag, NotificationM
 from .forms import MessageForm
@@ -7,11 +11,11 @@ from .forms import MessageForm
 # messagebox clicked on pencil button
 def msgDialog(request):
     curUser = User.objects.get(pk=request.user.id)
-    print(request.POST.get('codename'))
+#    print(request.POST.get('codename'))
 
     if request.method == 'POST' and request.POST.get('codename') == 'message':
-        print(request.POST.get('codename') == 'message')
-        print('message')
+#        print(request.POST.get('codename') == 'message')
+#        print('message')
         msgForm = MessageForm(request.POST)
         if msgForm.is_valid():
             msgForm.save()
@@ -32,13 +36,18 @@ def msgDialog(request):
 
 
     msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
-    print(msgForm.instance.text)
+#    print(msgForm.instance.text)
     return msgForm
 
 
 # edit or update Message
 def editMessage(request):
     if 'delMessage' in request.POST:                                        # if Message should be deleted
+        if Message.objects.filter(comment=request.POST['delMessage']).exists():
+            msg = Message.objects.get(pk=request.POST['delMessage'])
+            comments = Message.objects.filter(comment=msg)
+            for obj in comments:
+                obj.delete()
         if Message.objects.filter(pk=request.POST['delMessage']).exists():  # if Message exists
             curMsg = Message.objects.get(pk=request.POST['delMessage'])     # select Message
             curMsg.delete()                                                 # delete selected Message
@@ -51,6 +60,14 @@ def editMessage(request):
             msg_to_db(curMsg)                                               # ???
             curMsg.save()                                                   # save and update Message
         return 'Nachricht erfolgreich aktualisiert!'                        # return info
+
+    elif 'updateCmt' in request.POST:                                       # if Message should be updated
+        if Message.objects.filter(pk=request.POST['updateCmt']).exists():   # if Message exists
+            curMsg = Message.objects.get(pk=request.POST['updateCmt'])      # select Message
+            curMsg.text = request.POST['updatedText']                       # set Message text
+            msg_to_db(curMsg)                                               # ???
+            curMsg.save()                                                   # save and update Message
+        return 'Kommentar erfolgreich aktualisiert!'                        # return info
 
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
@@ -125,3 +142,80 @@ def dbm_to_m(message):
     return message
 
 
+def getMessages(page, user, end):
+
+    dbmessage_list, result, comments = None, {}, False
+    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
+                                  timezone.get_current_timezone())
+
+    # Messages
+    if page == 'index':
+        dbmessage_list = Message.objects.all().filter(
+            ( Q(user__exact=user) | Q(user__exact=user[0].userprofile.follow.all())
+            | Q(attags = None) | Q(attags = user) )
+            & Q(comment = None)
+        ).order_by('-date')[:end]
+    elif page == 'profile':
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
+            Q(user__exact=user) | Q(attags__username__exact=user.username)
+        ).order_by('-date').distinct()[:end]
+    elif page == 'hashtag':
+        dbmessage_list = Message.objects.all().filter(hashtags__name=user).order_by('-date')[:end]
+    elif page == 'search':
+        for term in user:
+            if term[:1] == "#" or term[:1] == "@":
+                term = term[1:]
+            dbmessage_list = Message.objects.all().select_related('user__userprofile') \
+                .filter(
+                Q(text__contains=term) | Q(user__username__contains=term)
+            ).order_by('-date')
+    else:
+        comments = True
+        dbmessage_list = Message.objects.filter(pk=page)
+
+    message_list, comment_list = [], []
+    for message in dbmessage_list:
+        if message.date > curDate:
+            message.editable = True
+        copy_message = copy.copy(message)
+        if comments == True:
+            c = getComments(message, curDate)
+            comment_list.append(c)
+        else:
+            comment_list.append(getCommentCount(message))
+        message_list.append(dbm_to_m(copy_message))
+
+    if len(message_list) > 0:
+        result['has_msg'] = True
+
+    result['message_list'] = message_list
+    result['dbmessage_list'] = dbmessage_list
+    result['comment_list'] = comment_list
+
+    return result
+
+
+def getComments(message, curDate):
+    comments = Message.objects.filter(comment=message)
+    c = []
+    if comments:
+        for co in comments:
+            cc, ccc = [], getComments(co, curDate)
+            if co.date > curDate:
+                co.editable = True
+            cc.append(dbm_to_m(co))
+            cc.append(ccc)
+            c.append(cc)
+    return c
+
+
+def getCommentCount(message):
+    count = 0
+    comments = Message.objects.filter(comment=message)
+    for comment in comments:
+        count = count + getCommentCount(comment) + 1
+    return count
+
+
+def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
+    return ''.join(random.choice(chars) for _ in range(size))

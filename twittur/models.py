@@ -101,9 +101,6 @@ class GroupProfile(models.Model):
         return self.name
 
 
-
-
-
 # FAQ model
 # - author: FAQ respondent REFERENCES User
 # - question: a frequently asked question
@@ -121,7 +118,8 @@ class Nav(models.Model):
     nav = [
         {'name': 'index', 'title': 'Startseite'},
         {'name': 'profile', 'title': 'Profil'},
+        {'name': 'notification', 'title': 'Mitteilungen'},
         {'name': 'info', 'title': 'Info'},
-        {'name': 'settings', 'title': 'Einstellungen'},
+        #{'name': 'settings', 'title': 'Einstellungen'},
         {'name': 'logout', 'title': 'Logout'}
     ]

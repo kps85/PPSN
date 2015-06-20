@@ -68,11 +68,12 @@
     	{% block content %}	
       {% endblock %}
     </div>
+    
     <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content"> 
+        <div class="modal-content">
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+          {% csrf_token %}
             <input name="msgDialog" type="hidden" value="true" />
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -93,36 +94,5 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="newComment" tabindex="-1" role="dialog" aria-labelledby="newCommentLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input name="cmtDialog" type="hidden" value="true" />
-            <input id="id_cmtToId" name="cmtToId" type="hidden" value="" />
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h4 class="modal-title" id="newCommentTitle"></h4>
-            </div>
-             <div class="modal-body">{{ msgForm.text }}</div>
-            <div class="modal-footer">
-              <div class="cmtDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
-
-              <input type="hidden" name="codename" value="comment" />
-              <input type="hidden" name="message" value="{{ message.id }}" />
-              {{ msgForm.user }}
-              {{ msgForm.date }}
-
-              <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-              <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-
   </div>
 {% include 'footer.html' %}

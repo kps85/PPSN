@@ -281,17 +281,22 @@ function initVarious() {
 			$("#id_text").focus();
 		}, 500);
   });
-	$(".showMsgEdit").click(function(e) {
+	$(".showMsgEdit, .showCmtEdit").click(function(e) {
 		var mID = $(this).attr("data-hint");
-		$(this).addClass("hidden");
-    $("#postText"+mID).addClass("hidden");
-    $("#postTextEdit"+mID).removeClass("hidden");    
+		var tar = ($(this).is(".showMsgEdit")) ? "#postText"+mID : "#cmtText"+mID;
+		var tarEdit = ($(this).is(".showMsgEdit")) ? "#postTextEdit"+mID : "#cmtTextEdit"+mID;
+		$(this).addClass("hidden");		
+    $(tar).addClass("hidden");
+    $(tarEdit).removeClass("hidden");    
   });
-	$(".hideMsgEdit").click(function(e) {
+	$(".hideMsgEdit, .hideCmtEdit").click(function(e) {
 		var mID = $(this).attr("data-hint");
-		$(".showMsgEdit").removeClass("hidden");
-    $("#postText"+mID).removeClass("hidden");
-    $("#postTextEdit"+mID).addClass("hidden");
+		var tar = ($(this).is(".hideMsgEdit")) ? "#postText"+mID : "#cmtText"+mID;
+		var tarEdit = ($(this).is(".hideMsgEdit")) ? "#postTextEdit"+mID : "#cmtTextEdit"+mID;
+		var tarBtn = ($(this).is(".hideMsgEdit")) ? ".showMsgEdit" : ".showCmtEdit";
+		$(tarBtn).removeClass("hidden");
+    $(tar).removeClass("hidden");
+    $(tarEdit).addClass("hidden");
   });
   
   
@@ -379,6 +384,53 @@ function initVarious() {
 	  $("#newCommentTitle").html("Antwort an " + data[1] + " verfassen"); 
 	  $("#id_cmtToId").val(data[0]);  
   });
+	
+	$(".load_more").click(function(e) {
+		var url = $(this).attr("data-hint");
+		var last = $(".post").last().attr("data-hint");
+		var user = $(".profilNick").attr("data-hint");
+		var search_input = $(".load_more_search_input").attr("data-hint");
+		var data = {
+			user: user,
+			last: last,
+			search_input: search_input,
+		}
+		var getIt = function(url) {
+			$.ajax({
+				type:"GET",
+				url: url,
+				data: data,
+				dataType: 'html',
+				async: true,
+				success: function(data) {
+					switch(url.split("/")[2]) {
+						case 'profile':
+							$(".profileMessages").html(data);
+							break;
+						case 'hashtag':
+							$("#searchMsg").html(data);
+							break;
+						case 'search':
+							$("#searchMsg").html("<h4> Folgende Nachrichten wurden gefunden:</h4>" + data);
+							break;
+						default:
+							$("#content").html(data);
+					}
+					if ($(".list_end").length > 0) {
+						$(".load_more").hide();
+					} else {
+						$(".load_more").find("span").removeClass("glyphicon-time").addClass("glyphicon-refresh");
+					}
+				},
+				error: function(xhr,err) {					
+					alert("readyState: "+xhr.readyState+"\nstatus: "+xhr.status);
+					alert("responseText: "+xhr.responseText);
+				}
+			});			
+		};
+		$(this).find("span").removeClass("glyphicon-refresh").addClass("glyphicon-time");
+		getIt(url)
+	});
   
 	/* Smoothes Scrollen */
 	$(function() {

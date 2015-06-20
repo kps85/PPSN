@@ -1,0 +1,94 @@
+<div class="cmtContent">
+  <div class="cmtMeta">
+    <div class="cmtAuthor pull-left">
+      {% if active_page == 'ftu' %}
+        @{{ comment.user.username }}
+      {% else %}
+        @<a href="{% url 'twittur:profile' user=comment.0.user %}">{{ comment.0.user.username }}</a>
+      {% endif %} 
+    </div>
+    <small class="cmtTime">am {{ comment.0.date|date:"j. F Y, \u\m H:i \U\h\r" }}</small>
+  </div>
+  <div class="cmtText" id="cmtText{{ comment.0.id }}">
+    {% if comment.0.text %}
+      {{ comment.0.text|safe }}
+    {% endif %}
+  </div>
+{% if comment.0.editable %}
+  <div class="cmtTextEdit hidden clearfix" id="cmtTextEdit{{ comment.0.id }}">
+    {% if active_page == 'profile' %}
+      <form action="{% url 'twittur:'|add:active_page user=user %}" method="POST">
+    {% elif active_page == 'message' %}
+      <form action="{% url 'twittur:'|add:active_page msg=msg_id %}" method="POST">
+    {% else %}
+      <form action="{% url 'twittur:'|add:active_page %}" method="POST">
+    {% endif %}
+    {% csrf_token %}
+      <input id="updateCmt" name="updateCmt" type="hidden" value="{{ comment.0.id }}" />
+      <div class="form-group">
+        <textarea class="form-control" name="updatedText" rows="3">{{ comment.0.text|safe }}</textarea>
+      </div>
+      <div class="form-group text-right">
+        <button class="btn btn-xs btn-default hideCmtEdit" type="button" data-hint="{{ comment.0.id }}" id="hideCmtEdit{{ comment.0.id }}">Abbrechen</button>
+        <button class="btn btn-xs btn-primary" type="submit">Speichern</button>
+      </div>
+    </form>
+  </div>
+{% endif %}
+
+{% if active_page != 'ftu' %}
+  <div class="cmtFoot clearfix">
+    <a class="reply_link" data-hint="{{ comment.0.id }} {{ comment.0.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
+      <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
+    </a>
+  {% if comment.0.user == user %}
+    <div class="cmtEdit pull-right">
+      {% if comment.0.editable %}
+        <a class="btn-xs showCmtEdit" data-hint="{{ comment.0.id }}" title="Kommentar bearbeiten">
+          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </a>
+      {% endif %}
+      <a class="btn-xs" data-toggle="modal" data-target="#delCmt{{ comment.0.id }}Modal" id="delCmt{{ comment.0.id }}Button" title="Kommentar l&ouml;schen">
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+      </a>
+    </div>
+  {% endif %}
+  </div>
+{% endif %}
+
+{% if comment.1 %}
+  <div class="children"> 
+  {% for comment in comment.1 %}
+  	{% include "comments.html" with comment=comment %}
+  {% endfor %}
+  </div>
+{% endif %}
+
+{% if comment.0.user == user %}
+<div class="modal fade bs-example-modal-sm" id="delCmt{{ comment.0.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delCmt{{ comment.0.id }}ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Kommentar vom {{ comment.0.date|date:"j. F Y, \u\m H:i \U\h\r" }} wirklich l&ouml;schen?</h4>
+      </div>
+      <div class="modal-body"> <em>{{ comment.0.text|safe }}</em> </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+        {% if active_page == 'profile' %}
+        <form action="{% url 'twittur:'|add:active_page user=user %}" class="pull-right" method="POST">
+        {% elif active_page == 'message' %}
+        <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
+        {% else %}
+        <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
+          {% endif %}
+          {% csrf_token %}
+          <input type="hidden" name="delMessage" value="{{ comment.0.id }}">
+          <button type="submit" class="btn btn-primary">Kommentar l&ouml;schen</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+</div>

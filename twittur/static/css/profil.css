@@ -1,12 +1,18 @@
 /* Small devices (tablets, 768px and up) */
 
 .profil {
+	position: relative;
   padding: 20px;
   border: 1px solid #E4E8EA;
   border-radius: 5px 5px 0px 0px;
   background: #fff; }
   .profil:hover {
     border-color: #d3d3d3;
+	}
+	.profilEdit {
+		position: absolute;
+		right: 20px;
+		z-index: 99;
 	}
 	.profilMeta div {
 		margin-top: 10px; 

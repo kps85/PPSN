@@ -1,4 +1,4 @@
-import copy, datetime, string, random, re
+import re
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
@@ -7,13 +7,12 @@ from django.core.mail import send_mail
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.utils import timezone
 from itertools import chain
 from operator import attrgetter
 
 from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
 from .forms import UserForm, UserDataForm #,CommentForm
-from .functions import dbm_to_m, editMessage, msgDialog #, commentMessage
+from .functions import editMessage, getMessages, msgDialog, pw_generator #, commentMessage
 
 
 # startpage
@@ -23,60 +22,64 @@ def index(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    has_msg, success_msg = None, None
+    has_msg, success_msg, list_end = False, None, False
 
     current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
-    curUser = User.objects.get(username__exact=request.user)
-    follow_list = curUser.userprofile.follow.all()
-
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
     #    atTag = '@' + request.user.username + ' '
 
     msgForm = msgDialog(request)
     #cmForm = commentMessage(request)
+
     if request.method == 'POST':
         success_msg = editMessage(request)
+    elif request.method == 'GET' and 'last' in request.GET:
+        end, isEnd = 0, False
+        last = Message.objects.get(id=request.GET.get('last'))
+        messages = Message.objects.filter(
+            Q(comment = None) & (Q(attags = None) | Q(attags = request.user.id))
+        ).order_by('-date')
+        for item in messages:
+            if item == last:
+                break
+            end = end + 1
+        end = end + 6
 
-    # dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-    #        .filter(Q(user__exact=request.user) | Q(text__contains=atTag)).order_by('-date')
-    dbmessage_list = Message.objects.all().filter((Q(user__exact=current_user)
-                                                  | Q(user__exact=curUser.userprofile.follow.all()))
-                                                  & Q(comment = None)
-                                                  ).order_by('-date')
-    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
-                                  timezone.get_current_timezone())
+        # Messages
+        messages = getMessages('index', current_user, end)
+        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
 
-    # Group
-    group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+        if end > len(messages['message_list']):
+            list_end = True
+
+        context = {'active_page': 'index', 'user': current_user, 'list_end': list_end,
+                   'message_list': message_list, 'msgForm': msgForm}
+        return render(request, 'message_box_reload.html', context)
 
     # Messages
-    message_list = []
-    comment_list = []
-    for message in dbmessage_list:
-        if message.date > curDate:
-            message.editable = True
-        copy_message = copy.copy(message)
-        comments = Message.objects.filter(comment=message)
-        c = []
-        if comments:
-            for co in comments:
-                c.append(dbm_to_m(co))
-        comment_list.append(c)
-        message_list.append(dbm_to_m(copy_message))
-
-    if len(message_list) > 0:
+    messages = getMessages('index', current_user, 5)
+    if 'has_msg' in messages:
         has_msg = True
-    message_list = zip(message_list, dbmessage_list, comment_list)
+    message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
 
     # Notification
     newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
     newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
     new = newM + newF
+
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
-               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,  'group_list': group_list,
-               'new': new, 'success_msg': success_msg, 'has_msg': has_msg, 'hot_list': hot_list, 'follow_list': follow_list}
+               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,
+               'new': new, 'success_msg': success_msg, 'has_msg': has_msg,
+               'group_sb_list': group_sb_list, 'hot_list': hot_list, 'follow_list': follow_list}
     return render(request, 'index.html', context)
 
 
@@ -253,34 +256,57 @@ def profile(request, user):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    has_msg, error_msg, success_msg = None, {}, None
-    # this is the login user
-    cuUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = cuUser.follow.all()
+    has_msg, error_msg, success_msg, end, list_end = None, {}, None, 0, False
 
-    # Group
-    group_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
+
+    if request.method == 'GET' and 'last' in request.GET:
+        current_user = User.objects.get(username__exact=user)
+        last = Message.objects.get(id=request.GET.get('last'))
+        messages = Message.objects.filter(comment=None).order_by('-date')
+        for item in messages:
+            if item == last:
+                break
+            end += + 1
+        end += 6
+
+        # Messages
+        msgForm = msgDialog(request)
+        messages = getMessages('profile', current_user, end)
+        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+
+        if end > len(messages['message_list']):
+            list_end = True
+
+        context = {'active_page': 'profile', 'user': request.user, 'list_end': list_end,
+                   'message_list': message_list, 'msgForm': msgForm}
+        return render(request, 'message_box_reload.html', context)
 
     try:
-        curUser = User.objects.get(username=user)  # this is the user displayed in html
-        print (curUser.username)
-        curUserProfile = curUser.userprofile
+        newUser = User.objects.get(username=user)  # this is the user displayed in html
 
         # follow
         if request.method == "GET" and 'follow' in request.GET:
-            if curUser in cuUser.follow.all():
+            if newUser in follow_list:
                 print("remove")
                 follow = NotificationF.objects.get(Q(me__exact=request.user.userprofile) & Q(you__exact=curUser))
                 follow.delete()
                 success_msg = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
             else:
                 print("add")
-                cuUser.save()
-                notification = NotificationF(me=request.user.userprofile, you=curUser, read=False)
+                curUser.save()
+                notification = NotificationF(me=request.user.userprofile, you=newUser, read=False)
                 notification.save()
                 success_msg = 'Du folgst ' + user.upper() + ' jetzt.'
 
-        if curUser in follow_list:
+        if newUser in follow_list:
             follow_text = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
         else:
             follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
@@ -288,36 +314,28 @@ def profile(request, user):
         if request.method == 'POST':
             success_msg = editMessage(request)
 
+        # Messages
+        messages = getMessages('profile', newUser, 5)
+        if 'has_msg' in messages:
+            has_msg = messages['has_msg']
+        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
 
-        dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-            .filter(Q(user__exact=curUser) | Q(attags__username__exact=curUser.username)
-                    ).order_by('-date').distinct()
+        context = {
+            'active_page': 'profile',
+            'nav': Nav.nav,
+            'curUser': newUser,
+            'curUserProfile': newUser.userprofile,
+            'profileUser': user,
+            'message_list': message_list,
+            'msgForm': msgDialog(request),
+            'has_msg': has_msg,
+            'success_msg': success_msg,
+            'hot_list': hot_list,
+            'follow_list': follow_list,
+            'follow_text': follow_text,
+            'group_sb_list': group_sb_list
+        }
 
-        curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
-                                      timezone.get_current_timezone())
-        message_list = []
-        for message in dbmessage_list:
-            if message.date > curDate:
-                message.editable = True
-            copy_message = copy.copy(message)
-            message_list.append(dbm_to_m(copy_message))
-        if len(message_list) > 0:
-            has_msg = True
-        message_list = zip(message_list, dbmessage_list)
-
-        context = {'follow_list': follow_list,
-                   'follow_text': follow_text,
-                   'curUser': curUser,
-                   'curUserProfile': curUserProfile,
-                   'active_page': 'profile',
-                   'profileUser': user,
-                   'nav': Nav.nav,
-                   'message_list': message_list,
-                   'msgForm': msgDialog(request),
-                   'has_msg': has_msg,
-                   'success_msg': success_msg,
-                   'group_list': group_list
-                   }
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
         context = {
@@ -325,8 +343,9 @@ def profile(request, user):
             'nav': Nav.nav,
             'curUser': None,
             'error_msg': error_msg,
+            'hot_list': hot_list,
             'follow_list': follow_list,
-            'group_list': group_list,
+            'group_sb_list': group_sb_list
         }
     return render(request, 'profile.html', context)
 
@@ -398,22 +417,48 @@ def settings(request):
     return render(request, 'settings.html', context)
 
 
-'''
-def follow(request, user):
+def showMessage(request, msg):
 
-    if request.method == 'GET':
-        print("hello")
-        print(request)
+    success_msg, error_msg, user, has_msg = None, {}, request.user, False
 
-    profile(request, user)
-    return HttpResponseRedirect('')
-    '''
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
 
-def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
-    return ''.join(random.choice(chars) for _ in range(size))
+    msgForm = msgDialog(request)
+    if request.method == 'POST':
+        success_msg = editMessage(request)
+
+    # Messages
+    messages = getMessages(msg, user, None)
+    if 'has_msg' in messages:
+        has_msg = messages['has_msg']
+    message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+
+    # return relevant information to render message.html
+    context = {
+        'active_page': 'message',
+        'msg_id': msg,
+        'nav': Nav.nav,
+        'hot_list': hot_list,
+        'follow_list': follow_list,
+        'group_sb_list': group_sb_list,
+        'msgForm': msgForm,
+        'user': request.user,
+        'success_msg': success_msg,
+        'error_msg': error_msg,
+        'message_list': message_list,
+        'has_msg': has_msg
+    }
+    return render(request, 'message.html', context)
+
 
 def notification(request):
-
     # for context
     notificationM_list = NotificationM.objects.all().filter(user=request.user)#.order_by('-message__date')
     notificationF_list = NotificationF.objects.all().filter(you=request.user)#.order_by('-message__date')
@@ -434,11 +479,24 @@ def notification(request):
     newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
     new = newF + newM
 
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
+
     context = {
+        'active_page': 'notification',
         'nav': Nav.nav,
         'user': request.user,
         'notification_list': notification_list,
-        'new': new
+        'new': new,
+        'hot_list': hot_list,
+        'follow_list': follow_list,
+        'group_sb_list': group_sb_list
     }
 
     # update -> set all notification to true

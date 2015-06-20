@@ -1,24 +1,57 @@
 import copy
 
+from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m
-from .models import Message, Nav, Hashtag
+from .functions import dbm_to_m, getMessages
+from .models import GroupProfile, Hashtag, Message, Nav, UserProfile
 from .views import msgDialog
-from django.contrib.auth.models import User
 
 
 # search input
 def search(request):
 
-    search_input, search_error, msgForm = None, {}, msgDialog(request)
+    search_input, search_error, msgForm, end, list_end = None, {}, msgDialog(request), 5, False
+
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
     hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                       .order_by('-hashtag_count')[:5]
-    follow_list = request.user.userprofile.follow.all()
+                   .order_by('-hashtag_count')[:5]
 
     if request.method == 'GET':
         search_input = request.GET['search_input'].strip().split(" ")
+
+    if request.method == 'GET' and 'last' in request.GET:
+        last = Message.objects.get(id=request.GET.get('last'))
+
+        for term in search_input:
+            if term[:1] == "#" or term[:1] == "@":
+                term = term[1:]
+            messages = Message.objects.filter(
+                Q(text__contains=term) | Q(user__username__contains=term)
+            ).order_by('-date')
+            for item in messages:
+                if item == last:
+                    break
+                end += + 1
+        end += 6
+
+        # Messages
+        msgForm = msgDialog(request)
+        messages = getMessages('search', search_input, end)
+        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+
+        if end > len(messages['message_list']):
+            list_end = True
+
+        context = {'active_page': 'search', 'user': request.user, 'list_end': list_end,
+                   'search_input': ' '.join(search_input), 'message_list': message_list, 'msgForm': msgForm}
+        return render(request, 'message_box_reload.html', context)
         
     if search_input is None or search_input[0] == "":
         search_error["no_term"] = "Kein Suchbegriff eingegeben!"
@@ -26,7 +59,10 @@ def search(request):
             'active_page': 'index',
             'nav': Nav.nav,
             'msgForm': msgForm,
-            'error_msg': search_error
+            'error_msg': search_error,
+            'hot_list': hot_list,
+            'follow_list': follow_list,
+            'group_sb_list': group_sb_list,
         }
         return render(request, 'index.html', context_error)
 
@@ -35,7 +71,7 @@ def search(request):
     # the reason behind this is we save username instead of @username, so if someone is looking for
     # @kps for example, we wont find him, because the database don't know him
 
-    message_list, user_list, hashtag_list = [], [], []
+    user_list, group_list, hashtag_list, message_list = [], [], [], []
 
     for term in search_input:
         # special case: flag for @
@@ -61,6 +97,10 @@ def search(request):
                                             | Q(first_name__contains=term)
                                             | Q(last_name__contains=term)))
 
+        group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term) | Q(desc__contains=term))
+        if len(group) > 0:
+            group_list.append(group)
+
         hashtag_list.append(Hashtag.objects.all().filter(Q(name__contains=term)))
 
         # flag was set -> back to normal input
@@ -77,12 +117,16 @@ def search(request):
         'msgForm': msgForm,
         'hot_list': hot_list,
         'follow_list': follow_list,
+        'group_sb_list': group_sb_list,
         'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
+        'search_input': ' '.join(search_input),
         'user_list': user_list,
         'user_list_length': len(user_list),
+        'group_list': group_list,
+        'group_list_length': len(group_list),
         'hashtag_list': hashtag_list,
         'hashtag_list_length': len(hashtag_list),
-        'message_list': message_list,
+        'message_list': message_list[:end],
         'message_list_length': len(message_list),
     }
     return render(request, 'search.html', context)
@@ -90,18 +134,42 @@ def search(request):
 
 # click on hashtaglinks will redirect to this function.
 def hashtag(request, text):
-    msgForm = msgDialog(request)
-    follow_list = request.user.userprofile.follow.all()
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                       .order_by('-hashtag_count')[:5]
+    msgForm, end = msgDialog(request), 5
 
-    # filter all messages contain #
-    dbmessage_list = Message.objects.all().filter(hashtags__name=text).order_by('-date')
-    message_list = []
-    for message in dbmessage_list:
-        copy_message = copy.copy(message)
-        message_list.append(dbm_to_m(copy_message))
-    message_list = zip(message_list, dbmessage_list)
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
+
+    if request.method == 'GET' and 'last' in request.GET:
+        last = Message.objects.get(id=request.GET.get('last'))
+        messages = Message.objects.filter(hashtags__name=text).order_by('-date')
+        for item in messages:
+            if item == last:
+                break
+            end += + 1
+        end += 6
+
+        # Messages
+        msgForm = msgDialog(request)
+        messages = getMessages('hashtag', text, end)
+        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+
+        if end > len(messages['message_list']):
+            list_end = True
+
+        context = {'active_page': 'hashtag', 'user': request.user, 'list_end': list_end,
+                   'is_hash': text, 'message_list': message_list, 'msgForm': msgForm}
+        return render(request, 'message_box_reload.html', context)
+
+    # Messages
+    msgForm = msgDialog(request)
+    messages = getMessages('hashtag', text, end)
+    message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
 
     context = {
         'active_page': 'index',
@@ -109,9 +177,11 @@ def hashtag(request, text):
         'msgForm': msgForm,
         'hot_list': hot_list,
         'follow_list': follow_list,
+        'group_sb_list': group_sb_list,
         'search': 'Beitr&auml;ge zum Thema "#' + text + '"',
         'message_list': message_list,
-        'is_hash': True,
+        'hash_list_length': len(messages['dbmessage_list']),
+        'is_hash': text,
     }
     return render(request, 'search.html', context)
 

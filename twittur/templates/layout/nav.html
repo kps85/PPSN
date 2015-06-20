@@ -1,10 +1,15 @@
 {% for i in nav %}
 	{% if i.name == 'profile' %}
   	<a class="{{ i.name }}{% if active_page == i.name and user.username == profileUser %} active{% endif %}" href="{% url 'twittur:'|add:i.name user=user.username %}">
+	{% elif i.name == 'notification' %}
+    <a href="{% url 'twittur:notification' %}" class="notificationLink {% if active_page == i.name %}active{% endif %}">
+      {% if new > 0 %}<span class="badge">{{ new }}</span>{% endif %}
 	{% else %}
   	<a class="{{ i.name }}{% if active_page == i.name %} active{% endif %}" href="{% url 'twittur:'|add:i.name %}">
-  	{% endif %}
-			{% if i.name == 'logout' %}<span class="glyphicon glyphicon-off" aria-hidden="true"></span><br />{% endif %}
+  {% endif %}
+			{% if i.name == 'logout' %}<span class="glyphicon glyphicon-off" aria-hidden="true"></span><br />
+      {% elif i.name == 'notification' %}<span class="glyphicon glyphicon-bell" aria-hidden="true"></span><br />
+      {% endif %}
     	{{ i.title }}
     </a>
 {% endfor %}

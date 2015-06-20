@@ -18,7 +18,7 @@
     </a>
     <a href="#searchGroup" class="col-xs-3 btn btn-default searchResultButton searchGroup" data-hint="{{ group_list_length }}" title="Gruppen-Ergebnisse">
       <span class="glyphicon glyphicon-briefcase"></span>&nbsp; {{ group_list_length }}
-      <span class="hidden-xs">{% if group_list_length > 1 or hashtag_list_length = 0 %}Gruppen{% else %}Gruppe{% endif %}</span>
+      <span class="hidden-xs">{% if group_list_length > 1 or group_list_length = 0 %}Gruppen{% else %}Gruppe{% endif %}</span>
     </a>
     <a href="#searchHash" class="col-xs-3 btn btn-default searchResultButton searchHash" data-hint="{{ hashtag_list_length }}" title="Thema-Ergebnisse">
       <span class="glyphicon glyphicon-tags"></span>&nbsp; {{ hashtag_list_length }}
@@ -30,11 +30,12 @@
     </a>
   </div>
   {% endif %}
-  {% if user_list %}
+  
+  {% if user_list_length > 0 %}
     <div class="container-fluid searchResultBox searchUser" id="searchUser">
     <h4> Folgende Benutzer wurden gefunden:</h4>
   	{% for user in user_list %}
-      <a href="/twittur/profile/{{ user.username }}" >
+      <a href="{% url 'twittur:profile' user=user.username %}" >
       <p class="search_user_result pull-left text-center">
         <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/><br />
         {{ user.first_name }} {{ user.last_name }}<br />
@@ -42,9 +43,35 @@
       </p>
       </a>
     {% endfor %}
-    </div>
+    </div>  
+  {% else %}
+    <div class="container-fluid searchResultBox searchUser text-center" id="searchUser">
+      <br />
+      <em>Keine Benutzer zum Anzeigen gefunden!</em>
+    </div> 
   {% endif  %}
-  {% if hashtag_list %}
+  
+  {% if group_list_length > 0 %}
+    <div class="container-fluid searchResultBox searchGroup" id="searchGroup">
+    <h4> Folgende Gruppen wurden gefunden:</h4>
+  	{% for group in group_list %}
+      <a href="{% url 'twittur:group' groupshort=group.0.short %}" >
+      <p class="search_group_result pull-left text-center">
+        <img src="{{ group.0.picture.url }}" class="profilbild-s img-thumbnail"/><br />
+        {{ group.0.name }}<br />
+        (&{{ group.0.short }})
+      </p>
+      </a>
+    {% endfor %}
+    </div>  
+  {% else %}
+    <div class="container-fluid searchResultBox searchGroup text-center" id="searchGroup">
+      <br />
+      <em>Keine Gruppen zum Anzeigen gefunden!</em>
+    </div> 
+  {% endif  %}
+  
+  {% if hashtag_list_length > 0 %}
     <div class="container-fluid searchResultBox searchHash" id="searchHash">
     <h4> Folgende Themen wurden gefunden:</h4>
   	{% for hashtag in hashtag_list %}
@@ -54,19 +81,43 @@
       </p>
       </a>
     {% endfor %}
-    </div>
+    </div>  
+  {% else %}
+    <div class="container-fluid searchResultBox searchHash text-center" id="searchHash">
+      <br />
+      <em>Keine Themen zum Anzeigen gefunden!</em>
+    </div>    
   {% endif %}
-  {% if message_list  %}
+  
+  {% if message_list_length > 0 or hash_list_length > 0 %}
     <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
     {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
     {% for message, dbmessage in message_list %}
       {% include "message_box.html" with message=message page=active_page user=user  %}
     {% endfor %}
     </div>
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center">
+      {% if is_hash %}
+      <button class="load_more btn btn-default" data-hint="{% url 'twittur:hashtag' text=is_hash %}" title="Mehr Beitr&auml;ge laden">
+      {% else %}
+      <input class="load_more_search_input" data-hint="{{ search_input }}" type="hidden" />
+      <button class="load_more btn btn-default" data-hint="{% url 'twittur:search' %}" title="Mehr Beitr&auml;ge laden">
+      {% endif %}
+        <span class="glyphicon glyphicon-refresh"></span>
+      </button>
+    </div>
   {% else %}
-  <div class="container-fluid text-center">
-  	<br />
-  	<em>Keine Nachrichten zum Anzeigen gefunden!</em>
-  </div>
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center" id="searchMsg">
+      <br />
+      <em>Keine Nachrichten zum Anzeigen gefunden!</em>
+    </div>
   {% endif %}
+  
+  {% if not user_list and not group_list and not hashtag_list and not message_list %}
+    <div class="container-fluid searchResultBox active text-center">
+      <br />
+      <em>Keine Suchergebnisse zum Anzeigen gefunden!</em>
+    </div>  
+  {% endif %}
+  
 {% endblock %}

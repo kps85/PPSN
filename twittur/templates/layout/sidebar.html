@@ -4,26 +4,14 @@
     <ul>
       <h3>{{ group.short }}-Teilnehmer</h3>
       {% for member in member_list %}
-        <li>
-          <a class="ullink" href="{% url 'twittur:profile' user=member.username %}">@{{ member.username }}
-          {% if member == group.admin %}[admin]{% endif %}</a>
+        <li class="clearfix">
+          <a class="ullink pull-left memberLink" href="{% url 'twittur:profile' user=member.username %}">@{{ member.username }}</a>
+          {% if member == group.admin %}<span class="pull-right">[admin]</span>{% endif %}
       {% endfor %}
     </ul>
   {% endif %}
 {% endif %}
-{% if active_page == 'index' or active_page == 'profile' %}
-
-  <ul class="groups">
-    {% if group_list %}
-      <h3>Meine Gruppen</h3>
-      {% for group in group_list %}
-        <li class="{% if false %}active{% endif %}">
-          <a class="ullink {{ group.short }}" href="{% url 'twittur:group' group.short %}">&{{ group.short }}</a>
-      {% endfor %}
-      {% endif %}
-      <a href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen</a>
-    </ul>
-
+{% if active_page in 'index, profile, notification, message' %}
 
   {% if hot_list %}
     <ul class="hashs">
@@ -44,16 +32,16 @@
       <h3>Forever alone</h3>
     {% endif %}
   </ul>
-
-
-  <ul class="following">
-
-    <li><a href="{% url 'twittur:notification' %}">Mitteilungen {% if new > 0 %}({{ new }}){% endif %}</a></li>
-
+  <ul class="groups">
+    {% if group_sb_list %}
+      <h3>Meine Gruppen</h3>
+      {% for group in group_sb_list %}
+        <li class="{% if false %}active{% endif %}">
+        <a class="ullink {{ group.short }}" href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>
+      {% endfor %}
+    {% endif %}
+    <a href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen</a>
   </ul>
-
-
-
 
 {% elif active_page == 'info' %}  
   <ul>

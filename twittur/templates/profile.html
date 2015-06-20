@@ -13,6 +13,13 @@
 
   <div class="container-fluid">
     <div class="profil clearfix">
+    	{% if group %}
+    	<a href="{% url 'twittur:settings' %}" class="profilEdit" title="Gruppe bearbeiten">
+      {% else %}
+    	<a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
+      {% endif %}
+      	<span class="glyphicon glyphicon-cog"></span>
+      </a>
       <div class="col-xs-12 col-sm-4 text-center">
       	{% if group %}
           <img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/>
@@ -25,7 +32,7 @@
           <h3 class="profilAuthor">
           	{% if group %}{{ group.name }}{% else %}{{ curUser.first_name }} {{ curUser.last_name }}{% endif %}
           </h3>
-          <h5 class="profilNick">
+          <h5 class="profilNick" data-hint="{% if group %}{{ group.short }}{% else %}{{ curUser.username }}{% endif %}">
           	{% if group %}&{{ group.short }}{% else %}@{{ curUser.username }}{% endif %}
           </h5>          
           <div class="profilAcaDis" title="Studiengang">
@@ -43,7 +50,7 @@
             {{ curUserProfile.location }}
           </div>
           {% endif %}
-          <div class="profilJoined" title="{% if group %}registriert seit{% else %}erstellt am{% endif %}">
+          <div class="profilJoined" title="{% if group %}erstellt am{% else %}registriert seit{% endif %}">
           	<span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
             {% if group %}{{ group.date }}{% else %}{{ curUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}{% endif %}
           </div>
@@ -91,11 +98,22 @@
     {% endif %}
   </div>
   <br />
-  <div class="container-fluid">
+  <div class="profileMessages container-fluid">
     {% if has_msg %}
-      {% for message, dbmessage in message_list %}
-        {% include "message_box.html" with message=message page=active_page user=user %}
+      {% for message, dbmessage, comments in message_list %}
+        {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments page=active_page user=user  %}
       {% endfor %}
+      </div>
+      <div class="text-center">
+      	{% if group %}
+          <button class="load_more btn btn-default" data-hint="{% url 'twittur:group' groupshort=group.short %}" title="Mehr Beitr&auml;ge laden">
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+        {% else %}
+          <button class="load_more btn btn-default" data-hint="{% url 'twittur:profile' user=curUser %}" title="Mehr Beitr&auml;ge laden">
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+        {% endif %}
     {% else %}
       <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
     {% endif %}
