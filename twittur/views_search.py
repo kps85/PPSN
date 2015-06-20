@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, getMessages
+from .functions import dbm_to_m, getMessages, getNotificationCount
 from .models import GroupProfile, Hashtag, Message, Nav, UserProfile
 from .views import msgDialog
 
@@ -22,6 +22,9 @@ def search(request):
     # Beliebte Themen
     hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5]
+    # Notification
+    new = getNotificationCount(request.user)
+
 
     if request.method == 'GET':
         search_input = request.GET['search_input'].strip().split(" ")
@@ -58,6 +61,7 @@ def search(request):
         context_error = {
             'active_page': 'index',
             'nav': Nav.nav,
+            'new': new,
             'msgForm': msgForm,
             'error_msg': search_error,
             'hot_list': hot_list,
@@ -114,6 +118,7 @@ def search(request):
     context = {
         'active_page': 'index',
         'nav': Nav.nav,
+        'new': new,
         'msgForm': msgForm,
         'hot_list': hot_list,
         'follow_list': follow_list,
@@ -136,6 +141,8 @@ def search(request):
 def hashtag(request, text):
     msgForm, end = msgDialog(request), 5
 
+    # Notification
+    new = getNotificationCount(request.user)
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
     follow_list = curUser.follow.all()
@@ -174,6 +181,7 @@ def hashtag(request, text):
     context = {
         'active_page': 'index',
         'nav': Nav.nav,
+        'new': new,
         'msgForm': msgForm,
         'hot_list': hot_list,
         'follow_list': follow_list,

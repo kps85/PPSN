@@ -12,7 +12,7 @@ from operator import attrgetter
 
 from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
 from .forms import UserForm, UserDataForm #,CommentForm
-from .functions import editMessage, getMessages, msgDialog, pw_generator #, commentMessage
+from .functions import editMessage, getMessages, msgDialog, pw_generator, getNotificationCount #, commentMessage
 
 
 # startpage
@@ -42,8 +42,8 @@ def index(request):
         for item in messages:
             if item == last:
                 break
-            end = end + 1
-        end = end + 6
+            end += 1
+        end += 6
 
         # Messages
         messages = getMessages('index', current_user, end)
@@ -72,9 +72,7 @@ def index(request):
                    .order_by('-hashtag_count')[:5]
 
     # Notification
-    newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
-    newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
-    new = newM + newF
+    new = getNotificationCount(request.user)
 
     context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
                'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,
@@ -239,7 +237,7 @@ def login(request):
         auth.login(request, user)
         return HttpResponseRedirect('/twittur/')
 
-    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
+    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list, 'active_page': 'ftu'}
     return render(request, 'ftu.html', context)
 
 
@@ -266,6 +264,9 @@ def profile(request, user):
     # Beliebte Themen
     hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5]
+    # Notification
+    new = getNotificationCount(request.user)
+
 
     if request.method == 'GET' and 'last' in request.GET:
         current_user = User.objects.get(username__exact=user)
@@ -296,7 +297,7 @@ def profile(request, user):
         if request.method == "GET" and 'follow' in request.GET:
             if newUser in follow_list:
                 print("remove")
-                follow = NotificationF.objects.get(Q(me__exact=request.user.userprofile) & Q(you__exact=curUser))
+                follow = NotificationF.objects.get(Q(me__exact=request.user.userprofile) & Q(you__exact=newUser))
                 follow.delete()
                 success_msg = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
             else:
@@ -323,6 +324,7 @@ def profile(request, user):
         context = {
             'active_page': 'profile',
             'nav': Nav.nav,
+            'new': new,
             'curUser': newUser,
             'curUserProfile': newUser.userprofile,
             'profileUser': user,
@@ -402,11 +404,14 @@ def settings(request):
     # initialize UserForm and UserDataForm with current users information
     userForm = UserForm(instance=curUser)
     userDataForm = UserDataForm(instance=curUserProfile)
+    # Notification
+    new = getNotificationCount(request.user)
 
     # return relevant information to render settings.html
     context = {
         'active_page': 'settings',
         'nav': Nav.nav,
+        'new': new,
         'msgForm': msgDialog(request),
         'success_msg': success_msg,
         'error_msg': error_msg,
@@ -429,6 +434,9 @@ def showMessage(request, msg):
     # Beliebte Themen
     hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5]
+    # Notification
+    new = getNotificationCount(request.user)
+
 
     msgForm = msgDialog(request)
     if request.method == 'POST':
@@ -445,6 +453,7 @@ def showMessage(request, msg):
         'active_page': 'message',
         'msg_id': msg,
         'nav': Nav.nav,
+        'new': new,
         'hot_list': hot_list,
         'follow_list': follow_list,
         'group_sb_list': group_sb_list,
@@ -462,10 +471,15 @@ def notification(request):
     # for context
     notificationM_list = NotificationM.objects.all().filter(user=request.user)#.order_by('-message__date')
     notificationF_list = NotificationF.objects.all().filter(you=request.user)#.order_by('-message__date')
+    notificationC_list = Message.objects.all().filter(comment__user=request.user).exclude(user=request.user)
+    print(notificationF_list.all())
+    print(notificationM_list.all())
+    print(notificationC_list.all())
 
-    notification_list = sorted(chain(notificationM_list, notificationF_list), key=attrgetter('date') ,
+    notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list), key=attrgetter('date') ,
     reverse=True)
     boolean_list = []
+
 
     # saving boolean extra, because it will deleted by next for loop
     for no in notification_list:
@@ -475,10 +489,13 @@ def notification(request):
             boolean_list.append('True')
 
     notification_list = zip(notification_list,boolean_list)
-    newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
-    newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
-    new = newF + newM
+    #newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
+    #newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
+    #newC = Message.objects.all().filter(comment__user=request.user).count()
+    #new = newF + newM + newC
 
+    new = getNotificationCount(request.user)
+    print(new)
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
     follow_list = curUser.follow.all()
@@ -506,5 +523,7 @@ def notification(request):
     for n in NotificationF.objects.filter(Q(read=False) & Q(you=request.user)):
         n.read = True
         n.save()
-
+    for n in Message.objects.all().filter(Q(comment__user=request.user) & Q(read=False)).exclude(user=request.user):
+        n.read = True
+        n.save()
     return render(request, 'notification.html', context)

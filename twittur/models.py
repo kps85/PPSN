@@ -5,6 +5,7 @@ from datetime import date
 from datetime import datetime
 
 
+
 from django.contrib.auth.hashers import (
     check_password, is_password_usable, make_password,
 )
@@ -27,6 +28,10 @@ class Message(models.Model):
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
     attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='NotificationM')
     comment = models.ForeignKey('self', related_name='comments', blank=True, null=True)
+    read = models.BooleanField(default=False)
+
+    def get_model_name(self):
+                return self.__class__.__name__
 
     def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
@@ -63,7 +68,7 @@ class UserProfile(models.Model):
 class NotificationF(models.Model):
     me = models.ForeignKey(UserProfile, related_name='me')
     you = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='you')
-    read = models.BooleanField(default=True)
+    read = models.BooleanField(default=False)
     date = models.DateTimeField(default=datetime.now, blank=True)
     def __str__(self):
         return self.me.userprofile.username + ' to ' + self.you.username
@@ -74,7 +79,7 @@ class NotificationF(models.Model):
 class NotificationM(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
     message = models.ForeignKey(Message, related_name='message')
-    read = models.BooleanField(default=True)
+    read = models.BooleanField(default=False)
     date = models.DateTimeField(default=datetime.now, blank=True)
     def __str__(self):
         return self.user.username + ' mentioned in message: "' + self.message.text + '".'

@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
 
+from .functions import getNotificationCount
 from .models import Nav, FAQ
 from .forms import FAQForm
 from .views import msgDialog
@@ -18,6 +19,10 @@ def info(request):
     print("hello")
     projektTeam = User.objects.filter(is_superuser=True).order_by('last_name')
 
+    # Notification
+    new = getNotificationCount(request.user)
+
+
     # check if user is logged in
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
@@ -28,6 +33,7 @@ def info(request):
     context = {
         'active_page': 'info',
         'nav': Nav.nav,
+        'new': new,
         'msgForm': msgDialog(request),
         'team': projektTeam
     }
@@ -46,6 +52,10 @@ def faq(request):
 
     # initialize return information
     success_msg, error_msg = None, None
+
+    # Notification
+    new = getNotificationCount(request.user)
+
 
     # adding a FAQ entry
     # form: FAQform from forms.py
@@ -130,11 +140,14 @@ def support(request):
         send_mail(subject, mark_safe(message), sender.email, recipient)
         success_msg = "Ihre Nachricht wurde erfolgreich abgeschickt!"
 
+    # Notification
+    new = getNotificationCount(request.user)
 
     # return relevant information to render info_faq.html
     context = {
         'active_page': 'info',
         'nav': Nav.nav,
+        'new': new,
         'msgForm': msgDialog(request),
         'curUser': request.user,
         'team_list': team_list,
