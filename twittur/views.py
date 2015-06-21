@@ -495,9 +495,6 @@ def notification(request):
     notificationM_list = NotificationM.objects.all().filter(user=request.user)#.order_by('-message__date')
     notificationF_list = NotificationF.objects.all().filter(you=request.user)#.order_by('-message__date')
     notificationC_list = Message.objects.all().filter(comment__user=request.user).exclude(user=request.user)
-    print(notificationF_list.all())
-    print(notificationM_list.all())
-    print(notificationC_list.all())
 
     notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list), key=attrgetter('date') ,
     reverse=True)
@@ -518,7 +515,7 @@ def notification(request):
     #new = newF + newM + newC
 
     new = getNotificationCount(request.user)
-    print(new)
+
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
     follow_list = curUser.follow.all()

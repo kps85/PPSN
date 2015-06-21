@@ -95,6 +95,7 @@ class NotificationF(models.Model):
     def get_model_name(self):
                 return self.__class__.__name__
 
+
 class NotificationM(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
     message = models.ForeignKey(Message, related_name='message')

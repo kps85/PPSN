@@ -38,7 +38,7 @@
 
 {% if active_page != 'ftu' %}
   <div class="cmtFoot clearfix">
-    <a class="reply_link" data-hint="{{ comment.0.id }} {{ comment.0.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
+    <a class="reply_link" data-hint="{{ comment.0.id }} {{ comment.0.user.username }}" data-toggle="modal" data-target="#newComment{{ comment.0.id }}" title="Neue Antwort verfassen">
       <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
     </a>
   {% if comment.0.user == user %}
@@ -65,7 +65,7 @@
 {% endif %}
 
 {% if comment.0.user == user %}
-<div class="modal fade bs-example-modal-sm" id="delCmt{{ comment.0.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delCmt{{ comment.0.id }}ModalLabel" aria-hidden="true">
+<div class="modal fade" id="delCmt{{ comment.0.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delCmt{{ comment.0.id }}ModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -91,4 +91,34 @@
   </div>
 </div>
 {% endif %}
+  
+  <div class="modal fade newComment" id="newComment{{ comment.0.id }}" tabindex="-1" role="dialog" aria-labelledby="newComment{{ comment.0.id }}Label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{% url 'twittur:message' msg=comment.0.id %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input name="cmtDialog" type="hidden" value="true" />
+          <input id="id_cmtToId" name="cmtToId" type="hidden" value="{{ comment.0.id }}" />
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="newCommentTitle"></h4>
+          </div>
+          <div class="modal-body">{{ msgForm.text }}</div>
+          <div class="modal-footer">
+            <div class="cmtDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
+  
+            <input type="hidden" name="codename" value="comment" />
+            <input type="hidden" name="message" value="{{ message.id }}" />
+            {{ msgForm.user }}
+            {{ msgForm.date }}
+  
+            <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

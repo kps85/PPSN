@@ -180,7 +180,7 @@ function initInputValidation() {
 		validateFtu();
 	});
 
-	$('#newMessage, #newComment').on("keyup", function(e) {
+	$('#newMessage, .newComment').on("keyup", function(e) {
 		// Ueberprueft ob Textfeld leer ist oder nur Leerzeichen enthaelt
 		if($(this).find("textarea").val().replace( /\s/g, "") != '') {
 			$(this).find('button[type=submit]').prop("disabled", false);
@@ -275,10 +275,10 @@ function initVarious() {
 		var symbol = ($(this).is(".postToUser")) ? "@" : "&";
 		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {
 			var val = $("#id_text").val().replace(symbol + target + " ", '');
-			$("#id_text").val(symbol + target + " " + val);			
+			$("#newMessage").find("textarea").val(symbol + target + " " + val);			
 		}
     setTimeout(function() {
-			$("#id_text").focus();
+			$("#newMessage").find("textarea").focus();
 		}, 500);
   });
 	$(".showMsgEdit, .showCmtEdit").click(function(e) {
@@ -381,8 +381,7 @@ function initVarious() {
 	  
 	$(".reply_link").click(function(e) {
     var data = $(this).attr("data-hint").split(" ");
-	  $("#newCommentTitle").html("Antwort an " + data[1] + " verfassen"); 
-	  $("#id_cmtToId").val(data[0]);  
+	  $("#newComment"+data[0]).find(".modal-title").html("Antwort an " + data[1] + " verfassen");
   });
 	
 	$(".load_more").click(function(e) {

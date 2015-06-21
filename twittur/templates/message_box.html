@@ -71,7 +71,7 @@
         {{ comCount }}
       </a>
     {% else %}    
-      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
+      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment{{ message.id }}" title="Neue Antwort verfassen">
         <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
       </a>
     {% endif %}
@@ -103,7 +103,7 @@
 
 {% if active_page != 'ftu' %}
   {% if message.user == user %}
-  <div class="modal fade bs-example-modal-sm" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
+  <div class="modal fade" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -132,7 +132,7 @@
   </div>
   {% endif %}
   
-  <div class="modal fade" id="newComment" tabindex="-1" role="dialog" aria-labelledby="newCommentLabel" aria-hidden="true">
+  <div class="modal fade newComment" id="newComment{{ message.id }}" tabindex="-1" role="dialog" aria-labelledby="newComment{{ message.id }}Label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <form action="{% url 'twittur:message' msg=message.id %}" method="post" enctype="multipart/form-data">
