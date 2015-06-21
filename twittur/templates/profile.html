@@ -17,7 +17,7 @@
     	<a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="profilEdit" title="Gruppe bearbeiten">
       	<span class="glyphicon glyphicon-cog"></span>
       </a>
-      {% elif active_page == 'profile' %}
+      {% elif active_page == 'profile' and curUser = user %}
     	<a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
       	<span class="glyphicon glyphicon-cog"></span>
       </a>
@@ -166,7 +166,7 @@
         {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments comCount=count page=active_page user=user  %}
       {% endfor %}
       </div>
-      <div class="text-center{% if show_member or show_favs %} hidden{% endif %}">
+      <div class="text-center{% if show_member or show_favs or list_end %} hidden{% endif %}">
       	{% if group %}
           <button class="load_more btn btn-default" data-hint="{% url 'twittur:group' groupshort=group.short %}" title="Mehr Beitr&auml;ge laden">
             <span class="glyphicon glyphicon-refresh"></span>

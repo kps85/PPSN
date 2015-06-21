@@ -64,6 +64,15 @@ def addgroup(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
+    # Follow List
+    curUser = UserProfile.objects.get(userprofile=request.user)
+    follow_list = curUser.follow.all()
+    # Group List
+    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
+    # Beliebte Themen
+    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5]
+
     error_msg = {}
 
     if request.POST:
@@ -93,9 +102,14 @@ def addgroup(request):
 
     groupProfileForm = GroupProfileForm()
     context = {
+        'active_page': 'group',
         'nav': Nav.nav,
         'error_msg': error_msg,
         'groupProfileForm': groupProfileForm,
+        'msgForm': msgDialog(request),
+        'hot_list': hot_list,
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
+        'group_sb_list': group_sb_list,
     }
     return render(request, 'addgroup.html', context)
 

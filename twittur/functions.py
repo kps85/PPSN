@@ -194,8 +194,10 @@ def getMessageList(page, user):
     elif page == 'search':
         query = Q(user__username__in=user)
         for term in user:
-            query |= Q(text__contains=term)
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(query).order_by('-date')
+            query |= Q(text__contains=term) | Q(user__username__contains=term)
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
+            query
+        ).order_by('-date')
     elif page == 'ftu':
         dbmessage_list = Message.objects.all()
     else:

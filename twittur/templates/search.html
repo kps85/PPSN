@@ -96,7 +96,7 @@
       {% include "message_box.html" with message=message page=active_page user=user  %}
     {% endfor %}
     </div>
-    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center">
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center{% if list_end %} hidden{% endif %}">
       {% if is_hash %}
       <button class="load_more btn btn-default" data-hint="{% url 'twittur:hashtag' text=is_hash %}" title="Mehr Beitr&auml;ge laden">
       {% else %}

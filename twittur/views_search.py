@@ -30,7 +30,7 @@ def search(request):
 
     if request.method == 'GET' and 'last' in request.GET:
         end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'search', 'user': search_input})
-        print(end)
+
         # Messages
         messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end})
         message_list = zip(
@@ -38,7 +38,7 @@ def search(request):
             messages['comment_list'], messages['comment_count']
         )
 
-        if end > len(messages['message_list']):
+        if end >= len(messages['message_list']):
             list_end = True
 
         context = {'active_page': 'search', 'user': request.user, 'list_end': list_end,
@@ -78,11 +78,13 @@ def search(request):
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(text__contains=term) | Q(user__username__contains=term)
         ).order_by('-date')
+        print(len(dbmessage_list))
 
         mList = []
         for message in dbmessage_list:
             copy_message = copy.copy(message)
             mList.append(dbm_to_m(copy_message))
+
         message_list.append(zip(mList, dbmessage_list))
 
         user_list.append(User.objects.all().filter(Q(username__contains=term)
@@ -102,6 +104,13 @@ def search(request):
     user_list = elimDups(user_list)
     hashtag_list = elimDups(hashtag_list)
     message_list = elimDups(message_list)
+    message_list.sort(key=lambda x: x[0].date, reverse=True)
+
+    for idx, item in enumerate(message_list):
+        print(item[0].text)
+
+    if end >= len(message_list):
+        list_end = True
 
     context = {
         'active_page': 'index',
@@ -121,13 +130,14 @@ def search(request):
         'hashtag_list_length': len(hashtag_list),
         'message_list': message_list[:end],
         'message_list_length': len(message_list),
+        'list_end': list_end
     }
     return render(request, 'search.html', context)
 
 
 # click on hashtaglinks will redirect to this function.
 def hashtag(request, text):
-    msgForm, end = msgDialog(request), 5
+    msgForm, end, list_end = msgDialog(request), 5, False
 
     # Notification
     new = getNotificationCount(request.user)
@@ -166,6 +176,9 @@ def hashtag(request, text):
         messages['comment_list'], messages['comment_count']
     )
 
+    if end >= len(messages['message_list']):
+        list_end = True
+
     context = {
         'active_page': 'index',
         'nav': Nav.nav,
@@ -178,6 +191,7 @@ def hashtag(request, text):
         'message_list': message_list,
         'hash_list_length': len(messages['dbmessage_list']),
         'is_hash': text,
+        'list_end': list_end,
     }
     return render(request, 'search.html', context)
 

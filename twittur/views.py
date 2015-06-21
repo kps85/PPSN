@@ -330,6 +330,9 @@ def profile(request, user):
             messages['comment_list'], messages['comment_count']
         )
 
+        if end >= len(messages['message_list']):
+            list_end = True
+
         if 'has_msg' in messages:
             has_msg = messages['has_msg']
 
@@ -347,6 +350,7 @@ def profile(request, user):
             'message_list': message_list,
             'msgForm': msgDialog(request),
             'has_msg': has_msg,
+            'list_end': list_end,
             'success_msg': success_msg,
             'hot_list': hot_list,
             'follow_list': follow_list,

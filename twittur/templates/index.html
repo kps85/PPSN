@@ -14,7 +14,7 @@
       {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments comCount=count page=active_page user=user  %}
     {% endfor %}
     </div>
-    <div class="text-center">
+    <div class="text-center{% if list_end %} hidden{% endif %}">
     	<button class="load_more btn btn-default" data-hint="{% url 'twittur:index' %}" title="Mehr Beitr&auml;ge laden">
       	<span class="glyphicon glyphicon-refresh"></span>
       </button><br />
