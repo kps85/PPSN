@@ -1,4 +1,4 @@
-import copy, datetime, string, random
+import copy, datetime, string
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -174,6 +174,7 @@ def getMessages(data):
 
     return result
 
+
 # return Full Message List
 def getMessageList(page, user):
     if page == 'index':
@@ -191,15 +192,17 @@ def getMessageList(page, user):
             hashtags__name=user
         ).order_by('-date')
     elif page == 'search':
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
-            Q(text__in=user) | Q(user__username__in=user)
-        ).order_by('-date')
+        query = Q(user__username__in=user)
+        for term in user:
+            query |= Q(text__contains=term)
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(query).order_by('-date')
     elif page == 'ftu':
         dbmessage_list = Message.objects.all()
     else:
         dbmessage_list = Message.objects.filter(pk=page)
 
     return dbmessage_list
+
 
 # return End of new Message List for endless Scroll
 def getMessagesEnd(data):
@@ -211,6 +214,7 @@ def getMessagesEnd(data):
         end += 1
     end += 6
     return end
+
 
 # return Comment List for specific Message
 def getComments(message, curDate):

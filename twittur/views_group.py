@@ -48,7 +48,7 @@ def group(request, groupshort):
         'nav': Nav.nav,
         'msgForm': msgDialog(request),
         'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
         'group': group,
         'member_list': member_list,

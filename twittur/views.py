@@ -83,7 +83,7 @@ def index(request):
         'new': new,
         'success_msg': success_msg,
         'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
         'has_msg': has_msg,
         'list_end': list_end,
@@ -350,7 +350,7 @@ def profile(request, user):
             'success_msg': success_msg,
             'hot_list': hot_list,
             'follow_list': follow_list,
-            'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+            'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
             'follow_text': follow_text,
             'group_sb_list': group_sb_list
         }
@@ -364,7 +364,7 @@ def profile(request, user):
             'error_msg': error_msg,
             'hot_list': hot_list,
             'follow_list': follow_list,
-            'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+            'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
             'group_sb_list': group_sb_list
         }
     return render(request, 'profile.html', context)
@@ -474,7 +474,7 @@ def showMessage(request, msg):
         'nav': Nav.nav,
         'new': new,
         'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
         'msgForm': msgForm,
         'user': request.user,
@@ -531,7 +531,7 @@ def notification(request):
         'notification_list': notification_list,
         'new': new,
         'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list
     }
 

@@ -20,7 +20,7 @@
       {% endfor %}
       <form action="{% url 'twittur:profile' user=user %}" method="get">
         <input name="favorits" type="hidden" value="true" />
-        <input class="showFavList" type="submit" value="Alle anzeigen" />
+        <input class="showFavList{% if show_favs %} active{% endif %} text-left" type="submit" value="Alle anzeigen" />
       </form>
  		</ul>
   {% endif %}

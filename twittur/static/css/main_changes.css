@@ -116,16 +116,21 @@ a:focus { color: #a00000; text-decoration: none; }
 }
 
 .showMembList, .showFavList {
-	display: inline;
 	background: none;
 	border: none;
 	color: #a00000;
 }
 .showFavList {
+	width: 100%;
 	padding: 4px 10px;
+	border-radius: 4px;
 	color: #818d9b;
 }
 	.showFavList:hover { color: #fff; }
+	.showFavList.active {
+		color: #fff;
+		background-color: #1F212E;
+	}
 	.showMembList:hover { color: #f50000; }
 
 .memberList li {

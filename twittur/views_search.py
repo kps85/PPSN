@@ -1,4 +1,5 @@
-import copy
+import copy, random
+from pathlib import _Accessor
 
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
@@ -25,15 +26,12 @@ def search(request):
     # Notification
     new = getNotificationCount(request.user)
 
-
-    if request.method == 'GET':
-        search_input = request.GET['search_input'].strip().split(" ")
+    search_input = request.GET['search_input'].strip().split(" ")
 
     if request.method == 'GET' and 'last' in request.GET:
         end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'search', 'user': search_input})
-
+        print(end)
         # Messages
-        msgForm = msgDialog(request)
         messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end})
         message_list = zip(
             messages['message_list'][:end], messages['dbmessage_list'][:end],
@@ -56,7 +54,7 @@ def search(request):
             'msgForm': msgForm,
             'error_msg': search_error,
             'hot_list': hot_list,
-            'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+            'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
             'group_sb_list': group_sb_list,
         }
         return render(request, 'index.html', context_error)
@@ -111,7 +109,7 @@ def search(request):
         'new': new,
         'msgForm': msgForm,
         'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
         'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
         'search_input': ' '.join(search_input),
@@ -174,7 +172,7 @@ def hashtag(request, text):
         'new': new,
         'msgForm': msgForm,
         'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
         'search': 'Beitr&auml;ge zum Thema "#' + text + '"',
         'message_list': message_list,
