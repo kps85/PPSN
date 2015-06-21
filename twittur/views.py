@@ -37,13 +37,15 @@ def index(request):
         end, isEnd = 0, False
         last = Message.objects.get(id=request.GET.get('last'))
         messages = Message.objects.filter(
-            Q(comment = None) & (Q(attags = None) | Q(attags = request.user.id))
+            ( Q(user__exact=request.user) | Q(user__exact=request.user.userprofile.follow.all()) )
+            | ( Q(attags = None) | Q(attags = request.user.id) )
+            & Q(comment = None)
         ).order_by('-date')
         for item in messages:
             if item == last:
                 break
-            end = end + 1
-        end = end + 6
+            end += 1
+        end += 4
 
         # Messages
         messages = getMessages('index', current_user, end)
@@ -60,7 +62,10 @@ def index(request):
     messages = getMessages('index', current_user, 5)
     if 'has_msg' in messages:
         has_msg = True
-    message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+    message_list = zip(
+        messages['message_list'], messages['dbmessage_list'],
+        messages['comment_list']
+    )
 
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
@@ -256,7 +261,7 @@ def profile(request, user):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    has_msg, error_msg, success_msg, end, list_end = None, {}, None, 0, False
+    has_msg, error_msg, success_msg, end, list_end = None, {}, None, 5, False
 
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
@@ -270,12 +275,16 @@ def profile(request, user):
     if request.method == 'GET' and 'last' in request.GET:
         current_user = User.objects.get(username__exact=user)
         last = Message.objects.get(id=request.GET.get('last'))
-        messages = Message.objects.filter(comment=None).order_by('-date')
+        messages = Message.objects.filter(
+            ( Q(user__exact=request.user) | Q(user__exact=request.user.userprofile.follow.all()) )
+            | ( Q(attags = None) | Q(attags = request.user.id) )
+        ).order_by('-date')
         for item in messages:
             if item == last:
                 break
-            end += + 1
-        end += 6
+            end += 1
+        print(end)
+        end += 4
 
         # Messages
         msgForm = msgDialog(request)
@@ -315,7 +324,7 @@ def profile(request, user):
             success_msg = editMessage(request)
 
         # Messages
-        messages = getMessages('profile', newUser, 5)
+        messages = getMessages('profile', newUser, end)
         if 'has_msg' in messages:
             has_msg = messages['has_msg']
         message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])

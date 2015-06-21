@@ -160,20 +160,18 @@ def getMessages(page, user, end):
             Q(user__exact=user) | Q(attags__username__exact=user.username)
         ).order_by('-date').distinct()[:end]
     elif page == 'hashtag':
-        dbmessage_list = Message.objects.all().filter(hashtags__name=user).order_by('-date')[:end]
+        dbmessage_list = Message.objects.all().filter(
+            hashtags__name=user
+        ).order_by('-date')[:end]
     elif page == 'search':
-        for term in user:
-            if term[:1] == "#" or term[:1] == "@":
-                term = term[1:]
-            dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-                .filter(
-                Q(text__contains=term) | Q(user__username__contains=term)
-            ).order_by('-date')
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
+            Q(text__in=user) | Q(user__username__in=user)
+        ).order_by('-date')[:end]
     else:
         comments = True
         dbmessage_list = Message.objects.filter(pk=page)
 
-    message_list, comment_list = [], []
+    message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
         if message.date > curDate:
             message.editable = True

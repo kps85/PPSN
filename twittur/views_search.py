@@ -82,8 +82,7 @@ def search(request):
             attag = True
             term = term[1:]
 
-        dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-            .filter(
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(text__contains=term) | Q(user__username__contains=term)
         ).order_by('-date')
 

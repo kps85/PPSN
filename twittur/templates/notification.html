@@ -42,7 +42,7 @@
         <div class="notification alert alert-success" role="alert">
           <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
           <strong>Neue Nachricht</strong>: <small>{{ notification.message.date }}</small><br />
-          {{ notification.message.user.first_name }} {{ notification.message.user.last_name }} hat Dich in seiner <a href="{% url 'twittur:message' msg=notification.message.id %}">Nachricht</a> erw&auml;hnt!
+          {{ notification.message.user.first_name }} {{ notification.message.user.last_name }} hat Dich in seiner Nachricht erw&auml;hnt!
         </div>
         </a>
       {% else %}
