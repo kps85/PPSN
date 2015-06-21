@@ -164,9 +164,21 @@ def getMessages(page, user, end):
             hashtags__name=user
         ).order_by('-date')[:end]
     elif page == 'search':
+<<<<<<< HEAD
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(text__in=user) | Q(user__username__in=user)
         ).order_by('-date')[:end]
+=======
+        for term in user:
+            if term[:1] == "#" or term[:1] == "@":
+                term = term[1:]
+            dbmessage_list = Message.objects.all().select_related('user__userprofile') \
+                .filter(
+                Q(text__contains=term) | Q(user__username__contains=term)
+            ).order_by('-date')
+    elif page == 'ftu':
+        dbmessage_list = Message.objects.all()
+>>>>>>> origin/dev
     else:
         comments = True
         dbmessage_list = Message.objects.filter(pk=page)
@@ -176,11 +188,11 @@ def getMessages(page, user, end):
         if message.date > curDate:
             message.editable = True
         copy_message = copy.copy(message)
-        if comments == True:
+        if comments:
             c = getComments(message, curDate)
             comment_list.append(c)
         else:
-            comment_list.append(getCommentCount(message))
+            comment_list.append(str(getCommentCount(message)))
         message_list.append(dbm_to_m(copy_message))
 
     if len(message_list) > 0:
@@ -189,6 +201,7 @@ def getMessages(page, user, end):
     result['message_list'] = message_list
     result['dbmessage_list'] = dbmessage_list
     result['comment_list'] = comment_list
+    print(result)
 
     return result
 
@@ -213,6 +226,14 @@ def getCommentCount(message):
     for comment in comments:
         count = count + getCommentCount(comment) + 1
     return count
+
+def getNotificationCount(user):
+    newM = NotificationM.objects.filter(Q(read=False) & Q(user=user)).count()
+    newF = NotificationF.objects.filter(Q(read=False) & Q(you=user)).count()
+    newC = Message.objects.all().filter(Q(read=False) & Q(comment__user=user)).exclude(user=user).count()
+    new = newF + newM + newC
+
+    return new
 
 
 def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X

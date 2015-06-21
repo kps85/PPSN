@@ -36,7 +36,7 @@
         </div>
         </a>
       {% endif %}
-    {% else %}
+    {% elif notification.get_model_name == 'NotificationM' %}
       {% if boolean == 'False' %}
       	<a href="{% url 'twittur:message' msg=notification.message.id %}">
         <div class="notification alert alert-success" role="alert">
@@ -54,6 +54,24 @@
         </div>
         </a>
       {% endif %}
+    {% else %}
+      {% if boolean == 'False' %}
+        <a href="{% url 'twittur:message' msg=notification.id %}">
+          <div class="notification alert alert-success" role="alert">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            <strong>Neue Nachricht</strong>: <small>{{ notification.message.date }}</small><br />
+            {{ notification.user.first_name }} {{ notification.message.user.last_name }} hat deine <a href="{% url 'twittur:message' msg=notification.id %}">Nachricht</a> kommentiert!
+          </div>
+        </a>
+       {% else %}
+      	<a href="{% url 'twittur:message' msg=notification.id %}">
+          <div class="notification alert" role="alert">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            <strong>Neue Nachricht</strong>: <small>{{ notification.message.date }}</small><br />
+            {{ notification.user.first_name }} {{ notification.message.user.last_name }} hat deine Nachricht kommentiert!
+          </div>
+        </a>
+       {% endif %}
     {% endif %}  
   {% endfor %}
   </div>

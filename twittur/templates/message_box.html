@@ -58,20 +58,32 @@
       </form>
     </div>
   {% endif %}
+<<<<<<< HEAD
   
   {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
     {% if comments > 0 %}
+=======
+
+
+  {% if active_page != 'ftu' %}
+    <div class="postFoot clearfix">
+       <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
+        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
+      </a>
+    {% if comments > 0 and active_page != 'message' %}
+>>>>>>> origin/dev
     	<a href="{% url 'twittur:message' msg=message.id %}">
       	<span class="glyphicon glyphicon-comment"></span>&nbsp;
         {{ comments }}
       </a>
-    {% else %}
-      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
-        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
-      </a>
     {% endif %}
+<<<<<<< HEAD
     
+=======
+
+
+>>>>>>> origin/dev
     {% if message.user == user %}
       <div class="postEdit pull-right">
         {% if message.editable %}
@@ -88,15 +100,15 @@
   </div>
 	{% endif %}
 
-{% if comments and not comments > 0 %}
-  <div class="comments"> 
+{% if comments and active_page != 'profile' and active_page != 'index' %}
+  <div class="comments">
   {% for comment in comments %}
   	{% include "comments.html" with comment=comment message=message %}
   {% endfor %}
   </div>
 {% endif %}
 </div>
-  
+
 {% if message.user == user %}
 <div class="modal fade bs-example-modal-sm" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
