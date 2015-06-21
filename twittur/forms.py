@@ -27,24 +27,6 @@ AD_CHOICES = (
 )
 
 
-class GroupProfileForm(ModelForm):
-    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
-
-    class Meta:
-        model = GroupProfile
-        fields = ['name', 'short', 'desc', 'password', 'picture']
-        widgets = {
-            'desc': forms.Textarea(attrs={'rows': 4}),
-            'password': forms.PasswordInput(),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(GroupProfileForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            if field != 'picture':
-                self.fields[field].widget.attrs['class'] = 'form-control'
-
-
 # form to update user's account information
 class UserForm(ModelForm):
     # initialize second pw input for confirmation
@@ -140,6 +122,69 @@ class UserDataForm(ModelForm):
         # checkbox (False if clicked) -> return default picture
         if picture == False:
             return 'picture/default.gif'
+        return picture
+
+
+class GroupProfileForm(ModelForm):
+    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
+
+    class Meta:
+        model = GroupProfile
+        fields = ['name', 'short', 'desc', 'password', 'picture']
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4}),
+            'password': forms.PasswordInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(GroupProfileForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if field != 'picture':
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class GroupProfileEditForm(ModelForm):
+    ack_password = forms.CharField(max_length=128, required=False)
+
+    class Meta:
+        model = GroupProfile
+        fields = ['name', 'short', 'desc', 'password', 'picture']
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        print(instance.password)
+        super(GroupProfileEditForm, self).__init__(*args, **kwargs)
+        self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
+        self.fields['ack_password'].initial = instance.password
+        for field in self.fields:
+            if field != 'picture':
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
+    # method to compare password and password confirmation input values
+    # if equal: return password
+    # else: return error message
+    def clean(self):
+        password = self.cleaned_data.get('password')
+        ack_password = self.cleaned_data.get('ack_password')
+        error_dict = {}
+        if password != ack_password:
+            error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
+        if ' ' in password:
+            error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+        return self.cleaned_data
+
+    # validation: check after submit before save
+    def clean_picture(self):
+        # this is the current picture, nothing will happen if checkbox not clicked
+        picture = self.cleaned_data.get('picture')
+        # checkbox (False if clicked) -> return default picture
+        if picture == False:
+            return 'picture/gdefault.gif'
         return picture
 
 

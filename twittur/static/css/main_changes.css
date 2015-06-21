@@ -20,12 +20,23 @@ a:focus { color: #a00000; text-decoration: none; }
 	position: relative; 
 	padding-top: 15px;
 }
-.notificationLink .glyphicon { font-size: 36px; }
+.notificationLink .glyphicon, .logout .glyphicon { display: block; font-size: 36px; }
 .notificationLink .badge {
 	position: absolute;
 	right: 15px;
 	top: 15px;
+	z-index: 99;
 	background-color: #f50000;
+}
+@media screen and (max-width: 1023px) {
+	.notificationLink {
+		padding-top: 12px;
+	}
+		.notificationLink .glyphicon { font-size: 28px; }
+		.notificationLink .badge {
+			right: 5px;
+			top: 5px;
+		}
 }
 
 #main.infoGuest {
@@ -104,6 +115,26 @@ a:focus { color: #a00000; text-decoration: none; }
 	background-color: rgba(0,0,0,.03);
 }
 
+.showMembList, .showFavList {
+	display: inline;
+	background: none;
+	border: none;
+	color: #a00000;
+}
+.showFavList {
+	padding: 4px 10px;
+	color: #818d9b;
+}
+	.showFavList:hover { color: #fff; }
+	.showMembList:hover { color: #f50000; }
+
+.memberList li {
+	padding: 3px 5px;
+	border-bottom: 1px solid rgba(0,0,0,.03);
+}
+	.memberList li:hover { background-color: rgba(0,0,0,.03); }
+	.memberList li:last-of-type { border-bottom: none; }
+
 /* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
 
   #ftu input[type="submit"][disabled] {
@@ -134,7 +165,6 @@ nav a:focus { color: #fff; }
 .postFoot a:hover { cursor: pointer; }
 
 .faqList { list-style: inside square; }
-.faqList li { }
 
 .search_headline { clear: both; display: block; width: 100%; margin-top: 10px; }
 .search_user_result, .search_hash_result, .search_group_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 5px 5px 0; padding: 5px 10px; }

@@ -142,60 +142,77 @@ def dbm_to_m(message):
     return message
 
 
-def getMessages(page, user, end):
+def getMessages(data):
 
-    dbmessage_list, result, comments = None, {}, False
+    dbmessage_list, result, comments, has_msg = getMessageList(data['page'], data['user']), {}, False, False
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
-    # Messages
-    if page == 'index':
-        dbmessage_list = Message.objects.all().filter(
-            ( Q(user__exact=user) | Q(user__exact=user[0].userprofile.follow.all())
-            | Q(attags = None) | Q(attags = user) )
-            & Q(comment = None)
-        ).order_by('-date')[:end]
-    elif page == 'profile':
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
-            Q(user__exact=user) | Q(attags__username__exact=user.username)
-        ).order_by('-date').distinct()[:end]
-    elif page == 'hashtag':
-        dbmessage_list = Message.objects.all().filter(
-            hashtags__name=user
-        ).order_by('-date')[:end]
-    elif page == 'search':
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
-            Q(text__in=user) | Q(user__username__in=user)
-        ).order_by('-date')[:end]
-    elif page == 'ftu':
-        dbmessage_list = Message.objects.all()
-    else:
+    noComList = ['index', 'profile', 'hashtag', 'search', 'ftu']
+    if data['page'] in noComList:
         comments = True
-        dbmessage_list = Message.objects.filter(pk=page)
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
         if message.date > curDate:
             message.editable = True
+        c = getComments(message, curDate)
+        comment_list.append(c)
+        comment_count.append(getCommentCount(message))
+
         copy_message = copy.copy(message)
-        if comments:
-            c = getComments(message, curDate)
-            comment_list.append(c)
-        else:
-            comment_list.append(str(getCommentCount(message)))
         message_list.append(dbm_to_m(copy_message))
 
     if len(message_list) > 0:
-        result['has_msg'] = True
+        has_msg = True
 
     result['message_list'] = message_list
     result['dbmessage_list'] = dbmessage_list
     result['comment_list'] = comment_list
-    print(result)
+    result['comment_count'] = comment_count
+    result['has_msg'] = has_msg
 
     return result
 
+# return Full Message List
+def getMessageList(page, user):
+    if page == 'index':
+        dbmessage_list = Message.objects.all().filter(
+            ( Q(user__exact=user) | Q(user__exact=user[0].userprofile.follow.all())
+            | Q(attags = None) | Q(attags = user) )
+            & Q(comment = None)
+        ).order_by('-date')
+    elif page == 'profile':
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
+            Q(user__exact=user) | Q(attags__username__exact=user.username)
+        ).order_by('-date').distinct()
+    elif page == 'hashtag':
+        dbmessage_list = Message.objects.all().filter(
+            hashtags__name=user
+        ).order_by('-date')
+    elif page == 'search':
+        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
+            Q(text__in=user) | Q(user__username__in=user)
+        ).order_by('-date')
+    elif page == 'ftu':
+        dbmessage_list = Message.objects.all()
+    else:
+        dbmessage_list = Message.objects.filter(pk=page)
 
+    return dbmessage_list
+
+# return End of new Message List for endless Scroll
+def getMessagesEnd(data):
+    end, last = 0, Message.objects.get(id=data['last'])
+    messages = getMessageList(data['page'], data['user'])
+    for item in messages:
+        if item == last:
+            break
+        end += 1
+    end += 6
+    return end
+
+# return Comment List for specific Message
 def getComments(message, curDate):
     comments = Message.objects.filter(comment=message)
     c = []
@@ -205,7 +222,8 @@ def getComments(message, curDate):
             if co.date > curDate:
                 co.editable = True
             cc.append(dbm_to_m(co))
-            cc.append(ccc)
+            if ccc:
+                cc.append(ccc)
             c.append(cc)
     return c
 
@@ -214,8 +232,9 @@ def getCommentCount(message):
     count = 0
     comments = Message.objects.filter(comment=message)
     for comment in comments:
-        count = count + getCommentCount(comment) + 1
+        count += getCommentCount(comment) + 1
     return count
+
 
 def getNotificationCount(user):
     newM = NotificationM.objects.filter(Q(read=False) & Q(user=user)).count()

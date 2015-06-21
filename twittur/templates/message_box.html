@@ -19,7 +19,11 @@
         {% if message.comment %}
         {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}
         {% else %}
-        <a href="{% url 'twittur:message' msg=message.id %}">{{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}</a>        
+        	{% if active_page != 'ftu' %}
+          	<a href="{% url 'twittur:message' msg=message.id %}">{{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}</a>
+          {% else %}
+          	{{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}
+          {% endif %}
         {% endif %}
       </small>
     </div>
@@ -59,16 +63,16 @@
     </div>
   {% endif %}
 
-
   {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
-       <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
-        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
-      </a>
-    {% if comments > 0 and active_page != 'message' %}
+    {% if comCount > 0 and active_page != 'message' %}
     	<a href="{% url 'twittur:message' msg=message.id %}">
       	<span class="glyphicon glyphicon-comment"></span>&nbsp;
-        {{ comments }}
+        {{ comCount }}
+      </a>
+    {% else %}    
+      <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment" title="Neue Antwort verfassen">
+        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
       </a>
     {% endif %}
     
@@ -85,10 +89,10 @@
       </div>
     {% endif %}
     </div>
-  </div>
 	{% endif %}
+  </div>
 
-{% if comments and active_page != 'profile' and active_page != 'index' %}
+{% if comments and active_page not in 'profile, index, search' %}
   <div class="comments">
   {% for comment in comments %}
   	{% include "comments.html" with comment=comment message=message %}
@@ -97,62 +101,64 @@
 {% endif %}
 </div>
 
-{% if message.user == user %}
-<div class="modal fade bs-example-modal-sm" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Nachricht vom {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }} wirklich l&ouml;schen?</h4>
+{% if active_page != 'ftu' %}
+  {% if message.user == user %}
+  <div class="modal fade bs-example-modal-sm" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Nachricht vom {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }} wirklich l&ouml;schen?</h4>
+        </div>
+        <div class="modal-body"> <em>{{ dbmessage.text }}</em> </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+          {% if active_page == 'profile' %}
+          <form action="{% url 'twittur:'|add:active_page user=user %}" class="pull-right" method="POST">
+          {% elif active_page == 'message' %}
+          <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
+          {% elif active_page == 'hashtag' %}
+          <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
+          {% else %}
+          <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
+            {% endif %}
+            {% csrf_token %}
+            <input type="hidden" name="delMessage" value="{{ message.id }}">
+            <button type="submit" class="btn btn-primary">Nachricht l&ouml;schen</button>
+          </form>
+        </div>
       </div>
-      <div class="modal-body"> <em>{{ dbmessage.text }}</em> </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-        {% if active_page == 'profile' %}
-        <form action="{% url 'twittur:'|add:active_page user=user %}" class="pull-right" method="POST">
-        {% elif active_page == 'message' %}
-        <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
-        {% elif active_page == 'hashtag' %}
-        <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
-        {% else %}
-        <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
-          {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  
+  <div class="modal fade" id="newComment" tabindex="-1" role="dialog" aria-labelledby="newCommentLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="{% url 'twittur:message' msg=message.id %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <input type="hidden" name="delMessage" value="{{ message.id }}">
-          <button type="submit" class="btn btn-primary">Nachricht l&ouml;schen</button>
+          <input name="cmtDialog" type="hidden" value="true" />
+          <input id="id_cmtToId" name="cmtToId" type="hidden" value="{{ message.id }}" />
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="newCommentTitle"></h4>
+          </div>
+          <div class="modal-body">{{ msgForm.text }}</div>
+          <div class="modal-footer">
+            <div class="cmtDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
+  
+            <input type="hidden" name="codename" value="comment" />
+            <input type="hidden" name="message" value="{{ message.id }}" />
+            {{ msgForm.user }}
+            {{ msgForm.date }}
+  
+            <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
+          </div>
         </form>
       </div>
     </div>
   </div>
-</div>
 {% endif %}
-
-<div class="modal fade" id="newComment" tabindex="-1" role="dialog" aria-labelledby="newCommentLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form action="{% url 'twittur:message' msg=message.id %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input name="cmtDialog" type="hidden" value="true" />
-        <input id="id_cmtToId" name="cmtToId" type="hidden" value="{{ message.id }}" />
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="newCommentTitle"></h4>
-        </div>
-        <div class="modal-body">{{ msgForm.text }}</div>
-        <div class="modal-footer">
-          <div class="cmtDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
-
-          <input type="hidden" name="codename" value="comment" />
-          <input type="hidden" name="message" value="{{ message.id }}" />
-          {{ msgForm.user }}
-          {{ msgForm.date }}
-
-          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-          <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>

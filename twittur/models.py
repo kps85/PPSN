@@ -65,6 +65,25 @@ class UserProfile(models.Model):
             self.picture.delete()
         super(UserProfile, self).delete()
 
+
+class GroupProfile(models.Model):
+    name = models.CharField(max_length=50)
+    short = models.CharField(max_length=10)
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
+    desc = models.CharField(max_length=200)
+    password = models.CharField(max_length=128, blank=True,
+                                help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
+    picture = models.ImageField(verbose_name='Gruppenbild', upload_to='picture/', blank=True,
+                                height_field=None, width_field=None, default='picture/gdefault.gif',
+                                help_text='Dieses Bild wird auf der Gruppenseite zu sehen sein!')
+    date = models.DateField(default=date.today, blank=True)
+    member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
+
+    def __str__(self):
+        return self.name
+
+
 class NotificationF(models.Model):
     me = models.ForeignKey(UserProfile, related_name='me')
     you = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='you')
@@ -86,24 +105,6 @@ class NotificationM(models.Model):
 
     def get_model_name(self):
                 return self.__class__.__name__
-
-
-class GroupProfile(models.Model):
-    name = models.CharField(max_length=50)
-    short = models.CharField(max_length=10)
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
-    desc = models.CharField(max_length=200)
-    password = models.CharField(max_length=128, blank=True,
-                                help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
-    picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
-                                height_field=None, width_field=None, default='picture/gdefault.gif',
-                                help_text='Geben sie ein Foto ein!')
-    date = models.DateField(default=date.today, blank=True)
-    member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
-
-    def __str__(self):
-        return self.name
 
 
 # FAQ model

@@ -223,7 +223,7 @@ function initInfoSettings() {
 		
 		$("#profBildUpdate").each(function(index, element) {
       var userImg = $(element).find("a").text().replace('"', '');
-			if (userImg == 'picture/default.gif') {
+			if (userImg == 'picture/default.gif' || userImg == 'picture/gdefault.gif') {
 				$(element).find("input[type=checkbox]").addClass("hidden");
 				$(element).find("label").addClass("hidden");
 			} else {

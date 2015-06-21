@@ -26,5 +26,6 @@ urlpatterns = [
     # views_group
     url(r'^add/group$', views_group.addgroup, name='addgroup'),
     url(r'^group/(?P<groupshort>\w+)$', views_group.group, name='group'),
-    url(r'^djln/group/(?P<groupshort>\w+)$', views_group.djlgroup, name='djlgroup'),  # delete, join, leave
+    url(r'^group/(?P<groupshort>\w+)/settings$', views_group.groupSettings, name='group_settings'),
+    url(r'^group/(?P<groupshort>\w+)/djln$', views_group.djlgroup, name='djlgroup'),  # delete, join, leave
 ]

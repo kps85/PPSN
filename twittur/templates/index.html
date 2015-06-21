@@ -10,8 +10,8 @@
 
 {% block content %}
   {% if has_msg %}
-    {% for message, dbmessage, comments in message_list %}
-      {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments page=active_page user=user  %}
+    {% for message, dbmessage, comments, count in message_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments comCount=count page=active_page user=user  %}
     {% endfor %}
     </div>
     <div class="text-center">

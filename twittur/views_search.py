@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, getMessages, getNotificationCount
+from .functions import dbm_to_m, getMessages, getMessagesEnd, getNotificationCount
 from .models import GroupProfile, Hashtag, Message, Nav, UserProfile
 from .views import msgDialog
 
@@ -30,24 +30,15 @@ def search(request):
         search_input = request.GET['search_input'].strip().split(" ")
 
     if request.method == 'GET' and 'last' in request.GET:
-        last = Message.objects.get(id=request.GET.get('last'))
-
-        for term in search_input:
-            if term[:1] == "#" or term[:1] == "@":
-                term = term[1:]
-            messages = Message.objects.filter(
-                Q(text__contains=term) | Q(user__username__contains=term)
-            ).order_by('-date')
-            for item in messages:
-                if item == last:
-                    break
-                end += + 1
-        end += 6
+        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'search', 'user': search_input})
 
         # Messages
         msgForm = msgDialog(request)
-        messages = getMessages('search', search_input, end)
-        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+        messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end})
+        message_list = zip(
+            messages['message_list'][:end], messages['dbmessage_list'][:end],
+            messages['comment_list'], messages['comment_count']
+        )
 
         if end > len(messages['message_list']):
             list_end = True
@@ -65,7 +56,7 @@ def search(request):
             'msgForm': msgForm,
             'error_msg': search_error,
             'hot_list': hot_list,
-            'follow_list': follow_list,
+            'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
             'group_sb_list': group_sb_list,
         }
         return render(request, 'index.html', context_error)
@@ -120,7 +111,7 @@ def search(request):
         'new': new,
         'msgForm': msgForm,
         'hot_list': hot_list,
-        'follow_list': follow_list,
+        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
         'group_sb_list': group_sb_list,
         'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
         'search_input': ' '.join(search_input),
@@ -152,18 +143,15 @@ def hashtag(request, text):
                    .order_by('-hashtag_count')[:5]
 
     if request.method == 'GET' and 'last' in request.GET:
-        last = Message.objects.get(id=request.GET.get('last'))
-        messages = Message.objects.filter(hashtags__name=text).order_by('-date')
-        for item in messages:
-            if item == last:
-                break
-            end += + 1
-        end += 6
+        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'hashtag', 'user': text})
 
         # Messages
         msgForm = msgDialog(request)
-        messages = getMessages('hashtag', text, end)
-        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+        messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
+        message_list = zip(
+            messages['message_list'][:end], messages['dbmessage_list'][:end],
+            messages['comment_list'], messages['comment_count']
+        )
 
         if end > len(messages['message_list']):
             list_end = True
@@ -174,8 +162,11 @@ def hashtag(request, text):
 
     # Messages
     msgForm = msgDialog(request)
-    messages = getMessages('hashtag', text, end)
-    message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+    messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
+    message_list = zip(
+        messages['message_list'][:end], messages['dbmessage_list'][:end],
+        messages['comment_list'], messages['comment_count']
+    )
 
     context = {
         'active_page': 'index',
@@ -183,7 +174,7 @@ def hashtag(request, text):
         'new': new,
         'msgForm': msgForm,
         'hot_list': hot_list,
-        'follow_list': follow_list,
+        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
         'group_sb_list': group_sb_list,
         'search': 'Beitr&auml;ge zum Thema "#' + text + '"',
         'message_list': message_list,

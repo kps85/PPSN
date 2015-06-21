@@ -1,4 +1,4 @@
-import re
+import random, re
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
@@ -12,7 +12,7 @@ from operator import attrgetter
 
 from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
 from .forms import UserForm, UserDataForm #,CommentForm
-from .functions import editMessage, getMessages, msgDialog, pw_generator, getNotificationCount #, commentMessage
+from .functions import editMessage, getMessages, getMessagesEnd, msgDialog, pw_generator, getNotificationCount #, commentMessage
 
 
 # startpage
@@ -22,7 +22,7 @@ def index(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    has_msg, success_msg, list_end = False, None, False
+    has_msg, success_msg, list_end, end = False, None, False, 5
 
     current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
     user_list = UserProfile.objects.filter(userprofile__exact=request.user)
@@ -34,22 +34,14 @@ def index(request):
     if request.method == 'POST':
         success_msg = editMessage(request)
     elif request.method == 'GET' and 'last' in request.GET:
-        end, isEnd = 0, False
-        last = Message.objects.get(id=request.GET.get('last'))
-        messages = Message.objects.filter(
-            ( Q(user__exact=request.user) | Q(user__exact=request.user.userprofile.follow.all()) )
-            | ( Q(attags = None) | Q(attags = request.user.id) )
-            & Q(comment = None)
-        ).order_by('-date')
-        for item in messages:
-            if item == last:
-                break
-            end += 1
-        end += 4
+        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'index', 'user': current_user})
 
         # Messages
-        messages = getMessages('index', current_user, end)
-        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+        messages = getMessages(data={'page': 'index', 'user': current_user, 'end': end})
+        message_list = zip(
+            messages['message_list'][:end], messages['dbmessage_list'][:end],
+            messages['comment_list'], messages['comment_count']
+        )
 
         if end > len(messages['message_list']):
             list_end = True
@@ -59,12 +51,14 @@ def index(request):
         return render(request, 'message_box_reload.html', context)
 
     # Messages
-    messages = getMessages('index', current_user, 5)
+    messages = getMessages(data={'page': 'index', 'user': current_user, 'end': end})
+    if end > len(messages['message_list']):
+        list_end = True
     if 'has_msg' in messages:
         has_msg = True
     message_list = zip(
-        messages['message_list'], messages['dbmessage_list'],
-        messages['comment_list']
+        messages['message_list'][:end], messages['dbmessage_list'][:end],
+        messages['comment_list'], messages['comment_count']
     )
 
     # Follow List
@@ -79,10 +73,21 @@ def index(request):
     # Notification
     new = getNotificationCount(request.user)
 
-    context = {'active_page': 'index', 'current_user': current_user, 'user_list': user_list,
-               'message_list': message_list, 'nav': Nav.nav, 'msgForm': msgForm,
-               'new': new, 'success_msg': success_msg, 'has_msg': has_msg,
-               'group_sb_list': group_sb_list, 'hot_list': hot_list, 'follow_list': follow_list}
+    context = {
+        'active_page': 'index',
+        'current_user': current_user,
+        'user_list': user_list,
+        'message_list': message_list,
+        'nav': Nav.nav,
+        'msgForm': msgForm,
+        'new': new,
+        'success_msg': success_msg,
+        'hot_list': hot_list,
+        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
+        'group_sb_list': group_sb_list,
+        'has_msg': has_msg,
+        'list_end': list_end,
+    }
     return render(request, 'index.html', context)
 
 
@@ -92,7 +97,9 @@ def login(request):
         return HttpResponseRedirect('/twittur/')
 
     # Public Messages: TODO Filtern!
-    message_list = Message.objects.all().order_by('-date')
+    message_list = Message.objects.filter(
+        Q(comment=None) & Q(attags=None)
+    ).order_by('-date')
 
     # login
     if request.method == "GET":
@@ -259,7 +266,7 @@ def profile(request, user):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    has_msg, error_msg, success_msg, end, list_end = None, {}, None, 5, False
+    show_favs, has_msg, error_msg, success_msg, end, list_end = False, None, {}, None, 5, False
 
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
@@ -272,27 +279,19 @@ def profile(request, user):
     # Notification
     new = getNotificationCount(request.user)
 
-
     if request.method == 'GET' and 'last' in request.GET:
         current_user = User.objects.get(username__exact=user)
-        last = Message.objects.get(id=request.GET.get('last'))
-        messages = Message.objects.filter(
-            ( Q(user__exact=request.user) | Q(user__exact=request.user.userprofile.follow.all()) )
-            | ( Q(attags = None) | Q(attags = request.user.id) )
-        ).order_by('-date')
-        for item in messages:
-            if item == last:
-                break
-            end += 1
-        print(end)
-        end += 4
+        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'profile', 'user': current_user})
 
         # Messages
         msgForm = msgDialog(request)
-        messages = getMessages('profile', current_user, end)
-        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+        messages = getMessages(data={'page': 'profile', 'user': current_user, 'end': end})
+        message_list = zip(
+            messages['message_list'][:end], messages['dbmessage_list'][:end],
+            messages['comment_list'], messages['comment_count']
+        )
 
-        if end > len(messages['message_list']):
+        if end >= len(messages['message_list']):
             list_end = True
 
         context = {'active_page': 'profile', 'user': request.user, 'list_end': list_end,
@@ -325,15 +324,23 @@ def profile(request, user):
             success_msg = editMessage(request)
 
         # Messages
-        messages = getMessages('profile', newUser, end)
+        messages = getMessages(data={'page': 'profile', 'user': newUser, 'end': end})
+        message_list = zip(
+            messages['message_list'][:end], messages['dbmessage_list'][:end],
+            messages['comment_list'], messages['comment_count']
+        )
+
         if 'has_msg' in messages:
             has_msg = messages['has_msg']
-        message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
+
+        if 'favorits' in request.GET:
+            show_favs = True
 
         context = {
             'active_page': 'profile',
             'nav': Nav.nav,
             'new': new,
+            'show_favs': show_favs,
             'curUser': newUser,
             'curUserProfile': newUser.userprofile,
             'profileUser': user,
@@ -343,6 +350,7 @@ def profile(request, user):
             'success_msg': success_msg,
             'hot_list': hot_list,
             'follow_list': follow_list,
+            'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
             'follow_text': follow_text,
             'group_sb_list': group_sb_list
         }
@@ -356,6 +364,7 @@ def profile(request, user):
             'error_msg': error_msg,
             'hot_list': hot_list,
             'follow_list': follow_list,
+            'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
             'group_sb_list': group_sb_list
         }
     return render(request, 'profile.html', context)
@@ -376,6 +385,9 @@ def settings(request):
     curUser = User.objects.get(pk=request.user.id)
     curUserProfile = curUser.userprofile
     success_msg, error_msg, userForm, userDataForm = None, None, None, None
+
+    # Notification
+    new = getNotificationCount(request.user)
 
     # check if account should be deleted
     # if true: delete account, return to FTU
@@ -413,8 +425,6 @@ def settings(request):
     # initialize UserForm and UserDataForm with current users information
     userForm = UserForm(instance=curUser)
     userDataForm = UserDataForm(instance=curUserProfile)
-    # Notification
-    new = getNotificationCount(request.user)
 
     # return relevant information to render settings.html
     context = {
@@ -433,7 +443,7 @@ def settings(request):
 
 def showMessage(request, msg):
 
-    success_msg, error_msg, user, has_msg = None, {}, request.user, False
+    success_msg, error_msg, has_msg = None, {}, False
 
     # Follow List
     curUser = UserProfile.objects.get(userprofile=request.user)
@@ -452,7 +462,7 @@ def showMessage(request, msg):
         success_msg = editMessage(request)
 
     # Messages
-    messages = getMessages(msg, user, None)
+    messages = getMessages(data={'page': msg, 'user': request.user, 'end': None})
     if 'has_msg' in messages:
         has_msg = messages['has_msg']
     message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
@@ -464,7 +474,7 @@ def showMessage(request, msg):
         'nav': Nav.nav,
         'new': new,
         'hot_list': hot_list,
-        'follow_list': follow_list,
+        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
         'group_sb_list': group_sb_list,
         'msgForm': msgForm,
         'user': request.user,
@@ -521,7 +531,7 @@ def notification(request):
         'notification_list': notification_list,
         'new': new,
         'hot_list': hot_list,
-        'follow_list': follow_list,
+        'follow_sb_list': sorted(follow_list[:5], key=lambda x: random.random()),
         'group_sb_list': group_sb_list
     }
 
