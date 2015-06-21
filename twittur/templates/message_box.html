@@ -58,12 +58,6 @@
       </form>
     </div>
   {% endif %}
-<<<<<<< HEAD
-  
-  {% if active_page != 'ftu' %}
-    <div class="postFoot clearfix">
-    {% if comments > 0 %}
-=======
 
 
   {% if active_page != 'ftu' %}
@@ -72,18 +66,12 @@
         <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
       </a>
     {% if comments > 0 and active_page != 'message' %}
->>>>>>> origin/dev
     	<a href="{% url 'twittur:message' msg=message.id %}">
       	<span class="glyphicon glyphicon-comment"></span>&nbsp;
         {{ comments }}
       </a>
     {% endif %}
-<<<<<<< HEAD
     
-=======
-
-
->>>>>>> origin/dev
     {% if message.user == user %}
       <div class="postEdit pull-right">
         {% if message.editable %}

@@ -164,21 +164,11 @@ def getMessages(page, user, end):
             hashtags__name=user
         ).order_by('-date')[:end]
     elif page == 'search':
-<<<<<<< HEAD
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(text__in=user) | Q(user__username__in=user)
         ).order_by('-date')[:end]
-=======
-        for term in user:
-            if term[:1] == "#" or term[:1] == "@":
-                term = term[1:]
-            dbmessage_list = Message.objects.all().select_related('user__userprofile') \
-                .filter(
-                Q(text__contains=term) | Q(user__username__contains=term)
-            ).order_by('-date')
     elif page == 'ftu':
         dbmessage_list = Message.objects.all()
->>>>>>> origin/dev
     else:
         comments = True
         dbmessage_list = Message.objects.filter(pk=page)

@@ -45,11 +45,7 @@ def index(request):
             if item == last:
                 break
             end += 1
-<<<<<<< HEAD
         end += 4
-=======
-        end += 6
->>>>>>> origin/dev
 
         # Messages
         messages = getMessages('index', current_user, end)
