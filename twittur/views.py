@@ -4,15 +4,15 @@ from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from itertools import chain
 from operator import attrgetter
 
-from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
+from .models import UserProfile, Nav, Message, NotificationM, NotificationF
 from .forms import UserForm, UserDataForm
-from .functions import editMessage, getMessages, getWidgets, msgDialog, pw_generator, getNotificationCount
+from .functions import editMessage, getMessages, getWidgets, pw_generator
 
 
 # startpage
@@ -33,8 +33,8 @@ def index(request):
     if request.method == 'POST':
         success_msg = editMessage(request)
     # else if message list length should be extended
-    elif request.method == 'GET' and 'start' in request.GET:
-        end = int(request.GET.get('start')) + 5
+    elif request.method == 'GET' and 'length' in request.GET:
+        end = int(request.GET.get('length')) + 5
 
     # Messages
     messages = getMessages(data={'page': 'index', 'user': user, 'end': end})
@@ -44,7 +44,7 @@ def index(request):
     )
 
     # if message list length should be extended
-    if request.method == 'GET' and 'start' in request.GET:
+    if request.method == 'GET' and 'length' in request.GET:
         context = {'active_page': 'index', 'user': user, 'list_end': messages['list_end'],
                    'message_list': message_list, 'msgForm': widgets['msgForm']}
         return render(request, 'message_box_reload.html', context)
@@ -244,8 +244,8 @@ def profile(request, user):
 
         if request.method == 'GET':
             # extend message list length
-            if 'last' in request.GET:
-                end = int(request.GET.get('start')) + 5
+            if 'length' in request.GET:
+                end = int(request.GET.get('length')) + 5
 
             # follow
             if 'follow' in request.GET:
@@ -273,7 +273,7 @@ def profile(request, user):
             messages['comment_list'], messages['comment_count']
         )
 
-        if request.method == 'GET' and 'last' in request.GET:
+        if request.method == 'GET' and 'length' in request.GET:
             context = {'active_page': 'profile', 'user': request.user, 'list_end': messages['list_end'],
                        'message_list': message_list, 'msgForm': widgets['msgForm']}
             return render(request, 'message_box_reload.html', context)

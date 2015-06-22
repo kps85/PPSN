@@ -1,13 +1,12 @@
 import random, re
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import GroupProfileForm, GroupProfileEditForm
-from .functions import getNotificationCount, getWidgets, msgDialog
-from .models import GroupProfile, Hashtag, Nav, UserProfile
+from .functions import getWidgets
+from .models import GroupProfile, Nav
 
 
 def group(request, groupshort):

@@ -142,6 +142,12 @@ a:focus { color: #a00000; text-decoration: none; }
 	.memberList li:hover { background-color: rgba(0,0,0,.03); }
 	.memberList li:last-of-type { border-bottom: none; }
 
+.newMsgInfo {
+	margin: 15px 0 0 0;
+	padding: 0;
+	font-size: .9em;
+}
+
 /* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
 
   #ftu input[type="submit"][disabled] {

@@ -4,20 +4,13 @@ from django.conf import settings
 from datetime import date
 from datetime import datetime
 
-
-
-from django.contrib.auth.hashers import (
-    check_password, is_password_usable, make_password,
-)
-
 #### Entitys
-
-
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
+
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):

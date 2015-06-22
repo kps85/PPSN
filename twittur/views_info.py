@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from .functions import getNotificationCount
 from .models import Nav, FAQ
 from .forms import FAQForm
-from .views import msgDialog
 
 
 # Page: 'Info'

@@ -1,10 +1,11 @@
 import copy, datetime, string
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count
 from django.utils import timezone
 
 from .views import *
-from .models import Message, Hashtag, NotificationM
+from .models import GroupProfile, Message, Hashtag, NotificationM
 from .forms import MessageForm
 
 
@@ -112,7 +113,6 @@ def msg_to_db(message):
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
             message.attags.remove(dbattag)
-
 
     return message
 
@@ -239,7 +239,7 @@ def getNotificationCount(user):
     return new
 
 
-# generate Sidebar Widgets and return them
+# generate Widgets and return them
 def getWidgets(request):
     userProfile = UserProfile.objects.get(userprofile=request.user)
     sidebar = {

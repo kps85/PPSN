@@ -1,12 +1,11 @@
 import copy, random
 
 from django.contrib.auth.models import User
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, getMessages, getWidgets, getNotificationCount
-from .models import GroupProfile, Hashtag, Nav, UserProfile
-from .views import msgDialog
+from .functions import dbm_to_m, getMessages, getWidgets
+from .models import GroupProfile, Hashtag, Nav
 
 
 # search input
@@ -19,8 +18,8 @@ def search(request):
 
     search_input = request.GET['search_input'].strip().split(" ")
 
-    if request.method == 'GET' and 'last' in request.GET:
-        end = int(request.GET.get('start')) + 5
+    if request.method == 'GET' and 'length' in request.GET:
+        end = int(request.GET.get('length')) + 5
 
         # Messages
         messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end})
@@ -112,8 +111,8 @@ def hashtag(request, text):
     # initialize sidebar lists
     widgets = getWidgets(request)
 
-    if request.method == 'GET' and 'last' in request.GET:
-        end = int(request.GET.get('start')) + 5
+    if request.method == 'GET' and 'length' in request.GET:
+        end = int(request.GET.get('length')) + 5
 
     # Messages
     messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
@@ -122,7 +121,7 @@ def hashtag(request, text):
         messages['comment_list'], messages['comment_count']
     )
 
-    if request.method == 'GET' and 'last' in request.GET:
+    if request.method == 'GET' and 'length' in request.GET:
         context = {'active_page': 'hashtag', 'user': request.user, 'msgForm': widgets['msgForm'],
                    'is_hash': text, 'message_list': message_list, 'list_end': messages['list_end']}
         return render(request, 'message_box_reload.html', context)

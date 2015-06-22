@@ -85,7 +85,19 @@
               </button>
               <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
             </div>
-            <div class="modal-body">{{ msgForm.text }}</div>
+            <div class="modal-body">
+            	{{ msgForm.text }}
+              <dl class="newMsgInfo container-fluid clearfix">
+              	<dt class="col-xs-4 pull-left"><strong>@</strong><em>&lt;Benutzername&gt;</em></dt>
+                <dd class="col-xs-8 pull-left">f&uuml;gt Benutzer als Empf&auml;nger hinzu</dd>
+                
+              	<dt class="col-xs-4 pull-left"><strong>&amp;</strong><em>&lt;Gruppen-Abk&uuml;rzung&gt;</em></dt>
+                <dd class="col-xs-8 pull-left">f&uuml;gt Gruppe als Empf&auml;nger hinzu</dd>
+                
+              	<dt class="col-xs-4 pull-left"><strong>#</strong><em>&lt;Thema&gt;</em></dt>
+                <dd class="col-xs-8 pull-left">f&uuml;gt ein Thema der Nachricht hinzu</dd>
+              </dl>
+            </div>
             <div class="modal-footer">
               <div class="msgDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
               <input type="hidden" name="codename" value="message" />

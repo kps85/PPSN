@@ -229,6 +229,19 @@ function initInfoSettings() {
 				$(element).find("label").html("&nbsp; Bild l&ouml;schen?");				
 			}
     });
+		
+		$("#id_picture").change(function(e) {
+			var path = URL.createObjectURL(e.target.files[0]);
+			var help_text = ((window.location.href.split("/"))[4] == 'settings') ? 
+													"Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt." :
+													"Dieses Bild wird auf der Gruppenseite zu sehen sein!";
+			help_text += "<br><strong>Achtung!</strong> Dies ist nur eine Vorschau.<br>" + 
+									 "Die &Auml;nderung wird erst beim Speichern des Formulars &uuml;bernommen."
+			$(".profilePictures img").each(function(index, element) {
+        $(element).attr("src", path);
+      });
+			$(".profilePictures").find(".help-block").html(help_text);
+    });
 	}
 }
 function infoChange(hash) {		
