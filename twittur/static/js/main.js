@@ -400,10 +400,8 @@ function initVarious() {
 		$(".load_more").click(function(e) {
 			var url = $(this).attr("data-hint");
 			var data = {
-				user: $(".profilNick").attr("data-hint"),
-				start: $(".post").length,
-				last: $(".post").last().attr("data-hint"),
-				search_input: $(".load_more_search_input").attr("data-hint"),
+				length: $(".post").length,
+				search_input: $(".load_more_search_input").attr("data-hint")
 			}
 			var getIt = function(url) {
 				$.ajax({
