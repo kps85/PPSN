@@ -97,6 +97,7 @@ class NotificationM(models.Model):
     message = models.ForeignKey(Message, related_name='message')
     read = models.BooleanField(default=False)
     date = models.DateTimeField(default=datetime.now, blank=True)
+
     def __str__(self):
         return self.user.username + ' mentioned in message: "' + self.message.text + '".'
 
@@ -110,6 +111,7 @@ class NotificationG(models.Model):
     read = models.BooleanField(default=False)
     date = models.DateTimeField(default=datetime.now, blank=True)
     note = models.TextField(default=None, blank=True)
+
     def __str__(self):
         return 'Group Notification: ' + self.group.short + ' -> "' + self.user.username + '".'
 

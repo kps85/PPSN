@@ -229,8 +229,6 @@ def profile(request, user):
     else:
         show_favs = False
 
-
-
     # initialize widgets (sidebar, newMsgForm, ...)
     widgets = getWidgets(request)
 
@@ -253,7 +251,7 @@ def profile(request, user):
                 print("ADD")
 
         try:
-            ignored = request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
+            request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
         except ObjectDoesNotExist:
             pass                                                                    # no, so no changes
         else:

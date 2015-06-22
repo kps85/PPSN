@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
 
-from .functions import getNotificationCount, getWidgets
+from .functions import getWidgets
 from .models import Nav, FAQ
 from .forms import FAQForm
 

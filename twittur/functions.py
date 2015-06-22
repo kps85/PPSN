@@ -1,6 +1,5 @@
 import copy, datetime, string
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 from django.utils import timezone
 
@@ -157,7 +156,6 @@ def dbm_to_m(message):
 
 
 def getMessages(data):
-
     result = {
         'has_msg': False,
         'list_end': False
@@ -166,15 +164,9 @@ def getMessages(data):
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
-<<<<<<< HEAD
-    # Get ignored messages
-    userprofile = UserProfile.objects.get(userprofile=data['user'])
+    userprofile = UserProfile.objects.get(userprofile=data['request'].user)
     ignoreM_list = userprofile.ignoreM.all()
     ignoreU_list = userprofile.ignoreU.all()
-=======
-    userProfile = UserProfile.objects.get(userprofile=data['request'].user)
-    ignoreM_list = userProfile.ignoreM.all()
->>>>>>> origin/dev
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
