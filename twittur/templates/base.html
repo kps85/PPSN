@@ -72,7 +72,7 @@
     <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
-        	{% if active_page in 'profile' %}
+        	{% if active_page in 'profile' and pUser %}
           <form action="{% url 'twittur:profile' user=pUser %}" method="post" enctype="multipart/form-data">
         	{% else %}
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">

@@ -5,8 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import GroupProfileForm, GroupProfileEditForm
-from .functions import editMessage, getWidgets
-from .models import GroupProfile, Nav, NotificationG
+from .functions import editMessage, getWidgets, setNotification
+from .models import GroupProfile, Nav
 
 
 def group(request, groupshort):
@@ -108,7 +108,7 @@ def djlgroup(request, groupshort):
     if 'delete_join_group' in request.POST:
         group = GroupProfile.objects.get(short__exact=groupshort)
         admin = group.admin
-        print(admin)
+
         # Member function:
         # check if user is in group or not
         try:
@@ -119,22 +119,16 @@ def djlgroup(request, groupshort):
             if 'joinWithPassword' in request.POST:
                 if group.password == request.POST.get('password'):
                     group.member.add(request.user)
-                    note = request.user.username + ' ist deiner Gruppe beigetreten.'
-                    ntfcG = NotificationG(user=admin, group=group, note=note)
-                    ntfcG.save()
                 else:
                     return HttpResponse("Falsches Passwort!")
             else:
                 group.member.add(request.user)
-                note = request.user.username + ' ist deiner Gruppe beigetreten.'
-                ntfcG = NotificationG(user=admin, group=group, note=note)
-                ntfcG.save()
+            note = request.user.username + ' ist deiner Gruppe beigetreten.'
         # User exists -> delete him from group
         else:
             group.member.remove(request.user)
             note = request.user.username + ' hat deine Gruppe verlassen.'
-            ntfcG = NotificationG(user=admin, group=group, note=note)
-            ntfcG.save()
+        setNotification('group', data={'group': group, 'member': admin, 'note': note})
 
     return HttpResponseRedirect('/twittur/group/'+groupshort)
 

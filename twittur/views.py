@@ -8,12 +8,10 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from itertools import chain
-from operator import attrgetter
 
-from .models import UserProfile, Nav, Message, NotificationM, NotificationF, NotificationG
+from .models import UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
-from .functions import editMessage, getMessages, getWidgets, pw_generator
+from .functions import editMessage, getMessages, getWidgets, setNotification, pw_generator
 
 
 # startpage
@@ -264,15 +262,14 @@ def profile(request, user):
             # follow
             if 'follow' in request.GET:
                 if pUser in widgets['follow_list']:
-                    follow = NotificationF.objects.get(
-                        Q(me__exact=request.user.userprofile) & Q(you__exact=pUser)
+                    follow = Notification.objects.get(
+                        Q(user__exact=pUser) & Q(follower__exact=request.user.userprofile)
                     )
                     follow.delete()
                     context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
                 else:
-                    widgets['userProfile'].save()
-                    notification = NotificationF(me=request.user.userprofile, you=pUser, read=False)
-                    notification.save()
+                    note = request.user.username + ' folgt Dir jetzt!'
+                    setNotification('follower', data={'user': pUser, 'follower': request.user.userprofile, 'note': note})
                     context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
                 widgets['follow_list'] = widgets['userProfile'].follow.all()
 
@@ -305,7 +302,6 @@ def profile(request, user):
         context['message_list'], context['list_end'] = message_list, messages['list_end']
         context['has_msg'], context['follow_text'] = messages['has_msg'], follow_text
         context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-        print(context['ignored'])
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
         context['error_msg'] = error_msg
@@ -391,7 +387,7 @@ def showMessage(request, msg):
         success_msg = editMessage(request)
 
     # Messages
-    messages = getMessages(data={'page': msg, 'user': request.user})
+    messages = getMessages(data={'page': msg, 'user': request.user, 'request': request})
     message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
 
     # return relevant information to render message.html
@@ -410,43 +406,34 @@ def notification(request):
     widgets = getWidgets(request)
 
     # for context
-    notificationM_list = NotificationM.objects.filter(user=request.user)
-    notificationF_list = NotificationF.objects.filter(you=request.user)
-    notificationC_list = Message.objects.filter(comment__user=request.user).exclude(user=request.user)
-    notificationG_list = NotificationG.objects.filter(user__exact=request.user)
-
-    notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list, notificationG_list),
-                               key=attrgetter('date'),
-                               reverse=True)
+    ntfc_list = Notification.objects.filter(
+        Q(user=request.user)
+    ).order_by("-date")
 
     # saving boolean extra, because it will deleted by next for loop
     boolean_list = []
-    for item in notification_list:
+    for item in ntfc_list:
         if item.read == False:
             boolean_list.append('False')
         else:
             boolean_list.append('True')
 
-    notification_list = zip(notification_list,boolean_list)
+    ntfc_list = zip(ntfc_list,boolean_list)
 
     context = {
         'active_page': 'notification', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'user': request.user,
-        'notification_list': notification_list,
+        'notification_list': ntfc_list,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
 
     # update -> set all notification to true
-    notifications = [
-        NotificationM.objects.filter(Q(read=False) & Q(user=request.user)),
-        NotificationF.objects.filter(Q(read=False) & Q(you=request.user)),
-        NotificationG.objects.filter(Q(read=False) & Q(user=request.user)),
-        Message.objects.all().filter(Q(comment__user=request.user) & Q(read=False)).exclude(user=request.user)
-    ]
-    for list in notifications:
-        for item in list:
-            item.read = True
-            item.save()
+    ntfc_list = Notification.objects.filter(
+        Q(read=False) & Q(user=request.user)
+    )
+    for item in ntfc_list:
+        item.read = True
+        item.save()
 
     return render(request, 'notification.html', context)

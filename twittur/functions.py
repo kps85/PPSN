@@ -4,36 +4,35 @@ from django.db.models import Count
 from django.utils import timezone
 
 from .views import *
-from .models import GroupProfile, Message, Hashtag, NotificationM, NotificationG, NotificationF
+from .models import GroupProfile, Message, Hashtag, Notification
 from .forms import MessageForm
 
 
 # messagebox clicked on pencil button
 def msgDialog(request):
-    curUser = User.objects.get(pk=request.user.id)
+    if request.method == 'POST':
+        if request.POST.get('codename') == 'message':
+            msgForm = MessageForm(request.POST)
+            if msgForm.is_valid():
+                msgForm.save()
+                msg_to_db(msgForm.instance)
+                msgForm.save()
+                # save this shit for the next step
 
-    if request.method == 'POST' and request.POST.get('codename') == 'message':
-        msgForm = MessageForm(request.POST)
-        if msgForm.is_valid():
-            msgForm.save()
-            msg_to_db(msgForm.instance)
-            msgForm.save()
-            # save this shit for the next step
+        elif request.POST.get('codename') == 'comment':
+            msgForm = MessageForm(request.POST)
+            if msgForm.is_valid():
+                msgForm.save()
+                message = Message.objects.get(id=request.POST.get('cmtToId'))
+                msgForm.instance.comment = message
+                if message.user != request.user:
+                    note = request.user.username + ' hat auf deine Nachricht geantwortet.'
+                    setNotification('comment', data={'user': message.user, 'message': msgForm.instance, 'note': note})
+                msg_to_db(msgForm.instance)
+                msgForm.save()
+                # save this shit for the next step
 
-    if request.method == 'POST' and request.POST.get('codename') == 'comment':
-
-        msgForm = MessageForm(request.POST)
-        if msgForm.is_valid():
-            msgForm.save()
-            message = Message.objects.get(id=request.POST.get('cmtToId'))
-            msgForm.instance.comment = message
-            msg_to_db(msgForm.instance)
-            msgForm.save()
-            # save this shit for the next step
-
-
-    msgForm = MessageForm(initial={'user': curUser.id, 'date': datetime.datetime.now()})
-#    print(msgForm.instance.text)
+    msgForm = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()})
     return msgForm
 
 
@@ -65,6 +64,7 @@ def editMessage(request):
             msg_to_db(curMsg)                                               # ???
             curMsg.save()                                                   # save and update Message
         return 'Kommentar erfolgreich aktualisiert!'                        # return info
+
     elif 'ignoreMsg' in request.POST:
         ignore_list = request.user.userprofile.ignoreM.all()
         if Message.objects.filter(pk=request.POST['ignoreMsg']).exists():
@@ -80,13 +80,14 @@ def editMessage(request):
                 else:
                     request.user.userprofile.ignoreM.add(msg)
                     return 'Nachricht erfolgreich ausgeblendet!'                       # return info
+
     elif 'remUser' in request.POST:
         group = GroupProfile.objects.get(pk=request.POST['group'])
         member = User.objects.get(pk=request.POST['remUser'])
-        ntfcG = NotificationG(user=member, group=group, note='Du wurdest aus der Gruppe entfernt.')
-        ntfcG.save()
+        setNotification('group', data={'group': group, 'member': member})
         group.member.remove(member)
         return "Mitglied erfolgreich entfernt."
+
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
 
@@ -94,8 +95,7 @@ def editMessage(request):
 # Message to database, save hashtags and attags in text into database
 # (2) edit: changed message may contains other hashtags and attags or hashtags and attags may removed
 def msg_to_db(message):
-    hashtaglist = []
-    attaglist = []
+    hashtaglist, attaglist = [], []
 
     # Step 1: replace all # and @ with link
     for word in message.text.split():
@@ -121,18 +121,22 @@ def msg_to_db(message):
             except ObjectDoesNotExist:
                 pass
             else:
-                notification = NotificationM(user=user, message=message, read=False)
-                notification.save()
-                print(message.attags.all())
+                setNotification('message', data={'user': user, 'message': message})
                 attaglist.append(user)
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
             message.hashtags.remove(dbhashtag)
+
+    print(message.attags.all())
+
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
-            message.attags.remove(dbattag)
+            attag = Notification.objects.get(
+                Q(user=dbattag) & Q(message=message)
+            )
+            attag.delete()
 
     return message
 
@@ -259,14 +263,30 @@ def getCommentCount(message):
     return count
 
 
-def getNotificationCount(user):
-    newG = NotificationG.objects.filter(Q(read=False) & Q(user=user)).count()
-    newM = NotificationM.objects.filter(Q(read=False) & Q(user=user)).count()
-    newF = NotificationF.objects.filter(Q(read=False) & Q(you=user)).count()
-    newC = Message.objects.all().filter(Q(read=False) & Q(comment__user=user)).exclude(user=user).count()
-    new = newF + newM + newC + newG
+def setNotification(type, data):
+    ntfc = None
+    if type == 'follower':
+        ntfc = Notification(user=data['user'], follower=data['follower'], note=data['note'])
+    elif type == 'message':
+        ntfc = Notification(
+            user=data['user'], message=data['message'],
+            note='Du wurdest in einer Nachricht erw&auml;hnt.'
+        )
+    elif type == 'comment':
+        ntfc = Notification(user=data['user'], message=data['message'], comment=True, note=data['note'])
+    elif type == 'group':
+        if 'note' not in data:
+            data['note'] = 'Du wurdest aus der Gruppe entfernt.'
+        ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
 
-    return new
+    ntfc.save()
+    return ntfc
+
+
+def getNotificationCount(user):
+    return Notification.objects.filter(
+        Q(read=False) & Q(user=user)
+    ).count()
 
 
 # generate Widgets and return them
@@ -275,7 +295,7 @@ def getWidgets(request):
     sidebar = {
         'msgForm': msgDialog(request),
         'userProfile': userProfile,
-        'follow_list': userProfile.follow.all().order_by('first_name'), # Follow List
+        'follow_list': userProfile.follow.all(), # Follow List
         'group_sb_list': GroupProfile.objects.all().filter(Q(member__exact=request.user)), # Group List
         'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5], # Beliebte Themen

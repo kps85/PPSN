@@ -1,8 +1,9 @@
-from django.db import models
+from datetime import date
+
 from django.contrib.auth.models import User
 from django.conf import settings
-from datetime import date
-from datetime import datetime
+from django.db import models
+from django.utils import timezone
 
 #### Entitys
 class Hashtag(models.Model):
@@ -19,9 +20,8 @@ class Message(models.Model):
     picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
     date = models.DateTimeField('date published')
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
-    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='NotificationM')
+    attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='Notification')
     comment = models.ForeignKey('self', related_name='comments', blank=True, null=True)
-    read = models.BooleanField(default=False)
     ignore = models.BooleanField(default=False)
 
     def get_model_name(self):
@@ -35,7 +35,7 @@ class Message(models.Model):
 class UserProfile(models.Model):
     userprofile = models.OneToOneField(User)
 
-    follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='NotificationF')
+    follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='Notification')
     studentNumber = models.CharField(max_length=6, default='000000',
                                      help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der '
                                                'TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')
@@ -79,40 +79,23 @@ class GroupProfile(models.Model):
         return self.name
 
 
-class NotificationF(models.Model):
-    me = models.ForeignKey(UserProfile, related_name='me')
-    you = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='you')
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ntfcUser')
+    follower = models.ForeignKey(UserProfile, related_name='ntfcFollower', blank=True, null=True)
+    group = models.ForeignKey(GroupProfile, related_name='ntfcGroup2', blank=True, null=True)
+    message = models.ForeignKey(Message, related_name='ntfcMessage', blank=True, null=True)
+    comment = models.BooleanField(default=False)
     read = models.BooleanField(default=False)
-    date = models.DateTimeField(default=datetime.now, blank=True)
-    def __str__(self):
-        return self.me.userprofile.username + ' to ' + self.you.username
-
-    def get_model_name(self):
-                return self.__class__.__name__
-
-
-class NotificationM(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
-    message = models.ForeignKey(Message, related_name='message')
-    read = models.BooleanField(default=False)
-    date = models.DateTimeField(default=datetime.now, blank=True)
-
-    def __str__(self):
-        return self.user.username + ' mentioned in message: "' + self.message.text + '".'
-
-    def get_model_name(self):
-        return self.__class__.__name__
-
-
-class NotificationG(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ntfcMember')
-    group = models.ForeignKey(GroupProfile, related_name='ntfcGroup')
-    read = models.BooleanField(default=False)
-    date = models.DateTimeField(default=datetime.now, blank=True)
+    date = models.DateTimeField(default=timezone.now)
     note = models.TextField(default=None, blank=True)
 
     def __str__(self):
-        return 'Group Notification: ' + self.group.short + ' -> "' + self.user.username + '".'
+        if self.follower:
+            return self.follower.userprofile.username + ' to ' + self.you.username
+        elif self.group:
+            return 'Group Notification: ' + self.group.short + ' -> "' + self.user.username + '".'
+        elif self.message:
+            return self.user.username + ' mentioned in message: "' + self.message.text + '".'
 
     def get_model_name(self):
         return self.__class__.__name__

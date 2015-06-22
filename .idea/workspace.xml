@@ -2,10 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="88ab18aa-0f46-4975-a197-48b0dc6c1483" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/KarlPhilipp.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/admin.py" afterPath="$PROJECT_DIR$/twittur/admin.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/base.html" afterPath="$PROJECT_DIR$/twittur/templates/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/functions.py" afterPath="$PROJECT_DIR$/twittur/functions.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/models.py" afterPath="$PROJECT_DIR$/twittur/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/notification.html" afterPath="$PROJECT_DIR$/twittur/templates/notification.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/views.py" afterPath="$PROJECT_DIR$/twittur/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/views_group.py" afterPath="$PROJECT_DIR$/twittur/views_group.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PPSN.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,18 +32,30 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twittur/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5561614">
-              <caret line="247" column="46" selection-start-line="247" selection-start-column="46" selection-end-line="247" selection-end-column="46" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="409" column="28" selection-start-line="409" selection-start-column="28" selection-end-line="409" selection-end-column="28" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
-                <element signature="e#2620#9760#0" expanded="false" />
-                <element signature="e#9797#9862#0" expanded="false" />
-                <element signature="e#14808#17495#0" expanded="false" />
-                <element signature="e#17533#18564#0" expanded="false" />
-                <element signature="e#18598#20525#0" expanded="false" />
+                <element signature="e#577#2496#0" expanded="false" />
+                <element signature="e#2546#9686#0" expanded="false" />
+                <element signature="e#9723#9788#0" expanded="false" />
+                <element signature="e#14708#17395#0" expanded="false" />
+                <element signature="e#17433#18484#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twittur/admin.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="27" column="64" selection-start-line="27" selection-start-column="64" selection-end-line="27" selection-end-column="64" />
+              <folding>
+                <element signature="e#0#32#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -47,12 +65,12 @@
         <entry file="file://$PROJECT_DIR$/twittur/views_group.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="149" column="39" selection-start-line="149" selection-start-column="39" selection-end-line="149" selection-end-column="39" />
+              <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
               <folding>
-                <element signature="e#365#2046#0" expanded="false" />
-                <element signature="e#2102#4536#0" expanded="false" />
-                <element signature="e#4617#6288#0" expanded="false" />
-                <element signature="e#6565#8632#0" expanded="false" />
+                <element signature="e#367#2048#0" expanded="false" />
+                <element signature="e#2104#4538#0" expanded="false" />
+                <element signature="e#4619#5959#0" expanded="false" />
+                <element signature="e#6236#8303#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -76,17 +94,9 @@
         <entry file="file://$PROJECT_DIR$/twittur/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="34" column="32" selection-start-line="34" selection-start-column="32" selection-end-line="34" selection-end-column="32" />
+              <caret line="89" column="53" selection-start-line="89" selection-start-column="53" selection-end-line="89" selection-end-column="53" />
               <folding>
-                <element signature="e#209#299#0" expanded="false" />
-                <element signature="e#400#1191#0" expanded="false" />
-                <element signature="e#1237#2931#0" expanded="false" />
-                <element signature="e#2972#3912#0" expanded="false" />
-                <element signature="e#3954#4368#0" expanded="false" />
-                <element signature="e#4410#4842#0" expanded="false" />
-                <element signature="e#4884#5389#0" expanded="false" />
-                <element signature="e#5633#5828#0" expanded="false" />
-                <element signature="e#5869#6185#0" expanded="false" />
+                <element signature="e#5403#5719#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -106,23 +116,32 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="functions.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/twittur/functions.py">
+      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twittur/forms.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="81" column="100" selection-start-line="81" selection-start-column="100" selection-end-line="81" selection-end-column="100" />
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#1037#3326#0" expanded="false" />
+                <element signature="e#3406#5299#0" expanded="false" />
+                <element signature="e#5341#5924#0" expanded="false" />
+                <element signature="e#5970#7733#0" expanded="false" />
+                <element signature="e#7795#8629#0" expanded="false" />
+                <element signature="e#8662#10207#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="functions.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/twittur/functions.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.5925926">
+              <caret line="32" column="50" selection-start-line="32" selection-start-column="50" selection-end-line="32" selection-end-column="50" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
-                <element signature="e#317#1221#0" expanded="false" />
-                <element signature="e#5069#6657#0" expanded="false" />
-                <element signature="e#6786#7881#0" expanded="false" />
-                <element signature="e#7911#9496#0" expanded="false" />
-                <element signature="e#9562#10674#0" expanded="false" />
-                <element signature="e#10759#11110#0" expanded="false" />
-                <element signature="e#11147#11303#0" expanded="false" />
-                <element signature="e#11342#11728#0" expanded="false" />
-                <element signature="e#11795#12397#0" expanded="false" />
-                <element signature="e#12508#12565#0" expanded="false" />
+                <element signature="e#1465#5011#0" expanded="false" />
+                <element signature="e#9750#10862#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -136,17 +155,17 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/twittur/admin.py" />
         <option value="$PROJECT_DIR$/PPSN/settings.py" />
         <option value="$PROJECT_DIR$/twittur/0030_groupprofile_password.py" />
         <option value="$PROJECT_DIR$/twittur/forms.py" />
         <option value="$PROJECT_DIR$/twittur/urls.py" />
         <option value="$PROJECT_DIR$/twittur/views_search.py" />
-        <option value="$PROJECT_DIR$/twittur/views_group.py" />
         <option value="$PROJECT_DIR$/twittur/views_info.py" />
+        <option value="$PROJECT_DIR$/twittur/views_group.py" />
+        <option value="$PROJECT_DIR$/twittur/admin.py" />
+        <option value="$PROJECT_DIR$/twittur/views.py" />
         <option value="$PROJECT_DIR$/twittur/models.py" />
         <option value="$PROJECT_DIR$/twittur/functions.py" />
-        <option value="$PROJECT_DIR$/twittur/views.py" />
       </list>
     </option>
   </component>
@@ -156,7 +175,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="1" />
     <option name="width" value="1918" />
-    <option name="height" value="1050" />
+    <option name="height" value="1051" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -400,7 +419,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1" y="0" width="1918" height="1050" extended-state="0" />
+    <frame x="1" y="0" width="1918" height="1051" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1382755" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -436,13 +455,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/twittur/models.py</url>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="15" />
+      <option name="time" value="17" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -495,11 +508,11 @@
           <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
-            <element signature="e#2620#9760#0" expanded="false" />
-            <element signature="e#9797#9862#0" expanded="false" />
-            <element signature="e#14808#17495#0" expanded="false" />
-            <element signature="e#17533#18564#0" expanded="false" />
-            <element signature="e#18598#20525#0" expanded="false" />
+            <element signature="e#577#2496#0" expanded="false" />
+            <element signature="e#2546#9686#0" expanded="false" />
+            <element signature="e#9723#9788#0" expanded="false" />
+            <element signature="e#14708#17395#0" expanded="false" />
+            <element signature="e#17433#18484#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -545,11 +558,11 @@
           <caret line="156" column="8" selection-start-line="155" selection-start-column="8" selection-end-line="156" selection-end-column="8" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
-            <element signature="e#2620#9760#0" expanded="false" />
-            <element signature="e#9797#9862#0" expanded="false" />
-            <element signature="e#14808#17495#0" expanded="false" />
-            <element signature="e#17533#18564#0" expanded="false" />
-            <element signature="e#18598#20525#0" expanded="false" />
+            <element signature="e#577#2496#0" expanded="false" />
+            <element signature="e#2546#9686#0" expanded="false" />
+            <element signature="e#9723#9788#0" expanded="false" />
+            <element signature="e#14708#17395#0" expanded="false" />
+            <element signature="e#17433#18484#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -581,11 +594,11 @@
           <caret line="163" column="24" selection-start-line="163" selection-start-column="24" selection-end-line="163" selection-end-column="24" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
-            <element signature="e#2620#9760#0" expanded="false" />
-            <element signature="e#9797#9862#0" expanded="false" />
-            <element signature="e#14808#17495#0" expanded="false" />
-            <element signature="e#17533#18564#0" expanded="false" />
-            <element signature="e#18598#20525#0" expanded="false" />
+            <element signature="e#577#2496#0" expanded="false" />
+            <element signature="e#2546#9686#0" expanded="false" />
+            <element signature="e#9723#9788#0" expanded="false" />
+            <element signature="e#14708#17395#0" expanded="false" />
+            <element signature="e#17433#18484#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -617,11 +630,11 @@
           <caret line="146" column="17" selection-start-line="146" selection-start-column="17" selection-end-line="146" selection-end-column="17" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
-            <element signature="e#2620#9760#0" expanded="false" />
-            <element signature="e#9797#9862#0" expanded="false" />
-            <element signature="e#14808#17495#0" expanded="false" />
-            <element signature="e#17533#18564#0" expanded="false" />
-            <element signature="e#18598#20525#0" expanded="false" />
+            <element signature="e#577#2496#0" expanded="false" />
+            <element signature="e#2546#9686#0" expanded="false" />
+            <element signature="e#9723#9788#0" expanded="false" />
+            <element signature="e#14708#17395#0" expanded="false" />
+            <element signature="e#17433#18484#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -737,38 +750,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46346784">
-          <caret line="25" column="28" selection-start-line="25" selection-start-column="28" selection-end-line="25" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Program Files (x86)/Python/Lib/site-packages/Django-1.8.1-py3.4.egg/django/contrib/auth/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PPSN/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -783,20 +768,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.1308615">
           <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.610687">
-          <caret line="175" column="47" selection-start-line="175" selection-start-column="47" selection-end-line="175" selection-end-column="47" />
-          <folding>
-            <element signature="e#1037#3326#0" expanded="false" />
-            <element signature="e#3406#5299#0" expanded="false" />
-            <element signature="e#5341#5924#0" expanded="false" />
-            <element signature="e#7795#8629#0" expanded="false" />
-            <element signature="e#8662#10207#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -816,32 +787,41 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/views_search.py">
+    <entry file="file://$PROJECT_DIR$/PPSN/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
-          <folding>
-            <element signature="e#292#4849#0" expanded="false" />
-            <element signature="e#4940#6476#0" expanded="false" />
-            <element signature="e#6582#6750#0" expanded="false" />
-          </folding>
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/models.py">
+    <entry file="file://$PROJECT_DIR$/twittur/tests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="34" column="32" selection-start-line="34" selection-start-column="32" selection-end-line="34" selection-end-column="32" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twittur/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twittur/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#209#299#0" expanded="false" />
-            <element signature="e#400#1191#0" expanded="false" />
-            <element signature="e#1237#2931#0" expanded="false" />
-            <element signature="e#2972#3912#0" expanded="false" />
-            <element signature="e#3954#4368#0" expanded="false" />
-            <element signature="e#4410#4842#0" expanded="false" />
-            <element signature="e#4884#5389#0" expanded="false" />
-            <element signature="e#5633#5828#0" expanded="false" />
-            <element signature="e#5869#6185#0" expanded="false" />
+            <element signature="e#1037#3326#0" expanded="false" />
+            <element signature="e#3406#5299#0" expanded="false" />
+            <element signature="e#5341#5924#0" expanded="false" />
+            <element signature="e#5970#7733#0" expanded="false" />
+            <element signature="e#7795#8629#0" expanded="false" />
+            <element signature="e#8662#10207#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -858,50 +838,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/views_group.py">
+    <entry file="file://$PROJECT_DIR$/twittur/views_search.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="149" column="39" selection-start-line="149" selection-start-column="39" selection-end-line="149" selection-end-column="39" />
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
           <folding>
-            <element signature="e#365#2046#0" expanded="false" />
-            <element signature="e#2102#4536#0" expanded="false" />
-            <element signature="e#4617#6288#0" expanded="false" />
-            <element signature="e#6565#8632#0" expanded="false" />
+            <element signature="e#292#4849#0" expanded="false" />
+            <element signature="e#4940#6476#0" expanded="false" />
+            <element signature="e#6582#6750#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/functions.py">
+    <entry file="file://$PROJECT_DIR$/twittur/views_group.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="81" column="100" selection-start-line="81" selection-start-column="100" selection-end-line="81" selection-end-column="100" />
+          <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
           <folding>
-            <element signature="e#0#29#0" expanded="true" />
-            <element signature="e#317#1221#0" expanded="false" />
-            <element signature="e#5069#6657#0" expanded="false" />
-            <element signature="e#6786#7881#0" expanded="false" />
-            <element signature="e#7911#9496#0" expanded="false" />
-            <element signature="e#9562#10674#0" expanded="false" />
-            <element signature="e#10759#11110#0" expanded="false" />
-            <element signature="e#11147#11303#0" expanded="false" />
-            <element signature="e#11342#11728#0" expanded="false" />
-            <element signature="e#11795#12397#0" expanded="false" />
-            <element signature="e#12508#12565#0" expanded="false" />
+            <element signature="e#367#2048#0" expanded="false" />
+            <element signature="e#2104#4538#0" expanded="false" />
+            <element signature="e#4619#5959#0" expanded="false" />
+            <element signature="e#6236#8303#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twittur/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="27" column="64" selection-start-line="27" selection-start-column="64" selection-end-line="27" selection-end-column="64" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/twittur/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5561614">
-          <caret line="247" column="46" selection-start-line="247" selection-start-column="46" selection-end-line="247" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="409" column="28" selection-start-line="409" selection-start-column="28" selection-end-line="409" selection-end-column="28" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
-            <element signature="e#2620#9760#0" expanded="false" />
-            <element signature="e#9797#9862#0" expanded="false" />
-            <element signature="e#14808#17495#0" expanded="false" />
-            <element signature="e#17533#18564#0" expanded="false" />
-            <element signature="e#18598#20525#0" expanded="false" />
+            <element signature="e#577#2496#0" expanded="false" />
+            <element signature="e#2546#9686#0" expanded="false" />
+            <element signature="e#9723#9788#0" expanded="false" />
+            <element signature="e#14708#17395#0" expanded="false" />
+            <element signature="e#17433#18484#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twittur/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="89" column="53" selection-start-line="89" selection-start-column="53" selection-end-line="89" selection-end-column="53" />
+          <folding>
+            <element signature="e#5403#5719#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twittur/functions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5925926">
+          <caret line="32" column="50" selection-start-line="32" selection-start-column="50" selection-end-line="32" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+            <element signature="e#1465#5011#0" expanded="false" />
+            <element signature="e#9750#10862#0" expanded="false" />
           </folding>
         </state>
       </provider>
