@@ -72,11 +72,11 @@ def editMessage(request):
             msg = Message.objects.get(pk=request.POST['ignoreMsg'])
             if msg in ignore_list:
                 request.user.userprofile.ignoreM.remove(msg)
-                return 'Nachricht wird nicht mehr ignoriert!'
+                return 'Nachricht wird nicht mehr ausgeblendet!'
 
             else:
                 request.user.userprofile.ignoreM.add(msg)
-                return 'Nachricht erfolgreich ignoriert!'
+                return 'Nachricht erfolgreich ausgeblendet!'
 
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
@@ -159,8 +159,10 @@ def getMessages(data):
     dbmessage_list = getMessageList(data['page'], data['user'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
-    userprofile = UserProfile.objects.get(userprofile=data['user'])
-    ignoreM_list = userprofile.ignoreM.all()
+
+    userProfile = UserProfile.objects.get(userprofile=data['request'].user)
+    ignoreM_list = userProfile.ignoreM.all()
+
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
         if message.date > curDate:

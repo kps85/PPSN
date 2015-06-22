@@ -4,25 +4,35 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, getMessages, getWidgets
+from .functions import dbm_to_m, editMessage, getMessages, getWidgets
 from .models import GroupProfile, Hashtag, Nav
 
 
 # search input
 def search(request):
     # initialize varios information
-    search_input, error_msg, end, list_end = None, {}, 5, False
+    search_input, success_msg, error_msg, end, list_end = None, None, {}, 5, False
 
     # initialize sidebar lists
     widgets = getWidgets(request)
 
-    search_input = request.GET['search_input'].strip().split(" ")
+    # if message was sent to view: return success message
+    if request.method == 'POST':
+        success_msg = editMessage(request)
 
+    if 'search_input' in request.GET:
+        search_input = request.GET['search_input'].strip().split(" ")
+    elif 'search_input' in request.POST:
+        search_input = request.POST['search_input'].strip().split(" ")
+    else:
+        search_input = None
+
+    print("test")
     if request.method == 'GET' and 'length' in request.GET:
         end = int(request.GET.get('length')) + 5
 
         # Messages
-        messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end})
+        messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end, 'request': request})
         message_list = zip(
             messages['message_list'][:end], messages['dbmessage_list'][:end],
             messages['comment_list'], messages['comment_count']
@@ -50,7 +60,7 @@ def search(request):
     # @kps for example, we wont find him, because the database don't know him
 
     user_list, group_list, hashtag_list, message_list = [], [], [], []
-    messages = getMessages(data={'page': 'search', 'user': search_input, 'end': None})
+    messages = getMessages(data={'page': 'search', 'user': search_input, 'request': request})
     if len(messages['message_list']) <= end:
         list_end = True
 
@@ -91,7 +101,8 @@ def search(request):
     message_list.sort(key=lambda x: x[0].date, reverse=True)
 
     context = {
-        'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'active_page': 'search', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'success_msg': success_msg,
         'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
         'search_input': ' '.join(search_input), 'list_end': list_end,
         'user_list': user_list, 'user_list_length': len(user_list),
@@ -106,16 +117,20 @@ def search(request):
 
 # click on hashtaglinks will redirect to this function.
 def hashtag(request, text):
-    end = 5
+    success_msg, end = None, 5
 
     # initialize sidebar lists
     widgets = getWidgets(request)
+
+    # if message was sent to view: return success message
+    if request.method == 'POST':
+        success_msg = editMessage(request)
 
     if request.method == 'GET' and 'length' in request.GET:
         end = int(request.GET.get('length')) + 5
 
     # Messages
-    messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
+    messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end, 'request': request})
     message_list = zip(
         messages['message_list'][:end], messages['dbmessage_list'][:end],
         messages['comment_list'], messages['comment_count']
@@ -128,6 +143,7 @@ def hashtag(request, text):
 
     context = {
         'active_page': 'hashtag', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'success_msg': success_msg,
         'search': 'Beitr&auml;ge zum Thema "#' + text + '"', 'is_hash': text, 'list_end': messages['list_end'],
         'message_list': message_list, 'hash_list_length': len(messages['dbmessage_list']),
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
