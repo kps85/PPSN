@@ -72,7 +72,11 @@
     <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
+        	{% if active_page in 'profile' %}
+          <form action="{% url 'twittur:profile' user=user %}" method="post" enctype="multipart/form-data">
+        	{% else %}
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
+          {% endif %}
           {% csrf_token %}
             <input name="msgDialog" type="hidden" value="true" />
             <div class="modal-header">

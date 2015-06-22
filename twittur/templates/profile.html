@@ -10,14 +10,13 @@
 
 {% block content %}
 {% if not error_msg %}
-
   <div class="container-fluid">
     <div class="profil clearfix">
-    	{% if group and curUser == group.admin %}
+    	{% if group and user == group.admin %}
     	<a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="profilEdit" title="Gruppe bearbeiten">
       	<span class="glyphicon glyphicon-cog"></span>
       </a>
-      {% elif active_page == 'profile' and curUser = user %}
+      {% elif active_page == 'profile' and user == pUser %}
     	<a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
       	<span class="glyphicon glyphicon-cog"></span>
       </a>
@@ -26,16 +25,16 @@
       	{% if group %}
           <img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/>
         {% else %}
-          <img src="{{ curUserProfile.picture.url }}" class="profilbild-s img-thumbnail"/>
+          <img src="{{ pUserProf.picture.url }}" class="profilbild-s img-thumbnail"/>
         {% endif %}
       </div>
       <div class="col-xs-12 col-sm-8 clearfix">
         <div class="profilMeta">
           <h3 class="profilAuthor">
-          	{% if group %}{{ group.name }}{% else %}{{ curUser.first_name }} {{ curUser.last_name }}{% endif %}
+          	{% if group %}{{ group.name }}{% else %}{{ pUser.first_name }} {{ pUser.last_name }}{% endif %}
           </h3>
-          <h5 class="profilNick" data-hint="{% if group %}{{ group.short }}{% else %}{{ curUser.username }}{% endif %}">
-          	{% if group %}&{{ group.short }}{% else %}@{{ curUser.username }}{% endif %}
+          <h5 class="profilNick" data-hint="{% if group %}{{ group.short }}{% else %}{{ pUser.username }}{% endif %}">
+          	{% if group %}&{{ group.short }}{% else %}@{{ pUser.username }}{% endif %}
           </h5>          
           <div class="profilAcaDis" title="Studiengang">
           	{% if group %}
@@ -43,7 +42,7 @@
               {{ group.admin.first_name }} {{ group.admin.last_name }} (@<a href="{% url 'twittur:profile' user=group.admin %}">{{ group.admin.username }}</a>)
             {% else %}
               <span class="glyphicon glyphicon-education" aria-hidden="true"></span>             
-              {{ curUserProfile.academicDiscipline }} 
+              {{ pUserProf.academicDiscipline }} 
             {% endif %}
           </div>
           {% if group %}
@@ -57,12 +56,12 @@
           {% else %}
           <div class="profilLocation" title="Wohnort">
           	<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
-            {{ curUserProfile.location }}
+            {{ pUserProf.location }}
           </div>
           {% endif %}
           <div class="profilJoined" title="{% if group %}erstellt am{% else %}registriert seit{% endif %}">
           	<span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
-            {% if group %}{{ group.date }}{% else %}{{ curUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}{% endif %}
+            {% if group %}{{ group.date }}{% else %}{{ pUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}{% endif %}
           </div>
           {% if group %}
           <div class="profilDesc" title="Beschreibung der Gruppe">
@@ -70,28 +69,18 @@
             {{ group.desc }}
           </div>
           {% endif %}
-          <!--{% if request.user != curUser %}
-          <div class="profilButton">
-            <form action="{% url 'twittur:profile' user=curUser %}" method="GET">
-              <button class="btn btn-primary" id="follow" name="follow" type="submit" value=""> {{ follow_text|safe }} </button>
-            </form>
-          </div>
-          {% endif %}
-          <div class="profilLink"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Nachricht senden</div>
-          <div class="profilLink"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nachfolgen</div>
-          --> 
         </div>
       </div>
     </div>
-    {% if request.user != curUser and not group %}
-    <form action="{% url 'twittur:profile' user=curUser %}" method="GET" >
+    {% if request.user != pUser and not group %}
+    <form action="{% url 'twittur:profile' user=pUser %}" method="GET" >
     	<input name="follow" type="hidden" value="follow" />
       <button class="col-xs-6 text-center btn btn-default profileButton" id="id_follow" type="submit">
         <strong>{{ follow_text|safe }}</strong>
       </button>
     </form>
-    <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ curUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ curUser|upper }} schreiben" type="button">
-      <strong><span class="glyphicon glyphicon-edit"></span> {{ curUser|upper }} schreiben</strong>
+    <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ pUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ pUser|upper }} schreiben" type="button">
+      <strong><span class="glyphicon glyphicon-edit"></span> {{ pUser|upper }} schreiben</strong>
     </button>
     {% endif %}
     {% if group %}
@@ -172,7 +161,7 @@
             <span class="glyphicon glyphicon-refresh"></span>
           </button>
         {% else %}
-          <button class="load_more btn btn-default" data-hint="{% url 'twittur:profile' user=curUser %}" title="Mehr Beitr&auml;ge laden">
+          <button class="load_more btn btn-default" data-hint="{% url 'twittur:profile' user=pUser %}" title="Mehr Beitr&auml;ge laden">
             <span class="glyphicon glyphicon-refresh"></span>
           </button>
         {% endif %}

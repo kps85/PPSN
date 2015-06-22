@@ -11,8 +11,8 @@ from itertools import chain
 from operator import attrgetter
 
 from .models import UserProfile, Nav, Message, Hashtag, GroupProfile, NotificationM, NotificationF
-from .forms import UserForm, UserDataForm #,CommentForm
-from .functions import editMessage, getMessages, getMessagesEnd, msgDialog, pw_generator, getNotificationCount #, commentMessage
+from .forms import UserForm, UserDataForm
+from .functions import editMessage, getMessages, getWidgets, msgDialog, pw_generator, getNotificationCount
 
 
 # startpage
@@ -22,73 +22,41 @@ def index(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    has_msg, success_msg, list_end, end = False, None, False, 5
+    # initialize newMsgForm, user and various information
+    success_msg, end = None, 5
+    user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
 
-    current_user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
-    user_list = UserProfile.objects.filter(userprofile__exact=request.user)
-    #    atTag = '@' + request.user.username + ' '
+    # initialize sidebar lists
+    widgets = getWidgets(request)
 
-    msgForm = msgDialog(request)
-    #cmForm = commentMessage(request)
-
+    # if message was sent to view: return success message
     if request.method == 'POST':
         success_msg = editMessage(request)
-    elif request.method == 'GET' and 'last' in request.GET:
-        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'index', 'user': current_user})
-
-        # Messages
-        messages = getMessages(data={'page': 'index', 'user': current_user, 'end': end})
-        message_list = zip(
-            messages['message_list'][:end], messages['dbmessage_list'][:end],
-            messages['comment_list'], messages['comment_count']
-        )
-
-        if end > len(messages['message_list']):
-            list_end = True
-
-        context = {'active_page': 'index', 'user': current_user, 'list_end': list_end,
-                   'message_list': message_list, 'msgForm': msgForm}
-        return render(request, 'message_box_reload.html', context)
+    # else if message list length should be extended
+    elif request.method == 'GET' and 'start' in request.GET:
+        end = int(request.GET.get('start')) + 5
 
     # Messages
-    messages = getMessages(data={'page': 'index', 'user': current_user, 'end': end})
-    if end > len(messages['message_list']):
-        list_end = True
-    if 'has_msg' in messages:
-        has_msg = True
+    messages = getMessages(data={'page': 'index', 'user': user, 'end': end})
     message_list = zip(
         messages['message_list'][:end], messages['dbmessage_list'][:end],
         messages['comment_list'], messages['comment_count']
     )
 
-    # Follow List
-    curUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = curUser.follow.all()
-    # Group List
-    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
-    # Beliebte Themen
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
-
-    # Notification
-    new = getNotificationCount(request.user)
-
-    context = {
-        'active_page': 'index',
-        'current_user': current_user,
-        'user_list': user_list,
-        'message_list': message_list,
-        'nav': Nav.nav,
-        'msgForm': msgForm,
-        'new': new,
-        'success_msg': success_msg,
-        'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-        'group_sb_list': group_sb_list,
-        'has_msg': has_msg,
-        'list_end': list_end,
-    }
-    return render(request, 'index.html', context)
+    # if message list length should be extended
+    if request.method == 'GET' and 'start' in request.GET:
+        context = {'active_page': 'index', 'user': user, 'list_end': messages['list_end'],
+                   'message_list': message_list, 'msgForm': widgets['msgForm']}
+        return render(request, 'message_box_reload.html', context)
+    else:
+        context = {
+            'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+            'success_msg': success_msg, 'current_user': user,
+            'message_list': message_list, 'has_msg': messages['has_msg'], 'list_end': messages['list_end'],
+            'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+            'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        }
+        return render(request, 'index.html', context)
 
 
 # login/registration page
@@ -96,18 +64,16 @@ def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/')
 
-    # Public Messages: TODO Filtern!
+    # Public Messages:
     message_list = Message.objects.filter(
         Q(comment=None) & Q(attags=None)
     ).order_by('-date')
 
     # login
     if request.method == "GET":
-
         if 'login' in request.GET:
-            query_dict = request.GET
-            username = query_dict.get('username')
-            password = query_dict.get('password')
+            username = request.GET.get('username')
+            password = request.GET.get('password')
             user = authenticate(username=username, password=password)
 
             if user is not None:
@@ -116,9 +82,8 @@ def login(request):
                     return HttpResponseRedirect('/twittur/')
             else:
                 error_login = "Ups, Username oder Passwort falsch."
-                active_toggle = "active_toggle"
                 return render(request, 'ftu.html',
-                              {'error_login': error_login, 'message_list': message_list, 'active_page': 'ftu'})
+                              {'active_page': 'ftu', 'error_login': error_login, 'message_list': message_list})
 
     # Registration
     if request.method == 'POST':
@@ -158,8 +123,7 @@ def login(request):
                 errors['error_not_registered'] = "Die eingegebene E-Mail Adresse ist nicht registriert."
 
         else:
-            userList, username, academicDiscipline, studentNumber, data, errors \
-                = User.objects.all(), query_dict.get('name'), None, 0, {}, {}
+            userList, username = User.objects.all(), query_dict.get('name')
 
             # case if username is available
             for user in userList:
@@ -181,13 +145,11 @@ def login(request):
             email = query_dict.get('email')
             mail = email.split('@')
             if len(mail) == 1 or not (
-                        mail[1].endswith(".tu-berlin.de") or
-                        (email[(len(email) - 13):len(email)] == '@tu-berlin.de')
-            ):
+                mail[1].endswith(".tu-berlin.de") or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
                 errors['error_reg_mail'] = "Keine g&uuml;tige TU E-Mail Adresse!"
             else:
                 try:
-                    checkMail = User.objects.get(email=email)
+                    User.objects.get(email=email)
                     errors['error_reg_mail'] = "Ein Benutzer mit dieser E-Mail Adresse existiert bereits!"
                 except:
                     data['email'] = email
@@ -202,13 +164,11 @@ def login(request):
             if len(query_dict.get('studentNumber')) == 6:
                 studentNumber = query_dict.get('studentNumber')
                 try:
-                    checkSN = UserProfile.objects.get(studentNumber=studentNumber)
+                    UserProfile.objects.get(studentNumber=studentNumber)
                     errors["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."
                 except:
                     data['studentNumber'] = studentNumber
             else:
-                if len(query_dict.get('studentNumber')) > 0:
-                    data['studentNumber'] = query_dict.get('studentNumber')
                 errors['error_student_number'] = "Die eingegebene Matrikel-Nummer ist ung&uuml;ltig!"
             academicDiscipline = query_dict.get('academicDiscipline')
             if len(academicDiscipline) > 0:
@@ -218,19 +178,15 @@ def login(request):
 
         # context for html
         context = {
-            'active_page': 'ftu',
-            'nav': Nav.nav,
-            'message_list': message_list,
-            'data': data,
-            'errors': errors
+            'active_page': 'ftu', 'nav': Nav.nav, 'data': data, 'errors': errors,
+            'message_list': message_list
         }
 
         # error?
         if len(errors) > 0 or 'password_reset' in request.POST:
             if 'password_reset' in request.POST:
                 context['pActive'] = 'active'
-                if success_msg:
-                    context['success_msg'] = success_msg
+                if success_msg: context['success_msg'] = success_msg
             else:
                 context['rActive'] = 'active'
             return render(request, 'ftu.html', context)
@@ -240,16 +196,16 @@ def login(request):
         user.first_name = first_name
         user.last_name = last_name
         user.save()
-        user_profil = UserProfile(userprofile=user, studentNumber=studentNumber,
+        userProfile = UserProfile(userprofile=user, studentNumber=studentNumber,
                                   academicDiscipline=academicDiscipline, location="Irgendwo")
-        user_profil.save()
+        userProfile.save()
 
         # log user in and redirect to index page
         user = authenticate(username=username, password=password)
         auth.login(request, user)
         return HttpResponseRedirect('/twittur/')
 
-    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list, 'active_page': 'ftu'}
+    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
     return render(request, 'ftu.html', context)
 
 
@@ -266,111 +222,71 @@ def profile(request, user):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    show_favs, has_msg, error_msg, success_msg, end, list_end = False, None, {}, None, 5, False
+    error_msg, success_msg, end = {}, None, 5
+    if 'favorits' in request.GET:
+        show_favs = True
+    else:
+        show_favs = False
 
-    # Follow List
-    curUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = curUser.follow.all()
-    # Group List
-    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
-    # Beliebte Themen
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
-    # Notification
-    new = getNotificationCount(request.user)
+    # initialize widgets (sidebar, newMsgForm, ...)
+    widgets = getWidgets(request)
 
-    if request.method == 'GET' and 'last' in request.GET:
-        current_user = User.objects.get(username__exact=user)
-        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'profile', 'user': current_user})
-
-        # Messages
-        msgForm = msgDialog(request)
-        messages = getMessages(data={'page': 'profile', 'user': current_user, 'end': end})
-        message_list = zip(
-            messages['message_list'][:end], messages['dbmessage_list'][:end],
-            messages['comment_list'], messages['comment_count']
-        )
-
-        if end >= len(messages['message_list']):
-            list_end = True
-
-        context = {'active_page': 'profile', 'user': request.user, 'list_end': list_end,
-                   'message_list': message_list, 'msgForm': msgForm}
-        return render(request, 'message_box_reload.html', context)
+    context = {
+        'active_page': 'profile', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'follow_list': widgets['follow_list'],
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list']
+    }
 
     try:
-        newUser = User.objects.get(username=user)  # this is the user displayed in html
+        pUser = User.objects.get(username=user)  # this is the user displayed in html
+        if request.method == 'POST':
+            context['success_msg'] = editMessage(request)
 
-        # follow
-        if request.method == "GET" and 'follow' in request.GET:
-            if newUser in follow_list:
-                print("remove")
-                follow = NotificationF.objects.get(Q(me__exact=request.user.userprofile) & Q(you__exact=newUser))
-                follow.delete()
-                success_msg = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
-            else:
-                print("add")
-                curUser.save()
-                notification = NotificationF(me=request.user.userprofile, you=newUser, read=False)
-                notification.save()
-                success_msg = 'Du folgst ' + user.upper() + ' jetzt.'
+        if request.method == 'GET':
+            # extend message list length
+            if 'last' in request.GET:
+                end = int(request.GET.get('start')) + 5
 
-        if newUser in follow_list:
+            # follow
+            if 'follow' in request.GET:
+                if pUser in widgets['follow_list']:
+                    follow = NotificationF.objects.get(
+                        Q(me__exact=request.user.userprofile) & Q(you__exact=pUser)
+                    )
+                    follow.delete()
+                    context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
+                else:
+                    widgets['userProfile'].save()
+                    notification = NotificationF(me=request.user.userprofile, you=pUser, read=False)
+                    notification.save()
+                    context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
+                widgets['follow_list'] = widgets['userProfile'].follow.all()
+        if pUser in widgets['follow_list']:
             follow_text = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
         else:
             follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
 
-        if request.method == 'POST':
-            success_msg = editMessage(request)
-
         # Messages
-        messages = getMessages(data={'page': 'profile', 'user': newUser, 'end': end})
+        messages = getMessages(data={'page': 'profile', 'user': pUser, 'end': end})
         message_list = zip(
             messages['message_list'][:end], messages['dbmessage_list'][:end],
             messages['comment_list'], messages['comment_count']
         )
 
-        if end >= len(messages['message_list']):
-            list_end = True
+        if request.method == 'GET' and 'last' in request.GET:
+            context = {'active_page': 'profile', 'user': request.user, 'list_end': messages['list_end'],
+                       'message_list': message_list, 'msgForm': widgets['msgForm']}
+            return render(request, 'message_box_reload.html', context)
 
-        if 'has_msg' in messages:
-            has_msg = messages['has_msg']
-
-        if 'favorits' in request.GET:
-            show_favs = True
-
-        context = {
-            'active_page': 'profile',
-            'nav': Nav.nav,
-            'new': new,
-            'show_favs': show_favs,
-            'curUser': newUser,
-            'curUserProfile': newUser.userprofile,
-            'profileUser': user,
-            'message_list': message_list,
-            'msgForm': msgDialog(request),
-            'has_msg': has_msg,
-            'list_end': list_end,
-            'success_msg': success_msg,
-            'hot_list': hot_list,
-            'follow_list': follow_list,
-            'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-            'follow_text': follow_text,
-            'group_sb_list': group_sb_list
-        }
+        context['pUser'], context['pUserProf'], context['show_favs'] = pUser, pUser.userprofile, show_favs
+        context['message_list'], context['list_end']  = message_list, messages['list_end']
+        context['has_msg'], context['follow_text'] = messages['has_msg'], follow_text
+        context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
 
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
-        context = {
-            'active_page': 'profile',
-            'nav': Nav.nav,
-            'curUser': None,
-            'error_msg': error_msg,
-            'hot_list': hot_list,
-            'follow_list': follow_list,
-            'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-            'group_sb_list': group_sb_list
-        }
+        context['error_msg'] = error_msg
+
     return render(request, 'profile.html', context)
 
 
@@ -386,25 +302,25 @@ def settings(request):
         return HttpResponseRedirect('/twittur/login/')
 
     # get current users information and initialize return messages
-    curUser = User.objects.get(pk=request.user.id)
-    curUserProfile = curUser.userprofile
+    user = User.objects.get(pk=request.user.id)
+    userProfile = user.userprofile
     success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
-    # Notification
-    new = getNotificationCount(request.user)
+    # initialize widgets (sidebar, newMsgForm, ...)
+    widgets = getWidgets(request)
 
     # check if account should be deleted
     # if true: delete account, return to FTU
     if request.method == 'POST' and request.POST['delete'] == 'true':
-        curUser.userprofile.delete()
-        curUser.delete()
+        userProfile.delete()
+        user.delete()
         return HttpResponseRedirect('/twittur/')
     # else: validate userForm and userDataForm and save changes
     elif request.method == 'POST':
-        userForm = UserForm(request.POST, instance=curUser)
+        userForm = UserForm(request.POST, instance=user)
         if userForm.is_valid():
-            userDataForm = UserDataForm(request.POST, request.FILES, instance=curUserProfile)
-            userDataForm.oldPicture = curUserProfile.picture
+            userDataForm = UserDataForm(request.POST, request.FILES, instance=userProfile)
+            userDataForm.oldPicture = userProfile.picture
             # if picture has changed, delete old picture
             # do not, if old picture was default picture
             if 'picture' in request.FILES or 'picture-clear' in request.POST:
@@ -427,123 +343,86 @@ def settings(request):
             error_msg = userForm.errors
 
     # initialize UserForm and UserDataForm with current users information
-    userForm = UserForm(instance=curUser)
-    userDataForm = UserDataForm(instance=curUserProfile)
+    userForm = UserForm(instance=user)
+    userDataForm = UserDataForm(instance=userProfile)
 
     # return relevant information to render settings.html
     context = {
-        'active_page': 'settings',
-        'nav': Nav.nav,
-        'new': new,
-        'msgForm': msgDialog(request),
-        'success_msg': success_msg,
-        'error_msg': error_msg,
-        'user': curUser,
-        'userForm': userForm,
-        'userDataForm': userDataForm
+        'active_page': 'settings', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'success_msg': success_msg, 'error_msg': error_msg,
+        'user': user,
+        'userForm': userForm, 'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)
 
 
 def showMessage(request, msg):
+    success_msg, error_msg = None, {}
 
-    success_msg, error_msg, has_msg = None, {}, False
+    # initialize widgets (sidebar, newMsgForm, ...)
+    widgets = getWidgets(request)
 
-    # Follow List
-    curUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = curUser.follow.all()
-    # Group List
-    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
-    # Beliebte Themen
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
-    # Notification
-    new = getNotificationCount(request.user)
-
-
-    msgForm = msgDialog(request)
+    # if a message was sent to this view:
+    # return success_msg
     if request.method == 'POST':
         success_msg = editMessage(request)
 
     # Messages
-    messages = getMessages(data={'page': msg, 'user': request.user, 'end': None})
-    if 'has_msg' in messages:
-        has_msg = messages['has_msg']
+    messages = getMessages(data={'page': msg, 'user': request.user})
     message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
 
     # return relevant information to render message.html
     context = {
-        'active_page': 'message',
-        'msg_id': msg,
-        'nav': Nav.nav,
-        'new': new,
-        'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-        'group_sb_list': group_sb_list,
-        'msgForm': msgForm,
-        'user': request.user,
-        'success_msg': success_msg,
-        'error_msg': error_msg,
-        'message_list': message_list,
-        'has_msg': has_msg
+        'active_page': 'message', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'success_msg': success_msg, 'error_msg': error_msg, 'user': request.user,
+        'msg_id': msg, 'message_list': message_list, 'has_msg': messages['has_msg'],
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
     return render(request, 'message.html', context)
 
 
 def notification(request):
     # for context
-    notificationM_list = NotificationM.objects.all().filter(user=request.user)#.order_by('-message__date')
-    notificationF_list = NotificationF.objects.all().filter(you=request.user)#.order_by('-message__date')
-    notificationC_list = Message.objects.all().filter(comment__user=request.user).exclude(user=request.user)
+    notificationM_list = NotificationM.objects.filter(user=request.user)
+    notificationF_list = NotificationF.objects.filter(you=request.user)
+    notificationC_list = Message.objects.filter(comment__user=request.user).exclude(user=request.user)
 
-    notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list), key=attrgetter('date') ,
-    reverse=True)
-    boolean_list = []
-
+    notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list),
+                               key=attrgetter('date'),
+                               reverse=True)
 
     # saving boolean extra, because it will deleted by next for loop
-    for no in notification_list:
-        if no.read == False:
+    boolean_list = []
+    for item in notification_list:
+        if item.read == False:
             boolean_list.append('False')
         else:
             boolean_list.append('True')
 
     notification_list = zip(notification_list,boolean_list)
-    #newM = NotificationM.objects.filter(Q(read=False) & Q(user=request.user)).count()
-    #newF = NotificationF.objects.filter(Q(read=False) & Q(you=request.user)).count()
-    #newC = Message.objects.all().filter(comment__user=request.user).count()
-    #new = newF + newM + newC
 
-    new = getNotificationCount(request.user)
-
-    # Follow List
-    curUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = curUser.follow.all()
-    # Group List
-    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
-    # Beliebte Themen
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
+    # initialize widgets (sidebar, newMsgForm, ...)
+    widgets = getWidgets(request)
 
     context = {
-        'active_page': 'notification',
-        'nav': Nav.nav,
+        'active_page': 'notification', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'user': request.user,
         'notification_list': notification_list,
-        'new': new,
-        'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-        'group_sb_list': group_sb_list
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+
     }
 
     # update -> set all notification to true
-    for n in NotificationM.objects.filter(Q(read=False) & Q(user=request.user)):
-        n.read = True
-        n.save()
-    for n in NotificationF.objects.filter(Q(read=False) & Q(you=request.user)):
-        n.read = True
-        n.save()
-    for n in Message.objects.all().filter(Q(comment__user=request.user) & Q(read=False)).exclude(user=request.user):
-        n.read = True
-        n.save()
+    notifications = [
+        NotificationM.objects.filter(Q(read=False) & Q(user=request.user)),
+        NotificationF.objects.filter(Q(read=False) & Q(you=request.user)),
+        Message.objects.all().filter(Q(comment__user=request.user) & Q(read=False)).exclude(user=request.user)
+    ]
+    for list in notifications:
+        for item in list:
+            item.read = True
+            item.save()
+
     return render(request, 'notification.html', context)

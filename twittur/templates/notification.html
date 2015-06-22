@@ -20,7 +20,7 @@
   {% for notification, boolean in notification_list %}
     {% if notification.get_model_name == 'NotificationF' %}
       <a href="{% url 'twittur:profile' user=notification.me.userprofile.username %}">
-        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default{% endif %}" role="alert">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
           <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
           <strong>Neuer Follower</strong>:<small class="pull-right">{{ notification.date }}</small><br />
           <span class="info">{{ notification.me.userprofile.username }} folgt dir jetzt!</span>
@@ -28,7 +28,7 @@
       </a>
     {% elif notification.get_model_name == 'NotificationM' %}
       <a href="{% url 'twittur:message' msg=notification.message.id %}">
-        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default{% endif %}" role="alert">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
           <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
           <strong>Neue Nachricht</strong>: <small class="pull-right">{{ notification.message.date }}</small><br />
           <span class="info">{{ notification.message.user.username }} hat Dich in seiner Nachricht erw&auml;hnt!</span>
@@ -36,7 +36,7 @@
       </a>
     {% else %}      
       <a href="{% url 'twittur:message' msg=notification.id %}">
-        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default{% endif %}" role="alert">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
           <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
           <strong>Neuer Kommentar</strong>: <small class="pull-right">{{ notification.date }}</small><br />
           <span class="info">{{ notification.user.username }} hat deine Nachricht kommentiert!</span>
@@ -44,6 +44,11 @@
       </a>       
     {% endif %}  
   {% endfor %}
+    <div class="text-center">
+    	<button class="load_more btn btn-default hidden" title="Mehr Benachrichtigungen laden">
+      	<span class="glyphicon glyphicon-refresh"></span>
+      </button>
+    </div>
   </div>
 {% endif %}
 

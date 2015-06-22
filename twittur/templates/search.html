@@ -92,8 +92,8 @@
   {% if message_list_length > 0 or hash_list_length > 0 %}
     <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
     {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
-    {% for message, dbmessage in message_list %}
-      {% include "message_box.html" with message=message page=active_page user=user  %}
+    {% for message, dbmessage, comments, count in message_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments comCount=count page=active_page user=user  %}
     {% endfor %}
     </div>
     <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center{% if list_end %} hidden{% endif %}">

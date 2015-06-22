@@ -11,11 +11,8 @@ from .forms import MessageForm
 # messagebox clicked on pencil button
 def msgDialog(request):
     curUser = User.objects.get(pk=request.user.id)
-#    print(request.POST.get('codename'))
 
     if request.method == 'POST' and request.POST.get('codename') == 'message':
-#        print(request.POST.get('codename') == 'message')
-#        print('message')
         msgForm = MessageForm(request.POST)
         if msgForm.is_valid():
             msgForm.save()
@@ -144,13 +141,10 @@ def dbm_to_m(message):
 
 def getMessages(data):
 
-    dbmessage_list, result, comments, has_msg = getMessageList(data['page'], data['user']), {}, False, False
+    result, has_msg, list_end = {}, False, False
+    dbmessage_list = getMessageList(data['page'], data['user'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
-
-    noComList = ['index', 'profile', 'hashtag', 'search', 'ftu']
-    if data['page'] in noComList:
-        comments = True
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
@@ -166,12 +160,19 @@ def getMessages(data):
     if len(message_list) > 0:
         has_msg = True
 
-    result['message_list'] = message_list
-    result['dbmessage_list'] = dbmessage_list
-    result['comment_list'] = comment_list
-    result['comment_count'] = comment_count
-    result['has_msg'] = has_msg
+    print(data['end'])
+    if 'end' in data:
+        if data['end'] is None or data['end'] >= len(message_list):
+            list_end = True
 
+    result = {
+        'message_list': message_list,
+        'dbmessage_list': dbmessage_list,
+        'comment_list': comment_list,
+        'comment_count': comment_count,
+        'has_msg': has_msg,
+        'list_end': list_end,
+    }
     return result
 
 
@@ -186,7 +187,7 @@ def getMessageList(page, user):
     elif page == 'profile':
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(user__exact=user) | Q(attags__username__exact=user.username)
-        ).order_by('-date').distinct()
+        ).order_by('-date')
     elif page == 'hashtag':
         dbmessage_list = Message.objects.all().filter(
             hashtags__name=user
@@ -204,18 +205,6 @@ def getMessageList(page, user):
         dbmessage_list = Message.objects.filter(pk=page)
 
     return dbmessage_list
-
-
-# return End of new Message List for endless Scroll
-def getMessagesEnd(data):
-    end, last = 0, Message.objects.get(id=data['last'])
-    messages = getMessageList(data['page'], data['user'])
-    for item in messages:
-        if item == last:
-            break
-        end += 1
-    end += 6
-    return end
 
 
 # return Comment List for specific Message
@@ -249,6 +238,21 @@ def getNotificationCount(user):
     new = newF + newM + newC
 
     return new
+
+
+# generate Sidebar Widgets and return them
+def getWidgets(request):
+    userProfile = UserProfile.objects.get(userprofile=request.user)
+    sidebar = {
+        'msgForm': msgDialog(request),
+        'userProfile': userProfile,
+        'follow_list': userProfile.follow.all(), # Follow List
+        'group_sb_list': GroupProfile.objects.all().filter(Q(member__exact=request.user)), # Group List
+        'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5], # Beliebte Themen
+        'new': getNotificationCount(request.user), # Notifications
+    }
+    return sidebar
 
 
 def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X

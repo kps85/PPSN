@@ -1,35 +1,26 @@
 import copy, random
-from pathlib import _Accessor
 
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, getMessages, getMessagesEnd, getNotificationCount
-from .models import GroupProfile, Hashtag, Message, Nav, UserProfile
+from .functions import dbm_to_m, getMessages, getWidgets, getNotificationCount
+from .models import GroupProfile, Hashtag, Nav, UserProfile
 from .views import msgDialog
 
 
 # search input
 def search(request):
+    # initialize varios information
+    search_input, error_msg, end, list_end = None, {}, 5, False
 
-    search_input, search_error, msgForm, end, list_end = None, {}, msgDialog(request), 5, False
-
-    # Follow List
-    curUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = curUser.follow.all()
-    # Group List
-    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
-    # Beliebte Themen
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
-    # Notification
-    new = getNotificationCount(request.user)
+    # initialize sidebar lists
+    widgets = getWidgets(request)
 
     search_input = request.GET['search_input'].strip().split(" ")
 
     if request.method == 'GET' and 'last' in request.GET:
-        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'search', 'user': search_input})
+        end = int(request.GET.get('start')) + 5
 
         # Messages
         messages = getMessages(data={'page': 'search', 'user': search_input, 'end': end})
@@ -38,24 +29,19 @@ def search(request):
             messages['comment_list'], messages['comment_count']
         )
 
-        if end >= len(messages['message_list']):
-            list_end = True
-
-        context = {'active_page': 'search', 'user': request.user, 'list_end': list_end,
-                   'search_input': ' '.join(search_input), 'message_list': message_list, 'msgForm': msgForm}
+        context = {
+            'active_page': 'search', 'user': request.user, 'msgForm': widgets['msgForm'],
+            'search_input': ' '.join(search_input), 'message_list': message_list, 'list_end': messages['list_end']
+        }
         return render(request, 'message_box_reload.html', context)
         
     if search_input is None or search_input[0] == "":
-        search_error["no_term"] = "Kein Suchbegriff eingegeben!"
+        error_msg["no_term"] = "Kein Suchbegriff eingegeben!"
         context_error = {
-            'active_page': 'index',
-            'nav': Nav.nav,
-            'new': new,
-            'msgForm': msgForm,
-            'error_msg': search_error,
-            'hot_list': hot_list,
-            'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-            'group_sb_list': group_sb_list,
+            'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+            'error_msg': error_msg,
+            'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+            'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
         }
         return render(request, 'index.html', context_error)
 
@@ -65,6 +51,7 @@ def search(request):
     # @kps for example, we wont find him, because the database don't know him
 
     user_list, group_list, hashtag_list, message_list = [], [], [], []
+    messages = getMessages(data={'page': 'search', 'user': search_input, 'end': None})
 
     for term in search_input:
         # special case: flag for @
@@ -75,17 +62,13 @@ def search(request):
             attag = True
             term = term[1:]
 
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
-            Q(text__contains=term) | Q(user__username__contains=term)
-        ).order_by('-date')
-        print(len(dbmessage_list))
-
         mList = []
-        for message in dbmessage_list:
+        for message in messages['dbmessage_list']:
             copy_message = copy.copy(message)
             mList.append(dbm_to_m(copy_message))
 
-        message_list.append(zip(mList, dbmessage_list))
+        mZip = zip(mList, messages['dbmessage_list'], messages['comment_list'], messages['comment_count'])
+        message_list.append(mZip)
 
         user_list.append(User.objects.all().filter(Q(username__contains=term)
                                             | Q(first_name__contains=term)
@@ -106,20 +89,14 @@ def search(request):
     message_list = elimDups(message_list)
     message_list.sort(key=lambda x: x[0].date, reverse=True)
 
-    for idx, item in enumerate(message_list):
-        print(item[0].text)
-
-    if end >= len(message_list):
-        list_end = True
-
     context = {
         'active_page': 'index',
         'nav': Nav.nav,
-        'new': new,
-        'msgForm': msgForm,
-        'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-        'group_sb_list': group_sb_list,
+        'new': widgets['new'],
+        'msgForm': widgets['msgForm'],
+        'hot_list': widgets['hot_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'group_sb_list': widgets['group_sb_list'],
         'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
         'search_input': ' '.join(search_input),
         'user_list': user_list,
@@ -130,68 +107,39 @@ def search(request):
         'hashtag_list_length': len(hashtag_list),
         'message_list': message_list[:end],
         'message_list_length': len(message_list),
-        'list_end': list_end
+        'list_end': messages['list_end']
     }
     return render(request, 'search.html', context)
 
 
 # click on hashtaglinks will redirect to this function.
 def hashtag(request, text):
-    msgForm, end, list_end = msgDialog(request), 5, False
+    end = 5
 
-    # Notification
-    new = getNotificationCount(request.user)
-    # Follow List
-    curUser = UserProfile.objects.get(userprofile=request.user)
-    follow_list = curUser.follow.all()
-    # Group List
-    group_sb_list = GroupProfile.objects.all().filter(Q(member__exact=request.user))
-    # Beliebte Themen
-    hot_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5]
+    # initialize sidebar lists
+    widgets = getWidgets(request)
 
     if request.method == 'GET' and 'last' in request.GET:
-        end = getMessagesEnd(data={'last': request.GET.get('last'), 'page': 'hashtag', 'user': text})
-
-        # Messages
-        msgForm = msgDialog(request)
-        messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
-        message_list = zip(
-            messages['message_list'][:end], messages['dbmessage_list'][:end],
-            messages['comment_list'], messages['comment_count']
-        )
-
-        if end > len(messages['message_list']):
-            list_end = True
-
-        context = {'active_page': 'hashtag', 'user': request.user, 'list_end': list_end,
-                   'is_hash': text, 'message_list': message_list, 'msgForm': msgForm}
-        return render(request, 'message_box_reload.html', context)
+        end = int(request.GET.get('start')) + 5
 
     # Messages
-    msgForm = msgDialog(request)
     messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
     message_list = zip(
         messages['message_list'][:end], messages['dbmessage_list'][:end],
         messages['comment_list'], messages['comment_count']
     )
 
-    if end >= len(messages['message_list']):
-        list_end = True
+    if request.method == 'GET' and 'last' in request.GET:
+        context = {'active_page': 'hashtag', 'user': request.user, 'msgForm': widgets['msgForm'],
+                   'is_hash': text, 'message_list': message_list, 'list_end': messages['list_end']}
+        return render(request, 'message_box_reload.html', context)
 
     context = {
-        'active_page': 'index',
-        'nav': Nav.nav,
-        'new': new,
-        'msgForm': msgForm,
-        'hot_list': hot_list,
-        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-        'group_sb_list': group_sb_list,
-        'search': 'Beitr&auml;ge zum Thema "#' + text + '"',
-        'message_list': message_list,
-        'hash_list_length': len(messages['dbmessage_list']),
-        'is_hash': text,
-        'list_end': list_end,
+        'active_page': 'hashtag', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'search': 'Beitr&auml;ge zum Thema "#' + text + '"', 'is_hash': text, 'list_end': messages['list_end'],
+        'message_list': message_list, 'hash_list_length': len(messages['dbmessage_list']),
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
     }
     return render(request, 'search.html', context)
 
