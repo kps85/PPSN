@@ -27,7 +27,6 @@ def search(request):
     else:
         search_input = None
 
-    print("test")
     if request.method == 'GET' and 'length' in request.GET:
         end = int(request.GET.get('length')) + 5
 

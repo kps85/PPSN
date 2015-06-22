@@ -53,6 +53,8 @@ a:focus { color: #a00000; text-decoration: none; }
 		color: #f50000;
 	}
 
+.remUser:hover { cursor: pointer; }
+
 #main.infoGuest {
 	width: auto;
 	margin-left: auto;

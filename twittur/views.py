@@ -10,7 +10,7 @@ from django.shortcuts import render
 from itertools import chain
 from operator import attrgetter
 
-from .models import UserProfile, Nav, Message, NotificationM, NotificationF
+from .models import UserProfile, Nav, Message, NotificationM, NotificationF, NotificationG
 from .forms import UserForm, UserDataForm
 from .functions import editMessage, getMessages, getWidgets, pw_generator
 
@@ -383,12 +383,16 @@ def showMessage(request, msg):
 
 
 def notification(request):
+    # initialize widgets (sidebar, newMsgForm, ...)
+    widgets = getWidgets(request)
+
     # for context
     notificationM_list = NotificationM.objects.filter(user=request.user)
     notificationF_list = NotificationF.objects.filter(you=request.user)
     notificationC_list = Message.objects.filter(comment__user=request.user).exclude(user=request.user)
+    notificationG_list = NotificationG.objects.filter(user__exact=request.user)
 
-    notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list),
+    notification_list = sorted(chain(notificationM_list, notificationF_list, notificationC_list, notificationG_list),
                                key=attrgetter('date'),
                                reverse=True)
 
@@ -402,22 +406,19 @@ def notification(request):
 
     notification_list = zip(notification_list,boolean_list)
 
-    # initialize widgets (sidebar, newMsgForm, ...)
-    widgets = getWidgets(request)
-
     context = {
         'active_page': 'notification', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'user': request.user,
         'notification_list': notification_list,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
-
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
 
     # update -> set all notification to true
     notifications = [
         NotificationM.objects.filter(Q(read=False) & Q(user=request.user)),
         NotificationF.objects.filter(Q(read=False) & Q(you=request.user)),
+        NotificationG.objects.filter(Q(read=False) & Q(user=request.user)),
         Message.objects.all().filter(Q(comment__user=request.user) & Q(read=False)).exclude(user=request.user)
     ]
     for list in notifications:

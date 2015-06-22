@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.utils import timezone
 
 from .views import *
-from .models import GroupProfile, Message, Hashtag, NotificationM
+from .models import GroupProfile, Message, Hashtag, NotificationM, NotificationG, NotificationF
 from .forms import MessageForm
 
 
@@ -77,7 +77,13 @@ def editMessage(request):
             else:
                 request.user.userprofile.ignoreM.add(msg)
                 return 'Nachricht erfolgreich ausgeblendet!'
-
+    elif 'remUser' in request.POST:
+        group = GroupProfile.objects.get(pk=request.POST['group'])
+        member = User.objects.get(pk=request.POST['remUser'])
+        ntfcG = NotificationG(user=member, group=group, note='Du wurdest aus der Gruppe entfernt.')
+        ntfcG.save()
+        group.member.remove(member)
+        return "Mitglied erfolgreich entfernt."
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
 
@@ -246,10 +252,11 @@ def getCommentCount(message):
 
 
 def getNotificationCount(user):
+    newG = NotificationG.objects.filter(Q(read=False) & Q(user=user)).count()
     newM = NotificationM.objects.filter(Q(read=False) & Q(user=user)).count()
     newF = NotificationF.objects.filter(Q(read=False) & Q(you=user)).count()
     newC = Message.objects.all().filter(Q(read=False) & Q(comment__user=user)).exclude(user=user).count()
-    new = newF + newM + newC
+    new = newF + newM + newC + newG
 
     return new
 
@@ -260,7 +267,7 @@ def getWidgets(request):
     sidebar = {
         'msgForm': msgDialog(request),
         'userProfile': userProfile,
-        'follow_list': userProfile.follow.all(), # Follow List
+        'follow_list': userProfile.follow.all().order_by('first_name'), # Follow List
         'group_sb_list': GroupProfile.objects.all().filter(Q(member__exact=request.user)), # Group List
         'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5], # Beliebte Themen

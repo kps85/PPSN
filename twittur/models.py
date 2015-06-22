@@ -100,7 +100,20 @@ class NotificationM(models.Model):
         return self.user.username + ' mentioned in message: "' + self.message.text + '".'
 
     def get_model_name(self):
-                return self.__class__.__name__
+        return self.__class__.__name__
+
+
+class NotificationG(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ntfcMember')
+    group = models.ForeignKey(GroupProfile, related_name='ntfcGroup')
+    read = models.BooleanField(default=False)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+    note = models.TextField(default=None, blank=True)
+    def __str__(self):
+        return 'Group Notification: ' + self.group.short + ' -> "' + self.user.username + '".'
+
+    def get_model_name(self):
+        return self.__class__.__name__
 
 
 # FAQ model

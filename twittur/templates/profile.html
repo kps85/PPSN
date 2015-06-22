@@ -133,7 +133,32 @@
   	<ul class="post memberList">
   	{% for member in member_list %}
     	<li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>) 
-      										 {% if member == group.admin %}<span class="pull-right"> [admin]</span>{% endif %}
+      										 {% if member == group.admin %}
+                           		<span class="pull-right"> [admin]</span>
+                           {% elif user == group.admin %}
+                              <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ message.id }}Modal" id="remUser{{ message.id }}Button" title="Mitglied entfernen">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                              </a>
+                              <div class="modal fade" id="remUser{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="remUser{{ message.id }}ModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                      <h4 class="modal-title" id="myModalLabel">Mitglied (<em>{{ member.username }}</em>) wirklich entfernen?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                      <form action="{% url 'twittur:group' groupshort=group.short %}?member=true" class="pull-right" method="POST">
+                                      {% csrf_token %}
+                                        <input type="hidden" name="group" value="{{ group.id }}">
+                                        <input type="hidden" name="remUser" value="{{ member.id }}">
+                                        <button type="submit" class="btn btn-primary">Benutzer entfernen</button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>                           		
+                           {% endif %}
     {% endfor %}
     </ul>
   </div>

@@ -5,8 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import GroupProfileForm, GroupProfileEditForm
-from .functions import getWidgets
-from .models import GroupProfile, Nav
+from .functions import editMessage, getWidgets
+from .models import GroupProfile, Nav, NotificationG
 
 
 def group(request, groupshort):
@@ -16,13 +16,17 @@ def group(request, groupshort):
         return HttpResponseRedirect('/twittur/login/')
 
     # initialize various information
-    show_member, is_member, button_text = False, False, None
+    show_member, is_member, button_text, success_msg = False, False, None, None
 
     # initialize sidebar lists
     widgets = getWidgets(request)
 
+    # if message was sent to view: return success message
+    if request.method == 'POST':
+        success_msg = editMessage(request)
+
     group = GroupProfile.objects.get(short__exact=groupshort)
-    member_list = group.member.all()
+    member_list = group.member.order_by('first_name')
     if request.user in member_list:
         is_member = True
         if group.admin == request.user:
@@ -40,7 +44,7 @@ def group(request, groupshort):
     context = {
         'active_page': 'group', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'group': group, 'member_list': member_list, 'is_member': is_member, 'button_text': button_text,
-        'show_member': show_member,
+        'show_member': show_member, 'success_msg': success_msg,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
@@ -103,7 +107,8 @@ def djlgroup(request, groupshort):
     # Be sure this is the right function, true -> get group object
     if 'delete_join_group' in request.POST:
         group = GroupProfile.objects.get(short__exact=groupshort)
-
+        admin = group.admin
+        print(admin)
         # Member function:
         # check if user is in group or not
         try:
@@ -114,13 +119,22 @@ def djlgroup(request, groupshort):
             if 'joinWithPassword' in request.POST:
                 if group.password == request.POST.get('password'):
                     group.member.add(request.user)
+                    note = request.user.username + ' ist deiner Gruppe beigetreten.'
+                    ntfcG = NotificationG(user=admin, group=group, note=note)
+                    ntfcG.save()
                 else:
                     return HttpResponse("Falsches Passwort!")
             else:
                 group.member.add(request.user)
+                note = request.user.username + ' ist deiner Gruppe beigetreten.'
+                ntfcG = NotificationG(user=admin, group=group, note=note)
+                ntfcG.save()
         # User exists -> delete him from group
         else:
             group.member.remove(request.user)
+            note = request.user.username + ' hat deine Gruppe verlassen.'
+            ntfcG = NotificationG(user=admin, group=group, note=note)
+            ntfcG.save()
 
     return HttpResponseRedirect('/twittur/group/'+groupshort)
 

@@ -1,6 +1,6 @@
 {% for i in nav %}
 	{% if i.name == 'profile' %}
-  	<a class="{{ i.name }}{% if active_page == i.name and user.username == profileUser %} active{% endif %}" href="{% url 'twittur:'|add:i.name user=user.username %}">
+  	<a class="{{ i.name }}{% if active_page == 'profile' and user == pUser %} active{% endif %}" href="{% url 'twittur:'|add:i.name user=user.username %}">
 	{% elif i.name == 'notification' %}
     <a href="{% url 'twittur:notification' %}" class="notificationLink {% if active_page == i.name %}active{% endif %}">
       {% if new > 0 %}<span class="badge">{{ new }}</span>{% endif %}
