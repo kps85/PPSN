@@ -79,7 +79,7 @@ def editMessage(request):
 
                 else:
                     request.user.userprofile.ignoreM.add(msg)
-                    return 'Nachricht erfolgreich ausgeblendet!'
+                    return 'Nachricht erfolgreich ausgeblendet!'                       # return info
     elif 'remUser' in request.POST:
         group = GroupProfile.objects.get(pk=request.POST['group'])
         member = User.objects.get(pk=request.POST['remUser'])

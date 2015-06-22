@@ -48,8 +48,8 @@
     </div> -->
     <div id="content">
       {% if success_msg %}
-        <div class="infoMessage alert alert-success" role="alert">
-          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        <div class="infoMessage alert alert-{% if 'entsperren' in success_msg %}warning{% else %}success{% endif %}" role="alert">
+          <span class="glyphicon glyphicon-{% if 'entsperren' in success_msg %}exclamation-sign{% else %}ok{% endif %}" aria-hidden="true"></span>
           {{ success_msg|safe }}
           <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
         </div>

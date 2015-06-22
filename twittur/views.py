@@ -246,9 +246,11 @@ def profile(request, user):
                 ignoreUser_list = request.user.userprofile.ignoreU.all()
                 if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
                     request.user.userprofile.ignoreU.remove(pUser)
+                    context['success_msg'] = pUser.username + " wird nicht mehr ignoriert."
                     print("REMOVED")
                 else:                                                       # ignore dat biatch
                     request.user.userprofile.ignoreU.add(pUser)
+                    context['success_msg'] = pUser.username + " wird fortan ignoriert."
                     print("ADD")
 
             if 'codename' in request.POST or 'ignoreMsg' in request.POST:
@@ -273,7 +275,7 @@ def profile(request, user):
                     notification.save()
                     context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
                 widgets['follow_list'] = widgets['userProfile'].follow.all()
-                
+
         try:
             ignore = request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
         except ObjectDoesNotExist:
