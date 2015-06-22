@@ -383,7 +383,7 @@ function initVarious() {
 	  $("#newComment"+data[0]).find(".modal-title").html("Antwort an " + data[1] + " verfassen");
   });
 	
-	if ($("#body_index").length > 0 || $("#body_profile").length > 0 || $("#body_group").length > 0) {
+	if ($("#body_index").length > 0 || $("#body_profile").length > 0 || $("#body_group").length > 0 || $("#body_hashtag").length > 0) {
 		$(".load_more").click(function(e) {
 			var url = $(this).attr("data-hint");
 			var data = {

@@ -52,6 +52,8 @@ def search(request):
 
     user_list, group_list, hashtag_list, message_list = [], [], [], []
     messages = getMessages(data={'page': 'search', 'user': search_input, 'end': None})
+    if len(messages['message_list']) <= end:
+        list_end = True
 
     for term in search_input:
         # special case: flag for @
@@ -90,24 +92,15 @@ def search(request):
     message_list.sort(key=lambda x: x[0].date, reverse=True)
 
     context = {
-        'active_page': 'index',
-        'nav': Nav.nav,
-        'new': widgets['new'],
-        'msgForm': widgets['msgForm'],
-        'hot_list': widgets['hot_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
-        'group_sb_list': widgets['group_sb_list'],
+        'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
-        'search_input': ' '.join(search_input),
-        'user_list': user_list,
-        'user_list_length': len(user_list),
-        'group_list': group_list,
-        'group_list_length': len(group_list),
-        'hashtag_list': hashtag_list,
-        'hashtag_list_length': len(hashtag_list),
-        'message_list': message_list[:end],
-        'message_list_length': len(message_list),
-        'list_end': messages['list_end']
+        'search_input': ' '.join(search_input), 'list_end': list_end,
+        'user_list': user_list, 'user_list_length': len(user_list),
+        'group_list': group_list, 'group_list_length': len(group_list),
+        'hashtag_list': hashtag_list, 'hashtag_list_length': len(hashtag_list),
+        'message_list': message_list[:end], 'message_list_length': len(message_list),
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
     return render(request, 'search.html', context)
 
@@ -121,6 +114,7 @@ def hashtag(request, text):
 
     if request.method == 'GET' and 'last' in request.GET:
         end = int(request.GET.get('start')) + 5
+        print(end)
 
     # Messages
     messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
@@ -129,7 +123,11 @@ def hashtag(request, text):
         messages['comment_list'], messages['comment_count']
     )
 
+    print(text)
+    print(len(messages['message_list']))
+
     if request.method == 'GET' and 'last' in request.GET:
+        print("jo")
         context = {'active_page': 'hashtag', 'user': request.user, 'msgForm': widgets['msgForm'],
                    'is_hash': text, 'message_list': message_list, 'list_end': messages['list_end']}
         return render(request, 'message_box_reload.html', context)
