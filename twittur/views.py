@@ -3,6 +3,7 @@ import random, re
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -228,6 +229,8 @@ def profile(request, user):
     else:
         show_favs = False
 
+
+
     # initialize widgets (sidebar, newMsgForm, ...)
     widgets = getWidgets(request)
 
@@ -239,7 +242,26 @@ def profile(request, user):
 
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
-        if request.method == 'POST':
+        context['ignored'] = False
+        if request.POST and 'ignoreUser' in request.POST:               # clicked User ignorieren
+            ignoreUser_list = request.user.userprofile.ignoreU.all()
+            if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
+                request.user.userprofile.ignoreU.remove(pUser)
+                print("REMOVED")
+            else:                                                       # ignore dat biatch
+                request.user.userprofile.ignoreU.add(pUser)
+                print("ADD")
+
+        try:
+            ignored = request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
+        except ObjectDoesNotExist:
+            pass                                                                    # no, so no changes
+        else:
+            print("yes")
+            context['ignored'] = True                                             # yes, so disable all messages from her profile
+
+        #if request.method == 'POST':
+        if request.POST and 'codename' in request.POST:
             context['success_msg'] = editMessage(request)
 
         if request.method == 'GET':
@@ -282,7 +304,7 @@ def profile(request, user):
         context['message_list'], context['list_end']  = message_list, messages['list_end']
         context['has_msg'], context['follow_text'] = messages['has_msg'], follow_text
         context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-
+        print(context['ignored'])
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
         context['error_msg'] = error_msg
