@@ -428,8 +428,7 @@ function initVarious() {
 			$(this).find("span").removeClass("glyphicon-refresh").addClass("glyphicon-time");
 			getIt(url)
 		});
-	}
-	if ($(".notification.panel").length > 0) {
+	} else if ($(".notification.panel").length > 0) {
 		var count = 4;
 		var setNtfcLength = function(more) {
 			if (more) count += 5;

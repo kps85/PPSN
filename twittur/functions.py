@@ -160,11 +160,9 @@ def getMessages(data):
     if len(message_list) > 0:
         has_msg = True
 
-    print(data['end'])
     if 'end' in data:
         if data['end'] is None or data['end'] >= len(message_list):
             list_end = True
-    print(list_end)
 
     result = {
         'message_list': message_list,

@@ -114,7 +114,6 @@ def hashtag(request, text):
 
     if request.method == 'GET' and 'last' in request.GET:
         end = int(request.GET.get('start')) + 5
-        print(end)
 
     # Messages
     messages = getMessages(data={'page': 'hashtag', 'user': text, 'end': end})
@@ -123,11 +122,7 @@ def hashtag(request, text):
         messages['comment_list'], messages['comment_count']
     )
 
-    print(text)
-    print(len(messages['message_list']))
-
     if request.method == 'GET' and 'last' in request.GET:
-        print("jo")
         context = {'active_page': 'hashtag', 'user': request.user, 'msgForm': widgets['msgForm'],
                    'is_hash': text, 'message_list': message_list, 'list_end': messages['list_end']}
         return render(request, 'message_box_reload.html', context)

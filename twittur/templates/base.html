@@ -73,7 +73,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
         	{% if active_page in 'profile' %}
-          <form action="{% url 'twittur:profile' user=user %}" method="post" enctype="multipart/form-data">
+          <form action="{% url 'twittur:profile' user=pUser %}" method="post" enctype="multipart/form-data">
         	{% else %}
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
           {% endif %}
