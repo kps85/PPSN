@@ -152,7 +152,10 @@ def dbm_to_m(message):
 
 def getMessages(data):
 
-    result, has_msg, list_end = {}, False, False
+    result = {
+        'has_msg': False,
+        'list_end': False
+    }
     dbmessage_list = getMessageList(data['page'], data['user'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
@@ -173,20 +176,15 @@ def getMessages(data):
             message_list.append(dbm_to_m(copy_message))
 
     if len(message_list) > 0:
-        has_msg = True
+        result['has_msg'] = True
 
     if 'end' in data:
         if data['end'] is None or data['end'] >= len(message_list):
-            list_end = True
+            result['list_end'] = True
 
-    result = {
-        'message_list': message_list,
-        'dbmessage_list': dbmessage_list,
-        'comment_list': comment_list,
-        'comment_count': comment_count,
-        'has_msg': has_msg,
-        'list_end': list_end,
-    }
+    result['message_list'], result['dbmessage_list'] = message_list, dbmessage_list
+    result['comment_list'], result['comment_count'] = comment_list, comment_count
+
     return result
 
 
