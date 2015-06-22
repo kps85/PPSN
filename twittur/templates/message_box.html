@@ -82,7 +82,9 @@
           </a>
         {% endif %}
       {% else %}
-      	<div class="pull-left">Diese Nachricht von {{ message.user.username }} wurde ausgeblendet.</div>
+      	<div class="pull-left">
+        	Diese Nachricht von {{ message.user.username }} wurde ausgeblendet.
+        </div>
       {% endif %}
 
       <div class="postEdit pull-right">

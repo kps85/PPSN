@@ -56,7 +56,6 @@ class UserProfile(models.Model):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
     def delete(self, using=None):
-        print(self)
         if self.picture != 'picture/default.gif':
             self.picture.delete()
         super(UserProfile, self).delete()

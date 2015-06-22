@@ -69,13 +69,17 @@ def editMessage(request):
         ignore_list = request.user.userprofile.ignoreM.all()
         if Message.objects.filter(pk=request.POST['ignoreMsg']).exists():
             msg = Message.objects.get(pk=request.POST['ignoreMsg'])
-            if msg in ignore_list:
-                request.user.userprofile.ignoreM.remove(msg)
-                return 'Nachricht wird nicht mehr ausgeblendet!'
-
+            if msg.user in request.user.userprofile.ignoreU.all():
+                return "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
+                                                         "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
             else:
-                request.user.userprofile.ignoreM.add(msg)
-                return 'Nachricht erfolgreich ausgeblendet!'
+                if msg in ignore_list:
+                    request.user.userprofile.ignoreM.remove(msg)
+                    return 'Nachricht wird nicht mehr ausgeblendet!'
+
+                else:
+                    request.user.userprofile.ignoreM.add(msg)
+                    return 'Nachricht erfolgreich ausgeblendet!'
     elif 'remUser' in request.POST:
         group = GroupProfile.objects.get(pk=request.POST['group'])
         member = User.objects.get(pk=request.POST['remUser'])

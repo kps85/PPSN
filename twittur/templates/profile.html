@@ -21,10 +21,16 @@
       	<span class="glyphicon glyphicon-cog"></span>
       </a>
       {% elif active_page == 'profile' and user != pUser %}
-      <form action="{% url 'twittur:profile' user=pUser %}" method="POST" class="pull-right">
+      	<form action="{% url 'twittur:profile' user=pUser %}" method="POST" class="pull-right">
             {% csrf_token %}
             <input type="hidden" name="ignoreUser" value="{{ pUser }}">
-            <button type="submit" >{% if not ignored %}Bitch ignorieren{% else %} Bitch wieder wahrnehmen{% endif %}</button>
+            <button class="ignoreMsgButton profilEdit" type="submit" title="{% if not ignored %}Benutzer ignorieren{% else %}Benutzer nicht mehr ignorieren{% endif %}">
+            {% if not ignored %}
+              <span class="glyphicon glyphicon-eye-close"></span>
+            {% else %}
+              <span class="glyphicon glyphicon-eye-open"></span>
+            {% endif %}
+            </button>
           </form>
       {% endif %}
       <div class="col-xs-12 col-sm-4 text-center">

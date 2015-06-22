@@ -241,28 +241,20 @@ def profile(request, user):
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
         context['ignored'] = False
-        if request.POST and 'ignoreUser' in request.POST:               # clicked User ignorieren
-            ignoreUser_list = request.user.userprofile.ignoreU.all()
-            if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
-                request.user.userprofile.ignoreU.remove(pUser)
-                print("REMOVED")
-            else:                                                       # ignore dat biatch
-                request.user.userprofile.ignoreU.add(pUser)
-                print("ADD")
+        if request.method == 'POST':
+            if 'ignoreUser' in request.POST:               # clicked User ignorieren
+                ignoreUser_list = request.user.userprofile.ignoreU.all()
+                if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
+                    request.user.userprofile.ignoreU.remove(pUser)
+                    print("REMOVED")
+                else:                                                       # ignore dat biatch
+                    request.user.userprofile.ignoreU.add(pUser)
+                    print("ADD")
 
-        try:
-            request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
-        except ObjectDoesNotExist:
-            pass                                                                    # no, so no changes
-        else:
-            print("yes")
-            context['ignored'] = True                                             # yes, so disable all messages from her profile
+            if 'codename' in request.POST or 'ignoreMsg' in request.POST:
+                context['success_msg'] = editMessage(request)
 
-        #if request.method == 'POST':
-        if request.POST and 'codename' in request.POST:
-            context['success_msg'] = editMessage(request)
-
-        if request.method == 'GET':
+        elif request.method == 'GET':
             # extend message list length
             if 'length' in request.GET:
                 end = int(request.GET.get('length')) + 5
@@ -281,6 +273,15 @@ def profile(request, user):
                     notification.save()
                     context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
                 widgets['follow_list'] = widgets['userProfile'].follow.all()
+                
+        try:
+            ignore = request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
+        except ObjectDoesNotExist:
+            pass                                                                    # no, so no changes
+        else:
+            print("yes")
+            context['ignored'] = True                                             # yes, so disable all messages from her profile
+
         if pUser in widgets['follow_list']:
             follow_text = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
         else:
@@ -294,7 +295,7 @@ def profile(request, user):
         )
 
         if request.method == 'GET' and 'length' in request.GET:
-            context = {'active_page': 'profile', 'user': request.user, 'list_end': messages['list_end'],
+            context = {'active_page': 'profile', 'user': request.user, 'pUser': pUser, 'list_end': messages['list_end'],
                        'message_list': message_list, 'msgForm': widgets['msgForm']}
             return render(request, 'message_box_reload.html', context)
 
