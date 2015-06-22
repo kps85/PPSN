@@ -22,6 +22,7 @@ class Message(models.Model):
     attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='NotificationM')
     comment = models.ForeignKey('self', related_name='comments', blank=True, null=True)
     read = models.BooleanField(default=False)
+    ignore = models.BooleanField(default=False)
 
     def get_model_name(self):
                 return self.__class__.__name__
@@ -47,7 +48,8 @@ class UserProfile(models.Model):
                                           'und in deinen Nachrichten (klein) angezeigt.')
 
     location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
-
+    ignoreM = models.ManyToManyField(Message, related_name='ignoreM')
+    ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU')
 
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'

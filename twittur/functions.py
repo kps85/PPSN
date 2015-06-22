@@ -66,6 +66,17 @@ def editMessage(request):
             msg_to_db(curMsg)                                               # ???
             curMsg.save()                                                   # save and update Message
         return 'Kommentar erfolgreich aktualisiert!'                        # return info
+    elif 'ignoreMsg' in request.POST:
+        ignore_list = request.user.userprofile.ignoreM.all()
+        if Message.objects.filter(pk=request.POST['ignoreMsg']).exists():
+            msg = Message.objects.get(pk=request.POST['ignoreMsg'])
+            if msg in ignore_list:
+                request.user.userprofile.ignoreM.remove(msg)
+                return 'Nachricht wird nicht mehr ignoriert!'
+
+            else:
+                request.user.userprofile.ignoreM.add(msg)
+                return 'Nachricht erfolgreich ignoriert!'
 
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
@@ -145,7 +156,8 @@ def getMessages(data):
     dbmessage_list = getMessageList(data['page'], data['user'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
-
+    userprofile = UserProfile.objects.get(userprofile=data['user'])
+    ignoreM_list = userprofile.ignoreM.all()
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
         if message.date > curDate:
@@ -153,9 +165,12 @@ def getMessages(data):
         c = getComments(message, curDate)
         comment_list.append(c)
         comment_count.append(getCommentCount(message))
-
-        copy_message = copy.copy(message)
-        message_list.append(dbm_to_m(copy_message))
+        if message in ignoreM_list:
+            message.ignore = True
+            message_list.append(message)
+        else:
+            copy_message = copy.copy(message)
+            message_list.append(dbm_to_m(copy_message))
 
     if len(message_list) > 0:
         has_msg = True
