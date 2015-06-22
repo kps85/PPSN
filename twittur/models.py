@@ -50,6 +50,7 @@ class UserProfile(models.Model):
     location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
     ignoreM = models.ManyToManyField(Message, related_name='ignoreM')
     ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU')
+    ignore = models.BooleanField(default=False)
 
     def __str__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'

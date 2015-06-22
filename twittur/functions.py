@@ -166,8 +166,15 @@ def getMessages(data):
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
+<<<<<<< HEAD
+    # Get ignored messages
+    userprofile = UserProfile.objects.get(userprofile=data['user'])
+    ignoreM_list = userprofile.ignoreM.all()
+    ignoreU_list = userprofile.ignoreU.all()
+=======
     userProfile = UserProfile.objects.get(userprofile=data['request'].user)
     ignoreM_list = userProfile.ignoreM.all()
+>>>>>>> origin/dev
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
@@ -176,7 +183,12 @@ def getMessages(data):
         c = getComments(message, curDate)
         comment_list.append(c)
         comment_count.append(getCommentCount(message))
+
+        # if User ignored this message -> boolean ignore = True, this change will not effect db (no save())
         if message in ignoreM_list:
+            message.ignore = True
+            message_list.append(message)
+        elif message.user in ignoreU_list:
             message.ignore = True
             message_list.append(message)
         else:

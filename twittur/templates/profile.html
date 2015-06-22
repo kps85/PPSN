@@ -20,6 +20,12 @@
     	<a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
       	<span class="glyphicon glyphicon-cog"></span>
       </a>
+      {% elif active_page == 'profile' and user != pUser %}
+      <form action="{% url 'twittur:profile' user=pUser %}" method="POST" class="pull-right">
+            {% csrf_token %}
+            <input type="hidden" name="ignoreUser" value="{{ pUser }}">
+            <button type="submit" >{% if not ignored %}Bitch ignorieren{% else %} Bitch wieder wahrnehmen{% endif %}</button>
+          </form>
       {% endif %}
       <div class="col-xs-12 col-sm-4 text-center">
       	{% if group %}
@@ -174,8 +180,9 @@
     </ul>
   </div>
   {% endif %}
+  {% if not ignored %}
   <div class="profileMessages container-fluid{% if show_member or show_favs %} hidden{% endif %}">
-    {% if has_msg %}
+    {% if has_msg  %}
       {% for message, dbmessage, comments, count in message_list %}
         {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments comCount=count page=active_page user=user  %}
       {% endfor %}
@@ -194,5 +201,8 @@
       <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
     {% endif %}
   </div>
+{% else %}
+<p> Du ignoriest diese Bitch!</p>
+{% endif %}
 {% endif %}
 {% endblock %}
