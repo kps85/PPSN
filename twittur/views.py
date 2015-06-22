@@ -38,7 +38,7 @@ def index(request):
         end = int(request.GET.get('length')) + 5
 
     # Messages
-    messages = getMessages(data={'page': 'index', 'user': user, 'end': end})
+    messages = getMessages(data={'page': 'index', 'user': user, 'end': end, 'request': request})
     message_list = zip(
         messages['message_list'][:end], messages['dbmessage_list'][:end],
         messages['comment_list'], messages['comment_count']
@@ -46,8 +46,8 @@ def index(request):
 
     # if message list length should be extended
     if request.method == 'GET' and 'length' in request.GET:
-        context = {'active_page': 'index', 'user': user, 'list_end': messages['list_end'],
-                   'message_list': message_list, 'msgForm': widgets['msgForm']}
+        context = {'active_page': 'index', 'user': request.user, 'msgForm': widgets['msgForm'],
+                   'message_list': message_list, 'list_end': messages['list_end']}
         return render(request, 'message_box_reload.html', context)
     else:
         context = {
@@ -289,7 +289,7 @@ def profile(request, user):
             follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
 
         # Messages
-        messages = getMessages(data={'page': 'profile', 'user': pUser, 'end': end})
+        messages = getMessages(data={'page': 'profile', 'user': pUser, 'end': end, 'request': request})
         message_list = zip(
             messages['message_list'][:end], messages['dbmessage_list'][:end],
             messages['comment_list'], messages['comment_count']
@@ -301,7 +301,7 @@ def profile(request, user):
             return render(request, 'message_box_reload.html', context)
 
         context['pUser'], context['pUserProf'], context['show_favs'] = pUser, pUser.userprofile, show_favs
-        context['message_list'], context['list_end']  = message_list, messages['list_end']
+        context['message_list'], context['list_end'] = message_list, messages['list_end']
         context['has_msg'], context['follow_text'] = messages['has_msg'], follow_text
         context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
         print(context['ignored'])

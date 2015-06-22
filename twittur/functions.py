@@ -72,11 +72,11 @@ def editMessage(request):
             msg = Message.objects.get(pk=request.POST['ignoreMsg'])
             if msg in ignore_list:
                 request.user.userprofile.ignoreM.remove(msg)
-                return 'Nachricht wird nicht mehr ignoriert!'
+                return 'Nachricht wird nicht mehr ausgeblendet!'
 
             else:
                 request.user.userprofile.ignoreM.add(msg)
-                return 'Nachricht erfolgreich ignoriert!'
+                return 'Nachricht erfolgreich ausgeblendet!'
 
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
@@ -152,15 +152,23 @@ def dbm_to_m(message):
 
 def getMessages(data):
 
-    result, has_msg, list_end = {}, False, False
+    result = {
+        'has_msg': False,
+        'list_end': False
+    }
     dbmessage_list = getMessageList(data['page'], data['user'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
+<<<<<<< HEAD
     # Get ignored messages
     userprofile = UserProfile.objects.get(userprofile=data['user'])
     ignoreM_list = userprofile.ignoreM.all()
     ignoreU_list = userprofile.ignoreU.all()
+=======
+    userProfile = UserProfile.objects.get(userprofile=data['request'].user)
+    ignoreM_list = userProfile.ignoreM.all()
+>>>>>>> origin/dev
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
@@ -182,20 +190,15 @@ def getMessages(data):
             message_list.append(dbm_to_m(copy_message))
 
     if len(message_list) > 0:
-        has_msg = True
+        result['has_msg'] = True
 
     if 'end' in data:
         if data['end'] is None or data['end'] >= len(message_list):
-            list_end = True
+            result['list_end'] = True
 
-    result = {
-        'message_list': message_list,
-        'dbmessage_list': dbmessage_list,
-        'comment_list': comment_list,
-        'comment_count': comment_count,
-        'has_msg': has_msg,
-        'list_end': list_end,
-    }
+    result['message_list'], result['dbmessage_list'] = message_list, dbmessage_list
+    result['comment_list'], result['comment_count'] = comment_list, comment_count
+
     return result
 
 
