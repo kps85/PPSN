@@ -12,7 +12,7 @@ from .forms import MessageForm
 def msgDialog(request):
     if request.method == 'POST':
         if request.POST.get('codename') == 'message':
-            msgForm = MessageForm(request.POST)
+            msgForm = MessageForm(request.POST, request.FILES)
             if msgForm.is_valid():
                 msgForm.save()
                 msg_to_db(msgForm.instance)
@@ -71,8 +71,9 @@ def editMessage(request):
             msg = Message.objects.get(pk=request.POST['ignoreMsg'])
             if msg.user in request.user.userprofile.ignoreU.all():
                 return "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
-                                                         "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
+                        "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
             else:
+                print(ignore_list)
                 if msg in ignore_list:
                     request.user.userprofile.ignoreM.remove(msg)
                     return 'Nachricht wird nicht mehr ausgeblendet!'
@@ -177,7 +178,9 @@ def getMessages(data):
     for message in dbmessage_list:
         if message.date > curDate:
             message.editable = True
-        c = getComments(message, curDate)
+        c = getComments(data={
+            'message': message, 'curDate': curDate, 'ignMsgList': ignoreM_list, 'ignUsrList': ignoreU_list
+        })
         comment_list.append(c)
         comment_count.append(getCommentCount(message))
 
@@ -237,14 +240,19 @@ def getMessageList(page, user):
 
 
 # return Comment List for specific Message
-def getComments(message, curDate):
-    comments = Message.objects.filter(comment=message)
+def getComments(data):
+    comments = Message.objects.filter(comment=data['message'])
     c = []
     if comments:
         for co in comments:
-            cc, ccc = [], getComments(co, curDate)
-            if co.date > curDate:
+            cc, ccc = [], getComments(data={
+                'message': co, 'curDate': data['curDate'],
+                'ignMsgList': data['ignMsgList'], 'ignUsrList': data['ignUsrList']
+            })
+            if co.date > data['curDate']:
                 co.editable = True
+            if co in data['ignMsgList'] or co.user in data['ignUsrList']:
+                co.ignore = True
             cc.append(dbm_to_m(co))
             if ccc:
                 cc.append(ccc)

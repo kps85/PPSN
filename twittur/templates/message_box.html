@@ -35,6 +35,34 @@
     <div class="postText" id="postText{{ message.id }}">
     	{% if message.text %}
       	{{ message.text|safe }}
+        {% if message.picture and active_page != 'ftu' %}
+        	<div class="msgPctr img-thumbnail" data-hint="{{ message.picture.url }}" data-toggle="modal" data-target="#msgPctr{{ message.id }}Modal"></div>
+          
+          <div class="msgPctrModal modal fade" id="msgPctr{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="msgPctr{{ message.id }}ModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  Bild von
+                  {% if active_page == 'ftu' %}
+                  	@{{ message.user.username }}
+                  {% else %}
+                  	@<a href="{% url 'twittur:profile' user=message.user %}">{{ message.user.username }}</a>
+					        {% endif %}
+                </div>
+                <div class="modal-body text-center">
+                	<img src="{{ message.picture.url }}" />
+                </div>
+                <div class="modal-footer">
+                	<p class="text-left">
+                  	<strong>Nachricht</strong>:<br />
+                  	{{ message.text|safe }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>          
+        {% endif %}
       {% endif %}
     	{% if message.comment %}
         <small class="clearfix"><em>
@@ -44,7 +72,7 @@
         </em></small>
       {% endif %}
     </div>
-  {% if message.editable %}
+    {% if message.editable %}
     <div class="postTextEdit hidden" id="postTextEdit{{ dbmessage.id }}">
       {% if active_page == 'profile' %}
         <form action="{% url 'twittur:'|add:active_page user=user %}" method="POST">
@@ -66,7 +94,7 @@
         </div>
       </form>
     </div>
-  {% endif %}
+    {% endif %}
 	{% endif %}
   {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
@@ -83,10 +111,10 @@
         {% endif %}
       {% else %}
       	<div class="pull-left">
-        	Diese Nachricht von {{ message.user.username }} wurde ausgeblendet.
+        	Diese Nachricht von {{ message.user.username }} wurde ausgeblendet. 
         </div>
       {% endif %}
-
+      
       <div class="postEdit pull-right">
       {% if message.user == user %}
         {% if message.editable %}
