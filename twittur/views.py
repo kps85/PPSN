@@ -222,10 +222,12 @@ def profile(request, user):
         return HttpResponseRedirect('/twittur/login/')
 
     error_msg, success_msg, end = {}, None, 5
-    if 'favorits' in request.GET:
+    if 'favorits' in request.GET or 'favorits' in request.POST:
+        print ("hey")
         show_favs = True
     else:
         show_favs = False
+
 
     # initialize widgets (sidebar, newMsgForm, ...)
     widgets = getWidgets(request)
@@ -239,7 +241,7 @@ def profile(request, user):
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
         context['ignored'] = False
-        if request.method == 'POST':
+        if request.method == 'POST' and 'ignoreUser' in request.POST:
             if 'ignoreUser' in request.POST:               # clicked User ignorieren
                 ignoreUser_list = request.user.userprofile.ignoreU.all()
                 if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
@@ -254,13 +256,26 @@ def profile(request, user):
             if 'codename' in request.POST or 'ignoreMsg' in request.POST:
                 context['success_msg'] = editMessage(request)
 
+        elif request.POST and 'entfollow' in request.POST:
+            print("1")
+            entfollow = User.objects.get(id=request.POST.get('entfollow'))
+            follow = Notification.objects.get(
+                        Q(user__exact=entfollow) & Q(follower__exact=request.user.userprofile)
+                    )
+            follow.delete()
+            print("2")
+            
+            context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
+
         elif request.method == 'GET':
+
             # extend message list length
             if 'length' in request.GET:
                 end = int(request.GET.get('length')) + 5
 
             # follow
             if 'follow' in request.GET:
+
                 if pUser in widgets['follow_list']:
                     follow = Notification.objects.get(
                         Q(user__exact=pUser) & Q(follower__exact=request.user.userprofile)
