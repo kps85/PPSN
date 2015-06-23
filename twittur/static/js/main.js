@@ -103,11 +103,12 @@ function initMenu() {
 		}
 	})
 	
-	if ((window.location.href.split("/"))[4] == "profile" 
-		 || (window.location.href.split("/"))[4] == "hashtag"
-		 || (window.location.href.split("/"))[4] == "group") {
+	var page = (window.location.href.split("/"))[4]
+	if (page == "profile" || page == "hashtag" || page == "group") {
 		var name = ((window.location.href.split("/"))[5]).split("?")[0];
-		$(".ullink."+name).addClass("active");
+		(page == "hashtag") ? $(".hashs .ullink."+name).addClass("active") :
+		(page == "group") ? $(".groups .ullink."+name).addClass("active") :
+		$(".following .ullink."+name).addClass("active");
 	}
 }
 
@@ -186,7 +187,24 @@ function initInputValidation() {
 		} else {
 			$(this).find('button[type=submit]').prop("disabled", true);
 		}
-	});	
+	});
+	
+	$(".newMsgPctr span").click(function(e) {
+		$(".newMsgPctr .glyphicon").toggleClass("glyphicon-plus glyphicon-minus");
+		$(".newMsgPctr div").toggleClass("hidden");
+  });	
+		
+	$(".newMsgPctr input[type=file]").change(function(e) {
+		var path = URL.createObjectURL(e.target.files[0]);
+		$(".newMsgPctr img").each(function(index, element) {
+			$(element).attr("src", path);
+		});
+	});
+	
+	$(".msgPctr").each(function(index, element) {
+		var bgImg = $(element).attr("data-hint");
+    $(element).css("background-image", "url("+bgImg+")");
+  });
 }
 
 function initInfoSettings() {
@@ -230,7 +248,7 @@ function initInfoSettings() {
 			}
     });
 		
-		$("#id_picture").change(function(e) {
+		$("#profBildUpdate input[type=file]").change(function(e) {
 			var path = URL.createObjectURL(e.target.files[0]);
 			var help_text = ((window.location.href.split("/"))[4] == 'settings') ? 
 													"Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt." :

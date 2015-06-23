@@ -92,6 +92,20 @@ a:focus { color: #a00000; text-decoration: none; }
 	right: 20px;
 	z-index: 99;
 }
+	.newMsgPctr, .newMsgPctr div { margin-top: 3px; }
+	.newMsgPctr span:hover { cursor: pointer; }
+	.newMsgPctr img { margin: 10px; max-width: 200px; max-height: 200px; }
+
+.msgPctr {
+	height: 200px;
+	width: 100%;
+	margin-top: 10px;
+	background-image: none;
+	background-size: cover;
+	background-position: center center;
+}
+	.msgPctr:hover { cursor: pointer; }
+	.msgPctrModal img { max-width: 100%; }
 
 .groupDesc { margin-top: 10px; }
 

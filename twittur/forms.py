@@ -194,7 +194,7 @@ class MessageForm(ModelForm):
     # initializing form input fields
     class Meta:
         model = Message
-        fields = ['user', 'text', 'date']
+        fields = ['user', 'text', 'date', 'picture']
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
