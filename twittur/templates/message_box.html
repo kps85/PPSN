@@ -13,7 +13,7 @@
       	{% if active_page == 'ftu' %}
         	@{{ message.user.username }}
         {% else %}
-        	@<a href="{% url 'twittur:profile' user=message.user %}">{{ message.user.username }}</a>
+        	<a href="{% url 'twittur:profile' user=message.user %}">@{{ message.user.username }}</a>
         {% endif %}
       </div>
 

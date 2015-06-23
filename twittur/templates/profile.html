@@ -51,7 +51,7 @@
           <div class="profilAcaDis" title="Studiengang">
           	{% if group %}
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-              {{ group.admin.first_name }} {{ group.admin.last_name }} (@<a href="{% url 'twittur:profile' user=group.admin %}">{{ group.admin.username }}</a>)
+              {{ group.admin.first_name }} {{ group.admin.last_name }} (<a href="{% url 'twittur:profile' user=group.admin %}">@{{ group.admin.username }}</a>)
             {% else %}
               <span class="glyphicon glyphicon-education" aria-hidden="true"></span>             
               {{ pUserProf.academicDiscipline }} 
