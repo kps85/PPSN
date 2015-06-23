@@ -91,11 +91,13 @@ class Notification(models.Model):
 
     def __str__(self):
         if self.follower:
-            return self.follower.userprofile.username + ' to ' + self.you.username
+            return self.follower.userprofile.username + ' to ' + self.user.username
         elif self.group:
             return 'Group Notification: ' + self.group.short + ' -> "' + self.user.username + '".'
-        elif self.message:
+        elif self.message and not self.comment:
             return self.user.username + ' mentioned in message: "' + self.message.text + '".'
+        elif self.message and self.comment:
+            return self.message.user.username + ' replied to ' + self.user.username + '.'
 
     def get_model_name(self):
         return self.__class__.__name__

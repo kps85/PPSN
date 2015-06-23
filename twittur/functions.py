@@ -25,11 +25,11 @@ def msgDialog(request):
                 msgForm.save()
                 message = Message.objects.get(id=request.POST.get('cmtToId'))
                 msgForm.instance.comment = message
-                if message.user != request.user:
-                    note = request.user.username + ' hat auf deine Nachricht geantwortet.'
-                    setNotification('comment', data={'user': message.user, 'message': msgForm.instance, 'note': note})
                 msg_to_db(msgForm.instance)
                 msgForm.save()
+                if message.user is not request.user:
+                    note = request.user.username + ' hat auf deine Nachricht geantwortet.'
+                    setNotification('comment', data={'user': message.user, 'message': msgForm.instance, 'note': note})
                 # save this shit for the next step
 
     msgForm = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()})
@@ -128,9 +128,6 @@ def msg_to_db(message):
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
             message.hashtags.remove(dbhashtag)
-
-    print(message.attags.all())
-
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
             attag = Notification.objects.get(
