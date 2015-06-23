@@ -36,7 +36,7 @@ def index(request):
         end = int(request.GET.get('length')) + 5
 
     # Messages
-    messages = getMessages(data={'page': 'index', 'user': user, 'end': end, 'request': request})
+    messages = getMessages(data={'page': 'index', 'user': user, 'group': None, 'end': end, 'request': request})
     message_list = zip(
         messages['message_list'][:end], messages['dbmessage_list'][:end],
         messages['comment_list'], messages['comment_count']
@@ -287,7 +287,7 @@ def profile(request, user):
             follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
 
         # Messages
-        messages = getMessages(data={'page': 'profile', 'user': pUser, 'end': end, 'request': request})
+        messages = getMessages(data={'page': 'profile', 'user': pUser, 'group': None, 'end': end, 'request': request})
         message_list = zip(
             messages['message_list'][:end], messages['dbmessage_list'][:end],
             messages['comment_list'], messages['comment_count']
@@ -387,7 +387,7 @@ def showMessage(request, msg):
         success_msg = editMessage(request)
 
     # Messages
-    messages = getMessages(data={'page': msg, 'user': request.user, 'request': request})
+    messages = getMessages(data={'page': msg, 'user': request.user, 'group': None, 'request': request})
     message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
 
     # return relevant information to render message.html

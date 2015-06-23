@@ -5,13 +5,29 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-#### Entitys
+
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
 
+class GroupProfile(models.Model):
+    name = models.CharField(max_length=50)
+    short = models.CharField(max_length=10)
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
+    desc = models.CharField(max_length=200)
+    password = models.CharField(max_length=128, blank=True,
+                                help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
+    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
+    picture = models.ImageField(verbose_name='Gruppenbild', upload_to='picture/', blank=True,
+                                height_field=None, width_field=None, default='picture/gdefault.gif',
+                                help_text='Dieses Bild wird auf der Gruppenseite zu sehen sein!')
+    date = models.DateField(default=date.today, blank=True)
+    member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
+
+    def __str__(self):
+        return self.name
 
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
@@ -21,6 +37,7 @@ class Message(models.Model):
     date = models.DateTimeField('date published')
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
     attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='Notification')
+    group = models.ForeignKey(GroupProfile, related_name='group', blank=True, null=True)
     comment = models.ForeignKey('self', related_name='comments', blank=True, null=True)
     ignore = models.BooleanField(default=False)
 
@@ -60,23 +77,6 @@ class UserProfile(models.Model):
             self.picture.delete()
         super(UserProfile, self).delete()
 
-
-class GroupProfile(models.Model):
-    name = models.CharField(max_length=50)
-    short = models.CharField(max_length=10)
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
-    desc = models.CharField(max_length=200)
-    password = models.CharField(max_length=128, blank=True,
-                                help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
-    picture = models.ImageField(verbose_name='Gruppenbild', upload_to='picture/', blank=True,
-                                height_field=None, width_field=None, default='picture/gdefault.gif',
-                                help_text='Dieses Bild wird auf der Gruppenseite zu sehen sein!')
-    date = models.DateField(default=date.today, blank=True)
-    member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
-
-    def __str__(self):
-        return self.name
 
 
 class Notification(models.Model):

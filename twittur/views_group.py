@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import GroupProfileForm, GroupProfileEditForm
-from .functions import editMessage, getWidgets, setNotification
+from .functions import editMessage, getWidgets, setNotification, getMessages
 from .models import GroupProfile, Nav
 
 
@@ -25,6 +25,7 @@ def group(request, groupshort):
     if request.method == 'POST':
         success_msg = editMessage(request)
 
+
     group = GroupProfile.objects.get(short__exact=groupshort)
     member_list = group.member.order_by('first_name')
     if request.user in member_list:
@@ -39,12 +40,17 @@ def group(request, groupshort):
     if 'member' in request.GET:
         show_member = True
 
-    # TODO Message
-
+    end = 5
+    messages = getMessages(data={'page': 'group', 'user': None, 'group': group, 'end': end, 'request': request})
+    message_list = zip(
+        messages['message_list'][:end], messages['dbmessage_list'][:end],
+        messages['comment_list'], messages['comment_count']
+    )
+    print(messages['has_msg'])
     context = {
-        'active_page': 'group', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'active_page': 'group', 'groupshort': groupshort, 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'group': group, 'member_list': member_list, 'is_member': is_member, 'button_text': button_text,
-        'show_member': show_member, 'success_msg': success_msg,
+        'show_member': show_member, 'success_msg': success_msg, 'message_list': message_list, 'has_msg': messages['has_msg'],
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
@@ -115,7 +121,6 @@ def djlgroup(request, groupshort):
             group.member.get(username__exact=request.user.username)
         # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
         except ObjectDoesNotExist:
-            # TODO and discuss!!! case: if password is required here -> redirect to loginsite (not implement yet)
             if 'joinWithPassword' in request.POST:
                 if group.password == request.POST.get('password'):
                     group.member.add(request.user)

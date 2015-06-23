@@ -74,6 +74,8 @@
         <div class="modal-content">
         	{% if active_page in 'profile' and pUser %}
           <form action="{% url 'twittur:profile' user=pUser %}" method="post" enctype="multipart/form-data">
+            {% elif active_page == 'group' and group %}
+          <form action="{% url 'twittur:group' groupshort=groupshort %}" method="post" enctype="multipart/form-data">
         	{% else %}
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
           {% endif %}

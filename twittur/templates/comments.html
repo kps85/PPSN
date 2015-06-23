@@ -20,6 +20,8 @@
       <form action="{% url 'twittur:'|add:active_page user=user %}" method="POST">
     {% elif active_page == 'message' %}
       <form action="{% url 'twittur:'|add:active_page msg=msg_id %}" method="POST">
+    {% elif active_page == 'group' %}
+      <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" method="POST">
     {% else %}
       <form action="{% url 'twittur:'|add:active_page %}" method="POST">
     {% endif %}
@@ -79,6 +81,8 @@
         <form action="{% url 'twittur:'|add:active_page user=user %}" class="pull-right" method="POST">
         {% elif active_page == 'message' %}
         <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
+        {% elif active_page == 'group' %}
+        <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" method="POST">
         {% else %}
         <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
           {% endif %}

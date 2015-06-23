@@ -124,6 +124,21 @@ def msg_to_db(message):
                 setNotification('message', data={'user': user, 'message': message})
                 attaglist.append(user)
 
+        if word[0] == "&":
+            # database will save group instead of @group
+            try:
+                group = GroupProfile.objects.get(short__exact=str(word[1:]))
+
+            except ObjectDoesNotExist:
+                if message.group != None:
+                    message.group = None
+                pass
+            else:
+                print ("hello")
+                message.group = group
+
+    print(message.group)
+
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
@@ -134,7 +149,6 @@ def msg_to_db(message):
                 Q(user=dbattag) & Q(message=message)
             )
             attag.delete()
-
     return message
 
 
@@ -143,10 +157,12 @@ def dbm_to_m(message):
     # get hashtags and attags (models.ManyToMany) in message from database
     hashtag_list = message.hashtags.all()
     attag_list = message.attags.all()
+    group = message.group
 
     # message contains hashtags or atttags
-    if attag_list or hashtag_list:
+    if attag_list or hashtag_list or group:
         for word in message.text.split():
+            href = ""
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
             if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
                 href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
@@ -155,8 +171,14 @@ def dbm_to_m(message):
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
             if word[0] == "@" and (User.objects.get(username=word[1:]) in attag_list):
-                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
-                    message.text = message.text.replace(word, href)
+                href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+                message.text = message.text.replace(word, href)
+
+            if word[0] == '&' and group.short == word[1:]:
+                href = '<a href="/twittur/group/' + word[1:] + '">' + word +'</a>'
+                message.text = message.text.replace(word, href)
+
+
     return message
 
 
@@ -165,13 +187,14 @@ def getMessages(data):
         'has_msg': False,
         'list_end': False
     }
-    dbmessage_list = getMessageList(data['page'], data['user'])
+    dbmessage_list = getMessageList(data['page'], data['user'], data['group'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
     userprofile = UserProfile.objects.get(userprofile=data['request'].user)
     ignoreM_list = userprofile.ignoreM.all()
     ignoreU_list = userprofile.ignoreU.all()
+
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
@@ -206,13 +229,19 @@ def getMessages(data):
 
 
 # return Full Message List
-def getMessageList(page, user):
+def getMessageList(page, user, group):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
             ( Q(user__exact=user) | Q(user__exact=user[0].userprofile.follow.all())
             | Q(attags = None) | Q(attags = user) )
             & Q(comment = None)
         ).order_by('-date')
+        print(dbmessage_list)
+    elif page == 'group':
+        dbmessage_list = Message.objects.all().filter(
+            Q(group=group) & Q(comment=None)
+        ).order_by('-date')
+        print(dbmessage_list)
     elif page == 'profile':
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(user__exact=user) | Q(attags__username__exact=user.username)
