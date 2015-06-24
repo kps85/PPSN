@@ -201,16 +201,13 @@
         {% include "message_box.html" with message=message dbmessage=dbmessage comments=comments comCount=count page=active_page user=user  %}
       {% endfor %}
       </div>
-      <div class="text-center{% if show_member or show_favs or list_end %} hidden{% endif %}">
-      	{% if group %}
-          <button class="load_more btn btn-default" data-hint="{% url 'twittur:group' groupshort=group.short %}" title="Mehr Beitr&auml;ge laden">
-            <span class="glyphicon glyphicon-refresh"></span>
-          </button>
-        {% else %}
-          <button class="load_more btn btn-default" data-hint="{% url 'twittur:profile' user=pUser %}" title="Mehr Beitr&auml;ge laden">
-            <span class="glyphicon glyphicon-refresh"></span>
-          </button>
-        {% endif %}
+      <div class="text-center{% if show_member or show_favs or list_end == True %} hidden{% endif %}">
+        <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
+                data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}" 
+                data-user="{{ pUser }}" data-group="{{ group.short }}">
+          <span class="glyphicon glyphicon-refresh"></span>
+        </button>
+      </div>
     {% else %}
       <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
     {% endif %}

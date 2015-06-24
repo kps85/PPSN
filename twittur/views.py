@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .models import UserProfile, Nav, Message, Notification
+from .models import GroupProfile, UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
 from .functions import editMessage, getMessages, getWidgets, setNotification, pw_generator
 
@@ -22,7 +22,7 @@ def index(request):
         return HttpResponseRedirect('/twittur/login/')
 
     # initialize newMsgForm, user and various information
-    success_msg, end = None, 5
+    success_msg = None
     user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
 
     # initialize sidebar lists
@@ -31,31 +31,18 @@ def index(request):
     # if message was sent to view: return success message
     if request.method == 'POST':
         success_msg = editMessage(request)
-    # else if message list length should be extended
-    elif request.method == 'GET' and 'length' in request.GET:
-        end = int(request.GET.get('length')) + 5
 
     # Messages
-    messages = getMessages(data={'page': 'index', 'user': user, 'group': None, 'end': end, 'request': request})
-    message_list = zip(
-        messages['message_list'][:end], messages['dbmessage_list'][:end],
-        messages['comment_list'], messages['comment_count']
-    )
+    messages = getMessages(data={'page': 'index', 'data': user, 'request': request})
 
-    # if message list length should be extended
-    if request.method == 'GET' and 'length' in request.GET:
-        context = {'active_page': 'index', 'user': request.user, 'msgForm': widgets['msgForm'],
-                   'message_list': message_list, 'list_end': messages['list_end']}
-        return render(request, 'message_box_reload.html', context)
-    else:
-        context = {
-            'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-            'success_msg': success_msg, 'current_user': user,
-            'message_list': message_list, 'has_msg': messages['has_msg'], 'list_end': messages['list_end'],
-            'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-            'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-        }
-        return render(request, 'index.html', context)
+    context = {
+        'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'success_msg': success_msg, 'current_user': user,
+        'message_list': messages['message_list'], 'has_msg': messages['has_msg'], 'list_end': messages['list_end'],
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+    }
+    return render(request, 'index.html', context)
 
 
 # login/registration page
@@ -222,12 +209,6 @@ def profile(request, user):
         return HttpResponseRedirect('/twittur/login/')
 
     error_msg, success_msg, end = {}, None, 5
-    if 'favorits' in request.GET or 'favorits' in request.POST:
-        print ("hey")
-        show_favs = True
-    else:
-        show_favs = False
-
 
     # initialize widgets (sidebar, newMsgForm, ...)
     widgets = getWidgets(request)
@@ -238,9 +219,14 @@ def profile(request, user):
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list']
     }
 
+    if 'favorits' in request.GET or 'favorits' in request.POST:
+        context['show_favs'] = True
+    else:
+        context['show_favs'] = False
+
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
-        context['ignored'] = False
+        context['pUser'], context['pUserProf'], context['ignored'] = pUser, pUser.userprofile, False
         if request.method == 'POST' and 'ignoreUser' in request.POST:
             if 'ignoreUser' in request.POST:               # clicked User ignorieren
                 ignoreUser_list = request.user.userprofile.ignoreU.all()
@@ -257,69 +243,44 @@ def profile(request, user):
                 context['success_msg'] = editMessage(request)
 
         elif request.POST and 'entfollow' in request.POST:
-            print("1")
             entfollow = User.objects.get(id=request.POST.get('entfollow'))
             follow = Notification.objects.get(
                         Q(user__exact=entfollow) & Q(follower__exact=request.user.userprofile)
                     )
             follow.delete()
-            print("2")
             
             context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
 
-        elif request.method == 'GET':
+        elif request.method == 'GET' and 'follow' in request.GET:
+            if pUser in widgets['follow_list']:
+                follow = Notification.objects.get(
+                    Q(user__exact=pUser) & Q(follower__exact=request.user.userprofile)
+                )
+                follow.delete()
+                context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
+            else:
+                note = request.user.username + ' folgt Dir jetzt!'
+                setNotification('follower', data={'user': pUser, 'follower': request.user.userprofile, 'note': note})
+                context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
+            widgets['follow_list'] = widgets['userProfile'].follow.all()
 
-            # extend message list length
-            if 'length' in request.GET:
-                end = int(request.GET.get('length')) + 5
-
-            # follow
-            if 'follow' in request.GET:
-
-                if pUser in widgets['follow_list']:
-                    follow = Notification.objects.get(
-                        Q(user__exact=pUser) & Q(follower__exact=request.user.userprofile)
-                    )
-                    follow.delete()
-                    context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
-                else:
-                    note = request.user.username + ' folgt Dir jetzt!'
-                    setNotification('follower', data={'user': pUser, 'follower': request.user.userprofile, 'note': note})
-                    context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
-                widgets['follow_list'] = widgets['userProfile'].follow.all()
-
-        try:
-            ignore = request.user.userprofile.ignoreU.get(username=pUser.username) # ignored biacth?
-        except ObjectDoesNotExist:
-            pass                                                                    # no, so no changes
-        else:
-            print("yes")
-            context['ignored'] = True                                             # yes, so disable all messages from her profile
+        if request.user.userprofile.ignoreU.filter(username=pUser.username).exists():
+            context['ignored'] = True                                   # yes, so disable all messages from her profile
 
         if pUser in widgets['follow_list']:
-            follow_text = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
+            context['follow_text'] = '<span class="glyphicon glyphicon-eye-close"></span> ' + user.upper() + ' nicht folgen'
         else:
-            follow_text = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
+            context['follow_text'] = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
 
         # Messages
-        messages = getMessages(data={'page': 'profile', 'user': pUser, 'group': None, 'end': end, 'request': request})
-        message_list = zip(
-            messages['message_list'][:end], messages['dbmessage_list'][:end],
-            messages['comment_list'], messages['comment_count']
-        )
-
-        if request.method == 'GET' and 'length' in request.GET:
-            context = {'active_page': 'profile', 'user': request.user, 'pUser': pUser, 'list_end': messages['list_end'],
-                       'message_list': message_list, 'msgForm': widgets['msgForm']}
-            return render(request, 'message_box_reload.html', context)
-
-        context['pUser'], context['pUserProf'], context['show_favs'] = pUser, pUser.userprofile, show_favs
-        context['message_list'], context['list_end'] = message_list, messages['list_end']
-        context['has_msg'], context['follow_text'] = messages['has_msg'], follow_text
-        context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        messages = getMessages(data={'page': 'profile', 'data': pUser, 'end': end, 'request': request})
+        context['message_list'], context['list_end'] = messages['message_list'], messages['list_end']
+        context['has_msg']  = messages['has_msg']
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
         context['error_msg'] = error_msg
+
+    context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
 
     return render(request, 'profile.html', context)
 
@@ -391,28 +352,27 @@ def settings(request):
 
 
 def showMessage(request, msg):
-    success_msg, error_msg = None, {}
 
     # initialize widgets (sidebar, newMsgForm, ...)
     widgets = getWidgets(request)
 
-    # if a message was sent to this view:
-    # return success_msg
-    if request.method == 'POST':
-        success_msg = editMessage(request)
-
-    # Messages
-    messages = getMessages(data={'page': msg, 'user': request.user, 'group': None, 'request': request})
-    message_list = zip(messages['message_list'], messages['dbmessage_list'], messages['comment_list'])
-
-    # return relevant information to render message.html
     context = {
         'active_page': 'message', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'success_msg': success_msg, 'error_msg': error_msg, 'user': request.user,
-        'msg_id': msg, 'message_list': message_list, 'has_msg': messages['has_msg'],
+        'user': request.user, 'msg_id': msg,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
+
+    # if a message was sent to this view:
+    # return success_msg
+    if request.method == 'POST':
+        context['success_msg'] = editMessage(request)
+
+    # Messages
+    messages = getMessages(data={'page': msg, 'data': request.user, 'request': request})
+    context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg'],
+
+    # return relevant information to render message.html
     return render(request, 'message.html', context)
 
 
@@ -452,3 +412,31 @@ def notification(request):
         item.save()
 
     return render(request, 'notification.html', context)
+
+
+def load_more(request):
+    page = request.GET.get('page')
+    end = int(request.GET.get('length')) + 5
+    widgets = getWidgets(request)
+    print(page)
+    context = {'active_page': page, 'user': request.user, 'msgForm': widgets['msgForm']}
+
+    if page == 'index':
+        data = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
+    elif page == 'profile':
+        data = User.objects.get(username=request.GET.get('user'))
+        context['pUser'] = data
+    elif page == 'group':
+        data = GroupProfile.objects.get(short=request.GET.get('group'))
+        context['group'] = data
+    elif page == 'search':
+        data = request.GET.get('search_input').split(" ")
+        context['search_input'] = data
+    elif page == 'hashtag':
+        data = request.GET.get('hash')
+        context['is_hash'] = request.GET.get('hash')
+
+    messages = getMessages(data={'page': page, 'data': data, 'end': end, 'request': request})
+    context['message_list'], context['list_end'] = messages['message_list'], messages['list_end']
+
+    return render(request, 'message_box_reload.html', context)

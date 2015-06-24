@@ -74,7 +74,6 @@ def editMessage(request):
                 return "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
                         "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
             else:
-                print(ignore_list)
                 if msg in ignore_list:
                     request.user.userprofile.ignoreM.remove(msg)
                     return 'Nachricht wird nicht mehr ausgeblendet!'
@@ -136,10 +135,7 @@ def msg_to_db(message):
                     message.group = None
                 pass
             else:
-                print ("hello")
                 message.group = group
-
-    print(message.group)
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
     for dbhashtag in message.hashtags.all():
@@ -161,7 +157,6 @@ def dbm_to_m(message):
     attag_list = message.attags.all()
     group = message.group
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.text)
-    print(urls)
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
@@ -190,17 +185,23 @@ def dbm_to_m(message):
 
 def getMessages(data):
     result = {
-        'has_msg': False,
-        'list_end': False
+        'has_msg': False
     }
-    dbmessage_list = getMessageList(data['page'], data['user'], data['group'])
+    if 'end' not in data:
+        result['list_end'] = 5
+    else:
+        result['list_end'] = data['end']
+
+    if 'end' in data['request'].POST:
+        result['list_end'] = data['request'].POST.get('end')
+
+    dbmessage_list = getMessageList(data['page'], data['data'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
     userprofile = UserProfile.objects.get(userprofile=data['request'].user)
     ignoreM_list = userprofile.ignoreM.all()
     ignoreU_list = userprofile.ignoreU.all()
-
 
     message_list, comment_list, comment_count = [], [], []
     for message in dbmessage_list:
@@ -226,41 +227,40 @@ def getMessages(data):
     if len(message_list) > 0:
         result['has_msg'] = True
 
-    if 'end' in data:
-        if data['end'] is None or data['end'] >= len(message_list):
-            result['list_end'] = True
+    result['list_length'] = len(message_list)
+    result['message_list'] = zip(
+        message_list[:result['list_end']], dbmessage_list[:result['list_end']], comment_list, comment_count
+    )
 
-    result['message_list'], result['dbmessage_list'] = message_list, dbmessage_list
-    result['comment_list'], result['comment_count'] = comment_list, comment_count
+    if result['list_end'] is None or result['list_end'] >= len(message_list):
+        result['list_end'] = True
 
     return result
 
 
 # return Full Message List
-def getMessageList(page, user, group):
+def getMessageList(page, data):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
-            ( Q(user__exact=user) | Q(user__exact=user[0].userprofile.follow.all())
-            | Q(attags = None) | Q(attags = user) )
+            ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
+            | Q(attags = None) | Q(attags = data) )
             & Q(comment = None)
         ).order_by('-date')
-        print(dbmessage_list)
     elif page == 'group':
         dbmessage_list = Message.objects.all().filter(
-            Q(group=group) & Q(comment=None)
+            Q(group=data) & Q(comment=None)
         ).order_by('-date')
-        print(dbmessage_list)
     elif page == 'profile':
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
-            Q(user__exact=user) | Q(attags__username__exact=user.username)
+            Q(user__exact=data) | Q(attags__username__exact=data.username)
         ).order_by('-date')
     elif page == 'hashtag':
         dbmessage_list = Message.objects.all().filter(
-            hashtags__name=user
+            hashtags__name=data
         ).order_by('-date')
     elif page == 'search':
-        query = Q(user__username__in=user)
-        for term in user:
+        query = Q(user__username__in=data)
+        for term in data:
             query |= Q(text__contains=term) | Q(user__username__contains=term)
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             query

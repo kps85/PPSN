@@ -418,36 +418,23 @@ function initVarious() {
 			$("#body_hashtag").length > 0 || $("#body_search").length > 0) {
 		$(".load_more").click(function(e) {
 			var url = $(this).attr("data-hint");
-			var data = {
-				length: $(".post").length,
-				search_input: $(".load_more_search_input").attr("data-hint")
+			var info = {
+				page: $(this).attr("data-page"),
+				user: $(this).attr("data-user"),
+				group: $(this).attr("data-group"),
+				search_input: $(this).attr("data-search"),
+				hash: $(this).attr("data-hash"),
+				length: $(this).attr("data-length")
 			}
 			var getIt = function(url) {
 				$.ajax({
 					type:"GET",
 					url: url,
-					data: data,
+					data: info,
 					dataType: 'html',
 					async: true,
 					success: function(data) {
-						switch(url.split("/")[2]) {
-							case 'profile':
-								$(".profileMessages").html(data);
-								break;
-							case 'hashtag':
-								$("#searchMsg").html(data);
-								break;
-							case 'search':
-								$("#searchMsg").html("<h4> Folgende Nachrichten wurden gefunden:</h4>" + data);
-								break;
-							default:
-								$("#content").html(data);
-						}
-						if ($(".list_end").length > 0) {
-							$(".load_more").hide();
-						} else {
-							$(".load_more").find("span").removeClass("glyphicon-time").addClass("glyphicon-refresh");
-						}
+						setIt(data, info.page);
 					},
 					error: function(xhr,err) {					
 						alert("readyState: "+xhr.readyState+"\nstatus: "+xhr.status);
@@ -455,6 +442,31 @@ function initVarious() {
 					}
 				});			
 			};
+			var setIt = function(data, page) {
+				switch(page) {
+					case 'profile':
+						$(".profileMessages").html(data);
+						break;
+					case 'group':
+						$(".profileMessages").html(data);
+						break;
+					case 'hashtag':
+						$("#searchMsg").html(data);
+						break;
+					case 'search':
+						$("#searchMsg").html("<h4> Folgende Nachrichten wurden gefunden:</h4>" + data);
+						break;
+					default:
+						$("#content").html(data);
+				}
+				if ($(".list_end").length > 0) {
+					$(".load_more").hide();
+				} else {
+					$(".load_more").find("span").removeClass("glyphicon-time").addClass("glyphicon-refresh");
+					$(".load_more").attr("data-length", $(".post").length);
+				}
+				initInputValidation()		
+			}
 			$(this).find("span").removeClass("glyphicon-refresh").addClass("glyphicon-time");
 			getIt(url)
 		});

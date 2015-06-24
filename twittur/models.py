@@ -30,6 +30,7 @@ class GroupProfile(models.Model):
     def __unicode__(self):
         return self.name
 
+
 # - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
@@ -77,7 +78,6 @@ class UserProfile(models.Model):
         if self.picture != 'picture/default.gif':
             self.picture.delete()
         super(UserProfile, self).delete()
-
 
 
 class Notification(models.Model):
