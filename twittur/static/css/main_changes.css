@@ -39,25 +39,32 @@ a:focus { color: #a00000; text-decoration: none; }
 		}
 }
 
+.postContent.isHidden { margin-left: 0px; }
+
 .postIgnore {
 	padding: 5px 20px;
 }
 	.postIgnore .postFoot { margin-top: 0px; }
-.ignoreMsgButton {
+.ignoreMsgButton, .ignoreCmtButton {
 	padding: 1px 5px;
 	background: none;
 	border: none;
 	color: #a00000;
 }
-	.ignoreMsgButton:hover {
+	.ignoreMsgButton:hover, .ignoreCmtButton:hover {
 		color: #f50000;
+		cursor: pointer;
 	}
 
-.remUser:hover { cursor: pointer; }
+.remUser:hover, .promUser:hover { cursor: pointer; }
 
 #main.infoGuest {
 	width: auto;
 	margin-left: auto;
+}
+
+a.profileButton {
+	color: #333 !important;
 }
 
 #content a:hover { text-decoration: none; }

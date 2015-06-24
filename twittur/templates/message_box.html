@@ -1,14 +1,13 @@
 <div class="post{% if message.ignore %} postIgnore{% endif %}" data-hint="{{ message.id }}" id="post{{ message.id }}">
-  {% if not message.ignore %}
-  <div class="icon">
+  
+  <div class="icon{% if message.ignore %} hidden{% endif %}">
   	<a href="{% url 'twittur:profile' user=message.user %}">
     	<img src="{{ message.user.userprofile.picture.url }}" class="img-thumbnail">
     </a>
   </div>
 
-  <div class="postContent">
-    <div class="postMeta">
-
+  <div class="postContent{% if message.ignore %} isHidden{% endif %}">
+    <div class="postMeta{% if message.ignore %} hidden{% endif %}">
       <div class="postAuthor">
       	{% if active_page == 'ftu' %}
         	@{{ message.user.username }}
@@ -32,7 +31,7 @@
       </small>
     </div>
     
-    <div class="postText" id="postText{{ message.id }}">
+    <div class="postText{% if message.ignore %} hidden{% endif %}" id="postText{{ message.id }}">
     	{% if message.text %}
       	{{ message.text|safe }}
         {% if message.picture and active_page != 'ftu' %}
@@ -72,6 +71,7 @@
         </em></small>
       {% endif %}
     </div>
+    
     {% if message.editable %}
     <div class="postTextEdit hidden" id="postTextEdit{{ dbmessage.id }}">
       {% if active_page == 'profile' %}
@@ -81,7 +81,7 @@
       {% elif active_page == 'hashtag' %}
         <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
       {% elif active_page == 'group' %}
-        <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" class="pull-right" method="POST">
       {% else %}
         <form action="{% url 'twittur:'|add:active_page %}" method="POST">
       {% endif %}
@@ -97,25 +97,24 @@
       </form>
     </div>
     {% endif %}
-	{% endif %}
+    
   {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
-      {% if not message.ignore %}
-        {% if comCount > 0 and active_page != 'message' %}
-          <a href="{% url 'twittur:message' msg=message.id %}">
-            <span class="glyphicon glyphicon-comment"></span>&nbsp;
-            {{ comCount }}
-          </a>
-        {% else %}    
-          <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment{{ message.id }}" title="Neue Antwort verfassen">
-            <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
-          </a>
-        {% endif %}
-      {% else %}
-      	<div class="pull-left">
-        	Diese Nachricht von {{ message.user.username }} wurde ausgeblendet. 
-        </div>
+    	<div class="postReply pull-left{% if message.ignore %} hidden{% endif %}">
+      {% if comCount > 0 and active_page != 'message' %}
+        <a href="{% url 'twittur:message' msg=message.id %}">
+          <span class="glyphicon glyphicon-comment"></span>&nbsp;
+          {{ comCount }}
+        </a>
+      {% else %}    
+        <a class="reply_link" data-hint="{{ message.id }} {{ message.user.username }}" data-toggle="modal" data-target="#newComment{{ message.id }}" title="Neue Antwort verfassen">
+          <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
+        </a>
       {% endif %}
+      </div>
+      <div class="postHide pull-left{% if not message.ignore %} hidden{% endif %}">
+        Diese Nachricht von {{ message.user.username }} wurde ausgeblendet. 
+      </div>
       
       <div class="postEdit pull-right">
       {% if message.user == user %}
@@ -128,34 +127,12 @@
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </a>
       {% else %}
-        {% if active_page == 'profile' %}
-        <form action="{% url 'twittur:'|add:active_page user=pUser %}#post{{ message.id }}" class="pull-right" method="POST">
-        {% elif active_page == 'message' %}
-        <form action="{% url 'twittur:'|add:active_page msg=message.id %}#post{{ message.id }}" class="pull-right" method="POST">
-        {% elif active_page == 'hashtag' %}
-        <form action="{% url 'twittur:'|add:active_page text=is_hash %}#post{{ message.id }}" class="pull-right" method="POST">
-        {% elif active_page == 'search' %}
-        <form action="{% url 'twittur:'|add:active_page %}?search_input={{ search_input }}#searchMsg#post{{ message.id }}" class="pull-right" method="POST">
-        {% elif active_page == 'group' %}
-        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}#post{{ message.id }}" class="pull-right" method="POST">
-        {% else %}
-        <form action="{% url 'twittur:'|add:active_page %}#post{{ message.id }}" class="pull-right" method="POST">
-        {% endif %}
-        {% csrf_token %}
-        	{% if active_page == 'search' %}<input name="search_input" type="hidden" value="{{ search_input }}" />{% endif %}
-          <input name="ignoreMsg" type="hidden" value="{{ message.id }}">
-          <input name="list_end" type="hidden" value="{{ list_end }}">
-          <button class="ignoreMsgButton" type="submit" title="{% if not message.ignore %}Nachricht ausblenden{% else %}Nachricht einblenden{% endif %}">
-          {% if not message.ignore %}
-            <span class="glyphicon glyphicon-eye-close"></span>
-          {% else %}
-            <span class="glyphicon glyphicon-eye-open"></span>
-          {% endif %}
-          </button>
-        </form>      
+        <span class="ignoreMsgButton glyphicon {% if message.ignore %}glyphicon-eye-open{% else %}glyphicon-eye-close{% endif %}" 
+        			title="Nachricht ein- / ausblenden"
+              data-hint="hide_msg {{ message.id }} {{ message.user.username }} {% url 'twittur:update' %}"></span>
       {% endif %}
     </div>
-  {% if not message.ignore %}</div>{% endif %}
+  </div>
 	{% endif %}
 </div>
 
@@ -170,7 +147,7 @@
 
 {% if active_page != 'ftu' %}
   {% if message.user == user %}
-  <div class="modal fade" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
+  <div class="modal fade delMsg{{ message.id }}Modal" id="delMsg{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delMsg{{ message.id }}ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -180,28 +157,15 @@
         <div class="modal-body"> <em>{{ dbmessage.text }}</em> </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-          {% if active_page == 'profile' %}
-          <form action="{% url 'twittur:'|add:active_page user=user %}" class="pull-right" method="POST">
-          {% elif active_page == 'message' %}
-          <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
-          {% elif active_page == 'hashtag' %}
-          <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
-          {% elif active_page == 'group' %}
-          <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" class="pull-right" method="POST">
-          {% else %}
-          <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
-            {% endif %}
-            {% csrf_token %}
-            <input type="hidden" name="delMessage" value="{{ message.id }}">
-            <button type="submit" class="btn btn-primary">Nachricht l&ouml;schen</button>
-          </form>
+          <button type="submit" class="deleteMsgButton btn btn-primary"
+          				data-hint="del_msg {{ message.id }} {{ message.user.username }} {% url 'twittur:update' %}">Nachricht l&ouml;schen</button>
         </div>
       </div>
     </div>
   </div>
   {% endif %}
   
-  <div class="modal fade newComment" id="newComment{{ message.id }}" tabindex="-1" role="dialog" aria-labelledby="newComment{{ message.id }}Label" aria-hidden="true">
+  <div class="modal fade newComment {{ message.id }}" id="newComment{{ message.id }}" tabindex="-1" role="dialog" aria-labelledby="newComment{{ message.id }}Label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <form action="{% url 'twittur:message' msg=message.id %}" method="post" enctype="multipart/form-data">

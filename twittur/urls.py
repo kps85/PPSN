@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^message/(?P<msg>[0-9]+)$', views.showMessage, name='message'),
     url(r'^notification/$', views.notification, name='notification'),
     url(r'^more/$', views.load_more, name='more'),
+    url(r'^update/$', views.update, name='update'),
 
 
     # views_into

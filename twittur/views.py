@@ -3,10 +3,9 @@ import random, re
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .models import GroupProfile, UserProfile, Nav, Message, Notification
@@ -37,7 +36,8 @@ def index(request):
     # if request was sent to view: return success message
     if request.method == 'POST':
         context['success_msg'] = editMessage(request)
-        context['list_end'] = request.POST['list_end']
+        if 'list_end' in request.POST:
+            context['list_end'] = request.POST['list_end']
 
     # Messages
     messages = getMessages(data={'page': 'index', 'data': user, 'end': context['list_end'], 'request': request})
@@ -256,6 +256,7 @@ def profile(request, user):
 
         elif 'delMessage' in request.POST or 'ignoreMsg' in request.POST:
             context['success_msg'] = editMessage(request)
+            context['list_end'] = request.POST['list_end']
 
         elif request.POST and 'entfollow' in request.POST:
             entfollow = User.objects.get(id=request.POST.get('entfollow'))
@@ -266,7 +267,7 @@ def profile(request, user):
             
             context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
 
-        elif request.method == 'GET' and 'follow' in request.GET:
+        elif request.GET and 'follow' in request.GET:
             if pUser in widgets['follow_list']:
                 follow = Notification.objects.get(
                     Q(user__exact=pUser) & Q(follower__exact=request.user.userprofile)
@@ -289,8 +290,9 @@ def profile(request, user):
 
         # Messages
         messages = getMessages(data={'page': 'profile', 'data': pUser, 'end': end, 'request': request})
-        context['message_list'], context['list_end'] = messages['message_list'], messages['list_end']
-        context['has_msg']  = messages['has_msg']
+        context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
+        if 'delMessage' or 'ignoreMsg' not in request.POST:
+            context['list_end']  = messages['list_end']
     except:
         error_msg['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
         context['error_msg'] = error_msg
@@ -367,7 +369,6 @@ def settings(request):
 
 
 def showMessage(request, msg):
-
     # initialize widgets (sidebar, newMsgForm, ...)
     widgets = getWidgets(request)
 
@@ -445,7 +446,7 @@ def load_more(request):
         context['group'] = data
     elif page == 'search':
         data = request.GET.get('search_input').split(" ")
-        context['search_input'] = data
+        context['search_input'] = request.GET.get('search_input')
     elif page == 'hashtag':
         data = request.GET.get('hash')
         context['is_hash'] = request.GET.get('hash')
@@ -454,3 +455,38 @@ def load_more(request):
     context['message_list'], context['list_end'] = messages['message_list'], messages['list_end']
 
     return render(request, 'message_box_reload.html', context)
+
+
+def update(request):
+    what = request.GET.get('what')
+    if what == 'hide_msg' or what == 'hide_cmt':
+        ignore_list = request.user.userprofile.ignoreM.all()
+        if Message.objects.filter(pk=request.GET.get('id')).exists():
+            msg = Message.objects.get(pk=request.GET.get('id'))
+            if msg.user in request.user.userprofile.ignoreU.all():
+                response = "<span class='glyphicon glyphicon-warning'></span>&nbsp;" \
+                           "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
+                           "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
+            else:
+                if msg in ignore_list:
+                    request.user.userprofile.ignoreM.remove(msg)
+                    response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
+                               "Nachricht wird nicht mehr ausgeblendet!"
+
+                else:
+                    request.user.userprofile.ignoreM.add(msg)
+                    response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
+                               "Nachricht erfolgreich ausgeblendet!"
+    elif what == 'del_msg' or what == 'del_cmt':
+        if Message.objects.filter(comment=request.GET.get('id')).exists():
+            msg = Message.objects.get(pk=request.GET.get('id'))
+            comments = Message.objects.filter(comment=msg)
+            for obj in comments:
+                obj.delete()
+        if Message.objects.filter(pk=request.GET.get('id')).exists():  # if Message exists
+            curMsg = Message.objects.get(pk=request.GET.get('id'))     # select Message
+            curMsg.delete()                                                 # delete selected Message
+        response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
+                   "Nachricht gel&ouml;scht!"                                   # return info
+
+    return HttpResponse(response)

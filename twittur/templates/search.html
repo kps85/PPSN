@@ -75,9 +75,9 @@
     <div class="container-fluid searchResultBox searchHash" id="searchHash">
     <h4> Folgende Themen wurden gefunden:</h4>
   	{% for hashtag in hashtag_list %}
-      <a href="/twittur/hashtag/{{ hashtag }}">
+      <a href="/twittur/hashtag/{{ hashtag.name }}">
       <p class="search_hash_result pull-left text-center">
-        #{{ hashtag }}
+        #{{ hashtag.name }}
       </p>
       </a>
     {% endfor %}

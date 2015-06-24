@@ -16,9 +16,12 @@ def search(request):
     # initialize sidebar lists
     widgets = getWidgets(request)
 
-    # if message was sent to view: return success message
-    if request.method == 'POST':
-        success_msg = editMessage(request)
+    context = {
+        'active_page': 'search', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'list_end': 5,
+        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+    }
 
     if 'search_input' in request.GET:
         search_input = request.GET['search_input'].strip().split(" ")
@@ -26,6 +29,8 @@ def search(request):
         search_input = request.POST['search_input'].strip().split(" ")
     else:
         search_input = None
+    context['search'] = 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"'
+    context['search_input'] = ' '.join(search_input)
         
     if search_input is None or search_input[0] == "":
         error_msg["no_term"] = "Kein Suchbegriff eingegeben!"
@@ -42,12 +47,23 @@ def search(request):
     # the reason behind this is we save username instead of @username, so if someone is looking for
     # @kps for example, we wont find him, because the database don't know him
 
-    user_list, group_list, hashtag_list, message_list, list_end = [], [], [], [], 5
+    user_list, group_list, hashtag_list, message_list = [], [], [], []
     messages = getMessages(data={'page': 'search', 'data': search_input, 'end': None, 'request': request})
     messages_list = list(messages['message_list'])
 
-    if len(messages_list) <= list_end:
-        list_end = True
+    print(messages['list_length'])
+
+    if messages['list_length'] <= context['list_end']:
+        context['list_end'] = True
+        if len(messages_list) <= 5:
+            context['sListEnd'] = 5
+
+    # if message was sent to view: return success message
+    if request.method == 'POST':
+        context['success_msg'] = editMessage(request)
+        context['list_end'] = int(request.POST['list_end'])
+
+    print(context['list_end'])
 
     for term in search_input:
         # special case: flag for @
@@ -88,18 +104,16 @@ def search(request):
     message_list = elimDups(message_list)
     message_list.sort(key=lambda x: x[0].date, reverse=True)
 
-    context = {
-        'active_page': 'search', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'success_msg': success_msg,
-        'search': 'Suchergebnisse f&uuml;r "<em>' + ' '.join(search_input) + '</em>"',
-        'search_input': ' '.join(search_input), 'list_end': list_end,
-        'user_list': user_list, 'user_list_length': len(user_list),
-        'group_list': group_list, 'group_list_length': len(group_list),
-        'hashtag_list': hashtag_list, 'hashtag_list_length': len(hashtag_list),
-        'message_list': message_list[:list_end], 'message_list_length': len(message_list),
-        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-    }
+    context['user_list'], context['user_list_length'] = user_list, len(user_list)
+    context['group_list'], context['group_list_length'] = group_list, len(group_list)
+    context['hashtag_list'], context['hashtag_list_length'] = hashtag_list, len(hashtag_list)
+    context['message_list_length'] = messages['list_length']
+
+    if 'sListEnd' in context:
+        context['message_list'] = message_list[:context['sListEnd']]
+    else:
+        context['message_list'] = message_list[:context['list_end']]
+
     return render(request, 'search.html', context)
 
 

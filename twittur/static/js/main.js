@@ -414,6 +414,87 @@ function initVarious() {
 	  $("#newComment"+data[0]).find(".modal-title").html("Antwort an " + data[1] + " verfassen");
   });
 	
+	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton").click(function(e) {
+		var hint = $(this).attr("data-hint").split(" ");
+    var info = {
+			what: hint[0],
+			id: hint[1],
+			user: hint[2],
+			url: hint[3]
+		}
+		var hideIt = function() {
+			$.ajax({
+				type:"GET",
+				url: info.url,
+				data: info,
+				dataType: 'html',
+				async: true,
+				success: function(data) {
+					switch(info.what) {
+						case 'hide_msg':
+							if (data.search('warning') > 0) {
+								$("#post"+info.id).find(".postHide").html(data);
+							} else {
+								$("#post"+info.id).each(function(index, element) {
+									$(element).toggleClass("postIgnore");
+									$(element).find(".icon, .postMeta, .postText, .postReply, .postHide").toggleClass("hidden");
+									$(element).find(".postContent").toggleClass("isHidden");
+									$(element).find(".ignoreMsgButton").toggleClass("glyphicon-eye-open glyphicon-eye-close");
+									$(element).find(".postHide").html(data);
+								});
+							}
+							break;
+						case 'hide_cmt':	
+							if (data.search('warning') > 0) {
+								$("#cmt"+info.id).find(".postHide").html(data);
+							} else {	
+								$("#cmt"+info.id).each(function(index, element) {
+									$(element).toggleClass("postIgnore");
+									var hideElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .postHide."+info.id;
+									$(element).find(hideElements).toggleClass("hidden");
+									$(element).find(".ignoreCmtButton."+info.id).toggleClass("glyphicon-eye-open glyphicon-eye-close");
+									$(element).find(".postHide."+info.id).html(data);
+								});
+							}
+							break;
+						case 'del_msg':
+							$("#post"+info.id).each(function(index, element) {
+								$("#delMsg"+info.id+"Modal").modal('hide');
+								$(element).toggleClass("postIgnore");
+								var delElements = ".icon, .postMeta, .postText, .postReply, .postEdit";
+								$(element).find(delElements).remove();
+								$("#newComment"+info.id).remove();
+								$(element).find(".postContent").toggleClass("isHidden");
+								$(element).find(".postHide").toggleClass("hidden").html(data);
+								setTimeout(function() {
+									$("#delMsg"+info.id+"Modal").remove();
+								}, 1000);
+							});
+							break;
+						case 'del_cmt':
+							$("#cmt"+info.id).each(function(index, element) {
+								$("#delCmt"+info.id+"Modal").modal('hide');
+								$(element).toggleClass("postIgnore");
+								var remElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .cmtEdit."+info.id;
+								$(element).find(remElements).remove();
+								$("#newComment"+info.id).remove();
+								$(element).find(".postHide."+info.id).toggleClass("hidden").html(data);
+								setTimeout(function() {
+									$("#delCmt"+info.id+"Modal").remove();
+								}, 1000);
+							});
+							break;
+					}
+				},
+				error: function(xhr,err) {					
+					alert("readyState: "+xhr.readyState+"\nstatus: "+xhr.status);
+					alert("responseText: "+xhr.responseText);
+				}
+			});			
+		};
+		hideIt();
+  });
+	
 	if ($("#body_index").length > 0 || $("#body_profile").length > 0 || $("#body_group").length > 0 || 
 			$("#body_hashtag").length > 0 || $("#body_search").length > 0) {
 		$(".load_more").click(function(e) {
@@ -465,7 +546,8 @@ function initVarious() {
 					$(".load_more").find("span").removeClass("glyphicon-time").addClass("glyphicon-refresh");
 					$(".load_more").attr("data-length", $(".post").length);
 				}
-				initInputValidation()		
+				initInputValidation();
+				initVarious();	
 			}
 			$(this).find("span").removeClass("glyphicon-refresh").addClass("glyphicon-time");
 			getIt(url)

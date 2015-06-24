@@ -1,5 +1,6 @@
 import copy, datetime, string
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 from django.utils import timezone
 
@@ -28,7 +29,7 @@ def msgDialog(request):
                 msgForm.instance.comment = message
                 msg_to_db(msgForm.instance)
                 msgForm.save()
-                if message.user is not request.user:
+                if message.user != request.user:
                     note = request.user.username + ' hat auf deine Nachricht geantwortet.'
                     setNotification('comment', data={'user': message.user, 'message': msgForm.instance, 'note': note})
                 # save this shit for the next step
@@ -39,18 +40,7 @@ def msgDialog(request):
 
 # edit or update Message
 def editMessage(request):
-    if 'delMessage' in request.POST:                                        # if Message should be deleted
-        if Message.objects.filter(comment=request.POST['delMessage']).exists():
-            msg = Message.objects.get(pk=request.POST['delMessage'])
-            comments = Message.objects.filter(comment=msg)
-            for obj in comments:
-                obj.delete()
-        if Message.objects.filter(pk=request.POST['delMessage']).exists():  # if Message exists
-            curMsg = Message.objects.get(pk=request.POST['delMessage'])     # select Message
-            curMsg.delete()                                                 # delete selected Message
-        return 'Nachricht gel&ouml;scht!'                                   # return info
-
-    elif 'updateMsg' in request.POST:                                       # if Message should be updated
+    if 'updateMsg' in request.POST:                                       # if Message should be updated
         if Message.objects.filter(pk=request.POST['updateMsg']).exists():   # if Message exists
             curMsg = Message.objects.get(pk=request.POST['updateMsg'])      # select Message
             curMsg.text = request.POST['updatedText']                       # set Message text
@@ -66,28 +56,20 @@ def editMessage(request):
             curMsg.save()                                                   # save and update Message
         return 'Kommentar erfolgreich aktualisiert!'                        # return info
 
-    elif 'ignoreMsg' in request.POST:
-        ignore_list = request.user.userprofile.ignoreM.all()
-        if Message.objects.filter(pk=request.POST['ignoreMsg']).exists():
-            msg = Message.objects.get(pk=request.POST['ignoreMsg'])
-            if msg.user in request.user.userprofile.ignoreU.all():
-                return "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
-                        "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
-            else:
-                if msg in ignore_list:
-                    request.user.userprofile.ignoreM.remove(msg)
-                    return 'Nachricht wird nicht mehr ausgeblendet!'
-
-                else:
-                    request.user.userprofile.ignoreM.add(msg)
-                    return 'Nachricht erfolgreich ausgeblendet!'                       # return info
-
     elif 'remUser' in request.POST:
         group = GroupProfile.objects.get(pk=request.POST['group'])
         member = User.objects.get(pk=request.POST['remUser'])
         setNotification('group', data={'group': group, 'member': member})
         group.member.remove(member)
         return "Mitglied erfolgreich entfernt."
+
+    elif 'promUser' in request.POST:
+        group = GroupProfile.objects.get(pk=request.POST['group'])
+        member = User.objects.get(pk=request.POST['promUser'])
+        setNotification('group_admin', data={'group': group, 'member': member})
+        group.admin = member
+        group.save()
+        return "Mitglied erfolgreich bef&ouml;rdert."
 
     else:                                                                   # if Message should be posted
         return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
@@ -122,7 +104,8 @@ def msg_to_db(message):
             except ObjectDoesNotExist:
                 pass
             else:
-                setNotification('message', data={'user': user, 'message': message})
+                if message.user != user:
+                    setNotification('message', data={'user': user, 'message': message})
                 attaglist.append(user)
 
         if word[0] == "&":
@@ -187,10 +170,13 @@ def getMessages(data):
     result = {
         'has_msg': False
     }
+
     if 'end' not in data:
         result['list_end'] = 5
     else:
-        if data['end'] == 'True':
+        if data['end'] is None:
+            result['list_end'] = 5
+        elif data['end'] == 'True':
             result['list_end'] = None
         else:
             result['list_end'] = int(data['end'])
@@ -319,6 +305,10 @@ def setNotification(type, data):
     elif type == 'group':
         if 'note' not in data:
             data['note'] = 'Du wurdest aus der Gruppe entfernt.'
+        ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
+    elif type == 'group_admin':
+        if 'note' not in data:
+            data['note'] = 'Du wurdest in der Gruppe ' + data['group'].short + ' zum Admin bef&ouml;rdert.'
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
 
     ntfc.save()

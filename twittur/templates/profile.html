@@ -98,13 +98,19 @@
     {% if group %}
     {% if group.joinable %}
     	{% if not group.password and not is_member or is_member %}
-        <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
-            {% csrf_token %}
-          <input name="delete_join_group" type="hidden" value="delete_group" />
-          <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
+      	{% if 'bearbeiten' in button_text %}
+          <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="col-xs-6 text-center btn btn-default profileButton">
             <strong>{{ button_text|safe }}</strong>
-          </button>
-        </form>
+          </a>        
+        {% else %}
+          <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
+              {% csrf_token %}
+            <input name="delete_join_group" type="hidden" value="delete_group" />
+            <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
+              <strong>{{ button_text|safe }}</strong>
+            </button>
+          </form>
+        {% endif %}
       {% else %}
         <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#enterPWforGroup" id="joinGroup" title="Gruppe beitreten" type="button">
           <strong><span class="glyphicon glyphicon-edit"></span> {{ group.short|upper }} beitreten</strong>
@@ -150,15 +156,15 @@
       										 {% if member == group.admin %}
                            		<span class="pull-right"> [admin]</span>
                            {% elif user == group.admin %}
-                              <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ message.id }}Modal" id="remUser{{ message.id }}Button" title="Mitglied entfernen">
+                              <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ member.id }}Modal" id="remUser{{ member.id }}Button" title="Mitglied entfernen">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                               </a>
-                              <div class="modal fade" id="remUser{{ message.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="remUser{{ message.id }}ModalLabel" aria-hidden="true">
+                              <div class="modal fade" id="remUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="remUser{{ member.id }}ModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-sm">
                                   <div class="modal-content">
                                     <div class="modal-header">
                                       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                      <h4 class="modal-title" id="myModalLabel">Mitglied (<em>{{ member.username }}</em>) wirklich entfernen?</h4>
+                                      <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich entfernen?</h4>
                                     </div>
                                     <div class="modal-footer">
                                       <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
@@ -167,6 +173,28 @@
                                         <input type="hidden" name="group" value="{{ group.id }}">
                                         <input type="hidden" name="remUser" value="{{ member.id }}">
                                         <button type="submit" class="btn btn-primary">Benutzer entfernen</button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>   
+                              <a class="btn-xs pull-right promUser" data-toggle="modal" data-target="#promUser{{ member.id }}Modal" id="promUser{{ member.id }}Button" title="zum Admin machen">
+                                <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+                              </a>
+                              <div class="modal fade" id="promUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="promUser{{ member.id }}ModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                      <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich zum Admin machen?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                      <form action="{% url 'twittur:group' groupshort=group.short %}?member=true" class="pull-right" method="POST">
+                                      {% csrf_token %}
+                                        <input type="hidden" name="group" value="{{ group.id }}">
+                                        <input type="hidden" name="promUser" value="{{ member.id }}">
+                                        <button type="submit" class="btn btn-primary">Benutzer bef&ouml;rdern</button>
                                       </form>
                                     </div>
                                   </div>

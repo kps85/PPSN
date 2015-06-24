@@ -1,6 +1,6 @@
-<div class="cmtContent{% if comment.0.ignore %} postIgnore{% endif %}">
-{% if not comment.0.ignore %}
-  <div class="cmtMeta">
+<div class="cmtContent{% if comment.0.ignore %} postIgnore{% endif %}" id="cmt{{ comment.0.id }}">
+
+  <div class="cmtMeta {{ comment.0.id }}{% if comment.0.ignore %} hidden{% endif %}">
     <div class="cmtAuthor pull-left">
       {% if active_page == 'ftu' %}
         @{{ comment.user.username }}
@@ -10,7 +10,7 @@
     </div>
     <small class="cmtTime">am {{ comment.0.date|date:"j. F Y, \u\m H:i \U\h\r" }}</small>
   </div>
-  <div class="cmtText" id="cmtText{{ comment.0.id }}">
+  <div class="cmtText {{ comment.0.id }}{% if comment.0.ignore %} hidden{% endif %}" id="cmtText{{ comment.0.id }}">
     {% if comment.0.text %}
       {{ comment.0.text|safe }}
     {% endif %}
@@ -38,42 +38,32 @@
     </form>
   </div>
   {% endif %}
-{% endif %}
+
 {% if active_page != 'ftu' %}
   <div class="cmtFoot clearfix">
-    {% if not comment.0.ignore %}
-    <a class="reply_link" data-hint="{{ comment.0.id }} {{ comment.0.user.username }}" data-toggle="modal" data-target="#newComment{{ comment.0.id }}" title="Neue Antwort verfassen">
+    
+    <a class="reply_link pull-left {{ comment.0.id }}{% if comment.0.ignore %} hidden{% endif %}" data-hint="{{ comment.0.id }} {{ comment.0.user.username }}" data-toggle="modal" data-target="#newComment{{ comment.0.id }}" title="Neue Antwort verfassen">
       <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Antworten
     </a>
-    {% else %}
-      <div class="pull-left">
-        Diese Nachricht von <a href="{% url 'twittur:profile' user=comment.0.user %}">{{ comment.0.user.username }}</a> wurde ausgeblendet.
-      </div>
-    {% endif %}
+    <div class="postHide pull-left {{ comment.0.id }}{% if not comment.0.ignore %} hidden {% endif %}">
+      Diese Nachricht von <a href="{% url 'twittur:profile' user=comment.0.user %}">{{ comment.0.user.username }}</a> wurde ausgeblendet.
+    </div>
+    <div class="cmtEdit pull-right {{ comment.0.id }}">
     {% if comment.0.user == user %}
-      <div class="cmtEdit pull-right">
-        {% if comment.0.editable %}
-          <a class="btn-xs showCmtEdit" data-hint="{{ comment.0.id }}" title="Kommentar bearbeiten">
-            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-          </a>
-        {% endif %}
-        <a class="btn-xs" data-toggle="modal" data-target="#delCmt{{ comment.0.id }}Modal" id="delCmt{{ comment.0.id }}Button" title="Kommentar l&ouml;schen">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+      {% if comment.0.editable %}
+        <a class="btn-xs showCmtEdit {{ comment.0.id }}" data-hint="{{ comment.0.id }}" title="Kommentar bearbeiten">
+          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
         </a>
-      </div>
+      {% endif %}
+      <a class="btn-xs" data-toggle="modal" data-target="#delCmt{{ comment.0.id }}Modal" id="delCmt{{ comment.0.id }}Button" title="Kommentar l&ouml;schen">
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+      </a>
     {% else %}
-      <form action="{% url 'twittur:message' msg=message.id %}" class="pull-right" method="POST">
-      {% csrf_token %}
-        <input name="ignoreMsg" type="hidden" value="{{ comment.0.id }}">
-        <button class="ignoreMsgButton" type="submit" title="{% if not comment.0.ignore %}Kommentar ausblenden{% else %}Kommentar einblenden{% endif %}">
-        {% if not comment.0.ignore %}
-          <span class="glyphicon glyphicon-eye-close"></span>
-        {% else %}
-          <span class="glyphicon glyphicon-eye-open"></span>
-        {% endif %}
-        </button>
-      </form>    
+      <span class="ignoreCmtButton glyphicon {% if comment.0.ignore %}glyphicon-eye-open{% else %}glyphicon-eye-close{% endif %} {{ comment.0.id }}" 
+            title="{% if comment.0.ignore %}Kommentar einblenden{% else %}Kommentar ausblenden{% endif %}"
+            data-hint="hide_cmt {{ comment.0.id }} {{ comment.0.user.username }} {% url 'twittur:update' %}"></span>  
     {% endif %}
+    </div>
   </div>
 {% endif %}
 
@@ -85,37 +75,26 @@
   </div>
 {% endif %}
 
-{% if comment.0.user == user %}
-<div class="modal fade" id="delCmt{{ comment.0.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delCmt{{ comment.0.id }}ModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Kommentar vom {{ comment.0.date|date:"j. F Y, \u\m H:i \U\h\r" }} wirklich l&ouml;schen?</h4>
-      </div>
-      <div class="modal-body"> <em>{{ comment.0.text|safe }}</em> </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-        {% if active_page == 'profile' %}
-        <form action="{% url 'twittur:'|add:active_page user=user %}" class="pull-right" method="POST">
-        {% elif active_page == 'message' %}
-        <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
-        {% elif active_page == 'group' %}
-        <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" method="POST">
-        {% else %}
-        <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
-          {% endif %}
-          {% csrf_token %}
-          <input type="hidden" name="delMessage" value="{{ comment.0.id }}">
-          <button type="submit" class="btn btn-primary">Kommentar l&ouml;schen</button>
-        </form>
+  {% if comment.0.user == user %}
+  <div class="modal fade delCmt{{ comment.0.id }}Modal" id="delCmt{{ comment.0.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="delCmt{{ comment.0.id }}ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Kommentar vom {{ comment.0.date|date:"j. F Y, \u\m H:i \U\h\r" }} wirklich l&ouml;schen?</h4>
+        </div>
+        <div class="modal-body"> <em>{{ comment.0.text|safe }}</em> </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+          <button type="submit" class="deleteMsgButton btn btn-primary"
+                  data-hint="del_cmt {{ comment.0.id }} {{ comment.0.user.username }} {% url 'twittur:update' %}">Kommentar l&ouml;schen</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endif %}
-{% if not comment.0.ignore %}
-  <div class="modal fade newComment" id="newComment{{ comment.0.id }}" tabindex="-1" role="dialog" aria-labelledby="newComment{{ comment.0.id }}Label" aria-hidden="true">
+	{% endif %}
+  
+  <div class="modal fade newComment {{ comment.0.id }}" id="newComment{{ comment.0.id }}" tabindex="-1" role="dialog" aria-labelledby="newComment{{ comment.0.id }}Label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <form action="{% url 'twittur:message' msg=comment.0.id %}" method="post" enctype="multipart/form-data">
@@ -144,5 +123,4 @@
       </div>
     </div>
   </div>
-{% endif %}
 </div>
