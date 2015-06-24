@@ -191,10 +191,13 @@ def getMessages(data):
     if 'end' not in data:
         result['list_end'] = 5
     else:
-        result['list_end'] = data['end']
+        if data['end'] == 'True':
+            result['list_end'] = None
+        else:
+            result['list_end'] = int(data['end'])
 
     if 'end' in data['request'].POST:
-        result['list_end'] = data['request'].POST.get('end')
+        result['list_end'] = int(data['request'].POST.get('end'))
 
     dbmessage_list = getMessageList(data['page'], data['data'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),

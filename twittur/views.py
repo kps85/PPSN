@@ -22,26 +22,28 @@ def index(request):
         return HttpResponseRedirect('/twittur/login/')
 
     # initialize newMsgForm, user and various information
-    success_msg = None
     user = User.objects.filter(username__exact=request.user.username).select_related('userprofile')
 
     # initialize sidebar lists
     widgets = getWidgets(request)
 
-    # if message was sent to view: return success message
-    if request.method == 'POST':
-        success_msg = editMessage(request)
-
-    # Messages
-    messages = getMessages(data={'page': 'index', 'data': user, 'request': request})
-
     context = {
         'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'success_msg': success_msg, 'current_user': user,
-        'message_list': messages['message_list'], 'has_msg': messages['has_msg'], 'list_end': messages['list_end'],
+        'current_user': user, 'list_end': 5,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
+
+    # if request was sent to view: return success message
+    if request.method == 'POST':
+        context['success_msg'] = editMessage(request)
+        context['list_end'] = request.POST['list_end']
+
+    # Messages
+    messages = getMessages(data={'page': 'index', 'data': user, 'end': context['list_end'], 'request': request})
+    context['message_list'] = messages['message_list']
+    context['has_msg'] = messages['has_msg']
+
     return render(request, 'index.html', context)
 
 
@@ -418,7 +420,6 @@ def load_more(request):
     page = request.GET.get('page')
     end = int(request.GET.get('length')) + 5
     widgets = getWidgets(request)
-    print(page)
     context = {'active_page': page, 'user': request.user, 'msgForm': widgets['msgForm']}
 
     if page == 'index':

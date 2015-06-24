@@ -1,4 +1,4 @@
-<div class="post{% if message.ignore %} postIgnore{% endif %}" data-hint="{{ message.id }}">
+<div class="post{% if message.ignore %} postIgnore{% endif %}" data-hint="{{ message.id }}" id="post{{ message.id }}">
   {% if not message.ignore %}
   <div class="icon">
   	<a href="{% url 'twittur:profile' user=message.user %}">
@@ -129,21 +129,22 @@
         </a>
       {% else %}
         {% if active_page == 'profile' %}
-        <form action="{% url 'twittur:'|add:active_page user=pUser %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page user=pUser %}#post{{ message.id }}" class="pull-right" method="POST">
         {% elif active_page == 'message' %}
-        <form action="{% url 'twittur:'|add:active_page msg=message.id %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page msg=message.id %}#post{{ message.id }}" class="pull-right" method="POST">
         {% elif active_page == 'hashtag' %}
-        <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page text=is_hash %}#post{{ message.id }}" class="pull-right" method="POST">
         {% elif active_page == 'search' %}
-        <form action="{% url 'twittur:'|add:active_page %}?search_input={{ search_input }}#searchMsg" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page %}?search_input={{ search_input }}#searchMsg#post{{ message.id }}" class="pull-right" method="POST">
         {% elif active_page == 'group' %}
-        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}#post{{ message.id }}" class="pull-right" method="POST">
         {% else %}
-        <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page %}#post{{ message.id }}" class="pull-right" method="POST">
         {% endif %}
         {% csrf_token %}
         	{% if active_page == 'search' %}<input name="search_input" type="hidden" value="{{ search_input }}" />{% endif %}
           <input name="ignoreMsg" type="hidden" value="{{ message.id }}">
+          <input name="list_end" type="hidden" value="{{ list_end }}">
           <button class="ignoreMsgButton" type="submit" title="{% if not message.ignore %}Nachricht ausblenden{% else %}Nachricht einblenden{% endif %}">
           {% if not message.ignore %}
             <span class="glyphicon glyphicon-eye-close"></span>
