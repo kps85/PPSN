@@ -96,6 +96,7 @@
     </button>
     {% endif %}
     {% if group %}
+    {% if group.joinable %}
     	{% if not group.password and not is_member or is_member %}
         <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
             {% csrf_token %}
@@ -131,6 +132,7 @@
           </div>
         </div>
       {% endif %}
+    {% endif %}
     
     <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
       <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
