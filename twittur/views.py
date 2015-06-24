@@ -29,6 +29,8 @@ def index(request):
     widgets = getWidgets(request)
 
     # if message was sent to view: return success message
+    print('hello ->')
+    print(request.POST.get('delMessage'))
     if request.method == 'POST':
         success_msg = editMessage(request)
 
@@ -239,8 +241,8 @@ def profile(request, user):
                     context['success_msg'] = pUser.username + " wird fortan ignoriert."
                     print("ADD")
 
-            if 'codename' in request.POST or 'ignoreMsg' in request.POST:
-                context['success_msg'] = editMessage(request)
+        elif 'delMessage' in request.POST or 'ignoreMsg' in request.POST:
+            context['success_msg'] = editMessage(request)
 
         elif request.POST and 'entfollow' in request.POST:
             entfollow = User.objects.get(id=request.POST.get('entfollow'))
