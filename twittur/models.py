@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import date
 
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from django.utils import timezone
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 class GroupProfile(models.Model):
@@ -25,8 +26,10 @@ class GroupProfile(models.Model):
                                 help_text='Dieses Bild wird auf der Gruppenseite zu sehen sein!')
     date = models.DateField(default=date.today, blank=True)
     member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
+    joinable = models.BooleanField(default=True)
+    supergroup = models.ForeignKey('self', related_name='sgroup', blank=True, null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 
@@ -45,7 +48,7 @@ class Message(models.Model):
     def get_model_name(self):
                 return self.__class__.__name__
 
-    def __str__(self):
+    def __unicode__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
 
@@ -66,11 +69,11 @@ class UserProfile(models.Model):
                                           'und in deinen Nachrichten (klein) angezeigt.')
 
     location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
-    ignoreM = models.ManyToManyField(Message, related_name='ignoreM')
-    ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU')
+    ignoreM = models.ManyToManyField(Message, related_name='ignoreM', blank=True)
+    ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU', blank=True)
     ignore = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
     def delete(self, using=None):
@@ -89,7 +92,7 @@ class Notification(models.Model):
     date = models.DateTimeField(default=timezone.now)
     note = models.TextField(default=None, blank=True)
 
-    def __str__(self):
+    def __unicode__(self):
         if self.follower:
             return self.follower.userprofile.username + ' to ' + self.user.username
         elif self.group:

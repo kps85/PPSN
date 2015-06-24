@@ -188,6 +188,21 @@ def login(request):
                                   academicDiscipline=academicDiscipline, location="Irgendwo")
         userProfile.save()
 
+        # academic discipline (required user in db) -> add user to group uni, fac whatever and his academic discipline
+        print(academicDiscipline)
+        try:
+            group = GroupProfile.objects.get(name=academicDiscipline)
+            while True:
+                group.member.add(user)
+                if group.supergroup == None:
+                    break
+                else:
+                    group = group.supergroup
+
+        except:
+            print("error, something went wrong")
+            pass
+
         # log user in and redirect to index page
         user = authenticate(username=username, password=password)
         auth.login(request, user)
@@ -235,14 +250,12 @@ def profile(request, user):
                 if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
                     request.user.userprofile.ignoreU.remove(pUser)
                     context['success_msg'] = pUser.username + " wird nicht mehr ignoriert."
-                    print("REMOVED")
                 else:                                                       # ignore dat biatch
                     request.user.userprofile.ignoreU.add(pUser)
                     context['success_msg'] = pUser.username + " wird fortan ignoriert."
-                    print("ADD")
 
-            if 'codename' in request.POST or 'ignoreMsg' in request.POST:
-                context['success_msg'] = editMessage(request)
+        elif 'delMessage' in request.POST or 'ignoreMsg' in request.POST:
+            context['success_msg'] = editMessage(request)
 
         elif request.POST and 'entfollow' in request.POST:
             entfollow = User.objects.get(id=request.POST.get('entfollow'))
