@@ -185,7 +185,6 @@ def dbm_to_m(message):
         for url in urls:
             href = '<a href="' + url + '">' + url + '</a>'
             message.text = message.text.replace(url, href)
-
     return message
 
 

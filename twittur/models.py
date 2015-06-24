@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import date
 
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from django.utils import timezone
 class Hashtag(models.Model):
     name = models.CharField(max_length=50)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 class GroupProfile(models.Model):
@@ -26,7 +27,7 @@ class GroupProfile(models.Model):
     date = models.DateField(default=date.today, blank=True)
     member = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='member')
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 # - message from User (message_from_self) to User (message_to_user)
@@ -44,7 +45,7 @@ class Message(models.Model):
     def get_model_name(self):
                 return self.__class__.__name__
 
-    def __str__(self):
+    def __unicode__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
 
@@ -69,7 +70,7 @@ class UserProfile(models.Model):
     ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU')
     ignore = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
     def delete(self, using=None):
@@ -89,7 +90,7 @@ class Notification(models.Model):
     date = models.DateTimeField(default=timezone.now)
     note = models.TextField(default=None, blank=True)
 
-    def __str__(self):
+    def __unicode__(self):
         if self.follower:
             return self.follower.userprofile.username + ' to ' + self.user.username
         elif self.group:

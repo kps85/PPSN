@@ -1,5 +1,5 @@
 __author__ = 'willycai'
-
+# -*- coding: utf-8 -*-
 
 hashtag = "hello #yolo #jvpj #wbvbeu @yolo @halo"
 hashtags = []
@@ -31,3 +31,7 @@ for mes, com, dbm in list2:
     for c in com:
         print(c)
     print(dbm)
+
+# Nachricht definieren (durch das Encoding Cookie als iso-8859-1 gekennzeichnet)
+message = "Hallo Österreich"
+print(message)
