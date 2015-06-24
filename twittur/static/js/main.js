@@ -260,6 +260,11 @@ function initInfoSettings() {
       });
 			$(".profilePictures").find(".help-block").html(help_text);
     });
+		
+		$(".memberHead").click(function(e) {
+      $(".memberList").toggleClass("hidden");
+      $(this).find("span").toggleClass("glyphicon-minus glyphicon-plus");
+    });
 	}
 }
 function infoChange(hash) {		

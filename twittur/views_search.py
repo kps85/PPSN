@@ -51,8 +51,6 @@ def search(request):
     messages = getMessages(data={'page': 'search', 'data': search_input, 'end': None, 'request': request})
     messages_list = list(messages['message_list'])
 
-    print(messages['list_length'])
-
     if messages['list_length'] <= context['list_end']:
         context['list_end'] = True
         if len(messages_list) <= 5:
@@ -62,8 +60,6 @@ def search(request):
     if request.method == 'POST':
         context['success_msg'] = editMessage(request)
         context['list_end'] = int(request.POST['list_end'])
-
-    print(context['list_end'])
 
     for term in search_input:
         # special case: flag for @
@@ -128,11 +124,8 @@ def hashtag(request, text):
     if request.method == 'POST':
         success_msg = editMessage(request)
 
-    if request.method == 'GET' and 'length' in request.GET:
-        end = int(request.GET.get('length')) + 5
-
     # Messages
-    messages = getMessages(data={'page': 'hashtag', 'data': text, 'end': end, 'request': request})
+    messages = getMessages(data={'page': 'hashtag', 'data': text, 'request': request})
 
     context = {
         'active_page': 'hashtag', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],

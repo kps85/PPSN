@@ -149,7 +149,7 @@ def groupSettings(request, groupshort):
 
     # get current groups information and initialize return messages
     group = GroupProfile.objects.get(short__exact=groupshort)
-    success_msg, error_msg = None, None
+    success_msg, error_msg, member_list = None, None, group.member.all()
 
     # check if user is group admin
     # if user is not group admin, redirect to group page
@@ -159,35 +159,38 @@ def groupSettings(request, groupshort):
     # initialize sidebar lists
     widgets = getWidgets(request)
 
-    # check if group should be deleted
-    # if true: delete group, return to index
-    if request.method == 'POST' and request.POST['delete'] == 'true':
-        group.delete()
-        return HttpResponseRedirect('/twittur/')
-    # else: validate GroupProfileEditForm and save changes
-    elif request.method == 'POST':
-        gpeForm = GroupProfileEditForm(request.POST, request.FILES, instance=group)
-        # if picture has changed, delete old picture
-        # do not, if old picture was default picture
-        if 'picture' in request.FILES or 'picture-clear' in request.POST:
-            gpeForm.oldPicture = group.picture
-            if gpeForm.oldPicture != 'picture/gdefault.gif':
-                gpeForm.oldPicture.delete()
-        if gpeForm.is_valid():
-            gpeForm.save()
-            success_msg = 'Gruppendaten wurden erfolgreich aktualisiert.'
-        else:
-            # return errors if GroupProfileEditForm is not valid
-            error_msg = gpeForm.errors
-
-    # initialize GroupProfileEditForm with current groups information
-    gpeForm = GroupProfileEditForm(instance=group)
-
-    # return relevant information to render settings.html
     context = {
         'active_page': 'settings', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'error_msg': error_msg,
-        'group': group,
-        'gpeForm': gpeForm,
+        'group': group, 'member_list': member_list
     }
+
+    # else: validate GroupProfileEditForm and save changes
+    if request.method == 'POST':
+        # check if group should be deleted
+        # if true: delete group, return to index
+        if 'delete' in request.POST and request.POST['delete'] == 'true':
+            group.delete()
+            return HttpResponseRedirect('/twittur/')
+        elif 'promUser' or 'remUser' in request.POST:
+            context['success_msg'] = editMessage(request)
+        else:
+            gpeForm = GroupProfileEditForm(request.POST, request.FILES, instance=group)
+            # if picture has changed, delete old picture
+            # do not, if old picture was default picture
+            if 'picture' in request.FILES or 'picture-clear' in request.POST:
+                gpeForm.oldPicture = group.picture
+                if gpeForm.oldPicture != 'picture/gdefault.gif':
+                    gpeForm.oldPicture.delete()
+            if gpeForm.is_valid():
+                gpeForm.save()
+                context['success_msg'] = 'Gruppendaten wurden erfolgreich aktualisiert.'
+            else:
+                # return errors if GroupProfileEditForm is not valid
+                context['error_msg'] = gpeForm.errors
+
+    # initialize GroupProfileEditForm with current groups information
+    context['gpeForm'] = GroupProfileEditForm(instance=group)
+
+    # return information to render settings.html
     return render(request, 'settings.html', context)

@@ -77,11 +77,11 @@
       {% if active_page == 'profile' %}
         <form action="{% url 'twittur:'|add:active_page user=user %}" method="POST">
       {% elif active_page == 'message' %}
-        <form action="{% url 'twittur:'|add:active_page msg=dbmessage.id %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page msg=dbmessage.id %}" method="POST">
       {% elif active_page == 'hashtag' %}
-        <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page text=is_hash %}" method="POST">
       {% elif active_page == 'group' %}
-        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" method="POST">
       {% else %}
         <form action="{% url 'twittur:'|add:active_page %}" method="POST">
       {% endif %}

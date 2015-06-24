@@ -118,9 +118,65 @@
       
       {% if group %}      
       <div class="post" id="member">
-      
-        <h4>Mitglieder</h4>
-        
+      	
+        <div class="memberHead clearfix">
+          <h4 class="pull-left">Mitglieder</h4> 
+          <span class="glyphicon glyphicon-plus pull-right"></span>
+				</div>
+                  
+        <ul class="memberList clearfix hidden">
+        {% for member in member_list %}
+          <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>) 
+                               {% if member == group.admin %}
+                                  <span class="pull-right"> [admin]</span>
+                               {% elif user == group.admin %}
+                                  <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ member.id }}Modal" id="remUser{{ member.id }}Button" title="Mitglied entfernen">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                  </a>
+                                  <div class="modal fade" id="remUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="remUser{{ member.id }}ModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                          <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich entfernen?</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                          <form action="{% url 'twittur:group_settings' groupshort=group.short %}" class="pull-right" method="POST">
+                                          {% csrf_token %}
+                                            <input type="hidden" name="group" value="{{ group.id }}">
+                                            <input type="hidden" name="remUser" value="{{ member.id }}">
+                                            <button type="submit" class="btn btn-primary">Benutzer entfernen</button>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>   
+                                  <a class="btn-xs pull-right promUser" data-toggle="modal" data-target="#promUser{{ member.id }}Modal" id="promUser{{ member.id }}Button" title="zum Admin machen">
+                                    <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+                                  </a>
+                                  <div class="modal fade" id="promUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="promUser{{ member.id }}ModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                          <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich zum Admin machen?</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                          <form action="{% url 'twittur:group' groupshort=group.short %}" class="pull-right" method="POST">
+                                          {% csrf_token %}
+                                            <input type="hidden" name="group" value="{{ group.id }}">
+                                            <input type="hidden" name="promUser" value="{{ member.id }}">
+                                            <button type="submit" class="btn btn-primary">Benutzer bef&ouml;rdern</button>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>                           		
+                               {% endif %}
+        {% endfor %}
+        </ul>
   
       </div> 
       {% endif %}

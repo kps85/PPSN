@@ -121,6 +121,7 @@ a.profileButton {
 #list ul li a.memberLink { width: auto; }
 
 .postTime { margin-left: 5px; }
+.postTextEdit { width: 100%; }
 .postTextEdit .form-group, .cmtTextEdit .form-group { margin-bottom: 0px; }
 
 .comments {
@@ -228,6 +229,9 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 .searchResultBox { display: none; }
 .searchResultBox.active { display: block; }
 
+.memberHead:hover { cursor: pointer; }
+.memberHead h4 { margin: 0px; }
+.memberList { margin: 10px 0px; }
 
 @media screen and (max-width: 1023px) {
 	#main { padding-top: 90px !important; }
