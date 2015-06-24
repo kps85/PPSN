@@ -137,7 +137,7 @@
         {% elif active_page == 'search' %}
         <form action="{% url 'twittur:'|add:active_page %}?search_input={{ search_input }}#searchMsg" class="pull-right" method="POST">
         {% elif active_page == 'group' %}
-        <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" class="pull-right" method="POST">
+        <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" class="pull-right" method="POST">
         {% else %}
         <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
         {% endif %}
@@ -186,7 +186,7 @@
           {% elif active_page == 'hashtag' %}
           <form action="{% url 'twittur:'|add:active_page text=is_hash %}" class="pull-right" method="POST">
           {% elif active_page == 'group' %}
-          <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" class="pull-right" method="POST">
+          <form action="{% url 'twittur:'|add:active_page groupshort=group.short %}" class="pull-right" method="POST">
           {% else %}
           <form action="{% url 'twittur:'|add:active_page %}" class="pull-right" method="POST">
             {% endif %}

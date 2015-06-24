@@ -15,45 +15,40 @@ def group(request, groupshort):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
 
-    # initialize various information
-    show_member, is_member, button_text, success_msg = False, False, None, None
-
     # initialize sidebar lists
     widgets = getWidgets(request)
 
-    # if message was sent to view: return success message
-    if request.method == 'POST':
-        success_msg = editMessage(request)
-
-
-    group = GroupProfile.objects.get(short__exact=groupshort)
-    member_list = group.member.order_by('first_name')
-    if request.user in member_list:
-        is_member = True
-        if group.admin == request.user:
-            button_text = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' bearbeiten'
-        else:
-            button_text = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
-    else:
-        button_text = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
-
-    if 'member' in request.GET:
-        show_member = True
-
-    end = 5
-    messages = getMessages(data={'page': 'group', 'user': None, 'group': group, 'end': end, 'request': request})
-    message_list = zip(
-        messages['message_list'][:end], messages['dbmessage_list'][:end],
-        messages['comment_list'], messages['comment_count']
-    )
-    print(messages['has_msg'])
     context = {
-        'active_page': 'group', 'groupshort': groupshort, 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'group': group, 'member_list': member_list, 'is_member': is_member, 'button_text': button_text,
-        'show_member': show_member, 'success_msg': success_msg, 'message_list': message_list, 'has_msg': messages['has_msg'],
+        'active_page': 'group', 'groupshort': groupshort, 'nav': Nav.nav,
+        'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'show_member': False, 'is_member': False,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
     }
+
+    # if message was sent to view: return success message
+    if request.method == 'POST':
+        context['success_msg'] = editMessage(request)
+
+    group = GroupProfile.objects.get(short__exact=groupshort)
+    context['group'] = group
+    context['member_list'] = group.member.order_by('first_name')
+    if request.user in context['member_list']:
+        context['is_member'] = True
+        if group.admin == request.user:
+            context['button_text'] = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' bearbeiten'
+        else:
+            context['button_text'] = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
+    else:
+        context['button_text'] = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
+
+    if 'member' in request.GET:
+        context['show_member'] = True
+
+    messages = getMessages(data={'page': 'group', 'data': group, 'request': request})
+    context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
+    context['list_end'] = messages['list_end']
+
     return render(request, 'profile.html', context)
 
 # view for add a new group
