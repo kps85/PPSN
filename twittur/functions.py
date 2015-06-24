@@ -6,6 +6,7 @@ from django.utils import timezone
 from .views import *
 from .models import GroupProfile, Message, Hashtag, Notification
 from .forms import MessageForm
+import re
 
 
 # messagebox clicked on pencil button
@@ -159,7 +160,8 @@ def dbm_to_m(message):
     hashtag_list = message.hashtags.all()
     attag_list = message.attags.all()
     group = message.group
-
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.text)
+    print(urls)
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
@@ -179,6 +181,10 @@ def dbm_to_m(message):
                 href = '<a href="/twittur/group/' + word[1:] + '">' + word +'</a>'
                 message.text = message.text.replace(word, href)
 
+    if urls:
+        for url in urls:
+            href = '<a href="' + url + '">' + url + '</a>'
+            message.text = message.text.replace(url, href)
 
     return message
 
