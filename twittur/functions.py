@@ -328,6 +328,7 @@ def getWidgets(request):
         'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5], # Beliebte Themen
         'new': getNotificationCount(request.user), # Notifications
+        'safetyLevels': getSafetyLevels(request.user, True)
     }
     return sidebar
 
@@ -348,7 +349,7 @@ def getDisciplines():
     return discs
 
 
-def getSafetyLevels(user):
+def getSafetyLevels(user, group=False):
     safetyLevel = ['Public']
     disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
     fak = GroupProfile.objects.get(name=disc.supergroup)
@@ -356,6 +357,11 @@ def getSafetyLevels(user):
     safetyLevel.append(uni.name)
     safetyLevel.append(fak.name)
     safetyLevel.append(disc.name)
+    if group:
+        group_list, gl = GroupProfile.objects.filter(Q(member__exact=user)), []
+        for group in group_list:
+            gl.append(group.short)
+        safetyLevel.append(gl)
     return safetyLevel
 
 

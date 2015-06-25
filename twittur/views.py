@@ -31,7 +31,8 @@ def index(request):
         'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'current_user': user, 'list_end': 5,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
 
     # if request was sent to view: return success message
