@@ -418,10 +418,12 @@ textarea, input {
   display: inline-block; }
 .modal .visibility {
   display: block;
-  width: 50%;
-  float: left;
   text-align: left;
   margin-top: -5px; }
+  @media screen and (min-width: 1024px) {
+    .modal .visibility {
+      width: 50%;
+      float: left; } }
 .modal p {
   display: inline-block;
   margin: 0; }
@@ -429,6 +431,12 @@ textarea, input {
   margin: 5px 20px; }
 .modal .close {
   margin-top: 5px; }
+@media screen and (max-width: 1023px) {
+  .modal .superDropdown {
+    display: block;
+    margin-bottom: 10px; }
+    .modal .superDropdown > p {
+      display: block; } }
 .modal .superDropdown > p {
   min-width: 150px !important; }
 
