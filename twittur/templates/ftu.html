@@ -91,25 +91,20 @@
     {% endif %}
   </div>
   <div class="column column-right">
-    <h4>Deine T&auml;tigkeit an der TU Berlin</h4>
-    <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
-      <optgroup label="Fakult&auml;t I"></optgroup>
-      <optgroup label="Fakult&auml;t II"></optgroup>
-      <optgroup label="Fakult&auml;t III"></optgroup>
-      <optgroup label="Fakult&auml;t IV">
-        <option value="Automotive Systems">Automotive Systems</option>
-        <option value="Computational Neuroscience">Computational Neuroscience</option>
-        <option value="Elektrotechnik">Elektrotechnik</option>
-        <option value="ICT Innovation">ICT Innovation</option>
-        <option value="Informatik">Informatik</option>
-        <option value="Medieninformatik">Medieninformatik</option>
-        <option value="Technische Informatik">Technische Informatik</option>
-        <option value="Wirtschaftsinformatik">Wirtschaftsinformatik</option>
-      </optgroup>
-      <optgroup label="Fakult&auml;t V"></optgroup>
-      <optgroup label="Fakult&auml;t VI"></optgroup>
-      <optgroup label="Fakult&auml;t VII"></optgroup>
-    </select>
+    <h4>Deine T&auml;tigkeit an der TU Berlin</h4>              
+    {% if discList %}
+      {% for list in discList %}
+        <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
+        {% for fac, ad in list %}
+          <optgroup label="{{ fac }}">
+          {% for disc in ad %}
+            <option value="{{ disc }}">{{ disc }}</option>
+          {% endfor %}
+          </optgroup>
+        {% endfor %}
+        </select>
+      {% endfor %}
+    {% endif %}
     
     <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentnumber %} value="{{ data.studentNumber }}"{% endif %}/>
     <br />

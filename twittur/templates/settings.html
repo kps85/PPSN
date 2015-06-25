@@ -198,8 +198,20 @@
           </div>
       
           <div class="col-xs-12 form-group">
-              <label class="control-label" for="id_academicDiscipline">Studiengang</label>
-			  			{{ userDataForm.academicDiscipline }}
+              <label class="control-label" for="id_academicDiscipline">Studiengang</label>              
+              {% if discList %}
+              	{% for list in discList %}
+                	<select class="form-control" id="id_academicDiscipline" name="academicDiscipline">
+                  {% for fac, ad in list %}
+                  	<optgroup label="{{ fac }}">
+                    {% for disc in ad %}
+                    	<option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
+                    {% endfor %}
+                    </optgroup>
+                  {% endfor %}
+                  </select>
+                {% endfor %}
+              {% endif %}              
               <p class="help-block">{{ userDataForm.academicDiscipline.help_text|safe }}</p>
               {{ userDataForm.academicDiscipline.errors }}
           </div>
@@ -224,15 +236,16 @@
         
           <h4>Seiteneinstellungen</h4>
           
+          {% if safetyLevelList %}
           <div class="col-xs-12 form-group">
               <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
-              <select class="form-control" id="stdSafetylevelSelect" name="safety">
-                  <option>public</option>
-                  <option>Uni</option>
-                  <option>Fakultät</option>
-                  <option selected>Studiengang</option>
+              <select class="form-control" id="id_safetyLevel" name="safety">
+                {% for level in safetyLevelList %}
+                	<option value="{{ level }}"{% if level == user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
+                {% endfor %}
               </select>
           </div>
+          {% endif %}
           
       </div>
       {% endif %}

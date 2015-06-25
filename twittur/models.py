@@ -76,7 +76,7 @@ class UserProfile(models.Model):
                                 help_text='Dieses Bild wird auf Deinem Profil (gro&szlig;) '
                                           'und in deinen Nachrichten (klein) angezeigt.')
 
-    location = models.CharField(max_length = 200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
+    location = models.CharField(max_length=200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
     ignoreM = models.ManyToManyField(Message, related_name='ignoreM', blank=True)
     ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU', blank=True)
     ignore = models.BooleanField(default=False)

@@ -1,4 +1,4 @@
-import copy, datetime, string
+import copy, datetime, operator, string
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -115,6 +115,7 @@ def msg_to_db(message):
             attag.delete()
     return message
 
+
 def checkhashtag(message, hashtaglist):
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
@@ -124,6 +125,8 @@ def checkhashtag(message, hashtaglist):
             if not hashtag_list:
                 h = Hashtag.objects.get(name=dbhashtag)
                 h.delete()
+
+
 # Database message to message (in template), replace all hashtags and attags in message with links
 def dbm_to_m(message):
     # get hashtags and attags (models.ManyToMany) in message from database
@@ -209,8 +212,7 @@ def getMessages(data):
 
     if len(message_list) > 0:
         result['has_msg'] = True
-    print(message_list)
-    print(dbmessage_list)
+
     result['list_length'] = len(message_list)
     result['message_list'] = zip(
         message_list[:result['list_end']], dbmessage_list[:result['list_end']],
@@ -250,8 +252,6 @@ def getMessageList(page, data):
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             query
         ).order_by('-date')
-    elif page == 'ftu':
-        dbmessage_list = Message.objects.all()
     else:
         dbmessage_list = Message.objects.filter(pk=page)
 
@@ -330,6 +330,22 @@ def getWidgets(request):
         'new': getNotificationCount(request.user), # Notifications
     }
     return sidebar
+
+
+def getDisciplines():
+    discs, uni, faks = [], [], []
+
+    tub = GroupProfile.objects.get(short='uni')
+    fak = GroupProfile.objects.filter(supergroup=tub).order_by('name')
+    for item in fak:
+        ad = GroupProfile.objects.filter(supergroup=item).order_by('name')
+        adList = []
+        for disc in ad:
+            adList.append(disc.name)
+        faks.append(adList)
+        uni.append(item.name)
+    discs.append(zip(uni,faks))
+    return discs
 
 
 # Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurueck

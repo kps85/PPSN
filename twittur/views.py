@@ -10,7 +10,8 @@ from django.shortcuts import render
 
 from .models import GroupProfile, UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
-from .functions import dbm_to_m, getMessages, getWidgets, msg_to_db, setNotification, pw_generator, checkhashtag
+from .functions import dbm_to_m, getDisciplines, getMessages, getWidgets, \
+                       msg_to_db, setNotification, pw_generator, checkhashtag
 
 
 # startpage
@@ -208,7 +209,7 @@ def login(request):
         auth.login(request, user)
         return HttpResponseRedirect('/twittur/')
 
-    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list}
+    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list, 'discList': getDisciplines()}
     return render(request, 'ftu.html', context)
 
 
@@ -326,12 +327,12 @@ def settings(request):
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
-    print(request.POST)
+
     # get current users information and initialize return messages
     user = User.objects.get(pk=request.user.id)
     userProfile = user.userprofile
     userGroup = GroupProfile.objects.get(name=userProfile.academicDiscipline)
-    print(userGroup.short)
+
     success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
     # initialize widgets (sidebar, newMsgForm, ...)
@@ -358,8 +359,8 @@ def settings(request):
             if userDataForm.is_valid():
                  # safety change
                 safety = userDataForm.instance.safety
-                if safety != request.POST.get('safety'):
-                    userDataForm.instance.safety = safety
+                if safety.lower() != request.POST.get('safety').lower():
+                    userDataForm.instance.safety = request.POST.get('safety')
                 else:
                     pass
                 userForm.save()
@@ -406,11 +407,19 @@ def settings(request):
     userForm = UserForm(instance=user)
     userDataForm = UserDataForm(instance=userProfile)
 
+    safetyLevel = ['Public']
+    disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
+    fak = GroupProfile.objects.get(name=disc.supergroup)
+    uni = GroupProfile.objects.get(name=fak.supergroup)
+    safetyLevel.append(uni.name)
+    safetyLevel.append(fak.name)
+    safetyLevel.append(disc.name)
+
     # return relevant information to render settings.html
     context = {
         'active_page': 'settings', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'error_msg': error_msg,
-        'user': user,
+        'user': user, 'discList': getDisciplines(), 'safetyLevelList': safetyLevel,
         'userForm': userForm, 'userDataForm': userDataForm
     }
     return render(request, 'settings.html', context)

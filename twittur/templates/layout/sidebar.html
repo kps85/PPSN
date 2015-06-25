@@ -20,7 +20,10 @@
       {% endfor %}
       <form action="{% url 'twittur:profile' user=user %}" method="get">
         <input name="favorits" type="hidden" value="true" />
-        <input class="showFavList{% if show_favs %} active{% endif %} text-left ullink" type="submit" value="Alle anzeigen" />
+        <button class="showFavList{% if show_favs %} active{% endif %} text-left ullink" type="submit" />
+        	Alle anzeigen          
+          <span class="pull-right">&raquo;</span>
+        </button>
       </form>
  		</ul>
   {% endif %}
@@ -28,16 +31,21 @@
   <ul class="groups">
     {% if group_sb_list %}
       <h3>Meine Gruppen</h3>
+    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup' %}"> Gruppe hinzufügen<span class="glpyhicon glyphicon-plus pull-right"></span></a>
       {% for group in group_sb_list %}
         <li class="{% if false %}active{% endif %}">
         <a class="ullink {{ group.short }}" href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>
       {% endfor %}
+    {% else %}
+    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen<span class="glpyhicon glyphicon-plus pull-right"></span></a>
     {% endif %}
-    <li><a href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen</a>
-     <form action="{% url 'twittur:profile' user=user %}" method="get">
-        <input name="group" type="hidden" value="true" />
-        <input class="showFavList{% if show_groups %} active{% endif %} text-left" type="submit" value="Alle anzeigen" />
-     </form>
+      <form action="{% url 'twittur:profile' user=user %}" method="get">
+	      <input name="group" type="hidden" value="true" />
+  	    <button class="showFavList{% if show_groups %} active{% endif %} text-left clearfix" type="submit" />
+        	Alle Anzeigen
+          <span class="pull-right">&raquo;</span>
+        </button>          
+      </form>
   </ul>
 
 {% elif active_page == 'info' %}  
