@@ -156,7 +156,7 @@
     <br />
   	<ul class="post memberList">
   	{% for member in member_list %}
-    	<li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>) 
+    	<li class="clearfix">{{ member.first_name }} {{ member.last_name }} (<a href="{% url 'twittur:profile' user=member.username %}">@{{ member.username }}</a>)
       										 {% if member == group.admin %}
                            		<span class="pull-right"> [admin]</span>
                            {% elif user == group.admin %}
