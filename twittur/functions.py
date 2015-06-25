@@ -348,6 +348,17 @@ def getDisciplines():
     return discs
 
 
+def getSafetyLevels(user):
+    safetyLevel = ['Public']
+    disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
+    fak = GroupProfile.objects.get(name=disc.supergroup)
+    uni = GroupProfile.objects.get(name=fak.supergroup)
+    safetyLevel.append(uni.name)
+    safetyLevel.append(fak.name)
+    safetyLevel.append(disc.name)
+    return safetyLevel
+
+
 # Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurueck
 def elimDups(list):
     dups, final = [], []

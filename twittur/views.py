@@ -10,7 +10,7 @@ from django.shortcuts import render
 
 from .models import GroupProfile, UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
-from .functions import dbm_to_m, getDisciplines, getMessages, getWidgets, \
+from .functions import dbm_to_m, getDisciplines, getSafetyLevels, getMessages, getWidgets, \
                        msg_to_db, setNotification, pw_generator, checkhashtag
 
 
@@ -407,13 +407,7 @@ def settings(request):
     userForm = UserForm(instance=user)
     userDataForm = UserDataForm(instance=userProfile)
 
-    safetyLevel = ['Public']
-    disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
-    fak = GroupProfile.objects.get(name=disc.supergroup)
-    uni = GroupProfile.objects.get(name=fak.supergroup)
-    safetyLevel.append(uni.name)
-    safetyLevel.append(fak.name)
-    safetyLevel.append(disc.name)
+    safetyLevel = getSafetyLevels(user)
 
     # return relevant information to render settings.html
     context = {
