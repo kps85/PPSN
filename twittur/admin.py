@@ -10,7 +10,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     # set fields and order of them for Group overview
     fieldsets = [
         ('User',    {'fields': ['userprofile']}),
-        ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location']}),
+        ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location', 'safety']}),
         ('Other',   {'fields': ['ignoreM', 'ignoreU', 'ignore']}),
     ]
     list_display = ('studentNumber', 'userprofile', 'academicDiscipline')

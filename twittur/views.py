@@ -305,7 +305,7 @@ def settings(request):
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
-
+    print(request.POST)
     # get current users information and initialize return messages
     user = User.objects.get(pk=request.user.id)
     userProfile = user.userprofile
@@ -328,12 +328,19 @@ def settings(request):
         if userForm.is_valid():
             userDataForm = UserDataForm(request.POST, request.FILES, instance=userProfile)
             userDataForm.oldPicture = userProfile.picture
+
             # if picture has changed, delete old picture
             # do not, if old picture was default picture
             if 'picture' in request.FILES or 'picture-clear' in request.POST:
                 if userDataForm.oldPicture != 'picture/default.gif':
                     userDataForm.oldPicture.delete()
             if userDataForm.is_valid():
+                 # safety change
+                safety = userDataForm.instance.safety
+                if safety != request.POST.get('safety'):
+                    userDataForm.instance.safety = safety
+                else:
+                    pass
                 userForm.save()
                 userDataForm.save()
                 if 'password' in request.POST and len(request.POST['password']) > 0:
