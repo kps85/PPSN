@@ -101,12 +101,14 @@
             {% endif %}
           {% endfor %}
         </select>
-      </div>            
-      <div class="form-group text-right">
+        
+      </div>          
+      <div class="msgEditSave form-group text-right">
         <button class="btn btn-xs btn-default hideMsgEdit" data-hint="{{ dbmessage.id }}" type="button">Abbrechen</button>
         <button class="btn btn-xs btn-primary saveMsgEdit" id="saveMsgEdit{{ dbmessage.id }}" type="button"
         				data-hint="upd_msg {{ dbmessage.id }} {{ message.user.username }} {% url 'twittur:update' %}">Speichern</button>
       </div>
+      <div class="clear"></div>
     </div>
     {% endif %}
     

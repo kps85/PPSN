@@ -50,11 +50,16 @@ $desktopWidth:1366px;
 
 
 // Clearfix
-@mixin clear {
-  &:after {
+@mixin clearAttr {
     content: "";
     display: table;
     clear: both;
+}
+
+
+@mixin clear {
+  &:after {
+      @include clearAttr;
   }
 }
 

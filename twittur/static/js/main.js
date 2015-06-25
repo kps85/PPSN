@@ -421,7 +421,7 @@ function initVarious() {
 	  $div.insertAfter($(this));
 	  
 	  $mainP.click(function() {
-		  var width = $mainP.innerWidth() - 1;
+		  var width = $mainP.innerWidth();
 			$mainDiv.width(width);
 			$content.css({'left':'0'});
 			$mainDiv.height("inherit");
