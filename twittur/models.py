@@ -13,6 +13,9 @@ class Hashtag(models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.name
+
 class GroupProfile(models.Model):
     name = models.CharField(max_length=50)
     short = models.CharField(max_length=10)
@@ -20,7 +23,6 @@ class GroupProfile(models.Model):
     desc = models.CharField(max_length=200)
     password = models.CharField(max_length=128, blank=True,
                                 help_text='Geben Sie ein Passwort zum Beitreten ihrer Gruppe ein. (optional)')
-    admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
     picture = models.ImageField(verbose_name='Gruppenbild', upload_to='picture/', blank=True,
                                 height_field=None, width_field=None, default='picture/gdefault.gif',
                                 help_text='Dieses Bild wird auf der Gruppenseite zu sehen sein!')
@@ -30,6 +32,9 @@ class GroupProfile(models.Model):
     supergroup = models.ForeignKey('self', related_name='sgroup', blank=True, null=True)
 
     def __unicode__(self):
+        return self.name
+
+    def __str__(self):
         return self.name
 
 
@@ -46,9 +51,12 @@ class Message(models.Model):
     ignore = models.BooleanField(default=False)
 
     def get_model_name(self):
-                return self.__class__.__name__
+        return self.__class__.__name__
 
     def __unicode__(self):
+        return self.user.username + ': ' + '"' + self.text + '"'
+
+    def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
 
@@ -76,6 +84,9 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
 
+    def __str__(self):
+        return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'
+
     def delete(self, using=None):
         if self.picture != 'picture/default.gif':
             self.picture.delete()
@@ -93,6 +104,16 @@ class Notification(models.Model):
     note = models.TextField(default=None, blank=True)
 
     def __unicode__(self):
+        if self.follower:
+            return self.follower.userprofile.username + ' to ' + self.user.username
+        elif self.group:
+            return 'Group Notification: ' + self.group.short + ' -> "' + self.user.username + '".'
+        elif self.message and not self.comment:
+            return self.user.username + ' mentioned in message: "' + self.message.text + '".'
+        elif self.message and self.comment:
+            return self.message.user.username + ' replied to ' + self.user.username + '.'
+
+    def __str__(self):
         if self.follower:
             return self.follower.userprofile.username + ' to ' + self.user.username
         elif self.group:

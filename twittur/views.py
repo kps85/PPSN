@@ -142,7 +142,7 @@ def login(request):
                 except:
                     data['email'] = email
 
-            # fill the rest for modal User and Userprofile
+            # fill the rest for model User and Userprofile
             first_name = query_dict.get('first_name')
             if len(first_name) > 0:
                 data['first_name'] = first_name
@@ -309,6 +309,8 @@ def settings(request):
     # get current users information and initialize return messages
     user = User.objects.get(pk=request.user.id)
     userProfile = user.userprofile
+    userGroup = GroupProfile.objects.get(name=userProfile.academicDiscipline)
+    print(userGroup.short)
     success_msg, error_msg, userForm, userDataForm = None, None, None, None
 
     # initialize widgets (sidebar, newMsgForm, ...)
@@ -346,6 +348,31 @@ def settings(request):
         else:
             # return errors if userForm is not valid
             error_msg = userForm.errors
+
+        # academic discipline (required user in db) -> add user to group uni, fac whatever and his academic discipline
+
+        try:
+            group = GroupProfile.objects.get(name=userProfile.academicDiscipline)
+            group_list = GroupProfile.objects.filter(Q(member__exact=request.user))
+            if group is not userGroup:
+                if user in userGroup.member.all():
+                    userGroup.member.remove(user)
+            if user not in group.member.all():
+                while True:
+                    if group.supergroup == None:
+                        if user not in group.member.all():
+                            group.member.add(user)
+                        break
+                    else:
+                        if group != userGroup.supergroup and group.supergroup.short == 'uni':
+                            userSuperGroup = userGroup.supergroup
+                            userSuperGroup.member.remove(user)
+                        if user not in group.member.all():
+                            group.member.add(user)
+                        group = group.supergroup
+        except:
+            print("error, something went wrong")
+            pass
 
     # initialize UserForm and UserDataForm with current users information
     userForm = UserForm(instance=user)
