@@ -105,9 +105,8 @@ def msg_to_db(message):
                 message.group = group
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
-    for dbhashtag in message.hashtags.all():
-        if dbhashtag not in hashtaglist:
-            message.hashtags.remove(dbhashtag)
+    checkhashtag(message, hashtaglist)
+
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
             attag = Notification.objects.get(
@@ -116,7 +115,15 @@ def msg_to_db(message):
             attag.delete()
     return message
 
-
+def checkhashtag(message, hashtaglist):
+    for dbhashtag in message.hashtags.all():
+        if dbhashtag not in hashtaglist:
+            message.hashtags.remove(dbhashtag)
+            # is there any message with this hashtag?
+            hashtag_list = Message.objects.filter(hashtags=dbhashtag)
+            if not hashtag_list:
+                h = Hashtag.objects.get(name=dbhashtag)
+                h.delete()
 # Database message to message (in template), replace all hashtags and attags in message with links
 def dbm_to_m(message):
     # get hashtags and attags (models.ManyToMany) in message from database
@@ -202,7 +209,8 @@ def getMessages(data):
 
     if len(message_list) > 0:
         result['has_msg'] = True
-
+    print(message_list)
+    print(dbmessage_list)
     result['list_length'] = len(message_list)
     result['message_list'] = zip(
         message_list[:result['list_end']], dbmessage_list[:result['list_end']],
@@ -220,7 +228,7 @@ def getMessageList(page, data):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
             ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
-            | Q(attags = None) | Q(attags = data) )
+            | Q(attags = data) )
             & Q(comment = None)
         ).order_by('-date')
     elif page == 'group':

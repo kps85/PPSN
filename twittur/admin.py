@@ -10,7 +10,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     # set fields and order of them for Group overview
     fieldsets = [
         ('User',    {'fields': ['userprofile']}),
-        ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location']}),
+        ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location', 'safety']}),
         ('Other',   {'fields': ['ignoreM', 'ignoreU', 'ignore']}),
     ]
     list_display = ('studentNumber', 'userprofile', 'academicDiscipline')
@@ -26,7 +26,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('Info',        {'fields': ['name', 'short', 'desc', 'password', 'picture', 'date', 'member', 'joinable']}),
         ('Admin',       {'fields': ['admin']}),
     ]
-    list_display = ('supergroup', 'name', 'admin')
+    list_display = ('name', 'supergroup', 'admin')
     list_display_links = ('supergroup', 'name')
     ordering = ('-supergroup', 'name')
 

@@ -10,7 +10,7 @@ from django.shortcuts import render
 
 from .models import GroupProfile, UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
-from .functions import dbm_to_m, getMessages, getWidgets, msg_to_db, setNotification, pw_generator
+from .functions import dbm_to_m, getMessages, getWidgets, msg_to_db, setNotification, pw_generator, checkhashtag
 
 
 # startpage
@@ -231,15 +231,23 @@ def profile(request, user):
     widgets = getWidgets(request)
 
     context = {
-        'active_page': 'profile', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'active_page': 'profile',
+        'nav': Nav.nav,
+        'new': widgets['new'],
+        'msgForm': widgets['msgForm'],
         'follow_list': widgets['follow_list'],
-        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list']
+        'hot_list': widgets['hot_list'],
+        'group_sb_list': widgets['group_sb_list']
     }
 
+
+    # GET request "Alle anzeigen" for group or favorites
+    context['show_favs'] = False
+    context['show_groups'] = False
     if 'favorits' in request.GET or 'favorits' in request.POST:
         context['show_favs'] = True
-    else:
-        context['show_favs'] = False
+    elif 'group' in request.GET or 'group' in request.POST:
+        context['show_groups'] = True
 
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
@@ -260,6 +268,16 @@ def profile(request, user):
                     )
             follow.delete()
             context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
+
+        elif request.POST and 'leaveGroup' in request.POST:
+            print('yes')
+            group = GroupProfile.objects.get(id = request.POST.get('leaveGroup'))
+            # g = Notification.objects.get( Q(user_exact=request.user) & Q(group=group))
+            group.member.remove(request.user)
+            note = request.user.username + ' hat deine Gruppe verlassen.'
+            setNotification('group', data={'group': group, 'member': group.admin, 'note': note})
+            context['success_msg'] = 'Ihr habt die Gruppe "' + group.name + '" verlassen.'
+            print('yes')
 
         elif request.GET and 'follow' in request.GET:
             if pUser in widgets['follow_list']:
@@ -295,7 +313,6 @@ def profile(request, user):
         context['error_msg'] = error_msg
 
     context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-
     return render(request, 'profile.html', context)
 
 
@@ -309,7 +326,7 @@ def settings(request):
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/twittur/login/')
-
+    print(request.POST)
     # get current users information and initialize return messages
     user = User.objects.get(pk=request.user.id)
     userProfile = user.userprofile
@@ -332,12 +349,19 @@ def settings(request):
         if userForm.is_valid():
             userDataForm = UserDataForm(request.POST, request.FILES, instance=userProfile)
             userDataForm.oldPicture = userProfile.picture
+
             # if picture has changed, delete old picture
             # do not, if old picture was default picture
             if 'picture' in request.FILES or 'picture-clear' in request.POST:
                 if userDataForm.oldPicture != 'picture/default.gif':
                     userDataForm.oldPicture.delete()
             if userDataForm.is_valid():
+                 # safety change
+                safety = userDataForm.instance.safety
+                if safety != request.POST.get('safety'):
+                    userDataForm.instance.safety = safety
+                else:
+                    pass
                 userForm.save()
                 userDataForm.save()
                 if 'password' in request.POST and len(request.POST['password']) > 0:
@@ -504,15 +528,29 @@ def update(request):
                     response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                                "Nachricht erfolgreich ausgeblendet!"
     elif what == 'del_msg' or what == 'del_cmt':
+
         if Message.objects.filter(pk=request.GET.get('id')).exists():           # if Message exists
             msg = Message.objects.get(pk=request.GET.get('id'))                 # select Message
             if Message.objects.filter(comment=request.GET.get('id')).exists():
                 comments = Message.objects.filter(comment=msg)
+
                 for obj in comments:
+                    # check for hashtag in db
+                    hashtaglist = []
+                    for hashtag in obj.hashtags.all():
+                        hashtaglist.append(hashtag)
+                    if hashtaglist:
+                        checkhashtag(obj, hashtaglist)
                     obj.delete()
             if msg.picture:
                 pic = msg.picture
                 pic.delete()
+            # check for hashtag in db
+            hashtaglist = []
+            for hashtag in msg.hashtags.all():
+                hashtaglist.append(hashtag)
+            if hashtaglist:
+                checkhashtag(msg, hashtaglist)
             msg.delete()                                                        # delete selected Message
         response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                    "Nachricht gel&ouml;scht!"                                   # return info

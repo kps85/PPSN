@@ -95,7 +95,7 @@
   {% if active_page != 'ftu' %}
     <div class="postFoot clearfix">
     	<div class="postReply pull-left{% if message.ignore %} hidden{% endif %}">
-      {% if comCount > 0 and active_page != 'message' %}
+      {% if comCount and active_page != 'message' %}
         <a href="{% url 'twittur:message' msg=message.id %}">
           <span class="glyphicon glyphicon-comment"></span>&nbsp;
           {{ comCount }}

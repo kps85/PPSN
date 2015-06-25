@@ -34,6 +34,10 @@
       {% endfor %}
     {% endif %}
     <li><a href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen</a>
+     <form action="{% url 'twittur:profile' user=user %}" method="get">
+        <input name="group" type="hidden" value="true" />
+        <input class="showFavList{% if show_groups %} active{% endif %} text-left" type="submit" value="Alle anzeigen" />
+     </form>
   </ul>
 
 {% elif active_page == 'info' %}  
