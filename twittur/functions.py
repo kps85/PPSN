@@ -234,9 +234,16 @@ def getMessageList(page, data):
             & Q(comment = None)
         ).order_by('-date')
     elif page == 'group':
-        dbmessage_list = Message.objects.all().filter(
-            Q(group=data) & Q(comment=None)
-        ).order_by('-date')
+        if data.joinable:
+            dbmessage_list = Message.objects.all().filter(
+                Q(group=data) & Q(comment=None)
+            ).order_by('-date')
+        else:
+            dbmessage_list = Message.objects.all().filter(
+                Q(group=data) & Q(comment=None)
+            ).order_by('-date')
+            print(dbmessage_list)
+
     elif page == 'profile':
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(user__exact=data) | Q(attags__username__exact=data.username)

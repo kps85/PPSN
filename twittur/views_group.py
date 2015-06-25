@@ -34,7 +34,7 @@ def group(request, groupshort):
     group = GroupProfile.objects.get(short__exact=groupshort)
     context['group'] = group
     context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
-    if request.user in context['member_list']:
+    if request.user in context['member_list'] or request.user == group.admin:
         context['is_member'] = True
         if group.admin == request.user:
             context['button_text'] = '<span class="glyphicon glyphicon-cog"></span> ' + group.short.upper() + ' bearbeiten'
@@ -119,8 +119,10 @@ def djlgroup(request, groupshort):
             group.member.get(username__exact=request.user.username)
         # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
         except ObjectDoesNotExist:
+            print(request)
             if 'joinWithPassword' in request.POST:
                 if group.password == request.POST.get('password'):
+                    print('hello')
                     group.member.add(request.user)
                 else:
                     return HttpResponse("Falsches Passwort!")
