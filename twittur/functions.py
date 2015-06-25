@@ -317,7 +317,7 @@ def getWidgets(request):
         'msgForm': msgDialog(request),
         'userProfile': userProfile,
         'follow_list': userProfile.follow.all(), # Follow List
-        'group_sb_list': GroupProfile.objects.all().filter(Q(member__exact=request.user)), # Group List
+        'group_sb_list': GroupProfile.objects.filter(Q(member__exact=request.user)), # Group List
         'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5], # Beliebte Themen
         'new': getNotificationCount(request.user), # Notifications

@@ -231,7 +231,11 @@
   {% if not ignored %}
   <div class="profileMessages container-fluid{% if show_member or show_favs %} hidden{% endif %}">
     {% if has_msg %}
+<<<<<<< HEAD
       {% for message, dbmessage, message_form, comments, count in message_list %}
+=======
+      {% for message, dbmessage, form, comments, count in message_list %}
+>>>>>>> origin/dev
         {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
       {% endfor %}
       </div>
