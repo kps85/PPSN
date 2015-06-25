@@ -230,15 +230,23 @@ def profile(request, user):
     widgets = getWidgets(request)
 
     context = {
-        'active_page': 'profile', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
+        'active_page': 'profile',
+        'nav': Nav.nav,
+        'new': widgets['new'],
+        'msgForm': widgets['msgForm'],
         'follow_list': widgets['follow_list'],
-        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list']
+        'hot_list': widgets['hot_list'],
+        'group_sb_list': widgets['group_sb_list']
     }
 
+
+    # GET request "Alle anzeigen" for group or favorites
+    context['show_favs'] = False
+    context['show_groups'] = False
     if 'favorits' in request.GET or 'favorits' in request.POST:
         context['show_favs'] = True
-    else:
-        context['show_favs'] = False
+    elif 'group' in request.GET:
+        context['show_groups'] = True
 
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
@@ -291,7 +299,6 @@ def profile(request, user):
         context['error_msg'] = error_msg
 
     context['follow_sb_list'] = sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-
     return render(request, 'profile.html', context)
 
 

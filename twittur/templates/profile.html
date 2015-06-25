@@ -209,11 +209,12 @@
     </ul>
   </div>
   {% endif %}
-  {% if show_favs %}
+  {% if show_favs or show_groups %}
   <div class="profileMessages container-fluid">
   	<a href="{% url 'twittur:profile' user=user %}">&laquo; Nachrichten anzeigen</a><br />
     <br />
   	<ul class="post memberList">
+      {% if show_favs %}
   	{% for fav in follow_list %}
     	<li class="clearfix">{{ fav.first_name }} {{ fav.last_name }} (<a href="{% url 'twittur:profile' user=fav.username %}">@{{ fav.username }}</a>)
           <span class="pull-right">
@@ -225,11 +226,28 @@
             </form>
           </span>
     {% endfor %}
+      {% endif %}
+      {% if show_groups %}
+          {% for group in group_sb_list %}
+    	<li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)
+          <span class="pull-right">
+            <!--
+            <form action="{% url 'twittur:profile' user=user %}" method="POST">
+              {% csrf_token %}
+              <input name="favorits" type="hidden" value="true" >
+              <input type="hidden" name="entfollow" value="{{ fav.id }}">
+              <button type="submit"><strong><span class="glyphicon glyphicon-eye-close"></span></strong></button>
+
+            </form>
+            -->
+          </span>
+    {% endfor %}
+      {% endif %}
     </ul>
   </div>
   {% endif %}
   {% if not ignored %}
-  <div class="profileMessages container-fluid{% if show_member or show_favs %} hidden{% endif %}">
+  <div class="profileMessages container-fluid{% if show_member or show_favs or show_groups %} hidden{% endif %}">
     {% if has_msg %}
 
       {% for message, dbmessage, form, comments, count in message_list %}
@@ -237,7 +255,7 @@
         {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
       {% endfor %}
       </div>
-      <div class="text-center{% if show_member or show_favs or list_end == True or list_end == 'True' %} hidden{% endif %}">
+      <div class="text-center{% if show_member or show_favs or show_groups or list_end == True or list_end == 'True' %} hidden{% endif %}">
         <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
                 data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}" 
                 data-user="{{ pUser }}" data-group="{{ group.short }}">
