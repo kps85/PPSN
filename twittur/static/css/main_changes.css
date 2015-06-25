@@ -14,7 +14,6 @@ a:focus { color: #a00000; text-decoration: none; }
 .copy a:hover { color: #a00000; }
 
 .forgotBack:hover { cursor: pointer; }
-.scrollTop { bottom: 70px; z-index: 99; }
 
 .notificationLink { 
 	position: relative; 
@@ -79,20 +78,6 @@ a.profileButton {
     bottom: 0;
     right: 0; }
 
-.searchBar {
-	padding: 5px 15px;
-	background-color: rgba(238,238,238,1);
-	border-bottom: 1px solid rgba(228,232,234,1);
-}
-	.searchBar .form-group { margin-bottom: 0px; padding: 0px; }
-	.searchBar input {
-		border-right-width: 0px;
-		border-radius: 4px 0px 0px 4px;
-	}
-	.searchBar button {
-		border-radius: 0px 4px 4px 0px;
-	}
-
 
 	.newMsgPctr, .newMsgPctr div { margin-top: 3px; }
 	.newMsgPctr span:hover { cursor: pointer; }
@@ -119,36 +104,9 @@ a.profileButton {
 .postTextEdit { width: 100%; }
 .postTextEdit .form-group, .cmtTextEdit .form-group { margin-bottom: 0px; }
 
-.comments {
-	margin-top: 10px;
-	background-color: rgba(238,238,238,.5);
-	border: 1px solid rgba(221,221,221,.5);
-	font-size: .9em;
-}
-.children {
-	margin-left: 10px;
-	background-color: rgba(238,238,238,0);
-	border-left: 3px solid rgba(221,221,221,.5);
-	font-size: 1em; 
-}
-	.cmtContent {
-		padding: 5px;
-		border-bottom: 1px solid rgba(255,255,255,.5);
-		border-top: 1px solid rgba(221,221,221,.5);
-	}
-	.comments > .cmtContent:nth-of-type(2n) { background-color: rgba(0,0,0,.03); }
-	.cmtContent:first-of-type { border-top: 0px; }
-	.cmtContent:last-of-type { border-bottom: 0px; }
-	.children .cmtContent { border: none; }
-	.cmtTime { margin-left: 5px; }
-	.cmtText { margin: 5px 10px; }
-	.comments a:hover { cursor: pointer; }
 
-.notification.panel { padding: 5px; }
-	.notification .info { margin-left: 17px; }
-.notification:hover {
-	background-color: rgba(0,0,0,.03);
-}
+
+
 
 .showMembList, .showFavList {
 	background: none;

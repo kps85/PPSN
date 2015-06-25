@@ -1,5 +1,6 @@
 <div class="cmtContent{% if comment.0.ignore %} postIgnore{% endif %}" id="cmt{{ comment.0.id }}">
 
+<div class="cmtBox">
   <div class="cmtMeta {{ comment.0.id }}{% if comment.0.ignore %} hidden{% endif %}">
     <div class="cmtAuthor pull-left">
       {% if active_page == 'ftu' %}
@@ -55,6 +56,7 @@
     </div>
   </div>
 {% endif %}
+</div>
 
 {% if comment.1 %}
   <div class="children"> 

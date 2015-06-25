@@ -39,8 +39,6 @@ header {
 #content .post {
   border: 1px solid #E4E8EA;
   background: #fff; }
-  #content .post:hover {
-    background: #fdfdfd; }
   #content .post .postTime {
     color: #aaa; }
 
@@ -382,6 +380,9 @@ a {
   a:hover {
     text-decoration: none;
     color: #a00000; }
+
+h2 {
+  margin-bottom: 20px; }
 
 textarea, input {
   outline: none; }
@@ -852,5 +853,116 @@ header {
     border-radius: 4px 0px 0px 4px; }
   .searchBar button {
     border-radius: 0px 4px 4px 0px; }
+
+/* Comments */
+.comments {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  background: #FDFDFD;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 20px;
+  padding-bottom: 30px;
+  margin-bottom: -20px;
+  font-size: .9em; }
+
+.children {
+  margin-left: 30px;
+  font-size: 1em; }
+  .children .children {
+    margin-left: 20px; }
+    .children .children .children {
+      margin-left: 20px; }
+      .children .children .children .children {
+        margin-left: 10px; }
+        .children .children .children .children .children {
+          margin-left: 0px; }
+
+.cmtBox {
+  background: #FFF;
+  margin-bottom: 10px;
+  border: 1px solid #E8E8E8;
+  /*position:relative;
+  .reply_link {
+      position:absolute;
+      top:0;
+      right:0;
+      display:block;
+      padding:10px;
+  }*/ }
+
+.cmtContent {
+  margin-bottom: 20px; }
+
+.cmtMeta, .cmtFoot {
+  padding: 5px 10px; }
+
+.cmtMeta {
+  background: #F8F8F8;
+  border-bottom: 1px solid #E7E7E7;
+  padding: 10px; }
+
+.cmtTime {
+  color: #888; }
+
+.cmtText {
+  padding: 10px; }
+  .cmtText p {
+    margin: 0; }
+
+.cmtAuthor {
+  margin-right: 5px; }
+
+/* Notifications */
+.notification {
+  color: #555; }
+  .notification.panel {
+    padding: 15px; }
+  .notification .info {
+    margin-left: 27px; }
+  .notification:hover {
+    background-color: rgba(0, 0, 0, 0.03); }
+  .notification .glyphicon {
+    padding-right: 10px; }
+
+/* Profil */
+/* Small devices (tablets, 768px and up) */
+.profil {
+  position: relative;
+  padding: 20px;
+  border: 1px solid #E4E8EA;
+  border-bottom: 0;
+  border-radius: 5px 5px 0px 0px;
+  background: #fff; }
+
+.profil:hover {
+  border-color: #d3d3d3; }
+
+.profilEdit {
+  position: absolute;
+  right: 20px;
+  z-index: 99; }
+
+.profilMeta div {
+  margin-top: 10px;
+  text-align: left; }
+
+.profil .profilNick {
+  color: #aaa; }
+
+.profileButton {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-color: #E4E8EA; }
+  .profileButton:hover {
+    border-color: #E4E8EA; }
+  .profileButton:nth-child(odd) {
+    border-right: none; }
+  .profileButton:nth-child(even) {
+    border-left: none; }
+
+@media (max-width: 767px) {
+  .profilAuthor, .profilNick {
+    text-align: center; } }
 
 /*# sourceMappingURL=main.css.map */
