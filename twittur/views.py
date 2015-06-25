@@ -273,6 +273,8 @@ def profile(request, user):
             group = GroupProfile.objects.get(id = request.POST.get('leaveGroup'))
             # g = Notification.objects.get( Q(user_exact=request.user) & Q(group=group))
             group.member.remove(request.user)
+            note = request.user.username + ' hat deine Gruppe verlassen.'
+            setNotification('group', data={'group': group, 'member': group.admin, 'note': note})
             context['success_msg'] = 'Ihr habt die Gruppe "' + group.name + '" verlassen.'
             print('yes')
 
