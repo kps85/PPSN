@@ -36,16 +36,16 @@
       </div>
       -->
     </header>
-   <!-- <div class="container-fluid searchBar">
+   <div class="container-fluid searchBar">
       <form action="{% url 'twittur:search' %}" class="searchForm" id="search" method="GET">
         <div class="col-xs-10 col-sm-11 form-group pull-left">
           <input class="form-control" id="search_input" name="search_input" type="text" placeholder="Suche" title="Suchbegriff eingeben">
         </div>
         <button type="submit" class="col-xs-2 col-sm-1 btn btn-default pull-right" title="Suche starten">
-          <span class="glyphicon glyphicon-search"></span>
+          Los
         </button>
       </form>      
-    </div> -->
+    </div>
     <div id="content">
       {% if success_msg %}
         <div class="infoMessage alert alert-{% if 'entsperren' in success_msg %}warning{% else %}success{% endif %}" role="alert">

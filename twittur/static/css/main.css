@@ -38,21 +38,11 @@ header {
 
 #content .post {
   border: 1px solid #E4E8EA;
-  border-radius: 5px;
   background: #fff; }
   #content .post:hover {
-    border-color: #d3d3d3;}
+    background: #fdfdfd; }
   #content .post .postTime {
     color: #aaa; }
-    
-  #content a {
-  color: #a00000;
-  font-weight: bold;}
-  
-  #content a:hover {
-  color: #f50000;
-  text-decoration: underline;
-  font-weight: bold;}
 
 #body_ftu {
   background: url("img/ftu_bg.png") center center;
@@ -423,7 +413,7 @@ textarea, input {
   height: 25px;
   width: 45px;
   position: fixed;
-  bottom: 20px;
+  bottom: 70px;
   right: 20px;
   display: block;
   display: none;
@@ -433,9 +423,6 @@ textarea, input {
   background-image: -o-linear-gradient(top, #30303F 0%, #282A37 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#30303F), to(#282A37));
   background-image: linear-gradient(to bottom, #30303F 0%, #282A37 100%); }
-  @media screen and (min-width: 1024px) {
-    .scrollTop {
-      bottom: 70px; } }
   .scrollTop .glyphicon {
     font-size: 1em;
     line-height: 0.5em;
@@ -449,12 +436,11 @@ textarea, input {
   height: 45px;
   width: 45px;
   margin-top: 22.5px;
-  margin-left: 3%; }
-  @media screen and (min-width: 1024px) {
-    .newMsg {
-      position: fixed;
-      bottom: 20px;
-      right: 20px; } }
+  margin-left: 3%;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2; }
   .newMsg textarea {
     width: 100%; }
   .newMsg .msgDiaDate {
@@ -546,6 +532,10 @@ nav a.logout {
       line-height: 11px; }
       nav a.logout span {
         font-size: 28px; } }
+nav .glyphicon {
+  display: block;
+  top: -5px;
+  font-size: 36px; }
 nav a.menuCloser {
   float: right;
   background-image: url("img/Login-Arrow-128.png");
@@ -612,9 +602,18 @@ a.title {
   @media screen and (min-width: 1024px) {
     a.title {
       margin-left: 6%; } }
-  @media screen and (max-width: 1023px) {
+  @media screen and (max-width: 639px) {
     a.title {
-      margin-left: 3%; } }
+      float: left;
+      display: inline-block;
+      width: 70%;
+      position: absolute;
+      left: 15%;
+      background: url("img/twittur_mobile.png") no-repeat;
+      background-position: center center;
+      background-size: 40px 48px;
+      height: 60px;
+      box-sizing: border-box; } }
 
 header {
   top: 0;
@@ -627,26 +626,51 @@ header {
       position: fixed;
       top: 0;
       z-index: 10; } }
-  header a.menuOpener {
+  @media screen and (max-width: 639px) {
+    header {
+      min-height: 60px; } }
+  header a.menuOpener, header a.searchOpener {
     text-indent: -9999px;
     display: block;
     box-sizing: border-box;
-    height: 45px;
     width: 45px;
-    margin-top: 22.5px;
+    margin-left: 3%;
     margin-right: 3%;
-    padding-top: 2px;
-    float: right;
+    float: left;
     display: none; }
     @media screen and (max-width: 1023px) {
-      header a.menuOpener {
+      header a.menuOpener, header a.searchOpener {
+        margin-top: 22.5px;
+        height: 22.5px; } }
+    @media screen and (max-width: 639px) {
+      header a.menuOpener, header a.searchOpener {
+        margin-top: 10px;
+        height: 40px;
+        width: 9%; } }
+    @media screen and (max-width: 1023px) {
+      header a.menuOpener, header a.searchOpener {
         display: inherit; } }
-    header a.menuOpener:hover {
+    header a.menuOpener:hover, header a.searchOpener:hover {
       cursor: pointer;
       opacity: 0.8; }
-    header a.menuOpener .patty {
-      margin: 14% 20%;
+    header a.menuOpener .patty, header a.searchOpener .patty {
+      margin: 7px 20%;
+      max-width: 30px;
       border-bottom: 5px solid transparent; }
+  header a.searchOpener {
+    display: none;
+    text-indent: inherit;
+    color: #6D6D6E;
+    float: right;
+    text-align: right;
+    padding-right: 2%; }
+    header a.searchOpener .glyphicon {
+      padding-top: 20%;
+      text-align: right;
+      font-size: 1.5em; }
+    @media screen and (max-width: 639px) {
+      header a.searchOpener {
+        display: inherit; } }
   header #search {
     margin-right: 3%;
     margin-top: 25px;
@@ -665,7 +689,7 @@ header {
       margin-top: 0;
       border-bottom-left-radius: 0;
       border-top-left-radius: 0; }
-    @media screen and (max-width: 1023px) {
+    @media screen and (max-width: 639px) {
       header #search {
         display: none; } }
   header #head:after {
@@ -689,6 +713,9 @@ header {
     min-height: 100%;
     overflow: auto;
     margin-left: 30%; } }
+@media screen and (max-width: 639px) {
+  #main {
+    padding-top: 60px; } }
 
 #content {
   margin: 30px auto; }
@@ -699,6 +726,9 @@ header {
     #content {
       width: 94%;
       margin-top: 120px; } }
+  @media screen and (max-width: 639px) {
+    #content {
+      margin-top: 30px !important; } }
 
 .post {
   padding: 20px;
@@ -729,9 +759,9 @@ header {
   vertical-align: bottom; }
 
 .copy {
-  font-size: .6em; }
+  font-size: .6em;
+  margin-top: 15px; }
   .copy a {
-    color: #a00000;
     font-size: 1.2em; }
     .copy a:hover {
       color: #F50000; }
@@ -779,5 +809,48 @@ header {
     position: absolute;
     left: 100%;
     top: 0; }
+
+/* Notifications */
+.notificationLink {
+  position: relative;
+  padding-top: 25px; }
+  .notificationLink .badge {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 99;
+    background-color: #f50000; }
+  @media screen and (max-width: 1023px) {
+    .notificationLink {
+      padding-top: 12px; }
+      .notificationLink .glyphicon {
+        top: 1px;
+        font-size: 28px; }
+      .notificationLink .badge {
+        right: 5px;
+        top: 5px; } }
+
+/* Various */
+.cit-logo {
+  width: 75px; }
+
+.post .cit-logo {
+  width: 150px;
+  margin: 10px; }
+
+/* SearchBar */
+.searchBar {
+  padding: 5px 15px;
+  background-color: #eeeeee;
+  border-bottom: 1px solid #e4e8ea;
+  display: none; }
+  .searchBar .form-group {
+    margin-bottom: 0px;
+    padding: 0px; }
+  .searchBar input {
+    border-right-width: 0px;
+    border-radius: 4px 0px 0px 4px; }
+  .searchBar button {
+    border-radius: 0px 4px 4px 0px; }
 
 /*# sourceMappingURL=main.css.map */

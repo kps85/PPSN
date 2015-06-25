@@ -232,9 +232,3 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 .memberHead:hover { cursor: pointer; }
 .memberHead h4 { margin: 0px; }
 .memberList { margin: 10px 0px; }
-
-@media screen and (max-width: 1023px) {
-	#main { padding-top: 90px !important; }
-	#content { margin-top: 30px; }
-	#aside { z-index: 99; }
-}

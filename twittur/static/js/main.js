@@ -58,7 +58,7 @@ function initMenu() {
 		$patty.clone().appendTo($menuOpener);
 	}
 	
-	$menuOpener.appendTo("#head");
+	$menuOpener.prependTo("#head");
 	
 	$(".menuOpener, .menuOpener > *").click(function() {
 
@@ -82,6 +82,15 @@ function initMenu() {
 			});
 		} 
 	});
+    
+    
+    var $searchOpener = $("<a>", {'class':'searchOpener', 'href':'javascript:;', 'html':'<span class="glyphicon glyphicon-search"></span>'});
+    $searchOpener.appendTo("#head");
+    
+    $searchOpener.click(function() {
+        scrollToTop();
+        $(".searchBar").slideToggle(300);
+    })
 	
 	
 	var menuOpenerWasVisible = false;
@@ -93,7 +102,7 @@ function initMenu() {
 		if($(window).width() == windowWidth) return
 		windowWidth = $(window).width();
 		if($(".menuOpener").is(":hidden") && menuOpenerWasVisible) {
-			$("#aside").css({'left':'0'})
+			$("#aside").css({'left':'0'});
 			$("#aside").show();
 			menuOpenerWasVisible = false;
 		} else if($(".menuOpener").is(":visible") && !menuOpenerWasVisible) {
@@ -101,14 +110,17 @@ function initMenu() {
 			$("#aside").hide();
 			menuOpenerWasVisible = true;
 		}
+        
+        if($(".searchOpener").is(":hidden")) {
+            $(".searchBar").hide();
+        }
 	})
 	
-	var page = (window.location.href.split("/"))[4]
-	if (page == "profile" || page == "hashtag" || page == "group") {
+	if ((window.location.href.split("/"))[4] == "profile" 
+		 || (window.location.href.split("/"))[4] == "hashtag"
+		 || (window.location.href.split("/"))[4] == "group") {
 		var name = ((window.location.href.split("/"))[5]).split("?")[0];
-		(page == "hashtag") ? $(".hashs .ullink."+name).addClass("active") :
-		(page == "group") ? $(".groups .ullink."+name).addClass("active") :
-		$(".following .ullink."+name).addClass("active");
+		$(".ullink."+name).addClass("active");
 	}
 }
 
@@ -585,9 +597,7 @@ function initVarious() {
 	$(function() {
 	  $('a.scrollTop[href*=#]:not([href=#])').click(function() {
 	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {     
-	        $('html,body').animate({
-	          scrollTop: 0
-	        }, 200);
+	        scrollToTop();
 	        return false;
 	    }
 	  });
@@ -604,8 +614,15 @@ function initVarious() {
 			$(".scrollTop").fadeOut("slow");
 		}
 	});
-  
 }
+
+/* Nach oben scrollen */
+function scrollToTop() {
+    $('html,body').animate({
+      scrollTop: 0
+    }, 200);
+}
+
 
 $(document).ready(function() {
 	initMenu();
