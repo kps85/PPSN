@@ -421,16 +421,20 @@ textarea, input {
   margin-top: -5px; }
   @media screen and (min-width: 1024px) {
     .modal .visibility {
-      width: 50%;
+      width: 60%;
       float: left;
       display: block; } }
-.modal p {
-  display: inline-block;
-  margin: 0; }
+  .modal .visibility > p {
+    display: inline-block;
+    margin: 0;
+    width: 25%; }
 .modal .msgDiaDate {
   margin: 5px 20px; }
 .modal .close {
   margin-top: 5px; }
+@media screen and (min-width: 1024px) {
+  .modal .superDropdown {
+    min-width: 70% !important; } }
 @media screen and (max-width: 1023px) {
   .modal .superDropdown {
     display: block;
@@ -438,7 +442,7 @@ textarea, input {
     .modal .superDropdown > p {
       display: block; } }
 .modal .superDropdown > p {
-  min-width: 150px !important; }
+  min-width: 0; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
