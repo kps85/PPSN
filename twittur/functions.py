@@ -108,6 +108,12 @@ def msg_to_db(message):
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
             message.hashtags.remove(dbhashtag)
+            # is there any message with this hashtag?
+            hashtag_list = Message.objects.filter(hashtags=dbhashtag)
+            if not hashtag_list:
+                h = Hashtag.objects.get(name=dbhashtag)
+                h.delete()
+
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
             attag = Notification.objects.get(
