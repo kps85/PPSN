@@ -506,6 +506,11 @@ nav a.index {
   background-image: url("img/icon_home.png"); }
 nav a.settings {
   background-image: url("img/Settings-02-128.png"); }
+  @media screen and (max-width: 1023px) {
+    nav a.settings {
+      left: 0;
+      padding-bottom: 0;
+      padding-top: 40px; } }
 nav a.profile {
   background-image: url("img/User-Profile-128.png"); }
 nav a.messages {
@@ -522,17 +527,23 @@ nav a.logout {
       color: #ffffff; }
   @media screen and (max-width: 1023px) {
     nav a.logout {
-      left: 0;
-      display: block;
-      min-height: 50px;
-      width: 100%;
-      z-index: 400;
-      text-align: center;
-      padding-top: 12px;
-      background: #30303F;
+      right: 0;
+      padding-top: 10px;
       line-height: 11px; }
-      nav a.logout span {
+      nav a.logout span.glyphicon {
+        margin-top: 10px;
+        line-height: 19px;
         font-size: 28px; } }
+@media screen and (max-width: 1023px) {
+  nav a.logout, nav a.settings {
+    position: absolute;
+    bottom: 0;
+    display: block;
+    min-height: 50px;
+    width: 50%;
+    z-index: 400;
+    text-align: center;
+    background-color: #30303F; } }
 nav .glyphicon {
   display: block;
   top: -5px;

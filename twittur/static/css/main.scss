@@ -193,6 +193,11 @@ nav {
 	
 	a.settings {
 		background-image:url('img/Settings-02-128.png');
+        @include tablet {
+            left:0;
+            padding-bottom:0;
+            padding-top:40px;
+        }
 	}
 	
 	a.profile {
@@ -219,22 +224,34 @@ nav {
 				color: #ffffff;
 			}
 		}
-		
 		@include tablet {
-			left:0;
-			display:block;
-			min-height:50px;
-			width:100%;
-			z-index:400;
-			text-align:center;
-			padding-top:12px;
-			background:#30303F;
+		    right:0;
+            padding-top:10px;
 			line-height: 11px;
-			span {
+			span.glyphicon {
+                margin-top:10px;
+                line-height:19px;
 				font-size:28px;
 			}
 		}
+		
 	}
+    
+    
+    a.logout, a.settings {
+		@include tablet {
+            position:absolute;
+            bottom:0;
+			display:block;
+			min-height:50px;
+			width:50%;
+			z-index:400;
+			text-align:center;
+			
+			background-color:#30303F;
+			
+		}
+    }
     
     .glyphicon {
         display:block;

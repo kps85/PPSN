@@ -124,7 +124,8 @@ class Nav(models.Model):
         {'name': 'index', 'title': 'Startseite'},
         {'name': 'profile', 'title': 'Profil'},
         {'name': 'notification', 'title': 'Mitteilungen'},
+        
         {'name': 'info', 'title': 'Info'},
-        #{'name': 'settings', 'title': 'Einstellungen'},
+        {'name': 'settings', 'title': 'Einstellungen'},
         {'name': 'logout', 'title': 'Logout'}
     ]
