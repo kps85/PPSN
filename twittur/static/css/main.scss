@@ -118,16 +118,23 @@ textarea, input { outline: none; }
         display:inline-block;
     }
     .visibility {
-       display:block;
-       width:50%;
-       float:left;
+       
+       @include desktop {
+           width:60%;
+           float:left;
+           display:block;
+       }
+       
        text-align:left;
        margin-top:-5px;
+       
+       & > p {
+           display:inline-block;
+           margin:0;
+           width:25%;
+       }
     }
-    p {
-        display:inline-block;
-        margin:0;
-    }
+    
     
     .msgDiaDate {
         margin:5px 20px;
@@ -137,8 +144,23 @@ textarea, input { outline: none; }
         margin-top:5px;
     }
     
-    .superDropdown > p {
-        min-width:150px !important;
+    .superDropdown {
+        @include desktop {
+             min-width:70% !important;
+         }
+        @include tablet {
+            display:block;
+            margin-bottom:10px;
+            & > p {
+                display:block;
+            }
+        
+        }
+        & > p {
+            min-width:0;
+            
+        }
+        
     }
 
 }

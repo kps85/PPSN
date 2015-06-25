@@ -111,15 +111,16 @@
               </dl>
             </div>
             <div class="modal-footer">
-                 <div class="visibility">
-                 <p>Sichtbarkeit:</p>
+            	{{ safetyLevels }}
+              <div class="visibility">
+                <p>Sichtbarkeit:</p>
                 <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Standard" required="required">
-                    <option value="group_default">Standard</option>
-                      <option value="group_test">Public</option>
-                      <option value="group_test">Uni</option>
-                      <option value="group_test">&test</option>
-                     </select>
-                 </div>
+                  <option value="group_default">Standard</option>
+                  <option value="group_test">Public</option>
+                  <option value="group_test">Uni</option>
+                  <option value="group_test">&test</option>
+                </select>
+              </div>
               <input type="hidden" name="codename" value="message" />
               {{ msgForm.user }}
               {{ msgForm.date }}

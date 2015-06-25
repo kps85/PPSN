@@ -417,20 +417,32 @@ textarea, input {
 .modal h4 {
   display: inline-block; }
 .modal .visibility {
-  display: block;
-  width: 50%;
-  float: left;
   text-align: left;
   margin-top: -5px; }
-.modal p {
-  display: inline-block;
-  margin: 0; }
+  @media screen and (min-width: 1024px) {
+    .modal .visibility {
+      width: 60%;
+      float: left;
+      display: block; } }
+  .modal .visibility > p {
+    display: inline-block;
+    margin: 0;
+    width: 25%; }
 .modal .msgDiaDate {
   margin: 5px 20px; }
 .modal .close {
   margin-top: 5px; }
+@media screen and (min-width: 1024px) {
+  .modal .superDropdown {
+    min-width: 70% !important; } }
+@media screen and (max-width: 1023px) {
+  .modal .superDropdown {
+    display: block;
+    margin-bottom: 10px; }
+    .modal .superDropdown > p {
+      display: block; } }
 .modal .superDropdown > p {
-  min-width: 150px !important; }
+  min-width: 0; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
