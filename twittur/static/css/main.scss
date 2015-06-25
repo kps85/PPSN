@@ -118,10 +118,11 @@ textarea, input { outline: none; }
         display:inline-block;
     }
     .visibility {
-       display:block;
+       
        @include desktop {
            width:50%;
            float:left;
+           display:block;
        }
        
        text-align:left;

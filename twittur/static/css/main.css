@@ -417,13 +417,13 @@ textarea, input {
 .modal h4 {
   display: inline-block; }
 .modal .visibility {
-  display: block;
   text-align: left;
   margin-top: -5px; }
   @media screen and (min-width: 1024px) {
     .modal .visibility {
       width: 50%;
-      float: left; } }
+      float: left;
+      display: block; } }
 .modal p {
   display: inline-block;
   margin: 0; }
