@@ -230,17 +230,20 @@
       {% if show_groups %}
           {% for group in group_sb_list %}
     	<li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)
+        {% if group.joinable and group.admin != request.user %}
           <span class="pull-right">
-            <!--
             <form action="{% url 'twittur:profile' user=user %}" method="POST">
               {% csrf_token %}
-              <input name="favorits" type="hidden" value="true" >
-              <input type="hidden" name="entfollow" value="{{ fav.id }}">
-              <button type="submit"><strong><span class="glyphicon glyphicon-eye-close"></span></strong></button>
-
+              <input name="group" type="hidden" value="true" >
+              <input type="hidden" name="leaveGroup" value="{{ group.id }}">
+              <button type="submit">verlassen</button>
             </form>
-            -->
           </span>
+        {% elif group.joinable and group.admin == request.user %}
+      <span class="pull-right">
+         <a href="/twittur/group/{{group.short}}/settings">bearbeiten</a>
+      </span>
+      {% endif %}
     {% endfor %}
       {% endif %}
     </ul>

@@ -245,7 +245,7 @@ def profile(request, user):
     context['show_groups'] = False
     if 'favorits' in request.GET or 'favorits' in request.POST:
         context['show_favs'] = True
-    elif 'group' in request.GET:
+    elif 'group' in request.GET or 'group' in request.POST:
         context['show_groups'] = True
 
     try:
@@ -267,6 +267,14 @@ def profile(request, user):
                     )
             follow.delete()
             context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
+
+        elif request.POST and 'leaveGroup' in request.POST:
+            print('yes')
+            group = GroupProfile.objects.get(id = request.POST.get('leaveGroup'))
+            # g = Notification.objects.get( Q(user_exact=request.user) & Q(group=group))
+            group.member.remove(request.user)
+            context['success_msg'] = 'Ihr habt die Gruppe "' + group.name + '" verlassen.'
+            print('yes')
 
         elif request.GET and 'follow' in request.GET:
             if pUser in widgets['follow_list']:
