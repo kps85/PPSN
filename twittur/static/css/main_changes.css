@@ -93,12 +93,7 @@ a.profileButton {
 		border-radius: 0px 4px 4px 0px;
 	}
 
-.newMsg {
-	position: fixed;
-	bottom: 20px;
-	right: 20px;
-	z-index: 99;
-}
+
 	.newMsgPctr, .newMsgPctr div { margin-top: 3px; }
 	.newMsgPctr span:hover { cursor: pointer; }
 	.newMsgPctr img { margin: 10px; max-width: 200px; max-height: 200px; }
