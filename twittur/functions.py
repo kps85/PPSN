@@ -202,7 +202,8 @@ def getMessages(data):
 
     if len(message_list) > 0:
         result['has_msg'] = True
-
+    print(message_list)
+    print(dbmessage_list)
     result['list_length'] = len(message_list)
     result['message_list'] = zip(
         message_list[:result['list_end']], dbmessage_list[:result['list_end']],
@@ -220,7 +221,7 @@ def getMessageList(page, data):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
             ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
-            | Q(attags = None) | Q(attags = data) )
+            | Q(attags = data) )
             & Q(comment = None)
         ).order_by('-date')
     elif page == 'group':

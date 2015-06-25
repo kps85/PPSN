@@ -15,7 +15,7 @@ from .forms import FAQForm
 # - template: info.html
 def info(request):
     # select admin users as Projekt-Team
-    projektTeam = User.objects.filter(is_superuser=True).order_by('last_name')
+    projektTeam = User.objects.filter(is_superuser=True).exclude(username='admin').order_by('last_name')
 
     # check if user is logged in
     # if user is not logged in, redirect to FTU
