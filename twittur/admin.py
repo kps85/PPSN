@@ -26,7 +26,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('Info',        {'fields': ['name', 'short', 'desc', 'password', 'picture', 'date', 'member', 'joinable']}),
         ('Admin',       {'fields': ['admin']}),
     ]
-    list_display = ('supergroup', 'name', 'admin')
+    list_display = ( 'name','supergroup', 'admin')
     list_display_links = ('supergroup', 'name')
     ordering = ('-supergroup', 'name')
 

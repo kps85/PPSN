@@ -105,14 +105,7 @@ def msg_to_db(message):
                 message.group = group
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
-    for dbhashtag in message.hashtags.all():
-        if dbhashtag not in hashtaglist:
-            message.hashtags.remove(dbhashtag)
-            # is there any message with this hashtag?
-            hashtag_list = Message.objects.filter(hashtags=dbhashtag)
-            if not hashtag_list:
-                h = Hashtag.objects.get(name=dbhashtag)
-                h.delete()
+    checkhashtag(message, hashtaglist)
 
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
@@ -122,7 +115,15 @@ def msg_to_db(message):
             attag.delete()
     return message
 
-
+def checkhashtag(message, hashtaglist):
+    for dbhashtag in message.hashtags.all():
+        if dbhashtag not in hashtaglist:
+            message.hashtags.remove(dbhashtag)
+            # is there any message with this hashtag?
+            hashtag_list = Message.objects.filter(hashtags=dbhashtag)
+            if not hashtag_list:
+                h = Hashtag.objects.get(name=dbhashtag)
+                h.delete()
 # Database message to message (in template), replace all hashtags and attags in message with links
 def dbm_to_m(message):
     # get hashtags and attags (models.ManyToMany) in message from database

@@ -10,7 +10,7 @@ from django.shortcuts import render
 
 from .models import GroupProfile, UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
-from .functions import dbm_to_m, getMessages, getWidgets, msg_to_db, setNotification, pw_generator
+from .functions import dbm_to_m, getMessages, getWidgets, msg_to_db, setNotification, pw_generator, checkhashtag
 
 
 # startpage
@@ -505,15 +505,29 @@ def update(request):
                     response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                                "Nachricht erfolgreich ausgeblendet!"
     elif what == 'del_msg' or what == 'del_cmt':
+
         if Message.objects.filter(pk=request.GET.get('id')).exists():           # if Message exists
             msg = Message.objects.get(pk=request.GET.get('id'))                 # select Message
             if Message.objects.filter(comment=request.GET.get('id')).exists():
                 comments = Message.objects.filter(comment=msg)
+
                 for obj in comments:
+                    # check for hashtag in db
+                    hashtaglist = []
+                    for hashtag in obj.hashtags.all():
+                        hashtaglist.append(hashtag)
+                    if hashtaglist:
+                        checkhashtag(obj, hashtaglist)
                     obj.delete()
             if msg.picture:
                 pic = msg.picture
                 pic.delete()
+            # check for hashtag in db
+            hashtaglist = []
+            for hashtag in msg.hashtags.all():
+                hashtaglist.append(hashtag)
+            if hashtaglist:
+                checkhashtag(msg, hashtaglist)
             msg.delete()                                                        # delete selected Message
         response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                    "Nachricht gel&ouml;scht!"                                   # return info
