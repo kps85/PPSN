@@ -32,7 +32,8 @@
     </div>
     
     <div class="postText {{ message.id }} {% if message.ignore %} hidden{% endif %}" id="postText{{ message.id }}">
-    	{% if message.text %}
+    	{{ message.group }}
+      {% if message.text %}
       	<p>{{ message.text|safe }}</p>
         {% if message.picture and active_page != 'ftu' %}
         	<div class="msgPctr img-thumbnail" data-hint="{{ message.picture.url }}" data-toggle="modal" data-target="#msgPctr{{ message.id }}Modal"></div>

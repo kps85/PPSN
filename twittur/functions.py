@@ -16,6 +16,17 @@ def msgDialog(request):
         if request.POST.get('codename') == 'message':
             msgForm = MessageForm(request.POST, request.FILES)
             if msgForm.is_valid():
+                print(request.POST)
+                if 'safety' in request.POST:
+                    print("safety")
+                    if request.POST['safety'][:1] == '&':
+                        group = GroupProfile.objects.get(short__exact=request.POST['safety'][1:])
+                    elif request.POST['safety'] == 'Public':
+                        group = None
+                    else:
+                        group = GroupProfile.objects.get(name__exact=request.POST['safety'])
+                    print(group.name)
+                    msgForm.instance.group = group
                 msgForm.save()
                 msg_to_db(msgForm.instance)
                 msgForm.save()
@@ -327,11 +338,15 @@ def getNotificationCount(user):
 # generate Widgets and return them
 def getWidgets(request):
     userProfile = UserProfile.objects.get(userprofile=request.user)
+    group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
+    group_sb_list = GroupProfile.objects.filter(
+        Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
+    ).exclude(pk=15)
     sidebar = {
         'msgForm': msgDialog(request),
         'userProfile': userProfile,
         'follow_list': userProfile.follow.all(), # Follow List
-        'group_sb_list': GroupProfile.objects.filter(Q(member__exact=request.user)), # Group List
+        'group_sb_list': group_sb_list, # Group List
         'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
                    .order_by('-hashtag_count')[:5], # Beliebte Themen
         'new': getNotificationCount(request.user), # Notifications

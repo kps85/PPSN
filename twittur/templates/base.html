@@ -117,7 +117,7 @@
               	<p class="text-center">
                 	<span class="glyphicon glyphicon-eye-open"></span>
                 </p>
-                <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}" required="required">
+                <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}">
                 	{% for item in safetyLevels %}
                   	{% if 'uni' in item %}
                     	<optgroup label="Gruppe ausw&auml;hlen">
