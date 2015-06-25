@@ -20,7 +20,8 @@ def search(request):
         'active_page': 'search', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'list_end': 5,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
 
     if 'search_input' in request.GET:
@@ -135,5 +136,6 @@ def hashtag(request, text):
         'message_list': messages['message_list'], 'hash_list_length': messages['list_length'],
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'search.html', context)

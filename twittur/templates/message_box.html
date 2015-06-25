@@ -84,6 +84,24 @@
         <label>Bild entfernen?</label>
       </div>
       {% endif %}
+      <div class="visibility" title="Sichtbarkeit einstellen">
+        <p class="text-center">
+          <span class="glyphicon glyphicon-eye-open"></span>
+        </p>
+        <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}" required="required">
+          {% for item in safetyLevels %}
+            {% if 'uni' in item %}
+              <optgroup label="Gruppe ausw&auml;hlen">
+                {% for grp in item %}
+                  <option value="&amp;{{ grp }}"{% if grp == user.userprofile.safety %} selected="selected"{% endif %}></option>
+                {% endfor %}
+              </optgroup>
+            {% else %}
+              <option value="{{ item }}"{% if item == user.userprofile.safety %} selected="selected"{% endif %}>{{ item }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>            
       <div class="form-group text-right">
         <button class="btn btn-xs btn-default hideMsgEdit" data-hint="{{ dbmessage.id }}" type="button">Abbrechen</button>
         <button class="btn btn-xs btn-primary saveMsgEdit" id="saveMsgEdit{{ dbmessage.id }}" type="button"
@@ -171,11 +189,30 @@
               <span aria-hidden="true">&times;</span>
             </button>
             <h4 class="modal-title" id="newCommentTitle"></h4>
+            <small>{% now "j. F Y, H:i" %} Uhr</small>  
           </div>
-          <div class="modal-body">{{ msgForm.text }}</div>
+          <div class="modal-body">
+          	{{ msgForm.text }}
+          </div>
           <div class="modal-footer">
-            <div class="cmtDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
-  
+            <div class="visibility" title="Sichtbarkeit einstellen">
+              <p class="text-center">
+                <span class="glyphicon glyphicon-eye-open"></span>
+              </p>
+              <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}" required="required">
+                {% for item in safetyLevels %}
+                  {% if 'uni' in item %}
+                    <optgroup label="Gruppe ausw&auml;hlen">
+                      {% for grp in item %}
+                        <option value="&amp;{{ grp }}"{% if grp == user.userprofile.safety %} selected="selected"{% endif %}></option>
+                      {% endfor %}
+                    </optgroup>
+                  {% else %}
+                    <option value="{{ item }}"{% if item == user.userprofile.safety %} selected="selected"{% endif %}>{{ item }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>            
             <input type="hidden" name="codename" value="comment" />
             <input type="hidden" name="message" value="{{ message.id }}" />
             {{ msgForm.user }}

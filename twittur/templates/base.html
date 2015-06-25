@@ -86,7 +86,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
               <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
-              <div class="msgDiaDate pull-right">{% now "j. F Y, H:i" %} Uhr</div>
+              <small>{% now "j. F Y, H:i" %} Uhr</small>
             </div>
             <div class="modal-body">
                 
@@ -99,6 +99,7 @@
                   {{ msgForm.picture }}
                 </div>
               </div>
+              <!--
               <dl class="newMsgInfo container-fluid clearfix">
               	<dt class="col-xs-4 pull-left"><strong>@</strong><em>&lt;Benutzername&gt;</em></dt>
                 <dd class="col-xs-8 pull-left">f&uuml;gt Benutzer als Empf&auml;nger hinzu.</dd>
@@ -109,16 +110,25 @@
               	<dt class="col-xs-4 pull-left"><strong>#</strong><em>&lt;Thema&gt;</em></dt>
                 <dd class="col-xs-8 pull-left">f&uuml;gt ein Thema der Nachricht hinzu.</dd>
               </dl>
+              -->
             </div>
             <div class="modal-footer">
-            	{{ safetyLevels }}
-              <div class="visibility">
-                <p>Sichtbarkeit:</p>
-                <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Standard" required="required">
-                  <option value="group_default">Standard</option>
-                  <option value="group_test">Public</option>
-                  <option value="group_test">Uni</option>
-                  <option value="group_test">&test</option>
+              <div class="visibility" title="Sichtbarkeit einstellen">
+              	<p class="text-center">
+                	<span class="glyphicon glyphicon-eye-open"></span>
+                </p>
+                <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}" required="required">
+                	{% for item in safetyLevels %}
+                  	{% if 'uni' in item %}
+                    	<optgroup label="Gruppe ausw&auml;hlen">
+                      	{% for grp in item %}
+                        	<option value="&amp;{{ grp }}"></option>
+                        {% endfor %}
+                      </optgroup>
+                    {% else %}
+		                  <option value="{{ item }}"{% if item == user.userprofile.safety %} selected="selected"{% endif %}>{{ item }}</option>
+                    {% endif %}
+                  {% endfor %}
                 </select>
               </div>
               <input type="hidden" name="codename" value="message" />

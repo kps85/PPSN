@@ -1,6 +1,10 @@
 a:hover { color: #f50000; }
 a:focus { color: #f50000; text-decoration: none; }
 
+
+/* Antworten Link :hover */
+a.reply_link:hover { cursor: pointer; }
+
 /* wenn Modal offen, scrollbar wird ausgeblendet und Content verschoben -> hier: FIX */
 body.modal-open { overflow: visible; padding-right: 0px !important; }
 

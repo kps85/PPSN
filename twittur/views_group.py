@@ -23,7 +23,8 @@ def group(request, groupshort):
         'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'show_member': False, 'is_member': False,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
 
     # if message was sent to view: return success message
@@ -100,6 +101,7 @@ def addgroup(request):
         'groupProfileForm': groupProfileForm,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'addgroup.html', context)
 
@@ -163,7 +165,8 @@ def groupSettings(request, groupshort):
     context = {
         'active_page': 'settings', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'error_msg': error_msg,
-        'group': group, 'member_list': member_list
+        'group': group, 'member_list': member_list,
+        'safetyLevels': widgets['safetyLevels']
     }
 
     # else: validate GroupProfileEditForm and save changes

@@ -239,7 +239,8 @@ def profile(request, user):
         'msgForm': widgets['msgForm'],
         'follow_list': widgets['follow_list'],
         'hot_list': widgets['hot_list'],
-        'group_sb_list': widgets['group_sb_list']
+        'group_sb_list': widgets['group_sb_list'],
+        'safetyLevels': widgets['safetyLevels']
     }
 
 
@@ -415,7 +416,8 @@ def settings(request):
         'active_page': 'settings', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'error_msg': error_msg,
         'user': user, 'discList': getDisciplines(), 'safetyLevelList': safetyLevel,
-        'userForm': userForm, 'userDataForm': userDataForm
+        'userForm': userForm, 'userDataForm': userDataForm,
+        'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'settings.html', context)
 
@@ -428,7 +430,8 @@ def showMessage(request, msg):
         'active_page': 'message', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'user': request.user, 'msg_id': msg,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
 
     # if a message was sent to this view:
@@ -468,7 +471,8 @@ def notification(request):
         'user': request.user,
         'notification_list': ntfc_list,
         'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
+        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+        'safetyLevels': widgets['safetyLevels']
     }
 
     # update -> set all notification to true
