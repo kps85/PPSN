@@ -1,88 +1,38 @@
-/* Wenn dann einheitlich. *gg* */
-#ftuFooter { border-top: 1px solid #F50000; }
-a { color: #F50000; }
-a:focus { color: #a00000; text-decoration: none; }
-/* Hier kann die Farbe entfernt werden.
-  .copy a {
-    color: #a00000;
-    font-size: 1.2em; }
-    .copy a:hover {
-      color: #F50000; }
-*/
-.copy { margin-top: 15px; }
-.copy a { color: #f50000; }
-.copy a:hover { color: #a00000; }
+a:hover { color: #f50000; }
+a:focus { color: #f50000; text-decoration: none; }
 
-.forgotBack:hover { cursor: pointer; }
+/* wenn Modal offen, scrollbar wird ausgeblendet und Content verschoben -> hier: FIX */
+body.modal-open { overflow: visible; padding-right: 0px !important; }
 
-.notificationLink { 
-	position: relative; 
-	padding-top: 25px;
-}
-.notificationLink .glyphicon, .logout .glyphicon { display: block; top: -5px; font-size: 36px; }
-.notificationLink .badge {
-	position: absolute;
-	right: 15px;
-	top: 15px;
-	z-index: 99;
-	background-color: #f50000;
-}
-@media screen and (max-width: 1023px) {
-	.notificationLink {
-		padding-top: 12px;
-	}
-		.notificationLink .glyphicon { top: 1px; font-size: 28px; }
-		.notificationLink .badge {
-			right: 5px;
-			top: 5px;
-		}
-}
+.forgotBack:hover { cursor: pointer; } /* Auf der FTU 'Zurück' Link in PW Forgot Box */
 
-.postContent.isHidden { margin-left: 0px; }
+.postContent.isHidden { margin-left: 0px; } /* ausgeblendete Nachricht: Bereich des Bildes entfernen */
 
-.postIgnore {
-	padding: 5px 20px;
-}
+.postIgnore { padding: 5px 20px; } /* Noch mehr Platz sparen, wenn Nachricht ausgeblendet */
 	.postIgnore .postFoot { margin-top: 0px; }
-.ignoreMsgButton, .ignoreCmtButton {
-	padding: 1px 5px;
-	background: none;
-	border: none;
-	color: #a00000;
+
+/*
+	das Auge zum ein- und ausblenden von Nachrichten, 
+	die Icons zum befördern / entfernen von Gruppenmitgliedern 
+*/
+.ignoreMsgButton, .ignoreCmtButton, .remUser, .promUser { 
+	padding: 1px 5px; background: none; border: none; color: #a00000; 
 }
-	.ignoreMsgButton:hover, .ignoreCmtButton:hover {
-		color: #f50000;
-		cursor: pointer;
+	.ignoreMsgButton:hover, .ignoreCmtButton:hover, .remUser:hover, .promUser:hover { 
+		color: #f50000; cursor: pointer; 
 	}
 
-.remUser:hover, .promUser:hover { cursor: pointer; }
-
-#main.infoGuest {
-	width: auto;
-	margin-left: auto;
-}
-
-a.profileButton {
-	color: #333 !important;
-}
-
-#content a:hover { text-decoration: none; }
-	
-.cit-logo { width: 75px; }
-.post .cit-logo { width: 150px; margin: 10px; }
-
-#body_info_guest #aside {
-    width: 0;
-    height: 0;
-    position: absolute;
-    bottom: 0;
-    right: 0; }
+/* Entfernt Sidebar-Reste vom Impressum für Gäste */
+#main.infoGuest { width: auto; margin-left: auto; }
+#body_info_guest #aside { width: 0; height: 0; position: absolute; bottom: 0; right: 0; }
 
 
+/* Neuer Nachricht Bild hinzufügen */
 	.newMsgPctr, .newMsgPctr div { margin-top: 3px; }
 	.newMsgPctr span:hover { cursor: pointer; }
 	.newMsgPctr img { margin: 10px; max-width: 200px; max-height: 200px; }
 
+/* Bild in message_box */
 .msgPctr {
 	height: 200px;
 	width: 100%;
@@ -93,95 +43,98 @@ a.profileButton {
 }
 	.msgPctr:hover { cursor: pointer; }
 	.msgPctrModal img { max-width: 100%; }
+	
 
-.groupDesc { margin-top: 10px; }
-
+/* Platz sparen in Sidebar */
 #list ul { margin-bottom: 0; }
 #list ul h3 { margin-top: 0; }
-#list ul li a.memberLink { width: auto; }
 
+
+/* message_box bessere Abgrenzung der Elemente, Platz sparen */
 .postTime { margin-left: 5px; }
-.postTextEdit { width: 100%; }
 .postTextEdit .form-group, .cmtTextEdit .form-group { margin-bottom: 0px; }
 
+/* post Button Delete has weird margin */
+.postFoot a { margin-right: 0px; }
 
 
-
-
-.showMembList, .showFavList {
+/*
+	Sidebar: Alle anzeigen unter Favoriten als Link darstellen
+	Profile FavList: Listitems ordentlich darstellen
+	Profile FavList: Auge zum "entfavoritisieren"
+	Group MemberList: Style Elements
+*/
+.showFavList, .showMembList, .memberList button[type=submit] {
 	background: none;
 	border: none;
-	color: #a00000;
-}
-.showFavList {
 	width: 100%;
 	padding: 4px 10px;
 	border-radius: 4px;
 	color: #818d9b;
 }
+.showMembList { width: auto; }
+.memberList button[type=submit], .showMembList { padding: 0px; color: #a00000; }
 	.showFavList:hover { color: #fff; }
+	.memberList button[type=submit]:hover, .showMembList:hover { color: #f50000; }
 	.showFavList.active {
 		color: #fff;
 		background-color: #1F212E;
 	}
-	.showMembList:hover { color: #f50000; }
-
 .memberList li {
 	padding: 3px 5px;
 	border-bottom: 1px solid rgba(0,0,0,.03);
 }
 	.memberList li:hover { background-color: rgba(0,0,0,.03); }
 	.memberList li:last-of-type { border-bottom: none; }
+/* Style for Memberlist on GroupSettings Page */
+.memberList { margin: 10px 0px; }
+.memberHead:hover { cursor: pointer; }
+.memberHead h4 { margin: 0px; }
 
+
+/* Infos im "neue Nachricht" Dialog / Modal */
 .newMsgInfo {
 	margin: 15px 0 0 0;
 	padding: 0;
 	font-size: .9em;
 }
 
-/* Irgendwo steckt bei den Links noch 'nen "text-deco: underline;". Ich krich's nicht, find's aber übelst hässlich. *gg* */
 
-  #ftu input[type="submit"][disabled] {
-		pointer-events: none;
-		cursor: not-allowed;
-		filter: alpha(opacity=50);
-		-webkit-box-shadow: none;
-						box-shadow: none;
-		opacity: .5;
-  }
-
-	#ftu .toggleItem { display: none; }
-	#ftu .toggleItem.active { display: block; }
-	#ftu #register.active { display: block; }
+/* Button's auf FTU werden nicht als "disabled" dargestellt, wenn disabled */
+#ftu input[type="submit"][disabled] {
+	pointer-events: none;
+	cursor: not-allowed;
+	filter: alpha(opacity=50);
+	-webkit-box-shadow: none;
+					box-shadow: none;
+	opacity: .5;
+}
+/* setzt PW Reset Box auf sichtbar, falls falsche Daten eingegeben wurden */
+#ftu .box { display: none; }
+#ftu .box.active { display: block; }
 	
-	#ftu .box { display: none; }
-	#ftu .box.active { display: block; }
 
-/* Kontrast, Kontrast, Kontrast ... */
-
+/* Nav Items weiß darstellen für besseren Kontrast */
 nav a { color: #fff; }
-nav a:focus { color: #fff; }
-	nav a:hover { background-color: rgba(255,255,255,0.1); }
-	nav a.active:hover { background-color: #f50000; }
+nav a:focus { color: #fff; } /* Wenn Nav Item angeklickt, weird blue Effekt entfernen */
+	nav a:hover { background-color: rgba(255,255,255,0.1); } /* ja :hover Effekt halt */
+	nav a.active:hover { background-color: #f50000; } /* selbst erklärend */
 
-.infoMessage .glyphicon-remove:hover { cursor: pointer; }
-.postFoot a { margin: 0; }
-.postFoot a:hover { cursor: pointer; }
 
-.faqList { list-style: inside square; }
+.infoMessage .glyphicon-remove:hover { cursor: pointer; } /* success_msg "X" :hover Kram ... */
+.postFoot a:hover { cursor: pointer; } /* Antworten Link:hover */
 
-.search_headline { clear: both; display: block; width: 100%; margin-top: 10px; }
+
+/* search_results ordentlich darstellen */
 .search_user_result, .search_hash_result, .search_group_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 5px 5px 0; padding: 5px 10px; }
 .search_user_result img, .search_group_result img { width: 50px; }
 
-body.modal-open { overflow: visible; padding-right: 0px !important; }
 
+/* style SearchResultButtons 'Benutzer, Gruppen, Themen, Nachrichten' */
 .searchResultButton { border-radius: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .searchResultButton.searchUser { border-radius: 4px 0 0 4px; }
 .searchResultButton.searchMsg { border-radius: 0 4px 4px 0; }
+
+/* show only first ResultBox with results */
 .searchResultBox { display: none; }
 .searchResultBox.active { display: block; }
-
-.memberHead:hover { cursor: pointer; }
-.memberHead h4 { margin: 0px; }
-.memberList { margin: 10px 0px; }

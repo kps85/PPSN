@@ -41,8 +41,9 @@ def index(request):
 
     # Messages
     messages = getMessages(data={'page': 'index', 'data': user, 'end': context['list_end'], 'request': request})
-    context['message_list'] = messages['message_list']
-    context['has_msg'] = messages['has_msg']
+
+    context['list_length'], context['list_end'] = messages['list_length'], messages['list_end']
+    context['has_msg'], context['message_list'] = messages['has_msg'], messages['message_list']
 
     return render(request, 'index.html', context)
 
@@ -283,7 +284,10 @@ def profile(request, user):
 
         # Messages
         messages = getMessages(data={'page': 'profile', 'data': pUser, 'end': end, 'request': request})
-        context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
+
+        context['list_length'], context['list_end'] = messages['list_length'], messages['list_end']
+        context['has_msg'], context['message_list'] = messages['has_msg'], messages['message_list']
+
         if 'delMessage' or 'ignoreMsg' not in request.POST:
             context['list_end']  = messages['list_end']
     except:
@@ -472,7 +476,9 @@ def load_more(request):
         context['is_hash'] = request.GET.get('hash')
 
     messages = getMessages(data={'page': page, 'data': data, 'end': end, 'request': request})
-    context['message_list'], context['list_end'] = messages['message_list'], messages['list_end']
+
+    context['list_length'], context['list_end'] = messages['list_length'], messages['list_end']
+    context['has_msg'], context['message_list'] = messages['has_msg'], messages['message_list']
 
     return render(request, 'message_box_reload.html', context)
 

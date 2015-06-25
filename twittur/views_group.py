@@ -32,7 +32,7 @@ def group(request, groupshort):
 
     group = GroupProfile.objects.get(short__exact=groupshort)
     context['group'] = group
-    context['member_list'] = group.member.order_by('first_name')
+    context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
     if request.user in context['member_list']:
         context['is_member'] = True
         if group.admin == request.user:

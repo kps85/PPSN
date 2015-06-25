@@ -70,15 +70,16 @@ def search(request):
             attag = True
             term = term[1:]
 
-        mList, dbmessage_list, comment_list, comment_count = [], [], [], []
+        mList, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
         for message in messages_list:
             copy_message = copy.copy(message[1])
             mList.append(dbm_to_m(copy_message))
             dbmessage_list.append(message[1])
-            comment_list.append(message[2])
-            comment_count.append(message[3])
+            message_forms.append(message[2])
+            comment_list.append(message[3])
+            comment_count.append(message[4])
 
-        mZip = zip(mList, dbmessage_list, comment_list, comment_count)
+        mZip = zip(mList, dbmessage_list, message_forms, comment_list, comment_count)
         message_list.append(mZip)
 
         user_list.append(User.objects.all().filter(Q(username__contains=term)

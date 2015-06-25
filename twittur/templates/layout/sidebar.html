@@ -20,7 +20,7 @@
       {% endfor %}
       <form action="{% url 'twittur:profile' user=user %}" method="get">
         <input name="favorits" type="hidden" value="true" />
-        <input class="showFavList{% if show_favs %} active{% endif %} text-left" type="submit" value="Alle anzeigen" />
+        <input class="showFavList{% if show_favs %} active{% endif %} text-left ullink" type="submit" value="Alle anzeigen" />
       </form>
  		</ul>
   {% endif %}
@@ -60,10 +60,10 @@
   </ul>
   
 {% elif active_page == 'settings' %}
-
   <ul>
     <h4>Einstellungen</h4>
     	{% if group %}
+  			<li><a href="{% url 'twittur:group' groupshort=group.short %}" class="menuCloser ullink">&laquo; zur&uuml;ck zu {{ group.short }}</a>
         <li><a href="#bild" class="menuCloser ullink bild">Gruppenbild ausw&auml;hlen</a></li>
         <li><a href="#gruppe" class="menuCloser ullink gruppe">Gruppendaten bearbeiten</a></li>
         <li><a href="#member" class="menuCloser ullink member">Mitglieder verwalten</a></li>

@@ -459,7 +459,6 @@ function initVarious() {
 								$("#cmt"+info.id).find(".postHide").html(data);
 							} else {	
 								$("#cmt"+info.id).each(function(index, element) {
-									$(element).toggleClass("postIgnore");
 									var hideElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .postHide."+info.id;
 									$(element).find(hideElements).toggleClass("hidden");
 									$(element).find(".ignoreCmtButton."+info.id).toggleClass("glyphicon-eye-open glyphicon-eye-close");
@@ -484,7 +483,6 @@ function initVarious() {
 						case 'del_cmt':
 							$("#cmt"+info.id).each(function(index, element) {
 								$("#delCmt"+info.id+"Modal").modal('hide');
-								$(element).toggleClass("postIgnore");
 								var remElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .cmtEdit."+info.id;
 								$(element).find(remElements).remove();
 								$("#newComment"+info.id).remove();

@@ -155,6 +155,8 @@
   	<a href="{% url 'twittur:group' groupshort=group.short %}">&laquo; Nachrichten anzeigen</a><br />
     <br />
   	<ul class="post memberList">
+    	<li class="clearfix">{{ group.admin.first_name }} {{ group.admin.last_name }} (@<a href="{% url 'twittur:profile' user=group.admin.username %}">{{ group.admin.username }}</a>)
+                           	<span class="pull-right"> [admin]</span>
   	{% for member in member_list %}
     	<li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>) 
       										 {% if member == group.admin %}
@@ -221,7 +223,7 @@
               {% csrf_token %}
               <input name="favorits" type="hidden" value="true" >
               <input type="hidden" name="entfollow" value="{{ fav.id }}">
-              <button type="submit"><strong><span class="glyphicon glyphicon-eye-close"></span></strong></button>
+              <button title="{{ fav.username }} aus Favoriten entfernen" type="submit"><strong><span class="glyphicon glyphicon-eye-close"></span></strong></button>
             </form>
           </span>
     {% endfor %}
