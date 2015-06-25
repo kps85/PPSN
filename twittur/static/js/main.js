@@ -162,14 +162,14 @@ function validateFtu() {
 
 
 function initInputValidation() {
-	$(".checkNumeric").keypress(function(e) {
+	/*$(".checkNumeric").keypress(function(e) {
 		// Erlaubt nur numerische Eingaben
 		if( ( (e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 8 ) || $(this).val().length > 5) {
 			e.preventDefault();
 			e.returnValue = false;
 			return false;
 		}
-	});
+	});*/
 	
 	$(".faqContainer .post").click(function() {
 		// Blendet Infotext ein und wechselt + zu - 
@@ -399,7 +399,25 @@ function initVarious() {
 		  $span.appendTo($ul);
 		  $p.appendTo($mainUl);
 		$ul.appendTo($content);
-	  })
+	  });
+      
+      
+      $(this).children("option").each(function() {
+          var $li = $("<li>", {'class':'superSubOpener', 'text':$(this).text()});
+          $li.click(function() {
+			$select.val($(this).val());
+			$mainUl.fadeOut(0);
+			$mainP.text($(this).text());
+            console.log($select.val());
+            $(".superDropdownSub").hide();
+			$mainP.addClass("active");
+			$mainP.removeClass("opened");
+          })
+          
+          $li.appendTo($mainUl);
+      })
+      
+      
 	  $div.insertAfter($(this));
 	  
 	  $mainP.click(function() {
@@ -459,6 +477,7 @@ function initVarious() {
 								$("#cmt"+info.id).find(".postHide").html(data);
 							} else {	
 								$("#cmt"+info.id).each(function(index, element) {
+									$(element).toggleClass("postIgnore");
 									var hideElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .postHide."+info.id;
 									$(element).find(hideElements).toggleClass("hidden");
 									$(element).find(".ignoreCmtButton."+info.id).toggleClass("glyphicon-eye-open glyphicon-eye-close");
@@ -483,6 +502,7 @@ function initVarious() {
 						case 'del_cmt':
 							$("#cmt"+info.id).each(function(index, element) {
 								$("#delCmt"+info.id+"Modal").modal('hide');
+								$(element).toggleClass("postIgnore");
 								var remElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .cmtEdit."+info.id;
 								$(element).find(remElements).remove();
 								$("#newComment"+info.id).remove();

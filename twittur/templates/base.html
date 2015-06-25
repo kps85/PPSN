@@ -85,12 +85,11 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
-              <h4 class="modal-title" id="myModalLabel">
-              	Neue Nachricht verfassen
-                <small>{% now "j. F Y, H:i" %} Uhr</small>
-              </h4>
+              <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
+              <div class="msgDiaDate pull-right">{% now "j. F Y, H:i" %} Uhr</div>
             </div>
             <div class="modal-body">
+                
             	{{ msgForm.text }}
               <div class="newMsgPctr container-fluid clearfix">
               	<span class="col-xs-6 pull-left"><strong>Bild hinzuf&uuml;gen</strong></span>
@@ -112,7 +111,15 @@
               </dl>
             </div>
             <div class="modal-footer">
-              <div class="msgDiaDate pull-left"></div>
+                 <div class="visibility">
+                 <p>Sichtbarkeit:</p>
+                <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Standard" required="required">
+                    <option value="group_default">Standard</option>
+                      <option value="group_test">Public</option>
+                      <option value="group_test">Uni</option>
+                      <option value="group_test">&test</option>
+                     </select>
+                 </div>
               <input type="hidden" name="codename" value="message" />
               {{ msgForm.user }}
               {{ msgForm.date }}

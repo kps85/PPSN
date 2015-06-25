@@ -100,24 +100,24 @@ header {
     margin-right: 15px; }
   #ftu #register {
     display: none; }
-  #ftu input, #ftu .superDropdown > p {
+  #ftu input {
     background: rgba(10, 10, 10, 0.6);
     color: #fff;
     border: 1px solid #000;
     padding: 10px;
     margin-bottom: 5px; }
-    #ftu input::-webkit-input-placeholder, #ftu .superDropdown > p::-webkit-input-placeholder {
+    #ftu input::-webkit-input-placeholder {
       /* WebKit browsers */
       color: #777; }
-    #ftu input:-moz-placeholder, #ftu .superDropdown > p:-moz-placeholder {
+    #ftu input:-moz-placeholder {
       /* Mozilla Firefox 4 to 18 */
       color: #777;
       opacity: 1; }
-    #ftu input::-moz-placeholder, #ftu .superDropdown > p::-moz-placeholder {
+    #ftu input::-moz-placeholder {
       /* Mozilla Firefox 19+ */
       color: #777;
       opacity: 1; }
-    #ftu input:-ms-input-placeholder, #ftu .superDropdown > p:-ms-input-placeholder {
+    #ftu input:-ms-input-placeholder {
       /* Internet Explorer 10+ */
       color: #777; }
   #ftu input[type="text"], #ftu input[type="password"] {
@@ -244,65 +244,32 @@ header {
       margin-top: 5%;
       height: 80%;
       max-width: 800px; } }
-  #register input, #register .superDropdown > p {
+  #register input {
     padding: 10px;
     border: 1px solid #E3E8EA;
     margin-bottom: 5px;
     background: #fff;
     color: #333; }
-    #register input::-webkit-input-placeholder, #register .superDropdown > p::-webkit-input-placeholder {
+    #register input::-webkit-input-placeholder {
       /* WebKit browsers */
       color: #555; }
-    #register input:-moz-placeholder, #register .superDropdown > p:-moz-placeholder {
+    #register input:-moz-placeholder {
       /* Mozilla Firefox 4 to 18 */
       color: #555;
       opacity: 1; }
-    #register input::-moz-placeholder, #register .superDropdown > p::-moz-placeholder {
+    #register input::-moz-placeholder {
       /* Mozilla Firefox 19+ */
       color: #555;
       opacity: 1; }
-    #register input:-ms-input-placeholder, #register .superDropdown > p:-ms-input-placeholder {
+    #register input:-ms-input-placeholder {
       /* Internet Explorer 10+ */
       color: #555; }
   #register input[disabled] {
     opacity: 0.6; }
     #register input[disabled]:hover {
       cursor: no-drop; }
-  @media screen and (max-width: 1023px) {
-    #register .superDropdown {
-      margin-bottom: 5px; } }
-  #register .superDropdown p {
-    color: #555; }
-  #register .superDropdown > p {
-    background: #fff;
-    color: #555;
-    cursor: pointer; }
-    #register .superDropdown > p.opened {
-      color: #333 !important;
-      background: rgba(255, 255, 255, 0.99); }
-    #register .superDropdown > p.active {
-      color: #333; }
-  #register .superDropdown .superDropdownDiv {
-    box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #E3E8EA;
-    border-top: none;
-    color: #333;
-    margin-left: 0px;
-    margin-top: -6px; }
-    #register .superDropdown .superDropdownDiv .superSubOpener {
-      padding: 10px; }
-      #register .superDropdown .superDropdownDiv .superSubOpener:hover {
-        background: #ddd;
-        cursor: pointer; }
-    #register .superDropdown .superDropdownDiv ul li, #register .superDropdown .superDropdownDiv span {
-      padding: 10px 30px; }
-      #register .superDropdown .superDropdownDiv ul li:hover, #register .superDropdown .superDropdownDiv span:hover {
-        background: #eee;
-        cursor: pointer; }
-    #register .superDropdown .superDropdownDiv span {
-      font-weight: bold;
-      display: block; }
+  #register div.superDropdown {
+    display: block !important; }
   #register input[type="submit"] {
     color: #fff;
     background: #FF0000;
@@ -446,6 +413,24 @@ textarea, input {
     width: 100%; }
   .newMsg .msgDiaDate {
     padding: 6px 12px; }
+
+.modal h4 {
+  display: inline-block; }
+.modal .visibility {
+  display: block;
+  width: 50%;
+  float: left;
+  text-align: left;
+  margin-top: -5px; }
+.modal p {
+  display: inline-block;
+  margin: 0; }
+.modal .msgDiaDate {
+  margin: 5px 20px; }
+.modal .close {
+  margin-top: 5px; }
+.modal .superDropdown > p {
+  min-width: 150px !important; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -800,15 +785,13 @@ header {
     padding: 0; }
   .superDropdown .superDropdownDiv {
     overflow-x: hidden;
-    cursor: default; }
-    @media screen and (min-width: 1024px) {
-      .superDropdown .superDropdownDiv {
-        position: absolute;
-        overflow-y: visible;
-        height: auto;
-        z-index: 4000;
-        background: transparent;
-        opacity: 1.0; } }
+    cursor: default;
+    position: absolute;
+    overflow-y: visible;
+    height: auto;
+    z-index: 4000;
+    background: transparent;
+    opacity: 1.0; }
   .superDropdown .superDropdownContent {
     position: relative;
     left: 0; }
@@ -821,6 +804,10 @@ header {
     position: absolute;
     left: 100%;
     top: 0; }
+
+@media screen and (max-width: 1023px) {
+  #register .superDropdownDiv {
+    position: static !important; } }
 
 /* Notifications */
 .notificationLink {
@@ -975,5 +962,60 @@ header {
 @media (max-width: 767px) {
   .profilAuthor, .profilNick {
     text-align: center; } }
+.superDropdown {
+  display: inline-block; }
+  @media screen and (max-width: 1023px) {
+    .superDropdown {
+      margin-bottom: 5px; } }
+  .superDropdown p {
+    color: #555; }
+  .superDropdown > p {
+    cursor: pointer;
+    padding: 10px;
+    min-width: 300px;
+    border: 1px solid #E3E8EA;
+    margin-bottom: 5px;
+    background: #fff;
+    color: #333; }
+    .superDropdown > p::-webkit-input-placeholder {
+      /* WebKit browsers */
+      color: #555; }
+    .superDropdown > p:-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: #555;
+      opacity: 1; }
+    .superDropdown > p::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: #555;
+      opacity: 1; }
+    .superDropdown > p:-ms-input-placeholder {
+      /* Internet Explorer 10+ */
+      color: #555; }
+    .superDropdown > p.opened {
+      color: #333 !important;
+      background: rgba(255, 255, 255, 0.99); }
+    .superDropdown > p.active {
+      color: #333; }
+  .superDropdown .superDropdownDiv {
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #E3E8EA;
+    border-top: none;
+    color: #333;
+    margin-left: 0px;
+    margin-top: -6px; }
+    .superDropdown .superDropdownDiv ul li, .superDropdown .superDropdownDiv span {
+      padding: 10px 30px; }
+      .superDropdown .superDropdownDiv ul li:hover, .superDropdown .superDropdownDiv span:hover {
+        background: #eee;
+        cursor: pointer; }
+    .superDropdown .superDropdownDiv .superSubOpener {
+      padding: 10px; }
+      .superDropdown .superDropdownDiv .superSubOpener:hover {
+        background: #ddd;
+        cursor: pointer; }
+    .superDropdown .superDropdownDiv span {
+      font-weight: bold;
+      display: block; }
 
 /*# sourceMappingURL=main.css.map */

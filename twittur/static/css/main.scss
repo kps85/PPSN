@@ -96,7 +96,7 @@ textarea, input { outline: none; }
 	margin-top: 22.5px;
 	margin-left: 3%;
 
-    
+
     
 	
 	position:fixed;
@@ -113,6 +113,35 @@ textarea, input { outline: none; }
 	}	
 }
 
+.modal { 
+    h4 {
+        display:inline-block;
+    }
+    .visibility {
+       display:block;
+       width:50%;
+       float:left;
+       text-align:left;
+       margin-top:-5px;
+    }
+    p {
+        display:inline-block;
+        margin:0;
+    }
+    
+    .msgDiaDate {
+        margin:5px 20px;
+    }
+    
+    .close {
+        margin-top:5px;
+    }
+    
+    .superDropdown > p {
+        min-width:150px !important;
+    }
+
+}
  
 
 /* Layout */
@@ -618,7 +647,7 @@ $iconWidth:50px;
 	.superDropdownDiv {
 		overflow-x:hidden;
 		cursor:default;
-		@include desktop {
+
 			position:absolute;
 			overflow-y:visible;
 			height:auto;
@@ -626,7 +655,7 @@ $iconWidth:50px;
 		
 			background:transparent;
 			opacity:1.0;
-		}
+		
 	}
 	
 	.superDropdownContent {
@@ -654,6 +683,11 @@ $iconWidth:50px;
 	}	
 }
 
+#register .superDropdownDiv {
+    @include tablet {
+        position:static !important;
+    }
+}
 
 /* Notifications */
 .notificationLink { 
@@ -864,4 +898,73 @@ $iconWidth:50px;
     }
 }
 
+
+.superDropdown {
+    display:inline-block;
+    
+	@include tablet {
+		margin-bottom:5px;
+	}
+	
+	
+	p {
+		color:#555;
+        
+	}
+	
+	& > p {
+		cursor:pointer;
+		padding:10px;
+        min-width:300px;
+		border:1px solid #E3E8EA;
+		margin-bottom:5px;
+		background:#fff;
+		color:#333;
+		@include placeholder(#555);
+
+    
+		&.opened {
+			color:#333 !important;
+			background:rgba(255,255,255,0.99);
+			
+		}
+		
+		&.active {
+			color:#333;
+		}
+	}
+	.superDropdownDiv {
+		box-sizing:border-box;
+		background:rgba(255,255,255,0.95);
+		border:1px solid #E3E8EA;
+		border-top:none;
+		color:#333;
+		margin-left:0px;
+		margin-top:-6px;
+		
+		
+		
+		ul  li, span {
+			padding:10px 30px;
+			&:hover {
+				background:#eee;
+				cursor:pointer;
+			}
+		}
+        
+		.superSubOpener {
+			padding:10px;
+			&:hover {
+				background:#ddd;
+				cursor:pointer;
+			}
+		}
+		
+		span {
+			font-weight:bold;
+			display:block;
+		}
+	}
+	
+}
     

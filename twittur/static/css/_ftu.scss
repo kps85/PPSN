@@ -77,7 +77,7 @@
 		display:none;
 	}
 	
-	input, .superDropdown > p {
+	input {
 		background:rgba(10,10,10,0.6);
 		color:#fff;
 		border:1px solid #000;
@@ -268,7 +268,7 @@
 	
 	
 	
-	input, .superDropdown > p {
+	input,  {
 		padding:10px;
 		border:1px solid #E3E8EA;
 		margin-bottom:5px;
@@ -285,62 +285,9 @@
 	}
 	
 	
-	.superDropdown {
-		@include tablet {
-			margin-bottom:5px;
-		}
-		
-		
-		p {
-			color:#555;
-		}
-		
-		& > p {
-			background:#fff;
-			color:#555;
-			cursor:pointer;
-			&.opened {
-				color:#333 !important;
-				background:rgba(255,255,255,0.99);
-				
-			}
-			
-			&.active {
-				color:#333;
-			}
-		}
-		.superDropdownDiv {
-			box-sizing:border-box;
-			background:rgba(255,255,255,0.95);
-			border:1px solid #E3E8EA;
-			border-top:none;
-			color:#333;
-			margin-left:0px;
-			margin-top:-6px;
-			
-			.superSubOpener {
-				padding:10px;
-				&:hover {
-					background:#ddd;
-					cursor:pointer;
-				}
-			}
-			
-			ul li, span {
-				padding:10px 30px;
-				&:hover {
-					background:#eee;
-					cursor:pointer;
-				}
-			}
-			
-			span {
-				font-weight:bold;
-				display:block;
-			}
-		}
-		
-		}
+    div.superDropdown {
+        display:block !important;
+    }
 	
 	input[type="submit"] {
 		color:#fff;
@@ -376,6 +323,10 @@
 		border-bottom:1px solid #eee;
 		font-weight:100;
 	}
+    
+    .superDropdownDiv {
+        
+    }
 	
 }
 
@@ -428,4 +379,6 @@
 		}
 	}
 }
+
+
 

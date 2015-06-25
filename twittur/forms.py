@@ -194,7 +194,7 @@ class MessageForm(ModelForm):
     # initializing form input fields
     class Meta:
         model = Message
-        fields = ['user', 'text', 'date', 'picture']
+        fields = ['user', 'text',  'date', 'picture']
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
@@ -202,6 +202,8 @@ class MessageForm(ModelForm):
         # set user input and date input type to hidden
         self.fields['user'].widget = forms.HiddenInput()
         self.fields['date'].widget = forms.HiddenInput()
+        # set visibility field
+        
         # set text input type to textarea and add class 'form-control'
         self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
         self.fields['text'].widget.attrs['class'] = 'form-control'
