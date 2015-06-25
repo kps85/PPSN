@@ -404,11 +404,13 @@ function initVarious() {
       
       $(this).children("option").each(function() {
           var $li = $("<li>", {'class':'superSubOpener', 'text':$(this).text()});
+          var optionVal = $(this).val()
           $li.click(function() {
-			$select.val($(this).val());
+			$select.val(optionVal);
+            console.log($select.val() + " gewaehlt");
 			$mainUl.fadeOut(0);
 			$mainP.text($(this).text());
-            console.log($select.val());
+
             $(".superDropdownSub").hide();
 			$mainP.addClass("active");
 			$mainP.removeClass("opened");
