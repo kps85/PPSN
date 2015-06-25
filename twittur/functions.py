@@ -40,23 +40,7 @@ def msgDialog(request):
 
 # edit or update Message
 def editMessage(request):
-    if 'updateMsg' in request.POST:                                       # if Message should be updated
-        if Message.objects.filter(pk=request.POST['updateMsg']).exists():   # if Message exists
-            curMsg = Message.objects.get(pk=request.POST['updateMsg'])      # select Message
-            curMsg.text = request.POST['updatedText']                       # set Message text
-            msg_to_db(curMsg)                                               # ???
-            curMsg.save()                                                   # save and update Message
-        return 'Nachricht erfolgreich aktualisiert!'                        # return info
-
-    elif 'updateCmt' in request.POST:                                       # if Message should be updated
-        if Message.objects.filter(pk=request.POST['updateCmt']).exists():   # if Message exists
-            curMsg = Message.objects.get(pk=request.POST['updateCmt'])      # select Message
-            curMsg.text = request.POST['updatedText']                       # set Message text
-            msg_to_db(curMsg)                                               # ???
-            curMsg.save()                                                   # save and update Message
-        return 'Kommentar erfolgreich aktualisiert!'                        # return info
-
-    elif 'remUser' in request.POST:
+    if 'remUser' in request.POST:
         group = GroupProfile.objects.get(pk=request.POST['group'])
         member = User.objects.get(pk=request.POST['remUser'])
         setNotification('group', data={'group': group, 'member': member})
@@ -192,7 +176,7 @@ def getMessages(data):
     ignoreM_list = userprofile.ignoreM.all()
     ignoreU_list = userprofile.ignoreU.all()
 
-    message_list, comment_list, comment_count = [], [], []
+    message_list, message_forms, comment_list, comment_count = [], [], [], []
     for message in dbmessage_list:
         if message.date > curDate:
             message.editable = True
@@ -213,12 +197,16 @@ def getMessages(data):
             copy_message = copy.copy(message)
             message_list.append(dbm_to_m(copy_message))
 
+        msgForm = MessageForm(instance=message)
+        message_forms.append(msgForm)
+
     if len(message_list) > 0:
         result['has_msg'] = True
 
     result['list_length'] = len(message_list)
     result['message_list'] = zip(
-        message_list[:result['list_end']], dbmessage_list[:result['list_end']], comment_list, comment_count
+        message_list[:result['list_end']], dbmessage_list[:result['list_end']],
+        message_forms, comment_list, comment_count
     )
 
     if result['list_end'] is None or result['list_end'] >= len(message_list):
@@ -259,7 +247,7 @@ def getMessageList(page, data):
     else:
         dbmessage_list = Message.objects.filter(pk=page)
 
-    return dbmessage_list
+    return dbmessage_list.distinct()
 
 
 # return Comment List for specific Message
@@ -334,6 +322,16 @@ def getWidgets(request):
         'new': getNotificationCount(request.user), # Notifications
     }
     return sidebar
+
+
+# Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurueck
+def elimDups(list):
+    dups, final = [], []
+    for sub in list:
+        for item in sub:
+            if item in final: dups.append(item)
+            else: final.append(item)
+    return final
 
 
 def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X

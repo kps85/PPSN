@@ -316,24 +316,11 @@ function initVarious() {
 			$("#newMessage").find("textarea").focus();
 		}, 500);
   });
-	$(".showMsgEdit, .showCmtEdit").click(function(e) {
-		var mID = $(this).attr("data-hint");
-		var tar = ($(this).is(".showMsgEdit")) ? "#postText"+mID : "#cmtText"+mID;
-		var tarEdit = ($(this).is(".showMsgEdit")) ? "#postTextEdit"+mID : "#cmtTextEdit"+mID;
-		$(this).addClass("hidden");		
-    $(tar).addClass("hidden");
-    $(tarEdit).removeClass("hidden");    
-  });
-	$(".hideMsgEdit, .hideCmtEdit").click(function(e) {
-		var mID = $(this).attr("data-hint");
-		var tar = ($(this).is(".hideMsgEdit")) ? "#postText"+mID : "#cmtText"+mID;
-		var tarEdit = ($(this).is(".hideMsgEdit")) ? "#postTextEdit"+mID : "#cmtTextEdit"+mID;
-		var tarBtn = ($(this).is(".hideMsgEdit")) ? ".showMsgEdit" : ".showCmtEdit";
-		$(tarBtn).removeClass("hidden");
-    $(tar).removeClass("hidden");
-    $(tarEdit).addClass("hidden");
-  });
-  
+	$(".showMsgEdit, .showCmtEdit, .hideMsgEdit, .hideCmtEdit").click(function(e) {
+		var id = $(this).attr("data-hint");
+		var togElements = ".showMsgEdit."+id+", .showCmtEdit."+id+", .postText."+id+", .postTextEdit."+id+", .cmtText."+id+", .cmtTextEdit."+id;
+		$(togElements).toggleClass("hidden");
+  });  
   
   /* Super Dropdown List */
   $(".superDropdown").each(function() {
@@ -419,13 +406,19 @@ function initVarious() {
 	  $("#newComment"+data[0]).find(".modal-title").html("Antwort an " + data[1] + " verfassen");
   });
 	
-	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton").click(function(e) {
+	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton, .saveMsgEdit, .saveCmtEdit").click(function(e) {
 		var hint = $(this).attr("data-hint").split(" ");
     var info = {
 			what: hint[0],
 			id: hint[1],
 			user: hint[2],
 			url: hint[3]
+		}
+		if ($(this).is(".saveMsgEdit")) {
+			info.clear = $(".postTextEdit."+info.id).find("input[type=checkbox]").prop('checked');
+			info.val = $(".postTextEdit."+info.id).find("textarea").val();
+		} else if ($(this).is(".saveCmtEdit")) {
+			info.val = $(".cmtTextEdit."+info.id).find("textarea").val();			
 		}
 		var hideIt = function() {
 			$.ajax({
@@ -466,7 +459,7 @@ function initVarious() {
 							$("#post"+info.id).each(function(index, element) {
 								$("#delMsg"+info.id+"Modal").modal('hide');
 								$(element).toggleClass("postIgnore");
-								var delElements = ".icon, .postMeta, .postText, .postReply, .postEdit";
+								var delElements = ".icon, .postMeta, .postText, .postTextEdit, .postReply, .postEdit";
 								$(element).find(delElements).remove();
 								$("#newComment"+info.id).remove();
 								$(element).find(".postContent").toggleClass("isHidden");
@@ -488,6 +481,19 @@ function initVarious() {
 									$("#delCmt"+info.id+"Modal").remove();
 								}, 1000);
 							});
+							break;
+						case 'upd_msg':
+							var togElements = ".showMsgEdit."+info.id+", .showCmtEdit."+info.id+", .postText."+info.id+", .postTextEdit."+info.id+", .cmtText."+info.id+", .cmtTextEdit."+info.id;
+							$(togElements).toggleClass("hidden");
+							if ($(".postTextEdit."+info.id).length > 0) {
+								$(".postText."+info.id).find("p").html(data);
+							} else {
+								$(".cmtText."+info.id).find("p").html(data);
+							}
+							if (info.clear) {
+								alert("test");
+								$("#post"+info.id).find(".msgPctr, .msgPctrEdit, .msgPctrModal").remove();
+							}
 							break;
 					}
 				},

@@ -36,7 +36,7 @@ def group(request, groupshort):
     if request.user in context['member_list']:
         context['is_member'] = True
         if group.admin == request.user:
-            context['button_text'] = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' bearbeiten'
+            context['button_text'] = '<span class="glyphicon glyphicon-cog"></span> ' + group.short.upper() + ' bearbeiten'
         else:
             context['button_text'] = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
     else:
@@ -50,6 +50,7 @@ def group(request, groupshort):
     context['list_end'] = messages['list_end']
 
     return render(request, 'profile.html', context)
+
 
 # view for add a new group
 def addgroup(request):

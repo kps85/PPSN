@@ -10,7 +10,7 @@ from django.shortcuts import render
 
 from .models import GroupProfile, UserProfile, Nav, Message, Notification
 from .forms import UserForm, UserDataForm
-from .functions import editMessage, getMessages, getWidgets, setNotification, pw_generator
+from .functions import dbm_to_m, getMessages, getWidgets, msg_to_db, setNotification, pw_generator
 
 
 # startpage
@@ -35,7 +35,7 @@ def index(request):
 
     # if request was sent to view: return success message
     if request.method == 'POST':
-        context['success_msg'] = editMessage(request)
+        context['success_msg'] = 'Nachricht erfolgreich gesendet!'
         if 'list_end' in request.POST:
             context['list_end'] = request.POST['list_end']
 
@@ -55,7 +55,7 @@ def login(request):
     # Public Messages:
     message_list = Message.objects.filter(
         Q(comment=None) & Q(attags=None)
-    ).order_by('-date')
+    ).order_by('-date').distinct()
 
     # login
     if request.method == "GET":
@@ -189,7 +189,6 @@ def login(request):
         userProfile.save()
 
         # academic discipline (required user in db) -> add user to group uni, fac whatever and his academic discipline
-        print(academicDiscipline)
         try:
             group = GroupProfile.objects.get(name=academicDiscipline)
             while True:
@@ -244,19 +243,14 @@ def profile(request, user):
     try:
         pUser = User.objects.get(username=user)  # this is the user displayed in html
         context['pUser'], context['pUserProf'], context['ignored'] = pUser, pUser.userprofile, False
-        if request.method == 'POST' and 'ignoreUser' in request.POST:
-            if 'ignoreUser' in request.POST:               # clicked User ignorieren
-                ignoreUser_list = request.user.userprofile.ignoreU.all()
-                if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
-                    request.user.userprofile.ignoreU.remove(pUser)
-                    context['success_msg'] = pUser.username + " wird nicht mehr ignoriert."
-                else:                                                       # ignore dat biatch
-                    request.user.userprofile.ignoreU.add(pUser)
-                    context['success_msg'] = pUser.username + " wird fortan ignoriert."
-
-        elif 'delMessage' in request.POST or 'ignoreMsg' in request.POST:
-            context['success_msg'] = editMessage(request)
-            context['list_end'] = request.POST['list_end']
+        if request.method == 'POST' and 'ignoreUser' in request.POST: # clicked User ignorieren
+            ignoreUser_list = request.user.userprofile.ignoreU.all()
+            if pUser in ignoreUser_list:                                # unignore(?) if user is ignored
+                request.user.userprofile.ignoreU.remove(pUser)
+                context['success_msg'] = pUser.username + " wird nicht mehr ignoriert."
+            else:                                                       # ignore dat biatch
+                request.user.userprofile.ignoreU.add(pUser)
+                context['success_msg'] = pUser.username + " wird fortan ignoriert."
 
         elif request.POST and 'entfollow' in request.POST:
             entfollow = User.objects.get(id=request.POST.get('entfollow'))
@@ -264,7 +258,6 @@ def profile(request, user):
                         Q(user__exact=entfollow) & Q(follower__exact=request.user.userprofile)
                     )
             follow.delete()
-            
             context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
 
         elif request.GET and 'follow' in request.GET:
@@ -382,7 +375,7 @@ def showMessage(request, msg):
     # if a message was sent to this view:
     # return success_msg
     if request.method == 'POST':
-        context['success_msg'] = editMessage(request)
+        context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
     # Messages
     messages = getMessages(data={'page': msg, 'data': request.user, 'request': request})
@@ -399,7 +392,7 @@ def notification(request):
     # for context
     ntfc_list = Notification.objects.filter(
         Q(user=request.user)
-    ).order_by("-date")
+    ).order_by("-date").distinct()
 
     # saving boolean extra, because it will deleted by next for loop
     boolean_list = []
@@ -478,15 +471,31 @@ def update(request):
                     response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                                "Nachricht erfolgreich ausgeblendet!"
     elif what == 'del_msg' or what == 'del_cmt':
-        if Message.objects.filter(comment=request.GET.get('id')).exists():
-            msg = Message.objects.get(pk=request.GET.get('id'))
-            comments = Message.objects.filter(comment=msg)
-            for obj in comments:
-                obj.delete()
-        if Message.objects.filter(pk=request.GET.get('id')).exists():  # if Message exists
-            curMsg = Message.objects.get(pk=request.GET.get('id'))     # select Message
-            curMsg.delete()                                                 # delete selected Message
+        if Message.objects.filter(pk=request.GET.get('id')).exists():           # if Message exists
+            msg = Message.objects.get(pk=request.GET.get('id'))                 # select Message
+            if Message.objects.filter(comment=request.GET.get('id')).exists():
+                comments = Message.objects.filter(comment=msg)
+                for obj in comments:
+                    obj.delete()
+            if msg.picture:
+                pic = msg.picture
+                pic.delete()
+            msg.delete()                                                        # delete selected Message
         response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                    "Nachricht gel&ouml;scht!"                                   # return info
+    elif what == 'upd_msg':
+        if Message.objects.filter(pk=request.GET.get('id')).exists():
+            msg = Message.objects.get(pk=request.GET.get('id'))
+            msg.text = request.GET.get('val')                                   # set Message text
+            if 'clear' in request.GET and request.GET.get('clear') == 'true':
+                if msg.picture is not None:
+                    pic = msg.picture
+                    pic.delete()
+                    msg.picture = None
+            msg_to_db(msg)                                                     # ???
+            msg.save()                                                       # save and update Message
+            response = dbm_to_m(msg).text
+    else:
+        response = "Something went wrong."
 
     return HttpResponse(response)

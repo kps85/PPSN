@@ -12,30 +12,19 @@
   </div>
   <div class="cmtText {{ comment.0.id }}{% if comment.0.ignore %} hidden{% endif %}" id="cmtText{{ comment.0.id }}">
     {% if comment.0.text %}
-      {{ comment.0.text|safe }}
+      <p>{{ comment.0.text|safe }}</p>
     {% endif %}
   </div>
   {% if comment.0.editable %}
-  <div class="cmtTextEdit hidden clearfix" id="cmtTextEdit{{ comment.0.id }}">
-    {% if active_page == 'profile' %}
-      <form action="{% url 'twittur:'|add:active_page user=user %}" method="POST">
-    {% elif active_page == 'message' %}
-      <form action="{% url 'twittur:'|add:active_page msg=msg_id %}" method="POST">
-    {% elif active_page == 'group' %}
-      <form action="{% url 'twittur:'|add:active_page groupshort=groupshort %}" method="POST">
-    {% else %}
-      <form action="{% url 'twittur:'|add:active_page %}" method="POST">
-    {% endif %}
-    {% csrf_token %}
-      <input id="updateCmt" name="updateCmt" type="hidden" value="{{ comment.0.id }}" />
-      <div class="form-group">
-        <textarea class="form-control" name="updatedText" rows="3">{{ comment.0.text|safe }}</textarea>
-      </div>
-      <div class="form-group text-right">
-        <button class="btn btn-xs btn-default hideCmtEdit" type="button" data-hint="{{ comment.0.id }}" id="hideCmtEdit{{ comment.0.id }}">Abbrechen</button>
-        <button class="btn btn-xs btn-primary" type="submit">Speichern</button>
-      </div>
-    </form>
+  <div class="cmtTextEdit {{ comment.0.id }} hidden clearfix" id="cmtTextEdit{{ comment.0.id }}">
+    <div class="form-group">
+      <textarea class="form-control updatedText {{ comment.0.id }}" name="updatedText" rows="3">{{ comment.0.text|striptags }}</textarea>
+    </div>
+    <div class="form-group text-right">
+      <button class="btn btn-xs btn-default hideCmtEdit" data-hint="{{ comment.0.id }}" type="button">Abbrechen</button>
+      <button class="btn btn-xs btn-primary saveCmtEdit" id="saveCmtEdit{{ comment.0.id }}" type="button"
+      				data-hint="upd_msg {{ comment.0.id }} {{ message.user.username }} {% url 'twittur:update' %}">Speichern</button>
+    </div>
   </div>
   {% endif %}
 

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, editMessage, getMessages, getWidgets
+from .functions import dbm_to_m, elimDups, getMessages, getWidgets
 from .models import GroupProfile, Hashtag, Nav
 
 
@@ -58,7 +58,7 @@ def search(request):
 
     # if message was sent to view: return success message
     if request.method == 'POST':
-        context['success_msg'] = editMessage(request)
+        context['success_msg'] = 'Nachricht erfolgreich gesendet!'
         context['list_end'] = int(request.POST['list_end'])
 
     for term in search_input:
@@ -122,7 +122,7 @@ def hashtag(request, text):
 
     # if message was sent to view: return success message
     if request.method == 'POST':
-        success_msg = editMessage(request)
+        success_msg = 'Nachricht erfolgreich gesendet!'
 
     # Messages
     messages = getMessages(data={'page': 'hashtag', 'data': text, 'request': request})
@@ -136,13 +136,3 @@ def hashtag(request, text):
         'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
     }
     return render(request, 'search.html', context)
-
-
-# Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurueck
-def elimDups(list):
-    dups, final = [], []
-    for sub in list:
-        for item in sub:
-            if item in final: dups.append(item)
-            else: final.append(item)
-    return final

@@ -205,6 +205,7 @@ class MessageForm(ModelForm):
         # set text input type to textarea and add class 'form-control'
         self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
         self.fields['text'].widget.attrs['class'] = 'form-control'
+        self.fields['text'].widget.attrs['rows'] = '5'
 
     # return checked text input value
     def clean_text(self):
