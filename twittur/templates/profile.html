@@ -62,7 +62,7 @@
             <form action="{% url 'twittur:group' groupshort=group.short %}" method="get">
             	<input name="member" type="hidden" value="true" />
               <strong><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
-            	<input class="showMembList" type="submit" value="{{ member_list|length }} {% if member_list|length == 1 %}Mitglied{% else %}Mitglieder{% endif %}" /></strong>
+            	<input class="showMembList" type="submit" value="{{ member_list|length|add:'1' }} {% if member_list|length|add:'1' == 1 %}Mitglied{% else %}Mitglieder{% endif %}" /></strong>
             </form>
           </div>          
           {% else %}
