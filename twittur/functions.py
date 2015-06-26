@@ -239,7 +239,7 @@ def getMessageList(page, data):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
             ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
-            | Q(attags = data) )
+            | Q(attags = data) ) | Q(group__member=data)
             & Q(comment = None)
         ).order_by('-date')
     elif page == 'group':
