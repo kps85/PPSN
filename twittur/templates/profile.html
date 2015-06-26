@@ -280,6 +280,11 @@
   {% else %}
     <div class="text-center"><em>Der Benutzer wurde von Dir ausgeblendet!</em></div>
   {% endif %}
-
+{% else %}
+<div class="container-fluid searchResultBox active text-center">
+      <br />
+      <em>{{ error_msg }}</em><br>
+      <a href="{% url 'twittur:index' %}"><em>zurück zur Startseite</em></a>
+    </div>
 {% endif %}
 {% endblock %}
