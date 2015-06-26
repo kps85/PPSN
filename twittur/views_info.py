@@ -28,7 +28,8 @@ def info(request):
     # return relevant information to render info.html
     context = {
         'active_page': 'info', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'team': projektTeam
+        'team': projektTeam,
+        'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'info.html', context)
 
@@ -79,7 +80,8 @@ def faq(request):
         'active_page': 'info', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'error_msg': error_msg, 'faqForm': faqForm,
         'FAQs': FAQs, 'faqMain': faqMain, 'faqStart': faqStart,
-        'faqProfile': faqProfile, 'faqInfo': faqInfo, 'faqSettings': faqSettings
+        'faqProfile': faqProfile, 'faqInfo': faqInfo, 'faqSettings': faqSettings,
+        'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'info_faq.html', context)
 
@@ -135,6 +137,7 @@ def support(request):
     context = {
         'active_page': 'info', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'hash': hash, 'curUser': request.user,
-        'team_list': team_list, 'cat_list': cat_list
+        'team_list': team_list, 'cat_list': cat_list,
+        'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'info_support.html', context)

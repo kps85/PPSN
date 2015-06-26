@@ -1,5 +1,9 @@
-a:hover { color: #f50000; }
+a:hover { color: #f50000; cursor: pointer; }
 a:focus { color: #f50000; text-decoration: none; }
+
+
+/* Antworten Link :hover */
+a.reply_link:hover { cursor: pointer; }
 
 /* wenn Modal offen, scrollbar wird ausgeblendet und Content verschoben -> hier: FIX */
 body.modal-open { overflow: visible; padding-right: 0px !important; }
@@ -48,6 +52,7 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 /* Platz sparen in Sidebar */
 #list ul { margin-bottom: 0; }
 #list ul h3 { margin-top: 0; }
+#list button:focus { box-shadow: none; }
 
 
 /* message_box bessere Abgrenzung der Elemente, Platz sparen */

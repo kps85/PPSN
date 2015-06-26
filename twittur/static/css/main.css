@@ -354,6 +354,12 @@ h2 {
 textarea, input {
   outline: none; }
 
+.clear {
+  height: 0px;
+  content: "";
+  display: table;
+  clear: both; }
+
 /* Bootstrap */
 .btn-primary, .btn-primary[disabled] {
   background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
@@ -416,33 +422,35 @@ textarea, input {
 
 .modal h4 {
   display: inline-block; }
-.modal .visibility {
-  text-align: left;
-  margin-top: -5px; }
-  @media screen and (min-width: 1024px) {
-    .modal .visibility {
-      width: 60%;
-      float: left;
-      display: block; } }
-  .modal .visibility > p {
-    display: inline-block;
-    margin: 0;
-    width: 25%; }
 .modal .msgDiaDate {
   margin: 5px 20px; }
 .modal .close {
   margin-top: 5px; }
-@media screen and (min-width: 1024px) {
-  .modal .superDropdown {
-    min-width: 70% !important; } }
-@media screen and (max-width: 1023px) {
-  .modal .superDropdown {
-    display: block;
-    margin-bottom: 10px; }
-    .modal .superDropdown > p {
-      display: block; } }
-.modal .superDropdown > p {
-  min-width: 0; }
+.modal .visibility {
+  margin-top: -5px; }
+
+.visibility {
+  width: 60%;
+  float: left;
+  display: block;
+  text-align: left;
+  margin-top: 5px; }
+  @media screen and (max-width: 639px) {
+    .visibility {
+      width: 100%;
+      float: none; } }
+  .visibility > p {
+    display: inline-block;
+    margin: 0;
+    width: 25%; }
+  .visibility .superDropdown {
+    max-width: 70%;
+    min-width: 70% !important; }
+    @media screen and (max-width: 639px) {
+      .visibility .superDropdown {
+        min-width: 72% !important; } }
+    .visibility .superDropdown > p {
+      min-width: 0; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -1029,5 +1037,8 @@ header {
     .superDropdown .superDropdownDiv span {
       font-weight: bold;
       display: block; }
+
+.msgEditSave {
+  padding-top: 15px; }
 
 /*# sourceMappingURL=main.css.map */

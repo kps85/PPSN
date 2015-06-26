@@ -36,6 +36,11 @@ h2 {
 
 textarea, input { outline: none; }
 
+.clear {
+    height:0px;
+    @include clearAttr;
+}
+
 /* Bootstrap */
 .btn-primary, .btn-primary[disabled] {
 	@include gradient(#F50000,#990000);
@@ -117,24 +122,6 @@ textarea, input { outline: none; }
     h4 {
         display:inline-block;
     }
-    .visibility {
-       
-       @include desktop {
-           width:60%;
-           float:left;
-           display:block;
-       }
-       
-       text-align:left;
-       margin-top:-5px;
-       
-       & > p {
-           display:inline-block;
-           margin:0;
-           width:25%;
-       }
-    }
-    
     
     .msgDiaDate {
         margin:5px 20px;
@@ -144,25 +131,45 @@ textarea, input { outline: none; }
         margin-top:5px;
     }
     
-    .superDropdown {
-        @include desktop {
-             min-width:70% !important;
-         }
-        @include tablet {
-            display:block;
-            margin-bottom:10px;
-            & > p {
-                display:block;
-            }
-        
-        }
-        & > p {
-            min-width:0;
-            
-        }
-        
+    .visibility {
+        margin-top:-5px;
     }
 
+}
+
+.visibility {
+
+   width:60%;
+   float:left;
+   display:block;
+   @include phone {
+       width:100%;
+       float:none;
+   }
+   
+   text-align:left;
+   margin-top:5px;
+   
+   & > p {
+       display:inline-block;
+       margin:0;
+       width:25%;
+   }
+   
+   .superDropdown {
+            max-width:70%;
+            min-width:70% !important;
+            @include phone {
+               min-width:72% !important;
+            }
+    
+      
+       & > p {
+           min-width:0;
+        
+       }
+    
+   }
 }
  
 
@@ -988,5 +995,9 @@ $iconWidth:50px;
 		}
 	}
 	
+}
+
+.msgEditSave {
+    padding-top:15px;
 }
     
