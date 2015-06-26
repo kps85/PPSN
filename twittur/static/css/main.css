@@ -959,7 +959,7 @@ header {
 .profilEdit {
   position: absolute;
   right: 20px;
-  z-index: 99; }
+  z-index: 2; }
 
 .profilMeta div {
   margin-top: 10px;
