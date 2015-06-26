@@ -111,6 +111,10 @@ def addgroup(request):
 
 # function for delete/join/leave group
 def djlgroup(request, groupshort):
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
     # Be sure this is the right function, true -> get group object
     if 'delete_join_group' in request.POST:
         group = GroupProfile.objects.get(short__exact=groupshort)

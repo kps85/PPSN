@@ -27,6 +27,7 @@ def index(request):
     # initialize sidebar lists
     widgets = getWidgets(request)
 
+    # context for template
     context = {
         'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'current_user': user, 'list_end': 5,
