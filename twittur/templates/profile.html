@@ -293,7 +293,11 @@
 <div class="container-fluid searchResultBox active text-center">
       <br />
       <em>{{ error_msg }}</em><br>
+      {% if where %}
+      <a href="{% url 'twittur:group' groupshort=where %}"><em>zurück zur Gruppenseite</em></a>
+    {% else %}
       <a href="{% url 'twittur:index' %}"><em>zurück zur Startseite</em></a>
+    {% endif %}
     </div>
 {% endif %}
 {% endblock %}
