@@ -123,11 +123,11 @@
                       {% if item.0|length > 1 %}
                         <optgroup label="Gruppe ausw&auml;hlen">
                           {% for grp in item %}
-                            <option value="&amp;{{ grp }}"></option>
+                            <option value="&amp;{{ grp }}" {% if user.userprofile.safety == grp %} selected="selected"{% endif %}></option>
                           {% endfor %}
                         </optgroup>
                       {% else %}
-                        <option value="{{ item }}">{{ item }}</option>
+                        <option value="{{ item }}" {% if user.userprofile.safety == item %} selected="selected"{% endif %}>{{ item }}</option>
                       {% endif %}
                     {% endif %}
                   {% endfor %}

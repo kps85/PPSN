@@ -115,22 +115,6 @@ function initMenu() {
             $(".searchBar").hide();
         }
 	})
-	
-	var page = (window.location.href.split("/"))[4]
-	var name = ((window.location.href.split("/"))[5]).split("?")[0];
-	switch (page) {
-		case 'profile':
-			$(".following .ullink."+name).addClass("active");
-			break;
-		case 'hashtag':
-			$(".hashs .ullink."+name).addClass("active");
-			break;
-		case 'group':
-			$(".groups .ullink."+name).addClass("active");
-			break;
-		default:
-			break;
-	}
 }
 
 function initList() {
@@ -326,24 +310,6 @@ function initVarious() {
 	$(".hideInfo").click(function() {
 		$(this).parent("div").hide();
 	});
-	$(".newMsg, .postToUser, .postToGroup").click(function(e) {
-		var target = $(this).attr("data-hint");
-		var symbol = ($(this).is(".postToUser")) ? "@" : "&";
-		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {
-			var val = $("#id_text").val().replace(symbol + target + " ", '');
-			$("#newMessage").find("textarea").val(symbol + target + " " + val);			
-		}
-		$("#newMessage select.superDropdown").val(symbol+target);
-		$("#newMessage").find("div.superDropdown p").text(symbol+target);
-    setTimeout(function() {
-			$("#newMessage").find("textarea").focus();
-		}, 500);
-  });
-	$(".showMsgEdit, .showCmtEdit, .hideMsgEdit, .hideCmtEdit").click(function(e) {
-		var id = $(this).attr("data-hint");
-		var togElements = ".showMsgEdit."+id+", .showCmtEdit."+id+", .postText."+id+", .postTextEdit."+id+", .cmtText."+id+", .cmtTextEdit."+id;
-		$(togElements).toggleClass("hidden");
-  });  
   
   /* Super Dropdown List */
   $(".superDropdown").each(function() {
@@ -352,7 +318,7 @@ function initVarious() {
 	  var name = $(this).attr('placeholder');
 	  var $div = $("<div>", {'class':'superDropdown'});
 	  var $mainDiv = $("<div>", {'class':'superDropdownDiv'});
-	  var $mainP = $("<p>", {'class':'id', 'text':name});
+	  var $mainP = $("<p>", {'class':'id', 'html':name+'<span class="glyphicon glyphicon-chevron-down pull-right"></span>'});
 	  $(this).attr('default', name);
 	  var $mainUl = $("<ul>", {'class':'superDropdownList'});
 	  
@@ -442,7 +408,52 @@ function initVarious() {
 		  $(this).toggleClass("opened");
 	  });
 	  
+  });  
+	/* Smoothes Scrollen */
+	$(function() {
+	  $('a.scrollTop[href*=#]:not([href=#])').click(function() {
+	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {     
+	        scrollToTop();
+	        return false;
+	    }
+	  });
+	});
+  
+  
+/* Scrollevent */
+	$(window).scroll(function() {
+		if($(window).scrollTop() > 0) {
+			$(".newMsg").addClass("scrolled");
+			$(".scrollTop").fadeIn("slow");
+		} else {
+			$(".newMsg").removeClass("scrolled");
+			$(".scrollTop").fadeOut("slow");
+		}
+	});
+}
+
+
+function msgManagement() {
+	$(".newMsg, .postToUser, .postToGroup").click(function(e) {
+		var target = $(this).attr("data-hint");
+		var symbol = ($(this).is(".postToUser")) ? "@" : "&";
+		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {
+			var val = $("#id_text").val().replace(symbol + target + " ", '');
+			$("#newMessage").find("textarea").val(symbol + target + " " + val);		
+			if ($(this).is(".postToGroup")) {
+				$("#newMessage select.superDropdown").val(symbol+target);
+				$("#newMessage").find("div.superDropdown p").text(symbol+target);
+			}
+		}
+    setTimeout(function() {
+			$("#newMessage").find("textarea").focus();
+		}, 500);
   });
+	$(".showMsgEdit, .showCmtEdit, .hideMsgEdit, .hideCmtEdit").click(function(e) {
+		var id = $(this).attr("data-hint");
+		var togElements = ".showMsgEdit."+id+", .showCmtEdit."+id+", .postText."+id+", .postTextEdit."+id+", .cmtText."+id+", .cmtTextEdit."+id;
+		$(togElements).toggleClass("hidden");
+  });  
 	  
 	$(".reply_link").click(function(e) {
     var data = $(this).attr("data-hint").split(" ");
@@ -541,7 +552,10 @@ function initVarious() {
 		};
 		hideIt();
   });
-	
+}
+
+
+function loadMore() {	
 	if ($("#body_index").length > 0 || $("#body_profile").length > 0 || $("#body_group").length > 0 || 
 			$("#body_hashtag").length > 0 || $("#body_search").length > 0) {
 		$(".load_more").click(function(e) {
@@ -552,8 +566,10 @@ function initVarious() {
 				group: $(this).attr("data-group"),
 				search_input: $(this).attr("data-search"),
 				hash: $(this).attr("data-hash"),
-				length: $(this).attr("data-length")
+				length: $(this).attr("data-length"),
+				post: $(".post").last().attr("data-hint")
 			}
+			//alert(info.post)
 			var getIt = function(url) {
 				$.ajax({
 					type:"GET",
@@ -593,8 +609,7 @@ function initVarious() {
 					$(".load_more").find("span").removeClass("glyphicon-time").addClass("glyphicon-refresh");
 					$(".load_more").attr("data-length", $(".post").length);
 				}
-				initInputValidation();
-				initVarious();	
+				msgManagement();
 			}
 			$(this).find("span").removeClass("glyphicon-refresh").addClass("glyphicon-time");
 			getIt(url)
@@ -616,29 +631,8 @@ function initVarious() {
     });
 		setNtfcLength();
 	}
-  
-	/* Smoothes Scrollen */
-	$(function() {
-	  $('a.scrollTop[href*=#]:not([href=#])').click(function() {
-	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {     
-	        scrollToTop();
-	        return false;
-	    }
-	  });
-	});
-  
-  
-/* Scrollevent */
-	$(window).scroll(function() {
-		if($(window).scrollTop() > 0) {
-			$(".newMsg").addClass("scrolled");
-			$(".scrollTop").fadeIn("slow");
-		} else {
-			$(".newMsg").removeClass("scrolled");
-			$(".scrollTop").fadeOut("slow");
-		}
-	});
 }
+
 
 /* Nach oben scrollen */
 function scrollToTop() {
@@ -656,6 +650,8 @@ $(document).ready(function() {
 	initSearchResults();
 	initInputValidation();
 	initVarious();
+	msgManagement();
+	loadMore();
 	
 	fph();
 	$(window).resize(function() {

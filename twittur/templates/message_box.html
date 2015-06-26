@@ -89,17 +89,17 @@
         <p class="text-center">
           <span class="glyphicon glyphicon-eye-open"></span>
         </p>
-        <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}">
+        <select class="superDropdown" id="id_safety" name="safety" placeholder="{% if message.group %}{{ message.group }}{% else %}Public{% endif %}">
           {% for item in safetyLevels %}
             {% if item.0|length > 0 %}
               {% if item.0|length > 1 %}
                 <optgroup label="Gruppe ausw&auml;hlen">
                   {% for grp in item %}
-                    <option value="&amp;{{ grp }}"></option>
+                    <option value="&amp;{{ grp }}" {% if message.group == grp %} selected="selected"{% endif %}></option>
                   {% endfor %}
                 </optgroup>
               {% else %}
-                <option value="{{ item }}">{{ item }}</option>
+                <option value="{{ item }}" {% if message.group == item %} selected="selected"{% endif %}>{{ item }}</option>
               {% endif %}
             {% endif %}
           {% endfor %}
@@ -200,29 +200,10 @@
           	{{ msgForm.text }}
           </div>
           <div class="modal-footer">
-            <div class="visibility" title="Sichtbarkeit einstellen">
-              <p class="text-center">
-                <span class="glyphicon glyphicon-eye-open"></span>
-              </p>
-              <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}" required="required">
-                {% for item in safetyLevels %}
-                  {% if 'uni' in item %}
-                    <optgroup label="Gruppe ausw&auml;hlen">
-                      {% for grp in item %}
-                        <option value="&amp;{{ grp }}"{% if grp == user.userprofile.safety %} selected="selected"{% endif %}></option>
-                      {% endfor %}
-                    </optgroup>
-                  {% else %}
-                    <option value="{{ item }}"{% if item == user.userprofile.safety %} selected="selected"{% endif %}>{{ item }}</option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-            </div>            
             <input type="hidden" name="codename" value="comment" />
             <input type="hidden" name="message" value="{{ message.id }}" />
             {{ msgForm.user }}
-            {{ msgForm.date }}
-  
+            {{ msgForm.date }}  
             <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
             <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>
           </div>

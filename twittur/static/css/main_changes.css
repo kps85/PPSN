@@ -5,6 +5,13 @@ a:focus { color: #f50000; text-decoration: none; }
 /* Antworten Link :hover */
 a.reply_link:hover { cursor: pointer; }
 
+/* Do dad EYE a lil bit schmaller! */
+.visibility > p { width: 25px; }
+.postTextEdit .superDropdown > p { margin-top: 10px; padding: 3px 10px; }
+.postTextEdit .superDropdown > p span { margin-top: 2px; }
+#newMessage .superDropdown > p span { margin-top: 4px; }
+
+
 /* wenn Modal offen, scrollbar wird ausgeblendet und Content verschoben -> hier: FIX */
 body.modal-open { overflow: visible; padding-right: 0px !important; }
 
