@@ -17,16 +17,13 @@ def msgDialog(request):
         if request.POST.get('codename') == 'message':
             msgForm = MessageForm(request.POST, request.FILES)
             if msgForm.is_valid():
-                print(request.POST)
                 if 'safety' in request.POST:
-                    print("safety")
                     if request.POST['safety'][:1] == '&':
                         group = GroupProfile.objects.get(short__exact=request.POST['safety'][1:])
                     elif request.POST['safety'] == 'Public':
                         group = None
                     else:
                         group = GroupProfile.objects.get(name__exact=request.POST['safety'])
-                    print(group.name)
                     msgForm.instance.group = group
                 msgForm.save()
                 msg_to_db(msgForm.instance)
@@ -190,7 +187,7 @@ def getMessages(data):
     if 'end' in data['request'].POST:
         result['list_end'] = int(data['request'].POST.get('end'))
 
-    dbmessage_list = getMessageList(data['page'], data['data'], data['request'])
+    dbmessage_list = getMessageList(data['page'], data['data'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
@@ -238,7 +235,7 @@ def getMessages(data):
 
 
 # return Full Message List
-def getMessageList(page, data, request):
+def getMessageList(page, data):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
             ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
@@ -336,7 +333,7 @@ def getWidgets(request):
     group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_sb_list = GroupProfile.objects.filter(
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
-    ).exclude(pk=15)
+    )
     sidebar = {
         'msgForm': msgDialog(request),
         'userProfile': userProfile,
@@ -375,7 +372,11 @@ def getSafetyLevels(user, group=False):
     safetyLevel.append(fak.name)
     safetyLevel.append(disc.name)
     if group:
-        group_list, gl = GroupProfile.objects.filter(Q(member__exact=user)), []
+        group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
+        group_list = GroupProfile.objects.filter(
+            Q(member__exact=user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
+        ).order_by('name')
+        gl = []
         for group in group_list:
             gl.append(group.short)
         safetyLevel.append(gl)

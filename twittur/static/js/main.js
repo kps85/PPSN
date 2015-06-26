@@ -448,6 +448,7 @@ function initVarious() {
 		}
 		if ($(this).is(".saveMsgEdit")) {
 			info.clear = $(".postTextEdit."+info.id).find("input[type=checkbox]").prop('checked');
+			info.safety = $(".postTextEdit."+info.id).find("select.superDropdown").val();
 			info.val = $(".postTextEdit."+info.id).find("textarea").val();
 		} else if ($(this).is(".saveCmtEdit")) {
 			info.val = $(".cmtTextEdit."+info.id).find("textarea").val();			
@@ -509,23 +510,15 @@ function initVarious() {
 								$(element).find(remElements).remove();
 								$("#newComment"+info.id).remove();
 								$(element).find(".postHide."+info.id).toggleClass("hidden").html(data);
-								setTimeout(function() {
-									$("#delCmt"+info.id+"Modal").remove();
-								}, 1000);
+								setTimeout(function() { $("#delCmt"+info.id+"Modal").remove(); }, 1000);
 							});
 							break;
 						case 'upd_msg':
 							var togElements = ".showMsgEdit."+info.id+", .showCmtEdit."+info.id+", .postText."+info.id+", .postTextEdit."+info.id+", .cmtText."+info.id+", .cmtTextEdit."+info.id;
 							$(togElements).toggleClass("hidden");
-							if ($(".postTextEdit."+info.id).length > 0) {
-								$(".postText."+info.id).find("p").html(data);
-							} else {
-								$(".cmtText."+info.id).find("p").html(data);
-							}
-							if (info.clear) {
-								alert("test");
-								$("#post"+info.id).find(".msgPctr, .msgPctrEdit, .msgPctrModal").remove();
-							}
+							if ($(".postTextEdit."+info.id).length > 0) { $(".postText."+info.id).find("p").html(data); }
+							else { $(".cmtText."+info.id).find("p").html(data); }
+							if (info.clear) $("#post"+info.id).find(".msgPctr, .msgPctrEdit, .msgPctrModal").remove();
 							break;
 					}
 				},
