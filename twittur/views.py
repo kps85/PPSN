@@ -57,7 +57,7 @@ def login(request):
 
     # Public Messages:
     message_list = Message.objects.filter(
-        Q(comment=None) & Q(attags=None)
+        Q(comment=None) #& Q(user_0_userprofile='public')
     ).order_by('-date').distinct()
 
     # login

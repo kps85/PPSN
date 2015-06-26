@@ -30,25 +30,27 @@ def group(request, groupshort):
     # if message was sent to view: return success message
     if request.method == 'POST':
         context['success_msg'] = editMessage(request)
-
-    group = GroupProfile.objects.get(short__exact=groupshort)
-    context['group'] = group
-    context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
-    if request.user in context['member_list'] or request.user == group.admin:
-        context['is_member'] = True
-        if group.admin == request.user:
-            context['button_text'] = '<span class="glyphicon glyphicon-cog"></span> ' + group.short.upper() + ' bearbeiten'
+    try:
+        group = GroupProfile.objects.get(short__exact=groupshort)
+        context['group'] = group
+        context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
+        if request.user in context['member_list'] or request.user == group.admin:
+            context['is_member'] = True
+            if group.admin == request.user:
+                context['button_text'] = '<span class="glyphicon glyphicon-cog"></span> ' + group.short.upper() + ' bearbeiten'
+            else:
+                context['button_text'] = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
         else:
-            context['button_text'] = '<span class="glyphicon glyphicon-log-out"></span> ' + group.short.upper() + ' verlassen'
-    else:
-        context['button_text'] = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
+            context['button_text'] = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
 
-    if 'member' in request.GET:
-        context['show_member'] = True
+        if 'member' in request.GET:
+            context['show_member'] = True
 
-    messages = getMessages(data={'page': 'group', 'data': group, 'request': request})
-    context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
-    context['list_end'] = messages['list_end']
+        messages = getMessages(data={'page': 'group', 'data': group, 'request': request})
+        context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
+        context['list_end'] = messages['list_end']
+    except:
+        context['error_msg'] = 'Keine Gruppe mit ' + groupshort + ' gefunden!'
 
     return render(request, 'profile.html', context)
 
