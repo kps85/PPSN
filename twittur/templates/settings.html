@@ -10,64 +10,178 @@
 {% endblock %}
 
 {% block content %}
+	{% if group %}
+  <form action="{% url 'twittur:group_settings' groupshort=group.short %}" method="post" enctype="multipart/form-data">
+  {% else %}
   <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
+  {% endif %}
   {% csrf_token %}
     <input name="delete" type="hidden" value="false" />
-    
-      {{ userForm.non_field_errors | safe }}
-      {{ userDataForm.non_field_errors | safe }}
+    	{% if group %}
+      	{{ gpeForm.non_field_errors | safe }}
+      {% else %}
+      	{{ userForm.non_field_errors | safe }}
+      	{{ userDataForm.non_field_errors | safe }}
+      {% endif %}
             
-      <div class="post" id="profilbild">
+      <div class="post" id="bild">
         
-          <h4>Profilbild auswählen</h4>
+          <h4>{% if group %}Gruppenbild{% else %}Profilbild{% endif %} ausw&auml;hlen</h4>
           
           <div class="col-xs-12 form-group">
             <div class="col-xs-12 text-center profilePictures">
-              <a href="{{ user.userprofile.picture.url }}" target="_blank">
-                <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail">
-                <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">
+              <a href="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" target="_blank">
+                <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
+                {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
               </a>
-              <p class="help-block">{{ userDataForm.picture.help_text | safe }}</p>
+              <p class="help-block">
+              	{% if group %}
+	              	{{ gpeForm.picture.help_text | safe }}
+                {% else %}
+	              	{{ userDataForm.picture.help_text | safe }}
+                {% endif %}
+              </p>
             </div>
             <div id="profBildUpdate">
-              {% if user.userprofile.picture %}<span>Aktuelles Profilbild: </span>{% endif %}
-              {{ userDataForm.picture }}
-              {{ userDataForm.picture.errors }}
+              <span><strong>Aktuelles {% if group %}Gruppenbild{% else %}Profilbild{% endif %}</strong>: </span>
+              {% if group %}
+  	            {{ gpeForm.picture }}              	
+              {% else %}
+  	            {{ userDataForm.picture }}
+	              {{ userDataForm.picture.errors }}
+              {% endif %}
             </div>                
           </div>            
       </div>
       
-      <div class="post" id="account">
+      <div class="post" id="{% if group %}gruppe{% else %}account{% endif %}">
       
-        <h4>Accountverwaltung</h4>
+        <h4>{% if group %}Gruppendaten{% else %}Accountverwaltung{% endif %}</h4>
       
           <div class="col-xs-12 form-group">
+          	{% if group %}
+              <label class="control-label" for="id_name">Name</label>
+              {{ gpeForm.name }}
+              {{ gpeForm.name.errors }}
+            {% else %}  
               <label class="control-label" for="id_username">Username</label>
               {{ userForm.username }}
               <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
               {{ userForm.username.errors }}
+            {% endif %}  
           </div>
           
           <div class="col-xs-12 form-group">
+          	{% if group %}
+              <label class="control-label" for="id_short">Abk&uuml;rzung</label>
+              {{ gpeForm.short }}
+              <p class="help-block">Die Gruppen-Abk&uuml;rzung kann nicht ver&auml;ndert werden.</p>
+              {{ gpeForm.short.errors }}
+            {% else %}  
               <label class="control-label" for="id_email">E-Mail</label>
               {{ userForm.email }}
               {{ userForm.email.errors }}
+            {% endif %}  
           </div>
           
+          {% if group %}
+          <div class="col-xs-12 form-group">
+              <label class="control-label" for="id_desc">Beschreibung</label>
+              {{ gpeForm.desc }}
+              {{ gpeForm.desc.errors }}
+          </div>
+          {% endif %}
+          
           <div class="col-xs-12 col-sm-6 form-group">
-              <label class="control-label" for="id_password">Passwort</label>
+            <label class="control-label" for="id_password">Passwort</label>
+          	{% if group %}    
+              {{ gpeForm.password }}
+              {{ gpeForm.password.errors }}
+            {% else %}  
               {{ userForm.password }}
               {{ userForm.password.errors }}
-          		<p class="help-block">Dein Passwort darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!</p>
+            {% endif %}  
+        		<p class="help-block">{% if group %}Das Gruppenpasswort{% else %}Dein Passwort{% endif %} darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!</p>
           </div>    
           <div class="col-xs-12 col-sm-6 form-group pull-right">
-              <label class="control-label" for="id_ack_password">Passwort bestätigen</label>
+            <label class="control-label" for="id_ack_password">Passwort bestätigen</label>
+						{% if group %}              
+              {{ gpeForm.ack_password }}                
+              {{ gpeForm.ack_password.errors }}
+            {% else %}  
               {{ userForm.ack_password }}                
               {{ userForm.ack_password.errors }}
+            {% endif %}  
           </div>
   
-      </div>  
+      </div> 
       
+      {% if group %}      
+      <div class="post" id="member">
+      	
+        <div class="memberHead clearfix">
+          <h4 class="pull-left">Mitglieder</h4> 
+          <span class="glyphicon glyphicon-plus pull-right"></span>
+				</div>
+                  
+        <ul class="memberList clearfix hidden">
+        {% for member in member_list %}
+          <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>) 
+                               {% if member == group.admin %}
+                                  <span class="pull-right"> [admin]</span>
+                               {% elif user == group.admin %}
+                                  <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ member.id }}Modal" id="remUser{{ member.id }}Button" title="Mitglied entfernen">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                  </a>
+                                  <div class="modal fade" id="remUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="remUser{{ member.id }}ModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                          <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich entfernen?</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                          <form action="{% url 'twittur:group_settings' groupshort=group.short %}" class="pull-right" method="POST">
+                                          {% csrf_token %}
+                                            <input type="hidden" name="group" value="{{ group.id }}">
+                                            <input type="hidden" name="remUser" value="{{ member.id }}">
+                                            <button type="submit" class="btn btn-primary">Benutzer entfernen</button>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>   
+                                  <a class="btn-xs pull-right promUser" data-toggle="modal" data-target="#promUser{{ member.id }}Modal" id="promUser{{ member.id }}Button" title="zum Admin machen">
+                                    <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+                                  </a>
+                                  <div class="modal fade" id="promUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="promUser{{ member.id }}ModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                          <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich zum Admin machen?</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                          <form action="{% url 'twittur:group' groupshort=group.short %}" class="pull-right" method="POST">
+                                          {% csrf_token %}
+                                            <input type="hidden" name="group" value="{{ group.id }}">
+                                            <input type="hidden" name="promUser" value="{{ member.id }}">
+                                            <button type="submit" class="btn btn-primary">Benutzer bef&ouml;rdern</button>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>                           		
+                               {% endif %}
+        {% endfor %}
+        </ul>
+  
+      </div> 
+      {% endif %}
+      
+      {% if not group %}
       <div class="post" id="daten">
       
         <h4>Pers&ouml;nliche Daten</h4>
@@ -84,8 +198,20 @@
           </div>
       
           <div class="col-xs-12 form-group">
-              <label class="control-label" for="id_academicDiscipline">Studiengang</label>
-			  			{{ userDataForm.academicDiscipline }}
+              <label class="control-label" for="id_academicDiscipline">Studiengang</label>              
+              {% if discList %}
+              	{% for list in discList %}
+                	<select class="form-control" id="id_academicDiscipline" name="academicDiscipline">
+                  {% for fac, ad in list %}
+                  	<optgroup label="{{ fac }}">
+                    {% for disc in ad %}
+                    	<option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
+                    {% endfor %}
+                    </optgroup>
+                  {% endfor %}
+                  </select>
+                {% endfor %}
+              {% endif %}              
               <p class="help-block">{{ userDataForm.academicDiscipline.help_text|safe }}</p>
               {{ userDataForm.academicDiscipline.errors }}
           </div>
@@ -110,25 +236,34 @@
         
           <h4>Seiteneinstellungen</h4>
           
+          {% if safetyLevelList %}
           <div class="col-xs-12 form-group">
               <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
-              <select class="form-control" id="stdSafetylevelSelect" name="safety">
-                  <option>public</option>
-                  <option>Uni</option>
-                  <option>Fakultät</option>
-                  <option selected>Studiengang</option>
+              <select class="form-control" id="id_safetyLevel" name="safety">
+                {% for level in safetyLevelList %}
+                	<option value="{{ level }}"{% if level == user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
+                {% endfor %}
               </select>
           </div>
+          {% endif %}
           
       </div>
+      {% endif %}
             
       <div class="post" id="delete">
         
-          <h4>Account vollst&auml;ndig l&ouml;schen</h4>
+          <h4>{% if group %}Gruppe{% else %}Account{% endif %} vollst&auml;ndig l&ouml;schen</h4>
           
           <div class="col-xs-12 form-group text-center">
-              <p class="help-block">&Uuml;ber diesen Button kannst Du deinen Account vollst&auml;ndig von unserer Plattform entfernen. Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
-              <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#delAccModal" id="deleteButton">Account löschen</button>
+              <p class="help-block">
+              	&Uuml;ber diesen Button kannst Du {% if group %}deine Gruppe{% else %}deinen Account{% endif %} vollst&auml;ndig von unserer Plattform entfernen. 
+                {% if group %}
+                	Alle Mitglieder werden aus der Gruppe entfernt und alle Nachrichten der Gruppe vom System gel&ouml;scht.                
+                {% else %}
+                	Deine Daten und Beitr&auml;ge, die im System gespeichert sind, werden gel&ouml;scht.
+                {% endif %}
+                Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
+              <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#{% if group %}delGrpModal{% else %}delAccModel{% endif %}" id="deleteButton">{% if group %}Gruppe{% else %}Account{% endif %} löschen</button>
           </div>
           
       </div>
@@ -140,18 +275,22 @@
   
   </form>
   
-  <div class="modal fade" id="delAccModal" tabindex="-1" role="dialog" aria-labelledby="delAccModalLabel" aria-hidden="true">
+  <div class="modal fade" id="{% if group %}delGrpModal{% else %}delAccModel{% endif %}" tabindex="-1" role="dialog" aria-labelledby="{% if group %}delGrpModal{% else %}delAccModel{% endif %}Label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Account l&ouml;schen?</h4>
+          <h4 class="modal-title" id="myModalLabel">{% if group %}Gruppe{% else %}Account{% endif %} l&ouml;schen?</h4>
         </div>
         <div class="modal-body">
-          Willst Du deinen Account wirklich l&ouml;schen?
+          Willst Du {% if group %}deine Gruppe{% else %}deinen Account{% endif %} wirklich l&ouml;schen?
         </div>
         <div class="modal-footer">
-          <form action="{% url 'twittur:settings' %}" method="POST">
+        {% if group %}
+        <form action="{% url 'twittur:group_settings' groupshort=group.short %}" method="POST">
+        {% else %}
+        <form action="{% url 'twittur:settings' %}" method="POST">
+        {% endif %}
         {% csrf_token %}
             <input name="delete" type="hidden" value="true" />
             <button type="button" class="btn btn-default" data-dismiss="modal">Ok, doch nicht.</button>

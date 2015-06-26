@@ -9,61 +9,71 @@
 {% endblock %}
 
 {% block content %}
-<div class="supportCont hidden" id="nachricht">
+{% if hash %}
+<div class="hidden" data-hint="{{ hash }}" id="hash"></div>
+{% endif %}
+<div class="supportCont {% if hash == 'kontaktformular' %}hidden{% endif %}" id="nachricht">
 	<h3 class="text-uppercase" id="nachricht">Nachricht an Teammitglied schicken</h3>
   <form action="{% url 'twittur:support' %}" method="POST">
     {% csrf_token %}
-    <input name="user" type="hidden" value="text" />
+    <input id="id_user" name="user" type="hidden" value="{{ curUser.username }}" />
+    <input id="id_hash" name="hash" type="hidden" value="nachricht" />
   	<div class="col-xs-6 form-group">
-    	<label for="questionInput">Betreff</label>
-      <input class="form-control" type="text" />
+    	<label for="id_subject">Betreff</label>
+      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text" />
     </div>
   	<div class="col-xs-6 form-group pull-right">
-    	<label for="katSelect">Ansprechpartner w&auml;hlen</label>
-      <select class="form-control">
-      	<option>Lilia Butenkova</option>
-      	<option>William Cai</option>
-      	<option>Yiming Chen</option>
-      	<option>Karl P. Schmidt</option>
-      	<option>Thomas Tietz</option>
-      	<option>Steffen Zerbe</option>
+    	<label for="id_staff">Ansprechpartner w&auml;hlen</label>
+      <select class="form-control" id="id_staff" name="staff">
+      	{% for user in team_list %}
+      	<option value="{{ user.email }}">{{ user.first_name }} {{ user.last_name }} (@{{ user.username }})</option>
+        {% endfor %}
       </select>
     </div>
   	<div class="col-xs-12 form-group">
-    	<label for="answerInput">Nachtricht schreiben</label>
-    	<textarea class="form-control" rows="5"></textarea>
+    	<label for="id_message">Nachtricht schreiben</label>
+    	<textarea class="form-control" id="id_message" name="message" placeholder="Nachricht eingeben *" rows="5"></textarea>
+      <p class="help-block">
+      	Nur Text m&ouml;glich. Kein HTML oder &auml;hnliches.<br />
+        Mit * gekennzeichnete Felder sind notwendig!
+      </p>
     </div>
     <div class="col-xs-12 form-group text-right">
       <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
-      <button class="btn btn-primary" type="submit">Absenden</button>
+      <button class="btn btn-primary" id="id_submit" type="submit" disabled="disabled">Absenden</button>
     </div>
   </form>
 </div>
 
-<div class="supportCont hidden" id="kontaktformular">
+<div class="supportCont {% if hash == 'nachricht' %}hidden{% endif %}" id="kontaktformular">
 	<h3 class="text-uppercase" id="nachricht">Supportanfrage senden</h3>
   <form action="{% url 'twittur:support' %}" method="POST">
     {% csrf_token %}
-    <input name="user" type="hidden" value="text" />
+    <input id="id_user" name="user" type="hidden" value="text" />
+    <input id="id_hash" name="hash" type="hidden" value="kontaktformular" />
   	<div class="col-xs-6 form-group">
-    	<label for="questionInput">Betreff</label>
-      <input class="form-control" type="text" />
+    	<label for="id_subject">Betreff</label>
+      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text" />
     </div>
   	<div class="col-xs-6 form-group pull-right">
-    	<label for="katSelect">Thema w&auml;hlen</label>
-      <select class="form-control">
-      	<option>Thema #1</option>
-      	<option>Thema #1</option>
-      	<option>Thema #1</option>
+    	<label for="id_topic">Thema w&auml;hlen</label>
+      <select class="form-control" id="id_topic" name="topic">
+      	{% for item in cat_list %}
+      	<option value="{{ item.category }}">{{ item.category }}</option>
+        {% endfor %}
       </select>
     </div>
   	<div class="col-xs-12 form-group">
-    	<label for="answerInput">Nachtricht schreiben</label>
-    	<textarea class="form-control" rows="5"></textarea>
+    	<label for="id_message">Nachricht schreiben</label>
+    	<textarea class="form-control" id="id_message" name="message" placeholder="Nachricht eingeben *" rows="5"></textarea>
+      <p class="help-block">
+      	Nur Text m&ouml;glich. Kein HTML oder &auml;hnliches.<br />
+        Mit * gekennzeichnete Felder sind notwendig!
+      </p>
     </div>
     <div class="col-xs-12 form-group text-right">
       <button class="btn btn-default" type="reset">Zur&uuml;cksetzen</button>
-      <button class="btn btn-primary" type="submit">Absenden</button>
+      <button class="btn btn-primary" id="id_submit" type="submit" disabled="disabled">Absenden</button>
     </div>
   </form>
 </div>

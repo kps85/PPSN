@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 
-from .models import User, UserProfile, Message, FAQ
+from .models import User, UserProfile, Message, FAQ, GroupProfile
 
 
 AD_CHOICES = (
@@ -25,12 +25,6 @@ AD_CHOICES = (
     (mark_safe('Fakult&auml;t VI'), ()),
     (mark_safe('Fakult&auml;t VII'), ()),
 )
-
-
-class RegistrationUserForm(forms.Form):
-    class Meta:
-        model = User
-        fields = ['firstname', 'username', 'email', 'password', 'ack_password', 'last_name']
 
 
 # form to update user's account information
@@ -131,13 +125,76 @@ class UserDataForm(ModelForm):
         return picture
 
 
+class GroupProfileForm(ModelForm):
+    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
+
+    class Meta:
+        model = GroupProfile
+        fields = ['name', 'short', 'desc', 'password', 'picture']
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4}),
+            'password': forms.PasswordInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(GroupProfileForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if field != 'picture':
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class GroupProfileEditForm(ModelForm):
+    ack_password = forms.CharField(max_length=128, required=False)
+
+    class Meta:
+        model = GroupProfile
+        fields = ['name', 'short', 'desc', 'password', 'picture']
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        print(instance.password)
+        super(GroupProfileEditForm, self).__init__(*args, **kwargs)
+        self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
+        self.fields['ack_password'].initial = instance.password
+        for field in self.fields:
+            if field != 'picture':
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
+    # method to compare password and password confirmation input values
+    # if equal: return password
+    # else: return error message
+    def clean(self):
+        password = self.cleaned_data.get('password')
+        ack_password = self.cleaned_data.get('ack_password')
+        error_dict = {}
+        if password != ack_password:
+            error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
+        if ' ' in password:
+            error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+        return self.cleaned_data
+
+    # validation: check after submit before save
+    def clean_picture(self):
+        # this is the current picture, nothing will happen if checkbox not clicked
+        picture = self.cleaned_data.get('picture')
+        # checkbox (False if clicked) -> return default picture
+        if picture == False:
+            return 'picture/gdefault.gif'
+        return picture
+
+
 # form to add a new message
 class MessageForm(ModelForm):
     # referencing Message model as basis for the form
     # initializing form input fields
     class Meta:
         model = Message
-        fields = ['user', 'text', 'date']
+        fields = ['user', 'text',  'date', 'picture']
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
@@ -145,9 +202,12 @@ class MessageForm(ModelForm):
         # set user input and date input type to hidden
         self.fields['user'].widget = forms.HiddenInput()
         self.fields['date'].widget = forms.HiddenInput()
+        # set visibility field
+        
         # set text input type to textarea and add class 'form-control'
         self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
         self.fields['text'].widget.attrs['class'] = 'form-control'
+        self.fields['text'].widget.attrs['rows'] = '5'
 
     # return checked text input value
     def clean_text(self):

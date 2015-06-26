@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+{% if new > 0 %}
+  <h2>Du hast {{ new }} neue Benachrichtigung:</h2>
+{% else %}
+  <h2>Du hast keine neuen Benachrichtigungen.</h2>
+{% endif %}
+
+{% if notification_list %}
+	<div class="container-fluid">
+  {% for notification, boolean in notification_list %}
+    {% if notification.follower %}
+      <a href="{% url 'twittur:profile' user=notification.follower.userprofile.username %}">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
+          <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
+          <strong>Neuer Follower</strong>:<small class="pull-right">{{ notification.date }}</small><br />
+          <span class="info">{{ notification.follower.userprofile.username }} folgt dir jetzt!</span>
+        </div>
+      </a>
+    {% elif notification.message and not notification.comment %}
+      <a href="{% url 'twittur:message' msg=notification.message.id %}">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
+          <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
+          <strong>Neue Nachricht</strong>: <small class="pull-right">{{ notification.message.date }}</small><br />
+          <span class="info">{{ notification.message.user.username }} hat Dich in seiner Nachricht erw&auml;hnt!</span>
+        </div>
+      </a>
+    {% elif notification.group %}
+      <a href="{% url 'twittur:group' groupshort=notification.group.short %}">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
+          <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
+          <strong>Neue Benachrichtigung</strong>: <small class="pull-right">{{ notification.date }}</small><br />
+          <span class="info">{{ notification.group.short|upper }}: {{ notification.note|safe }}</span>
+        </div>
+      </a>
+    {% else %}      
+      <a href="{% url 'twittur:message' msg=notification.message.id %}">
+        <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
+          <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
+          <strong>Neuer Kommentar</strong>: <small class="pull-right">{{ notification.date }}</small><br />
+          <span class="info">{{ notification.note|safe }}</span>
+        </div>
+      </a>       
+    {% endif %}  
+  {% endfor %}
+    <div class="text-center">
+    	<button class="load_more btn btn-default hidden" title="Mehr Benachrichtigungen laden">
+      	<span class="glyphicon glyphicon-refresh"></span>
+      </button>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}

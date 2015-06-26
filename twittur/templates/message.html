@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block list %}  
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+  
+  {% if has_msg %}
+    {% for message, dbmessage, form, comments, count in message_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
+    {% endfor %}
+  {% else %}
+    <div class="text-center">
+    	<em>Keine Nachricht zum Anzeigen gefunden!</em><br />
+      <a href="{% url 'twittur:index' %}">&laquo; zur Startseite</a>
+    </div>
+  {% endif %}
+{% endblock %}

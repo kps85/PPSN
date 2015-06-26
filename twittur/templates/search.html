@@ -10,36 +10,111 @@
 
 {% block content %}
   <h2>{{ search|safe }}</h2>
-  {% if user_list %}
-    <h4> Folgende User wurden gefunden:</h4>
-    <div class="container-fluid">
+  {% if not is_hash %}
+  <div class="container-fluid">
+    <a href="#searchUser" class="col-xs-3 btn btn-default searchResultButton searchUser" data-hint="{{ user_list_length }}" title="Benutzer-Ergebnisse">
+      <span class="glyphicon glyphicon-user"></span>&nbsp; {{ user_list_length }}
+      <span class="hidden-xs">Benutzer</span>
+    </a>
+    <a href="#searchGroup" class="col-xs-3 btn btn-default searchResultButton searchGroup" data-hint="{{ group_list_length }}" title="Gruppen-Ergebnisse">
+      <span class="glyphicon glyphicon-briefcase"></span>&nbsp; {{ group_list_length }}
+      <span class="hidden-xs">{% if group_list_length > 1 or group_list_length = 0 %}Gruppen{% else %}Gruppe{% endif %}</span>
+    </a>
+    <a href="#searchHash" class="col-xs-3 btn btn-default searchResultButton searchHash" data-hint="{{ hashtag_list_length }}" title="Thema-Ergebnisse">
+      <span class="glyphicon glyphicon-tags"></span>&nbsp; {{ hashtag_list_length }}
+      <span class="hidden-xs">{% if hashtag_list_length > 1 or hashtag_list_length = 0 %}Themen{% else %}Thema{% endif %}</span>
+    </a>
+    <a href="#searchMsg" class="col-xs-3 btn btn-default searchResultButton searchMsg" data-hint="{{ message_list_length }}" title="Nachrichten-Ergebnisse">
+      <span class="glyphicon glyphicon-envelope"></span>&nbsp; {{ message_list_length }}
+      <span class="hidden-xs">{% if message_list_length > 1 or message_list_length = 0 %}Nachrichten{% else %}Nachricht{% endif %}</span>
+    </a>
+  </div>
+  {% endif %}
+  
+  {% if user_list_length > 0 %}
+    <div class="container-fluid searchResultBox searchUser" id="searchUser">
+    <h4> Folgende Benutzer wurden gefunden:</h4>
   	{% for user in user_list %}
+      <a href="{% url 'twittur:profile' user=user.username %}" >
       <p class="search_user_result pull-left text-center">
         <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/><br />
         {{ user.first_name }} {{ user.last_name }}<br />
-        (<a href="/twittur/profile/{{ user.username }}" >@{{ user.username }}</a>)
+        (@{{ user.username }})
       </p>
+      </a>
     {% endfor %}
-    </div>
+    </div>  
+  {% else %}
+    <div class="container-fluid searchResultBox searchUser text-center" id="searchUser">
+      <br />
+      <em>Keine Benutzer zum Anzeigen gefunden!</em>
+    </div> 
   {% endif  %}
-  {% if hashtag_list %}
-    <h4> Folgende Hashtags wurden gefunden:</h4>
-    <div class="container-fluid">
-  	{% for hashtag in hashtag_list %}
-      <p class="search_hash_result pull-left text-center">
-        <a href="/twittur/hashtag/{{ hashtag }}">#{{ hashtag }}</a>
+  
+  {% if group_list_length > 0 %}
+    <div class="container-fluid searchResultBox searchGroup" id="searchGroup">
+    <h4> Folgende Gruppen wurden gefunden:</h4>
+  	{% for group in group_list %}
+      <a href="{% url 'twittur:group' groupshort=group.short %}" >
+      <p class="search_group_result pull-left text-center">
+        <img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/><br />
+        {{ group.name }}<br />
+        (&{{ group.short }})
       </p>
+      </a>
+    {% endfor %}
+    </div>  
+  {% else %}
+    <div class="container-fluid searchResultBox searchGroup text-center" id="searchGroup">
+      <br />
+      <em>Keine Gruppen zum Anzeigen gefunden!</em>
+    </div> 
+  {% endif  %}
+  
+  {% if hashtag_list_length > 0 %}
+    <div class="container-fluid searchResultBox searchHash" id="searchHash">
+    <h4> Folgende Themen wurden gefunden:</h4>
+  	{% for hashtag in hashtag_list %}
+      <a href="/twittur/hashtag/{{ hashtag.name }}">
+      <p class="search_hash_result pull-left text-center">
+        #{{ hashtag.name }}
+      </p>
+      </a>
+    {% endfor %}
+    </div>  
+  {% else %}
+    <div class="container-fluid searchResultBox searchHash text-center" id="searchHash">
+      <br />
+      <em>Keine Themen zum Anzeigen gefunden!</em>
+    </div>    
+  {% endif %}
+  
+  {% if message_list_length > 0 or hash_list_length > 0 %}
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
+    {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
+    {% for message, dbmessage, form, comments, count in message_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
     {% endfor %}
     </div>
-  {% endif %}
-  {% if message_list  %}
-    {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
-    <div class="container-fluid">
-  	{% for message, dbmessage in message_list %}
-      {% include "message_box.html" with message=message page=active_page user=user  %}
-    {% endfor %}
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center{% if list_end == True or list_end == 'True' %} hidden{% endif %}">
+      <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
+              data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}" 
+              data-search="{{ search_input }}" data-hash="{{ is_hash }}">
+        <span class="glyphicon glyphicon-refresh"></span>
+      </button>
     </div>
   {% else %}
-  <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center" id="searchMsg">
+      <br />
+      <em>Keine Nachrichten zum Anzeigen gefunden!</em>
+    </div>
   {% endif %}
+  
+  {% if not user_list and not group_list and not hashtag_list and not message_list %}
+    <div class="container-fluid searchResultBox active text-center">
+      <br />
+      <em>Keine Suchergebnisse zum Anzeigen gefunden!</em>
+    </div>  
+  {% endif %}
+  
 {% endblock %}

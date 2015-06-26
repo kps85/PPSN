@@ -1,5 +1,12 @@
 {% include 'header.html' %}
-  {% if active_page != 'ftu' %}<a href="#main" class="scrollTop btn btn-primary btn-grey"><span class="glyphicon glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>{% endif %}
+  {% if active_page != 'ftu' %}
+  <a href="#main" class="scrollTop btn btn-primary btn-grey">
+  	<span class="glyphicon glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+  </a>
+  <button type="button" class="newMsg btn btn-primary pull-left" data-toggle="modal" data-target="#newMessage" title="Neue Nachricht verfassen">
+    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+  </button>
+  {% endif %}
   
   <div id="aside">
     <nav>
@@ -12,30 +19,37 @@
     </div>
   </div>
   <div id="main">
-    <header>
-      <div id="head">
-        <button type="button" class="newMsg btn btn-primary pull-left" data-toggle="modal" data-target="#newMessage" title="Neue Nachricht verfassen">
-        	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+    <header id="head">
+      <a class="title" href="{% url 'twittur:index' %}">twittur</a>
+      <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm pull-right">
+        <div class="form-group pull-left">
+          <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
+        </div>
+        <button type="submit" class="btn btn-primary pull-right" title="Suche starten">
+          <span class="glyphicon glyphicon-search"></span>
         </button>
-        <a class="title" href="{% url 'twittur:index' %}">twittur</a>
-        <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm pull-right">
-          <div class="form-group pull-left">
-            <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
-          </div>
-          <button type="submit" class="btn btn-primary pull-right" title="Suche starten">
-          	<span class="glyphicon glyphicon-search"></span>
-          </button>
-        </form>
-      </div>
+      </form>
+      <!-- WAS IST DAS?
       <div id="infoBar">
       	{% block infobar %} 
         {% endblock %}
       </div>
+      -->
     </header>
+   <div class="container-fluid searchBar">
+      <form action="{% url 'twittur:search' %}" class="searchForm" id="search" method="GET">
+        <div class="col-xs-10 col-sm-11 form-group pull-left">
+          <input class="form-control" id="search_input" name="search_input" type="text" placeholder="Suche" title="Suchbegriff eingeben">
+        </div>
+        <button type="submit" class="col-xs-2 col-sm-1 btn btn-default pull-right" title="Suche starten">
+          Los
+        </button>
+      </form>      
+    </div>
     <div id="content">
       {% if success_msg %}
-        <div class="infoMessage alert alert-success" role="alert">
-          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+        <div class="infoMessage alert alert-{% if 'entsperren' in success_msg %}warning{% else %}success{% endif %}" role="alert">
+          <span class="glyphicon glyphicon-{% if 'entsperren' in success_msg %}exclamation-sign{% else %}ok{% endif %}" aria-hidden="true"></span>
           {{ success_msg|safe }}
           <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
         </div>
@@ -54,21 +68,72 @@
     	{% block content %}	
       {% endblock %}
     </div>
+    
     <div class="modal fade" id="newMessage" tabindex="-1" role="dialog" aria-labelledby="newMessageLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content"> 
+        <div class="modal-content">
+        	{% if active_page in 'profile' and pUser %}
+          <form action="{% url 'twittur:profile' user=pUser %}" method="post" enctype="multipart/form-data">
+            {% elif active_page == 'group' and group %}
+          <form action="{% url 'twittur:group' groupshort=groupshort %}" method="post" enctype="multipart/form-data">
+        	{% else %}
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+          {% endif %}
+          {% csrf_token %}
             <input name="msgDialog" type="hidden" value="true" />
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
               <h4 class="modal-title" id="myModalLabel">Neue Nachricht verfassen</h4>
+              <small>{% now "j. F Y, H:i" %} Uhr</small>
             </div>
-            <div class="modal-body">{{ msgForm.text }}</div>
+            <div class="modal-body">
+                
+            	{{ msgForm.text }}
+              <div class="newMsgPctr container-fluid clearfix">
+              	<span class="col-xs-6 pull-left"><strong>Bild hinzuf&uuml;gen</strong></span>
+              	<span class="col-xs-1 glyphicon glyphicon-plus pull-right text-right" aria-hidden="true"></span>
+              	<div class="col-xs-12 clearfix hidden">
+                  <center><img class="img-thumbnail" src="" /></center>
+                  {{ msgForm.picture }}
+                </div>
+              </div>
+              <!--
+              <dl class="newMsgInfo container-fluid clearfix">
+              	<dt class="col-xs-4 pull-left"><strong>@</strong><em>&lt;Benutzername&gt;</em></dt>
+                <dd class="col-xs-8 pull-left">f&uuml;gt Benutzer als Empf&auml;nger hinzu.</dd>
+                
+              	<dt class="col-xs-4 pull-left"><strong>&amp;</strong><em>&lt;Gruppen-Abk&uuml;rzung&gt;</em></dt>
+                <dd class="col-xs-8 pull-left">f&uuml;gt Gruppen-Link hinzu.</dd>
+                
+              	<dt class="col-xs-4 pull-left"><strong>#</strong><em>&lt;Thema&gt;</em></dt>
+                <dd class="col-xs-8 pull-left">f&uuml;gt ein Thema der Nachricht hinzu.</dd>
+              </dl>
+              -->
+            </div>
             <div class="modal-footer">
-              <div class="msgDiaDate pull-left">{% now "j. F Y, H:i" %} Uhr</div>
+              <div class="visibility" title="Sichtbarkeit einstellen">
+              	<p class="text-center">
+                	<span class="glyphicon glyphicon-eye-open"></span>
+                </p>
+                <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ user.userprofile.safety }}">
+                	{% for item in safetyLevels %}
+                  	{% if item.0|length > 0 %}
+                      {% if item.0|length > 1 %}
+                        <optgroup label="Gruppe ausw&auml;hlen">
+                          {% for grp in item %}
+                            <option value="&amp;{{ grp }}" {% if user.userprofile.safety == grp %} selected="selected"{% endif %}></option>
+                          {% endfor %}
+                        </optgroup>
+                      {% else %}
+                        <option value="{{ item }}" {% if user.userprofile.safety == item %} selected="selected"{% endif %}>{{ item }}</option>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+              <input type="hidden" name="codename" value="message" />
               {{ msgForm.user }}
               {{ msgForm.date }}
               <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>

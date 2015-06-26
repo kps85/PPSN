@@ -38,21 +38,9 @@ header {
 
 #content .post {
   border: 1px solid #E4E8EA;
-  border-radius: 5px;
   background: #fff; }
-  #content .post:hover {
-    border-color: #d3d3d3;}
   #content .post .postTime {
     color: #aaa; }
-    
-  #content a {
-  color: #a00000;
-  font-weight: bold;}
-  
-  #content a:hover {
-  color: #f50000;
-  text-decoration: underline;
-  font-weight: bold;}
 
 #body_ftu {
   background: url("img/ftu_bg.png") center center;
@@ -112,24 +100,24 @@ header {
     margin-right: 15px; }
   #ftu #register {
     display: none; }
-  #ftu input, #ftu .superDropdown > p {
+  #ftu input {
     background: rgba(10, 10, 10, 0.6);
     color: #fff;
     border: 1px solid #000;
     padding: 10px;
     margin-bottom: 5px; }
-    #ftu input::-webkit-input-placeholder, #ftu .superDropdown > p::-webkit-input-placeholder {
+    #ftu input::-webkit-input-placeholder {
       /* WebKit browsers */
       color: #777; }
-    #ftu input:-moz-placeholder, #ftu .superDropdown > p:-moz-placeholder {
+    #ftu input:-moz-placeholder {
       /* Mozilla Firefox 4 to 18 */
       color: #777;
       opacity: 1; }
-    #ftu input::-moz-placeholder, #ftu .superDropdown > p::-moz-placeholder {
+    #ftu input::-moz-placeholder {
       /* Mozilla Firefox 19+ */
       color: #777;
       opacity: 1; }
-    #ftu input:-ms-input-placeholder, #ftu .superDropdown > p:-ms-input-placeholder {
+    #ftu input:-ms-input-placeholder {
       /* Internet Explorer 10+ */
       color: #777; }
   #ftu input[type="text"], #ftu input[type="password"] {
@@ -256,65 +244,32 @@ header {
       margin-top: 5%;
       height: 80%;
       max-width: 800px; } }
-  #register input, #register .superDropdown > p {
+  #register input {
     padding: 10px;
     border: 1px solid #E3E8EA;
     margin-bottom: 5px;
     background: #fff;
     color: #333; }
-    #register input::-webkit-input-placeholder, #register .superDropdown > p::-webkit-input-placeholder {
+    #register input::-webkit-input-placeholder {
       /* WebKit browsers */
       color: #555; }
-    #register input:-moz-placeholder, #register .superDropdown > p:-moz-placeholder {
+    #register input:-moz-placeholder {
       /* Mozilla Firefox 4 to 18 */
       color: #555;
       opacity: 1; }
-    #register input::-moz-placeholder, #register .superDropdown > p::-moz-placeholder {
+    #register input::-moz-placeholder {
       /* Mozilla Firefox 19+ */
       color: #555;
       opacity: 1; }
-    #register input:-ms-input-placeholder, #register .superDropdown > p:-ms-input-placeholder {
+    #register input:-ms-input-placeholder {
       /* Internet Explorer 10+ */
       color: #555; }
   #register input[disabled] {
     opacity: 0.6; }
     #register input[disabled]:hover {
       cursor: no-drop; }
-  @media screen and (max-width: 1023px) {
-    #register .superDropdown {
-      margin-bottom: 5px; } }
-  #register .superDropdown p {
-    color: #555; }
-  #register .superDropdown > p {
-    background: #fff;
-    color: #555;
-    cursor: pointer; }
-    #register .superDropdown > p.opened {
-      color: #333 !important;
-      background: rgba(255, 255, 255, 0.99); }
-    #register .superDropdown > p.active {
-      color: #333; }
-  #register .superDropdown .superDropdownDiv {
-    box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #E3E8EA;
-    border-top: none;
-    color: #333;
-    margin-left: 0px;
-    margin-top: -6px; }
-    #register .superDropdown .superDropdownDiv .superSubOpener {
-      padding: 10px; }
-      #register .superDropdown .superDropdownDiv .superSubOpener:hover {
-        background: #ddd;
-        cursor: pointer; }
-    #register .superDropdown .superDropdownDiv ul li, #register .superDropdown .superDropdownDiv span {
-      padding: 10px 30px; }
-      #register .superDropdown .superDropdownDiv ul li:hover, #register .superDropdown .superDropdownDiv span:hover {
-        background: #eee;
-        cursor: pointer; }
-    #register .superDropdown .superDropdownDiv span {
-      font-weight: bold;
-      display: block; }
+  #register div.superDropdown {
+    display: block !important; }
   #register input[type="submit"] {
     color: #fff;
     background: #FF0000;
@@ -393,8 +348,17 @@ a {
     text-decoration: none;
     color: #a00000; }
 
+h2 {
+  margin-bottom: 20px; }
+
 textarea, input {
   outline: none; }
+
+.clear {
+  height: 0px;
+  content: "";
+  display: table;
+  clear: both; }
 
 /* Bootstrap */
 .btn-primary, .btn-primary[disabled] {
@@ -423,7 +387,7 @@ textarea, input {
   height: 25px;
   width: 45px;
   position: fixed;
-  bottom: 20px;
+  bottom: 70px;
   right: 20px;
   display: block;
   display: none;
@@ -433,9 +397,6 @@ textarea, input {
   background-image: -o-linear-gradient(top, #30303F 0%, #282A37 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#30303F), to(#282A37));
   background-image: linear-gradient(to bottom, #30303F 0%, #282A37 100%); }
-  @media screen and (min-width: 1024px) {
-    .scrollTop {
-      bottom: 70px; } }
   .scrollTop .glyphicon {
     font-size: 1em;
     line-height: 0.5em;
@@ -449,16 +410,47 @@ textarea, input {
   height: 45px;
   width: 45px;
   margin-top: 22.5px;
-  margin-left: 3%; }
-  @media screen and (min-width: 1024px) {
-    .newMsg {
-      position: fixed;
-      bottom: 20px;
-      right: 20px; } }
+  margin-left: 3%;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2; }
   .newMsg textarea {
     width: 100%; }
   .newMsg .msgDiaDate {
     padding: 6px 12px; }
+
+.modal h4 {
+  display: inline-block; }
+.modal .msgDiaDate {
+  margin: 5px 20px; }
+.modal .close {
+  margin-top: 5px; }
+.modal .visibility {
+  margin-top: -5px; }
+
+.visibility {
+  width: 60%;
+  float: left;
+  display: block;
+  text-align: left;
+  margin-top: 5px; }
+  @media screen and (max-width: 639px) {
+    .visibility {
+      width: 100%;
+      float: none; } }
+  .visibility > p {
+    display: inline-block;
+    margin: 0;
+    width: 25%; }
+  .visibility .superDropdown {
+    max-width: 70%;
+    min-width: 70% !important; }
+    @media screen and (max-width: 639px) {
+      .visibility .superDropdown {
+        min-width: 72% !important; } }
+    .visibility .superDropdown > p {
+      min-width: 0; }
 
 /* Layout */
 @media screen and (min-width: 1024px) {
@@ -519,6 +511,11 @@ nav a.index {
   background-image: url("img/icon_home.png"); }
 nav a.settings {
   background-image: url("img/Settings-02-128.png"); }
+  @media screen and (max-width: 1023px) {
+    nav a.settings {
+      left: 0;
+      padding-bottom: 0;
+      padding-top: 40px; } }
 nav a.profile {
   background-image: url("img/User-Profile-128.png"); }
 nav a.messages {
@@ -535,17 +532,27 @@ nav a.logout {
       color: #ffffff; }
   @media screen and (max-width: 1023px) {
     nav a.logout {
-      left: 0;
-      display: block;
-      min-height: 50px;
-      width: 100%;
-      z-index: 400;
-      text-align: center;
-      padding-top: 12px;
-      background: #30303F;
+      right: 0;
+      padding-top: 10px;
       line-height: 11px; }
-      nav a.logout span {
+      nav a.logout span.glyphicon {
+        margin-top: 10px;
+        line-height: 19px;
         font-size: 28px; } }
+@media screen and (max-width: 1023px) {
+  nav a.logout, nav a.settings {
+    position: absolute;
+    bottom: 0;
+    display: block;
+    min-height: 50px;
+    width: 50%;
+    z-index: 400;
+    text-align: center;
+    background-color: #30303F; } }
+nav .glyphicon {
+  display: block;
+  top: -5px;
+  font-size: 36px; }
 nav a.menuCloser {
   float: right;
   background-image: url("img/Login-Arrow-128.png");
@@ -612,9 +619,18 @@ a.title {
   @media screen and (min-width: 1024px) {
     a.title {
       margin-left: 6%; } }
-  @media screen and (max-width: 1023px) {
+  @media screen and (max-width: 639px) {
     a.title {
-      margin-left: 3%; } }
+      float: left;
+      display: inline-block;
+      width: 70%;
+      position: absolute;
+      left: 15%;
+      background: url("img/twittur_mobile.png") no-repeat;
+      background-position: center center;
+      background-size: 40px 48px;
+      height: 60px;
+      box-sizing: border-box; } }
 
 header {
   top: 0;
@@ -627,26 +643,51 @@ header {
       position: fixed;
       top: 0;
       z-index: 10; } }
-  header a.menuOpener {
+  @media screen and (max-width: 639px) {
+    header {
+      min-height: 60px; } }
+  header a.menuOpener, header a.searchOpener {
     text-indent: -9999px;
     display: block;
     box-sizing: border-box;
-    height: 45px;
     width: 45px;
-    margin-top: 22.5px;
+    margin-left: 3%;
     margin-right: 3%;
-    padding-top: 2px;
-    float: right;
+    float: left;
     display: none; }
     @media screen and (max-width: 1023px) {
-      header a.menuOpener {
+      header a.menuOpener, header a.searchOpener {
+        margin-top: 22.5px;
+        height: 22.5px; } }
+    @media screen and (max-width: 639px) {
+      header a.menuOpener, header a.searchOpener {
+        margin-top: 10px;
+        height: 40px;
+        width: 9%; } }
+    @media screen and (max-width: 1023px) {
+      header a.menuOpener, header a.searchOpener {
         display: inherit; } }
-    header a.menuOpener:hover {
+    header a.menuOpener:hover, header a.searchOpener:hover {
       cursor: pointer;
       opacity: 0.8; }
-    header a.menuOpener .patty {
-      margin: 14% 20%;
+    header a.menuOpener .patty, header a.searchOpener .patty {
+      margin: 7px 20%;
+      max-width: 30px;
       border-bottom: 5px solid transparent; }
+  header a.searchOpener {
+    display: none;
+    text-indent: inherit;
+    color: #6D6D6E;
+    float: right;
+    text-align: right;
+    padding-right: 2%; }
+    header a.searchOpener .glyphicon {
+      padding-top: 20%;
+      text-align: right;
+      font-size: 1.5em; }
+    @media screen and (max-width: 639px) {
+      header a.searchOpener {
+        display: inherit; } }
   header #search {
     margin-right: 3%;
     margin-top: 25px;
@@ -665,7 +706,7 @@ header {
       margin-top: 0;
       border-bottom-left-radius: 0;
       border-top-left-radius: 0; }
-    @media screen and (max-width: 1023px) {
+    @media screen and (max-width: 639px) {
       header #search {
         display: none; } }
   header #head:after {
@@ -689,6 +730,9 @@ header {
     min-height: 100%;
     overflow: auto;
     margin-left: 30%; } }
+@media screen and (max-width: 639px) {
+  #main {
+    padding-top: 60px; } }
 
 #content {
   margin: 30px auto; }
@@ -699,6 +743,9 @@ header {
     #content {
       width: 94%;
       margin-top: 120px; } }
+  @media screen and (max-width: 639px) {
+    #content {
+      margin-top: 30px !important; } }
 
 .post {
   padding: 20px;
@@ -729,9 +776,9 @@ header {
   vertical-align: bottom; }
 
 .copy {
-  font-size: .6em; }
+  font-size: .6em;
+  margin-top: 15px; }
   .copy a {
-    color: #a00000;
     font-size: 1.2em; }
     .copy a:hover {
       color: #F50000; }
@@ -758,15 +805,13 @@ header {
     padding: 0; }
   .superDropdown .superDropdownDiv {
     overflow-x: hidden;
-    cursor: default; }
-    @media screen and (min-width: 1024px) {
-      .superDropdown .superDropdownDiv {
-        position: absolute;
-        overflow-y: visible;
-        height: auto;
-        z-index: 4000;
-        background: transparent;
-        opacity: 1.0; } }
+    cursor: default;
+    position: absolute;
+    overflow-y: visible;
+    height: auto;
+    z-index: 4000;
+    background: transparent;
+    opacity: 1.0; }
   .superDropdown .superDropdownContent {
     position: relative;
     left: 0; }
@@ -779,5 +824,221 @@ header {
     position: absolute;
     left: 100%;
     top: 0; }
+
+@media screen and (max-width: 1023px) {
+  #register .superDropdownDiv {
+    position: static !important; } }
+
+/* Notifications */
+.notificationLink {
+  position: relative;
+  padding-top: 25px; }
+  .notificationLink .badge {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 99;
+    background-color: #f50000; }
+  @media screen and (max-width: 1023px) {
+    .notificationLink {
+      padding-top: 12px; }
+      .notificationLink .glyphicon {
+        top: 1px;
+        font-size: 28px; }
+      .notificationLink .badge {
+        right: 5px;
+        top: 5px; } }
+
+/* Various */
+.cit-logo {
+  width: 75px; }
+
+.post .cit-logo {
+  width: 150px;
+  margin: 10px; }
+
+/* SearchBar */
+.searchBar {
+  padding: 5px 15px;
+  background-color: #eeeeee;
+  border-bottom: 1px solid #e4e8ea;
+  display: none; }
+  .searchBar .form-group {
+    margin-bottom: 0px;
+    padding: 0px; }
+  .searchBar input {
+    border-right-width: 0px;
+    border-radius: 4px 0px 0px 4px; }
+  .searchBar button {
+    border-radius: 0px 4px 4px 0px; }
+
+/* Comments */
+.comments {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  background: #FDFDFD;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 20px;
+  padding-bottom: 30px;
+  margin-bottom: -20px;
+  font-size: .9em; }
+
+.children {
+  margin-left: 30px;
+  font-size: 1em; }
+  .children .children {
+    margin-left: 20px; }
+    .children .children .children {
+      margin-left: 20px; }
+      .children .children .children .children {
+        margin-left: 10px; }
+        .children .children .children .children .children {
+          margin-left: 0px; }
+
+.cmtBox {
+  background: #FFF;
+  margin-bottom: 10px;
+  border: 1px solid #E8E8E8;
+  /*position:relative;
+  .reply_link {
+      position:absolute;
+      top:0;
+      right:0;
+      display:block;
+      padding:10px;
+  }*/ }
+
+.cmtContent {
+  margin-bottom: 20px; }
+
+.cmtMeta, .cmtFoot {
+  padding: 5px 10px; }
+
+.cmtMeta {
+  background: #F8F8F8;
+  border-bottom: 1px solid #E7E7E7;
+  padding: 10px; }
+
+.cmtTime {
+  color: #888; }
+
+.cmtText {
+  padding: 10px; }
+  .cmtText p {
+    margin: 0; }
+
+.cmtAuthor {
+  margin-right: 5px; }
+
+/* Notifications */
+.notification {
+  color: #555; }
+  .notification.panel {
+    padding: 15px; }
+  .notification .info {
+    margin-left: 27px; }
+  .notification:hover {
+    background-color: rgba(0, 0, 0, 0.03); }
+  .notification .glyphicon {
+    padding-right: 10px; }
+
+/* Profil */
+/* Small devices (tablets, 768px and up) */
+.profil {
+  position: relative;
+  padding: 20px;
+  border: 1px solid #E4E8EA;
+  border-bottom: 0;
+  border-radius: 5px 5px 0px 0px;
+  background: #fff; }
+
+.profil:hover {
+  border-color: #d3d3d3; }
+
+.profilEdit {
+  position: absolute;
+  right: 20px;
+  z-index: 2; }
+
+.profilMeta div {
+  margin-top: 10px;
+  text-align: left; }
+
+.profil .profilNick {
+  color: #aaa; }
+
+.profileButton {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-color: #E4E8EA; }
+  .profileButton:hover {
+    border-color: #E4E8EA; }
+  .profileButton:nth-child(odd) {
+    border-right: none; }
+  .profileButton:nth-child(even) {
+    border-left: none; }
+
+@media (max-width: 767px) {
+  .profilAuthor, .profilNick {
+    text-align: center; } }
+.superDropdown {
+  display: inline-block; }
+  @media screen and (max-width: 1023px) {
+    .superDropdown {
+      margin-bottom: 5px; } }
+  .superDropdown p {
+    color: #555; }
+  .superDropdown > p {
+    cursor: pointer;
+    padding: 10px;
+    min-width: 300px;
+    border: 1px solid #E3E8EA;
+    margin-bottom: 5px;
+    background: #fff;
+    color: #333; }
+    .superDropdown > p::-webkit-input-placeholder {
+      /* WebKit browsers */
+      color: #555; }
+    .superDropdown > p:-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: #555;
+      opacity: 1; }
+    .superDropdown > p::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: #555;
+      opacity: 1; }
+    .superDropdown > p:-ms-input-placeholder {
+      /* Internet Explorer 10+ */
+      color: #555; }
+    .superDropdown > p.opened {
+      color: #333 !important;
+      background: rgba(255, 255, 255, 0.99); }
+    .superDropdown > p.active {
+      color: #333; }
+  .superDropdown .superDropdownDiv {
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #E3E8EA;
+    border-top: none;
+    color: #333;
+    margin-left: 0px;
+    margin-top: -6px; }
+    .superDropdown .superDropdownDiv ul li, .superDropdown .superDropdownDiv span {
+      padding: 10px 30px; }
+      .superDropdown .superDropdownDiv ul li:hover, .superDropdown .superDropdownDiv span:hover {
+        background: #eee;
+        cursor: pointer; }
+    .superDropdown .superDropdownDiv .superSubOpener {
+      padding: 10px; }
+      .superDropdown .superDropdownDiv .superSubOpener:hover {
+        background: #ddd;
+        cursor: pointer; }
+    .superDropdown .superDropdownDiv span {
+      font-weight: bold;
+      display: block; }
+
+.msgEditSave {
+  padding-top: 15px; }
 
 /*# sourceMappingURL=main.css.map */

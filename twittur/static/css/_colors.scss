@@ -71,9 +71,6 @@ header {
 	.post {
 		border:1px solid $headerBorder;
 		background:#fff;
-		&:hover {
-			background:#fdfdfd;
-		}
 		.postTime {
 			color:#aaa;
 		}

@@ -10,9 +10,9 @@
   </div>
 </div>
 <div class="column column-right">
-<div class="box loginBox">
-  <h2 class="{% if not rActive %}active {% endif %}">Anmelden</h2>
-  <div class="{% if not rActive %}active {% endif %}" id="login">
+<div class="box loginBox {% if not pActive %}active {% endif %}">
+  <h2>Anmelden</h2>
+  <div id="login">
     <form method="GET">
       {% csrf_token %}
       <input type="text" name="username" id="username" placeholder="Username"  />
@@ -30,13 +30,30 @@
     </form>
   </div>
 </div>
-<div class="box forgotBox">
-<h2>Passiert jedem mal ...</h2>
-<form method="POST">
-<input type="text" name="password_reset" placeholder="Deine Mailadresse" />
-<br />
-<input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
-<a href="#" class="forgotBack">Zur&uuml;ck</a>
+<div class="box forgotBox {% if pActive %}active{% endif %}">
+  <h2>Passiert jedem mal ...</h2>
+  {% if success_msg %}
+    <div class="infoMessage alert alert-success" role="alert">
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      {{ success_msg|safe }}
+      <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
+    </div>
+  {% endif %}
+  <form method="POST" action="{% url 'twittur:login' %}">
+	{% csrf_token %}
+    <input id="id_password_reset" name="password_reset" type="hidden" />
+    <input id="id_pwRestMail" name="pwResetMail" placeholder="Deine Mailadresse" type="text" />
+    {% if errors.error_not_registered %}
+    	<p><font color="#FF0000">{{ errors.error_not_registered|safe }}</font></p>
+    {% endif %}
+    <input class="checkNumeric" id="id_pwResetStudNumb" name="pwResetStudNumb" placeholder="Deine Matrikel-Nummer zur Sicherheit" type="text" />
+    {% if errors.error_number_not_identic %}
+    	<p><font color="#FF0000">{{ errors.error_number_not_identic|safe }}</font></p>
+    {% endif %}
+    <br />
+    <input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
+  	<a class="forgotBack">Zur&uuml;ck</a>
+  </form>
 </div>
 </div>
 </div>
@@ -74,30 +91,28 @@
     {% endif %}
   </div>
   <div class="column column-right">
-    <h4>Deine T&auml;tigkeit an der TU Berlin</h4>
-    <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
-      <optgroup label="Fakult&auml;t I"></optgroup>
-      <optgroup label="Fakult&auml;t II"></optgroup>
-      <optgroup label="Fakult&auml;t III"></optgroup>
-      <optgroup label="Fakult&auml;t IV">
-        <option value="Automotive Systems">Automotive Systems</option>
-        <option value="Computational Neuroscience">Computational Neuroscience</option>
-        <option value="Elektrotechnik">Elektrotechnik</option>
-        <option value="ICT Innovation">ICT Innovation</option>
-        <option value="Informatik">Informatik</option>
-        <option value="Medieninformatik">Medieninformatik</option>
-        <option value="Technische Informatik">Technische Informatik</option>
-        <option value="Wirtschaftsinformatik">Wirtschaftsinformatik</option>
-      </optgroup>
-      <optgroup label="Fakult&auml;t V"></optgroup>
-      <optgroup label="Fakult&auml;t VI"></optgroup>
-      <optgroup label="Fakult&auml;t VII"></optgroup>
-    </select>
+    <h4>Deine T&auml;tigkeit an der TU Berlin</h4>              
+    {% if discList %}
+      {% for list in discList %}
+        <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
+        {% for fac, ad in list %}
+          <optgroup label="{{ fac }}">
+          {% for disc in ad %}
+            <option value="{{ disc }}">{{ disc }}</option>
+          {% endfor %}
+          </optgroup>
+        {% endfor %}
+        </select>
+      {% endfor %}
+    {% endif %}
     
-    <input type="text" name="studentNumber" placeholder="Matrikelnummer" id="studentNumber" class="checkNumeric" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
+    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentnumber %} value="{{ data.studentNumber }}"{% endif %}/>
     <br />
     {% if errors.error_reg_userprofile_ad %}
     	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>
+    {% endif %}
+    {% if errors.error_student_number %}
+    	<p><font color="#FF0000"> &nbsp; {{ errors.error_student_number|safe }}</font></p>
     {% endif %}
     <p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
   </div>
@@ -109,25 +124,28 @@
 </div>
 {% if message_list %}
 <div id="ftuPosts" class="full-page-nomobile">
-<div class="center">
-<div class="column column-left">
-  <h2>&Ouml;ffentliche Nachrichten</h2>
-  <div class="messages"> {% for message in message_list %}
-    {% include "message_box.html" with message=message %}
-    {% endfor %} </div>
-</div>
-<div class="column column-right ftuTags">
-<h2>Beliebte Themen</h2>
-<ul>
-<li><a href="#">#yolo</a></li>
-<li><a href="#">#swag</a></li>
-<li><a href="#">#wprnervt</a></li>
-<li><a href="#">#burgerindermensa</a></li>
-<li><a href="#">#prokrastination</a></li>
-<li><a href="#">#montag</a></li>
-<li><a href="#">#telbrennt</a></li>
-</div>
-</div>
+  <div class="center">
+    <div class="column column-right ftuTags">
+      <h2>Beliebte Themen</h2>
+      <ul>
+        <li><a href="#">#yolo</a></li>
+        <li><a href="#">#swag</a></li>
+        <li><a href="#">#wprnervt</a></li>
+        <li><a href="#">#burgerindermensa</a></li>
+        <li><a href="#">#prokrastination</a></li>
+        <li><a href="#">#montag</a></li>
+        <li><a href="#">#telbrennt</a></li>
+      </ul>
+    </div>
+    <div class="column column-left">
+      <h2>&Ouml;ffentliche Nachrichten</h2>
+      <div class="messages">
+      	{% for message in message_list %}
+        	{% include "message_box.html" with message=message %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 <div id="ftuFooter">
