@@ -88,7 +88,7 @@ def search(request):
 
         group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term) | Q(desc__contains=term))
         if len(group) > 0:
-            group_list.append(group)
+            group_list.append(group.distinct())
 
         hashtag_list.append(Hashtag.objects.all().filter(Q(name__contains=term)))
 
@@ -98,6 +98,7 @@ def search(request):
 
     user_list = elimDups(user_list)
     hashtag_list = elimDups(hashtag_list)
+    group_list = elimDups(group_list)
     message_list = elimDups(message_list)
     message_list.sort(key=lambda x: x[0].date, reverse=True)
 

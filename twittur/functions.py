@@ -8,6 +8,7 @@ from .views import *
 from .models import GroupProfile, Message, Hashtag, Notification
 from .forms import MessageForm
 import re
+from itertools import chain
 
 
 # messagebox clicked on pencil button
@@ -178,7 +179,7 @@ def getMessages(data):
     if 'end' in data['request'].POST:
         result['list_end'] = int(data['request'].POST.get('end'))
 
-    dbmessage_list = getMessageList(data['page'], data['data'])
+    dbmessage_list = getMessageList(data['page'], data['data'], data['request'])
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
@@ -226,7 +227,7 @@ def getMessages(data):
 
 
 # return Full Message List
-def getMessageList(page, data):
+def getMessageList(page, data, request):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
             ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
@@ -234,16 +235,9 @@ def getMessageList(page, data):
             & Q(comment = None)
         ).order_by('-date')
     elif page == 'group':
-        if data.joinable:
-            dbmessage_list = Message.objects.all().filter(
-                Q(group=data) & Q(comment=None)
-            ).order_by('-date')
-        else:
-            dbmessage_list = Message.objects.all().filter(
-                Q(group=data) & Q(comment=None)
-            ).order_by('-date')
-            print(dbmessage_list)
-
+        dbmessage_list = Message.objects.all().filter(
+            Q(group=data) & Q(comment=None)
+        ).order_by('-date')
     elif page == 'profile':
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(user__exact=data) | Q(attags__username__exact=data.username)
@@ -259,6 +253,7 @@ def getMessageList(page, data):
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             query
         ).order_by('-date')
+
     else:
         dbmessage_list = Message.objects.filter(pk=page)
 

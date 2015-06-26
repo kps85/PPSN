@@ -143,8 +143,8 @@
         <strong>{{ button_text|safe }}</strong>
       </button>    
     {% endif %}
-    
-    <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
+
+    <button {% if request.user not in group.member.all %} disabled="disabled" {% endif %} class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
       <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
     </button>
     {% endif %}
@@ -252,27 +252,34 @@
   </div>
   {% endif %}
   {% if not ignored %}
-  <div class="profileMessages container-fluid{% if show_member or show_favs or show_groups %} hidden{% endif %}">
-    {% if has_msg %}
+    {% if request.user in group.member.all %}
+    <div class="profileMessages container-fluid{% if show_member or show_favs or show_groups %} hidden{% endif %}">
 
-      {% for message, dbmessage, form, comments, count in message_list %}
+      {% if has_msg %}
 
-        {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
-      {% endfor %}
-      </div>
-      <div class="text-center{% if show_member or show_favs or show_groups or list_end == True or list_end == 'True' %} hidden{% endif %}">
-        <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
-                data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}" 
-                data-user="{{ pUser }}" data-group="{{ group.short }}">
-          <span class="glyphicon glyphicon-refresh"></span>
-        </button>
-      </div>
-    {% else %}
-      <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
-    {% endif %}
+        {% for message, dbmessage, form, comments, count in message_list %}
+
+          {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
+        {% endfor %}
+        </div>
+        <div class="text-center{% if show_member or show_favs or show_groups or list_end == True or list_end == 'True' %} hidden{% endif %}">
+          <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
+                  data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}"
+                  data-user="{{ pUser }}" data-group="{{ group.short }}">
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+        </div>
+      {% else %}
+        <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+      {% endif %}
+
   </div>
+    {% else %}
+     <div class="text-center"><em>Du bist nicht in der Gruppe! Nur Mitglieder können hier Nachrichten sehen und posten!</em></div>
+    {% endif %}
   {% else %}
     <div class="text-center"><em>Der Benutzer wurde von Dir ausgeblendet!</em></div>
   {% endif %}
+
 {% endif %}
 {% endblock %}
