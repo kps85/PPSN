@@ -116,11 +116,20 @@ function initMenu() {
         }
 	})
 	
-	if ((window.location.href.split("/"))[4] == "profile" 
-		 || (window.location.href.split("/"))[4] == "hashtag"
-		 || (window.location.href.split("/"))[4] == "group") {
-		var name = ((window.location.href.split("/"))[5]).split("?")[0];
-		$(".ullink."+name).addClass("active");
+	var page = (window.location.href.split("/"))[4]
+	var name = ((window.location.href.split("/"))[5]).split("?")[0];
+	switch (page) {
+		case 'profile':
+			$(".following .ullink."+name).addClass("active");
+			break;
+		case 'hashtag':
+			$(".hashs .ullink."+name).addClass("active");
+			break;
+		case 'group':
+			$(".groups .ullink."+name).addClass("active");
+			break;
+		default:
+			break;
 	}
 }
 
@@ -324,6 +333,8 @@ function initVarious() {
 			var val = $("#id_text").val().replace(symbol + target + " ", '');
 			$("#newMessage").find("textarea").val(symbol + target + " " + val);			
 		}
+		$("#newMessage select.superDropdown").val(symbol+target);
+		$("#newMessage").find("div.superDropdown p").text(symbol+target);
     setTimeout(function() {
 			$("#newMessage").find("textarea").focus();
 		}, 500);
