@@ -571,8 +571,17 @@ def update(request):
                     pic = msg.picture
                     pic.delete()
                     msg.picture = None
-            msg_to_db(msg)                                                     # ???
+            if 'safety' in request.GET:
+                safety = request.GET.get('safety')
+                if safety[:1] == '&':
+                    group = GroupProfile.objects.get(short__exact=safety[1:])
+                elif safety == 'Public':
+                    group = None
+                else:
+                    group = GroupProfile.objects.get(name__exact=safety)
+                msg.group = group
             msg.save()                                                       # save and update Message
+            msg_to_db(msg)                                                     # ???
             response = dbm_to_m(msg).text
     else:
         response = "Something went wrong."
