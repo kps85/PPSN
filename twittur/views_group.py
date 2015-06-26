@@ -44,7 +44,8 @@ def group(request, groupshort):
             context['button_text'] = '<span class="glyphicon glyphicon-log-in"></span> ' + group.short.upper() + ' beitreten'
 
         if 'member' in request.GET:
-            context['show_member'] = True
+            if request.user in group.member.all():
+                context['show_member'] = True
 
         messages = getMessages(data={'page': 'group', 'data': group, 'request': request})
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
