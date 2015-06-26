@@ -8,6 +8,7 @@ from .views import *
 from .models import GroupProfile, Message, Hashtag, Notification
 from .forms import MessageForm
 import re
+from itertools import chain
 
 
 # messagebox clicked on pencil button
@@ -242,16 +243,9 @@ def getMessageList(page, data):
             & Q(comment = None)
         ).order_by('-date')
     elif page == 'group':
-        if data.joinable:
-            dbmessage_list = Message.objects.all().filter(
-                Q(group=data) & Q(comment=None)
-            ).order_by('-date')
-        else:
-            dbmessage_list = Message.objects.all().filter(
-                Q(group=data) & Q(comment=None)
-            ).order_by('-date')
-            print(dbmessage_list)
-
+        dbmessage_list = Message.objects.all().filter(
+            Q(group=data) & Q(comment=None)
+        ).order_by('-date')
     elif page == 'profile':
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             Q(user__exact=data) | Q(attags__username__exact=data.username)
@@ -267,6 +261,7 @@ def getMessageList(page, data):
         dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
             query
         ).order_by('-date')
+
     else:
         dbmessage_list = Message.objects.filter(pk=page)
 

@@ -55,11 +55,11 @@
     <div class="container-fluid searchResultBox searchGroup" id="searchGroup">
     <h4> Folgende Gruppen wurden gefunden:</h4>
   	{% for group in group_list %}
-      <a href="{% url 'twittur:group' groupshort=group.0.short %}" >
+      <a href="{% url 'twittur:group' groupshort=group.short %}" >
       <p class="search_group_result pull-left text-center">
-        <img src="{{ group.0.picture.url }}" class="profilbild-s img-thumbnail"/><br />
-        {{ group.0.name }}<br />
-        (&{{ group.0.short }})
+        <img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/><br />
+        {{ group.name }}<br />
+        (&{{ group.short }})
       </p>
       </a>
     {% endfor %}
