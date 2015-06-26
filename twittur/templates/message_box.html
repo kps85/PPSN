@@ -153,7 +153,7 @@
 	{% endif %}
 </div>
 
-{% if comments and active_page not in 'profile, index, search, hashtag' %}
+{% if comments and active_page not in 'profile, index, search, hashtag, group' %}
   <div class="comments">
   {% for comment in comments %}
   	{% include "comments.html" with comment=comment message=message %}

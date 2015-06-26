@@ -330,9 +330,9 @@ def getNotificationCount(user):
 # generate Widgets and return them
 def getWidgets(request):
     userProfile = UserProfile.objects.get(userprofile=request.user)
-    group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
+    # group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_sb_list = GroupProfile.objects.filter(
-        Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
+        Q(member__exact=request.user) #& Q(pk__in=group_super_list) & Q(supergroup__in=group_super_list)
     )
     sidebar = {
         'msgForm': msgDialog(request),
