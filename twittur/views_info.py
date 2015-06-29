@@ -61,26 +61,17 @@ def faq(request):
     # initialize FAQForm with current user as respondent
     faqForm = FAQForm(instance=request.user)
 
-    #faqCats = FAQ.objects.all().values('category').distinct()
-    #for item in faqCats:
-    #    print(item['category'])
-
     # initialize FAQ list for each category
-    faqMain = FAQ.objects.filter(category='Allgemeine Frage')
-    faqStart = FAQ.objects.filter(category='Startseite')
-    faqProfile = FAQ.objects.filter(category='Profilseite')
-    faqInfo = FAQ.objects.filter(category='Infoseite')
-    faqSettings = FAQ.objects.filter(category='Einstellungen')
-
-    # sum FAQs into one list
-    FAQs = [faqMain, faqStart, faqProfile, faqInfo, faqSettings]
+    faqCats = FAQ.objects.all().values('category').distinct().order_by('category')
+    for cat in faqCats:
+        faqList = FAQ.objects.filter(category=cat['category']).order_by('question')
+        FAQs.append(faqList)
 
     # return relevant information to render info_faq.html
     context = {
         'active_page': 'info', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'success_msg': success_msg, 'error_msg': error_msg, 'faqForm': faqForm,
-        'FAQs': FAQs, 'faqMain': faqMain, 'faqStart': faqStart,
-        'faqProfile': faqProfile, 'faqInfo': faqInfo, 'faqSettings': faqSettings,
+        'FAQs': FAQs,
         'safetyLevels': widgets['safetyLevels']
     }
     return render(request, 'info_faq.html', context)
