@@ -589,19 +589,19 @@ function loadMore() {
 			var setIt = function(data, page) {
 				switch(page) {
 					case 'profile':
-						$(".profileMessages").html(data);
+						$(".profileMessages").append(data);
 						break;
 					case 'group':
-						$(".profileMessages").html(data);
+						$(".profileMessages").append(data);
 						break;
 					case 'hashtag':
-						$("#searchMsg").html(data);
+						$("#searchMsg").append(data);
 						break;
 					case 'search':
-						$("#searchMsg").html("<h4> Folgende Nachrichten wurden gefunden:</h4>" + data);
+						$("#searchMsg").append(data);
 						break;
 					default:
-						$("#content").html(data);
+						$("#content").append(data);
 				}
 				if ($(".list_end").length > 0) {
 					$(".load_more").hide();

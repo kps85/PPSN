@@ -27,6 +27,7 @@ def index(request):
     # initialize sidebar lists
     widgets = getWidgets(request)
 
+    # context for template
     context = {
         'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
         'current_user': user, 'list_end': 5,
@@ -511,6 +512,9 @@ def load_more(request):
 
     context['list_length'], context['list_end'] = messages['list_length'], messages['list_end']
     context['has_msg'], context['message_list'] = messages['has_msg'], messages['message_list']
+
+    if 'new_msgs' in messages:
+        context['new_msgs'] = messages['new_msgs']
 
     return render(request, 'message_box_reload.html', context)
 

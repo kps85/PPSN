@@ -111,6 +111,9 @@ def addgroup(request):
 
 # function for delete/join/leave group
 def djlgroup(request, groupshort):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
+
     # Be sure this is the right function, true -> get group object
     if 'delete_join_group' in request.POST:
         group = GroupProfile.objects.get(short__exact=groupshort)
@@ -128,7 +131,21 @@ def djlgroup(request, groupshort):
                     print('hello')
                     group.member.add(request.user)
                 else:
-                    return HttpResponse("Falsches Passwort!")
+                    # initialize sidebar lists
+                    widgets = getWidgets(request)
+
+                    context = {
+                        'active_page': 'group', 'groupshort': groupshort, 'nav': Nav.nav,
+                        'new': widgets['new'], 'msgForm': widgets['msgForm'],
+                        'show_member': False, 'is_member': False,
+                        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
+                        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
+                        'safetyLevels': widgets['safetyLevels']
+    }
+
+                    context['error_msg'] = 'Falsches Passwort!'
+                    context['where'] = groupshort
+                    return render(request, 'profile.html', context)
             else:
                 group.member.add(request.user)
             note = request.user.username + ' ist deiner Gruppe beigetreten.'
@@ -139,10 +156,6 @@ def djlgroup(request, groupshort):
         setNotification('group', data={'group': group, 'member': admin, 'note': note})
 
     return HttpResponseRedirect('/twittur/group/'+groupshort)
-
-
-# TODO
-# - Sichtbarkeit von Nachrichten? (Passwort required oder nicht)
 
 
 # Page: 'Gruppen Einstellungen'

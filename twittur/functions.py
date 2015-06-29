@@ -191,12 +191,22 @@ def getMessages(data):
     curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                   timezone.get_current_timezone())
 
+    if 'post' in data['request'].GET:
+        lastPostID = int(data['request'].GET.get('post'))
+        result['list_start'] = 0
+        for msg in dbmessage_list:
+            result['list_start'] += 1
+            if msg.id == lastPostID:
+                break
+    else:
+        result['list_start'] = None
+
     userprofile = UserProfile.objects.get(userprofile=data['request'].user)
     ignoreM_list = userprofile.ignoreM.all()
     ignoreU_list = userprofile.ignoreU.all()
 
     message_list, message_forms, comment_list, comment_count = [], [], [], []
-    for message in dbmessage_list:
+    for message in dbmessage_list[result['list_start']:result['list_end']]:
         if message.date > curDate:
             message.editable = True
         c = getComments(data={
@@ -206,10 +216,7 @@ def getMessages(data):
         comment_count.append(getCommentCount(message))
 
         # if User ignored this message -> boolean ignore = True, this change will not effect db (no save())
-        if message in ignoreM_list:
-            message.ignore = True
-            message_list.append(message)
-        elif message.user in ignoreU_list:
+        if message in ignoreM_list or message.user in ignoreU_list:
             message.ignore = True
             message_list.append(message)
         else:
@@ -219,17 +226,26 @@ def getMessages(data):
         msgForm = MessageForm(instance=message)
         message_forms.append(msgForm)
 
-    if len(message_list) > 0:
+    if len(dbmessage_list) > 0:
         result['has_msg'] = True
 
-    result['list_length'] = len(message_list)
+    result['list_length'] = len(dbmessage_list)
     result['message_list'] = zip(
-        message_list[:result['list_end']], dbmessage_list[:result['list_end']],
+        message_list,
+        dbmessage_list[result['list_start']:result['list_end']],
         message_forms, comment_list, comment_count
     )
 
-    if result['list_end'] is None or result['list_end'] >= len(message_list):
+    if result['list_end'] is None or result['list_end'] >= len(dbmessage_list):
         result['list_end'] = True
+
+    if 'length' in data['request'].GET:
+        length = int(data['request'].GET.get('length'))
+        print(length)
+        print(result['list_start'])
+        if result['list_start'] > length:
+            result['new_msgs'] = result['list_start'] - length
+            print(result['new_msgs'])
 
     return result
 

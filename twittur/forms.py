@@ -237,8 +237,13 @@ class FAQForm(ModelForm):
             ('Allgemeine Frage', 'Allgemeine Frage'),
             ('Startseite', 'Startseite'),
             ('Profilseite', 'Profilseite'),
+            ('Gruppenseite', 'Gruppenseite'),
+            ('Gruppeneinstellungen', 'Gruppeneinstellungen'),
             ('Infoseite', 'Infoseite'),
-            ('Einstellungen', 'Einstellungen')
+            ('Suche', 'Suche'),
+            ('Einstellungen', 'Einstellungen'),
+            ('Benachrichtigungen', 'Benachrichtigungen'),
+            ('Nachrichtenanzeige', 'Nachrichtenanzeige')
         )
         self.fields['category'] = forms.ChoiceField(choices=catChoices, widget=forms.Select)
         # set answer input type to textarea, set size and placeholder
