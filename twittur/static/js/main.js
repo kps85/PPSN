@@ -98,6 +98,19 @@ function initMenu() {
 		menuOpenerWasVisible = true;
 	}
 	
+	var page = window.location.href.split("/")
+	switch (page[4]) {
+		case 'group':
+			$(".groups ."+page[5]).addClass("active");
+			break;
+		case 'hashtag':
+			$(".hashs ."+page[5]).addClass("active");
+			break;
+		case 'profile':
+			$(".following ."+page[5]).addClass("active");
+			break;
+	}
+	
 	$(window).resize(function() {
 		if($(window).width() == windowWidth) return
 		windowWidth = $(window).width();
@@ -502,7 +515,6 @@ function msgManagement() {
 								$("#cmt"+info.id).find(".postHide").html(data);
 							} else {	
 								$("#cmt"+info.id).each(function(index, element) {
-									$(element).toggleClass("postIgnore");
 									var hideElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .postHide."+info.id;
 									$(element).find(hideElements).toggleClass("hidden");
 									$(element).find(".ignoreCmtButton."+info.id).toggleClass("glyphicon-eye-open glyphicon-eye-close");
@@ -527,7 +539,6 @@ function msgManagement() {
 						case 'del_cmt':
 							$("#cmt"+info.id).each(function(index, element) {
 								$("#delCmt"+info.id+"Modal").modal('hide');
-								$(element).toggleClass("postIgnore");
 								var remElements = ".cmtMeta."+info.id+", .cmtText."+info.id+", .reply_link."+info.id+", .cmtEdit."+info.id;
 								$(element).find(remElements).remove();
 								$("#newComment"+info.id).remove();

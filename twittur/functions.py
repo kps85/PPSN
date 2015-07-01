@@ -1,4 +1,4 @@
-import copy, datetime, operator, string
+import copy, datetime, re, string
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -7,8 +7,40 @@ from django.utils import timezone
 from .views import *
 from .models import GroupProfile, Message, Hashtag, Notification
 from .forms import MessageForm
-import re
-from itertools import chain
+
+
+# initialize global data dictionary
+def getContext(request, page=None, user=None):
+
+    userProfile = UserProfile.objects.get(userprofile=request.user)
+    group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
+    group_sb_list = GroupProfile.objects.filter(
+        Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
+    )
+    follow_list = userProfile.follow.all()
+
+    # intialize data dictionary
+    context = {
+        'active_page': page,
+        'nav': Nav.nav,
+        'error_msg': {},
+        'success_msg': None,
+        'new': getNotificationCount(request.user), # Notifications
+        'msgForm': msgDialog(request),
+
+        'user': user,
+        'userProfile': userProfile,
+        'follow_list': follow_list, # Follow List
+        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
+        'group_sb_list': group_sb_list, # Group List
+        'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
+                   .order_by('-hashtag_count')[:5], # Beliebte Themen
+
+        'list_end': 5,
+        'safetyLevels': getSafetyLevels(request.user, True)
+    }
+
+    return context
 
 
 # messagebox clicked on pencil button
@@ -241,11 +273,8 @@ def getMessages(data):
 
     if 'length' in data['request'].GET:
         length = int(data['request'].GET.get('length'))
-        print(length)
-        print(result['list_start'])
         if result['list_start'] > length:
             result['new_msgs'] = result['list_start'] - length
-            print(result['new_msgs'])
 
     return result
 
@@ -254,7 +283,7 @@ def getMessages(data):
 def getMessageList(page, data):
     if page == 'index':
         dbmessage_list = Message.objects.all().filter(
-            ( Q(user__exact=data) | Q(user__exact=data[0].userprofile.follow.all())
+            ( Q(user__exact=data) | Q(user__exact=data.userprofile.follow.all())
             | Q(attags = data) ) | Q(group__member=data)
             & Q(comment = None)
         ).order_by('-date')
@@ -341,26 +370,6 @@ def getNotificationCount(user):
     return Notification.objects.filter(
         Q(read=False) & Q(user=user)
     ).count()
-
-
-# generate Widgets and return them
-def getWidgets(request):
-    userProfile = UserProfile.objects.get(userprofile=request.user)
-    group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
-    group_sb_list = GroupProfile.objects.filter(
-        Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
-    )
-    sidebar = {
-        'msgForm': msgDialog(request),
-        'userProfile': userProfile,
-        'follow_list': userProfile.follow.all(), # Follow List
-        'group_sb_list': group_sb_list, # Group List
-        'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5], # Beliebte Themen
-        'new': getNotificationCount(request.user), # Notifications
-        'safetyLevels': getSafetyLevels(request.user, True)
-    }
-    return sidebar
 
 
 def getDisciplines():

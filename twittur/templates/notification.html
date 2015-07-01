@@ -15,9 +15,9 @@
   <h2>Du hast keine neuen Benachrichtigungen.</h2>
 {% endif %}
 
-{% if notification_list %}
+{% if ntfc_list %}
 	<div class="container-fluid">
-  {% for notification, boolean in notification_list %}
+  {% for notification, boolean in ntfc_list %}
     {% if notification.follower %}
       <a href="{% url 'twittur:profile' user=notification.follower.userprofile.username %}">
         <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">

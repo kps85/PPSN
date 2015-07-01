@@ -34,14 +34,15 @@
   {% if user_list_length > 0 %}
     <div class="container-fluid searchResultBox searchUser" id="searchUser">
     <h4> Folgende Benutzer wurden gefunden:</h4>
-  	{% for user in user_list %}
-      <a href="{% url 'twittur:profile' user=user.username %}" >
-      <p class="search_user_result pull-left text-center">
-        <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/><br />
-        {{ user.first_name }} {{ user.last_name }}<br />
-        (@{{ user.username }})
-      </p>
-      </a>
+    <ul>
+    {% for user in user_list %}
+      <li class="search_user_result clearfix container-fluid">
+        <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail pull-left"/>
+        <div class="pull-left">
+          <strong>{{ user.first_name }} {{ user.last_name }} (@<a href="{% url 'twittur:profile' user=user.username %}" >{{ user.username }}</a>)</strong><br />
+          <em class="pull-left">studiert: {{ user.userprofile.academicDiscipline }}</em>
+        </div>
+        <p class="pull-right text-right"><em>registriert seit<br />{{ user.date_joined|date:"d.m.Y" }}</em></p>
     {% endfor %}
     </div>  
   {% else %}
@@ -53,15 +54,16 @@
   
   {% if group_list_length > 0 %}
     <div class="container-fluid searchResultBox searchGroup" id="searchGroup">
-    <h4> Folgende Gruppen wurden gefunden:</h4>
+      <h4> Folgende Gruppen wurden gefunden:</h4>
+      <ul>    
   	{% for group in group_list %}
-      <a href="{% url 'twittur:group' groupshort=group.short %}" >
-      <p class="search_group_result pull-left text-center">
-        <img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/><br />
-        {{ group.name }}<br />
-        (&{{ group.short }})
-      </p>
-      </a>
+        <li class="search_group_result clearfix container-fluid">
+        	<img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail pull-left"/>
+          <div class="pull-left">
+            <strong><a href="{% url 'twittur:group' groupshort=group.short %}" class="pull-left">{{ group.name }}</a>&nbsp;(&amp;{{ group.short|lower }})</strong><br />
+            {% if group.supergroup %}<em class="pull-left">Untergruppe von: {{ group.supergroup }}</em>{% endif %}
+          </div>
+          <p class="pull-right">{{ group.member.all.count }} {% if group.member.all.count == 1 %}Mitglied{% else %}Mitglieder{% endif %}</p>
     {% endfor %}
     </div>  
   {% else %}
@@ -73,14 +75,13 @@
   
   {% if hashtag_list_length > 0 %}
     <div class="container-fluid searchResultBox searchHash" id="searchHash">
-    <h4> Folgende Themen wurden gefunden:</h4>
-  	{% for hashtag in hashtag_list %}
-      <a href="/twittur/hashtag/{{ hashtag.name }}">
-      <p class="search_hash_result pull-left text-center">
-        #{{ hashtag.name }}
-      </p>
-      </a>
-    {% endfor %}
+      <h4> Folgende Themen wurden gefunden:</h4>
+      <ul>
+      {% for hashtag, count in hashtag_list %}      
+        <li class="search_hash_result clearfix">
+          <strong><a href="/twittur/hashtag/{{ hashtag.name }}" class="pull-left">#{{ hashtag.name }}</a></strong>
+          <p class="pull-right">{{ count }} {% if count == 1 %}Beitrag{% else %}Beitr&auml;ge{% endif %}</p>
+      {% endfor %}
     </div>  
   {% else %}
     <div class="container-fluid searchResultBox searchHash text-center" id="searchHash">

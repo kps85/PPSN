@@ -4,25 +4,15 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render
 
-from .functions import dbm_to_m, elimDups, getMessages, getWidgets
-from .models import GroupProfile, Hashtag, Nav
+from .functions import dbm_to_m, elimDups, getContext, getMessages
+from .models import GroupProfile, Hashtag, Message
+from .views import IndexView
 
 
 # search input
-def search(request):
-    # initialize varios information
-    success_msg, error_msg = None, {}
-
-    # initialize sidebar lists
-    widgets = getWidgets(request)
-
-    context = {
-        'active_page': 'search', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'list_end': 5,
-        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
-        'safetyLevels': widgets['safetyLevels']
-    }
+def SearchView(request):
+    # initialize various information
+    context = getContext(request, 'search', request.user)
 
     if 'search_input' in request.GET:
         search_input = request.GET['search_input'].strip().split(" ")
@@ -34,14 +24,7 @@ def search(request):
     context['search_input'] = ' '.join(search_input)
         
     if search_input is None or search_input[0] == "":
-        error_msg["no_term"] = "Kein Suchbegriff eingegeben!"
-        context_error = {
-            'active_page': 'index', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-            'error_msg': error_msg,
-            'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-            'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5]
-        }
-        return render(request, 'index.html', context_error)
+        return IndexView(request)
 
     # filter all messages contain the word  or all users contain the word
     # search_input contains @ -> cut @ off and set flag
@@ -66,7 +49,7 @@ def search(request):
         # special case: flag for @
         attag = False
         if term[:1] == "#":
-            hashtag(request, term)
+            HashtagView(request, term)
         elif term[:1] == "@":
             attag = True
             term = term[1:]
@@ -91,7 +74,9 @@ def search(request):
         if len(group) > 0:
             group_list.append(group.distinct())
 
-        hashtag_list.append(Hashtag.objects.all().filter(Q(name__contains=term)))
+        hashtag = Hashtag.objects.all().filter(Q(name__contains=term))
+        hashtag_count = [Message.objects.filter(hashtags__in=hashtag).count()]
+        hashtag_list.append(zip(hashtag, hashtag_count))
 
         # flag was set -> back to normal input
         if attag:
@@ -117,26 +102,18 @@ def search(request):
 
 
 # click on hashtaglinks will redirect to this function.
-def hashtag(request, text):
-    success_msg, end = None, 5
-
-    # initialize sidebar lists
-    widgets = getWidgets(request)
+def HashtagView(request, text):
+    context = getContext(request, 'hashtag', request.user)
 
     # if message was sent to view: return success message
     if request.method == 'POST':
-        success_msg = 'Nachricht erfolgreich gesendet!'
+        context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
     # Messages
     messages = getMessages(data={'page': 'hashtag', 'data': text, 'request': request})
 
-    context = {
-        'active_page': 'hashtag', 'nav': Nav.nav, 'new': widgets['new'], 'msgForm': widgets['msgForm'],
-        'success_msg': success_msg,
-        'search': 'Beitr&auml;ge zum Thema "#' + text + '"', 'is_hash': text, 'list_end': messages['list_end'],
-        'message_list': messages['message_list'], 'hash_list_length': messages['list_length'],
-        'hot_list': widgets['hot_list'], 'group_sb_list': widgets['group_sb_list'],
-        'follow_sb_list': sorted(widgets['follow_list'], key=lambda x: random.random())[:5],
-        'safetyLevels': widgets['safetyLevels']
-    }
+    context['search'] = 'Beitr&auml;ge zum Thema "#' + text + '"'
+    context['is_hash'], context['list_end'] = text, messages['list_end']
+    context['message_list'], context['hash_list_length'] = messages['message_list'], messages['list_length']
+
     return render(request, 'search.html', context)

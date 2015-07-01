@@ -1,7 +1,6 @@
 a:hover { color: #f50000; cursor: pointer; }
 a:focus { color: #f50000; text-decoration: none; }
 
-
 /* Antworten Link :hover */
 a.reply_link:hover { cursor: pointer; }
 
@@ -76,7 +75,7 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 	Profile FavList: Auge zum "entfavoritisieren"
 	Group MemberList: Style Elements
 */
-.showFavList, .showMembList, .memberList button[type=submit] {
+.showFavList, .showMembList, .remFav {
 	background: none;
 	border: none;
 	width: 100%;
@@ -85,9 +84,9 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 	color: #818d9b;
 }
 .showMembList { width: auto; }
-.memberList button[type=submit], .showMembList { padding: 0px; color: #a00000; }
+.remFav, .showMembList { padding: 0px; color: #a00000; }
 	.showFavList:hover { color: #fff; }
-	.memberList button[type=submit]:hover, .showMembList:hover { color: #f50000; }
+	.remFav:hover, .showMembList:hover { color: #f50000; }
 	.showFavList.active {
 		color: #fff;
 		background-color: #1F212E;
@@ -140,6 +139,10 @@ nav a:focus { color: #fff; } /* Wenn Nav Item angeklickt, weird blue Effekt entf
 /* search_results ordentlich darstellen */
 .search_user_result, .search_hash_result, .search_group_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 5px 5px 0; padding: 5px 10px; }
 .search_user_result img, .search_group_result img { width: 50px; }
+.search_user_result div, .search_group_result div { margin: 5px 10px; }
+.search_hash_result p { margin: 0px; }
+.search_user_result p { margin: 5px 0px; }
+.search_group_result p { margin: 15px 0px; }
 
 
 /* style SearchResultButtons 'Benutzer, Gruppen, Themen, Nachrichten' */
@@ -150,3 +153,24 @@ nav a:focus { color: #fff; } /* Wenn Nav Item angeklickt, weird blue Effekt entf
 /* show only first ResultBox with results */
 .searchResultBox { display: none; }
 .searchResultBox.active { display: block; }
+
+/* Settings Page */
+.alert .errorlist { display: inline-block }
+
+.profilbild-l { width: 200px; margin-right: 15px; }
+.profilbild-s { width: 50px; }
+
+#profBildUpdate { font-size: 0em; }
+#profBildUpdate > a, #profBildUpdate > input, #profBildUpdate > label, #profBildUpdate > span  { font-size: 14px; }
+#profBildUpdate > a:after { clear: both; display: block; width: 100%; content: ''; }
+
+/* Info Page */
+.teamContainer { margin-bottom: 20px; }
+.teamContainer .post { margin-bottom: 0; }
+.teamContainer img { max-width: 80px; }
+.teamContainer dd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.faqContainer .post:hover { cursor: pointer; }
+.faqContainer .post.active { background-color: rgba(92,184,92,.1); }
+.faqContainer h4 { position: relative; width: 100%; }
+.faqContainer h4 span { position: absolute; right: 0; }

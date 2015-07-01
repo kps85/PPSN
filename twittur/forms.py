@@ -150,15 +150,14 @@ class GroupProfileEditForm(ModelForm):
         model = GroupProfile
         fields = ['name', 'short', 'desc', 'password', 'picture']
         widgets = {
+            'password': forms.PasswordInput,
             'desc': forms.Textarea(attrs={'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
-        print(instance.password)
         super(GroupProfileEditForm, self).__init__(*args, **kwargs)
         self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
-        self.fields['ack_password'].initial = instance.password
         for field in self.fields:
             if field != 'picture':
                 self.fields[field].widget.attrs['class'] = 'form-control'

@@ -29,14 +29,8 @@
           <span class="glyphicon glyphicon-search"></span>
         </button>
       </form>
-      <!-- WAS IST DAS?
-      <div id="infoBar">
-      	{% block infobar %} 
-        {% endblock %}
-      </div>
-      -->
     </header>
-   <div class="container-fluid searchBar">
+    <div class="container-fluid searchBar">
       <form action="{% url 'twittur:search' %}" class="searchForm" id="search" method="GET">
         <div class="col-xs-10 col-sm-11 form-group pull-left">
           <input class="form-control" id="search_input" name="search_input" type="text" placeholder="Suche" title="Suchbegriff eingeben">
@@ -74,7 +68,7 @@
         <div class="modal-content">
         	{% if active_page in 'profile' and pUser %}
           <form action="{% url 'twittur:profile' user=pUser %}" method="post" enctype="multipart/form-data">
-            {% elif active_page == 'group' and group %}
+          {% elif active_page == 'group' and group %}
           <form action="{% url 'twittur:group' groupshort=groupshort %}" method="post" enctype="multipart/form-data">
         	{% else %}
           <form action="{% url 'twittur:index' %}" method="post" enctype="multipart/form-data">
