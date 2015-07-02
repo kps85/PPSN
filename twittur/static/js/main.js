@@ -171,7 +171,7 @@ function deleteNotification($notify, timer) {
 }
 
 
-function notify(content) {
+function notify(content, link) {
     // Template holen (s. template/layout/notificationBox.html)
     var $template = $(".notify.template");
     var $new = $template.clone().removeClass("template");
@@ -192,7 +192,15 @@ function notify(content) {
     });
     
     // Text einfuegen
-    $new.find(".notifyMessage").html(content);
+    var $message = $new.find(".notifyMessage");
+    $message.html(content);
+    // Link einfuegen
+    if(link != null) {
+        $message.attr('href',link);
+        $message.addClass("hover");
+    }
+    
+    
     
     // In die Notificationleiste einfuegen
     $new.prependTo(".liveNotifications");

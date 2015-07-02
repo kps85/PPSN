@@ -15,6 +15,7 @@
 .notify {
     max-width:100%;
     margin-top:10px;
+    display:block;
     @include desktop {
         max-width:50%;
     }
@@ -22,27 +23,53 @@
     color:#fff;
     a {
         text-decoration: none;
+        color:#fff;
+        &:hover {
+            color:#fff;
+            cursor:inherit;
+        }
+    }
+    
+    a.hover:hover {
+        cursor:pointer;
     }
 }
 
 .notifyContent {   
     color:#fff;
-    font-size:1.2em;
-    padding:20px;
+    
+    
     position:relative;
     left:-100%;
     background: RGBA(0, 200, 141, 1);
     .notifyMessage {
-        width:80%;
+        width:90%;
         float:left;
+        font-size:1.2em;
+        padding:20px;
+        padding-right:0;
     }
     
     
     .notifyClose {
         color:#fff;
-        
+        padding:20px 0;
+        padding-right:20px;
+        width:10%;
         float:right;
+        text-align: right;
         margin-top:4px;
+    }
+    
+    @include phone {
+        .notifyMessage {
+            width:80%;
+            font-size:1em;
+        }
+        
+        .notifyClose {
+            width:20%;
+        }
     }
     
     @include clear;

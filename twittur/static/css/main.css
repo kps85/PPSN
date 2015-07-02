@@ -362,18 +362,15 @@ textarea, input {
 
 /* Bootstrap */
 .btn-primary, .btn-primary[disabled] {
-  background-image: -webkit-linear-gradient(top, #F50000 0%, #990000 100%);
-  background-image: -o-linear-gradient(top, #F50000 0%, #990000 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#F50000), to(#990000));
-  background-image: linear-gradient(to bottom, #F50000 0%, #990000 100%);
+  background: RGBA(245, 13, 13, 1);
   background-repeat: repeat-x;
-  border-color: #990000; }
+  border-color: RGBA(245, 13, 13, 1); }
 
 .btn-primary[disabled] {
   opacity: 0.4; }
 
 .btn-primary:hover, .btn-primary:focus {
-  background-color: #990000;
+  background-color: #a00000;
   background-position: 0 -15px;
   border-color: #990000; }
 
@@ -1056,28 +1053,46 @@ header {
 .notify {
   max-width: 100%;
   margin-top: 10px;
+  display: block;
   display: none;
   color: #fff; }
   @media screen and (min-width: 1024px) {
     .notify {
       max-width: 50%; } }
   .notify a {
-    text-decoration: none; }
+    text-decoration: none;
+    color: #fff; }
+    .notify a:hover {
+      color: #fff;
+      cursor: inherit; }
+  .notify a.hover:hover {
+    cursor: pointer; }
 
 .notifyContent {
   color: #fff;
-  font-size: 1.2em;
-  padding: 20px;
   position: relative;
   left: -100%;
   background: RGBA(0, 200, 141, 1); }
   .notifyContent .notifyMessage {
-    width: 80%;
-    float: left; }
+    width: 90%;
+    float: left;
+    font-size: 1.2em;
+    padding: 20px;
+    padding-right: 0; }
   .notifyContent .notifyClose {
     color: #fff;
+    padding: 20px 0;
+    padding-right: 20px;
+    width: 10%;
     float: right;
+    text-align: right;
     margin-top: 4px; }
+  @media screen and (max-width: 639px) {
+    .notifyContent .notifyMessage {
+      width: 80%;
+      font-size: 1em; }
+    .notifyContent .notifyClose {
+      width: 20%; } }
   .notifyContent:after {
     content: "";
     display: table;

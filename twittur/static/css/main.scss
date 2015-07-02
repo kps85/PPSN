@@ -43,9 +43,9 @@ textarea, input { outline: none; }
 
 /* Bootstrap */
 .btn-primary, .btn-primary[disabled] {
-	@include gradient(#F50000,#990000);
+	background:RGBA(245, 13, 13, 1);
 	background-repeat: repeat-x;
-	border-color: rgba(153,0,0,1);
+	border-color: RGBA(245, 13, 13, 1);
 }
 
 .btn-gray {
@@ -57,7 +57,7 @@ textarea, input { outline: none; }
 }
 
 .btn-primary:hover, .btn-primary:focus {
-	background-color: #990000;
+	background-color: #a00000;
 	background-position: 0 -15px;
 	border-color: rgba(153,0,0,1);
 }
