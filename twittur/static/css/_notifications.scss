@@ -1,0 +1,49 @@
+.liveNotifications {
+     position:fixed;
+    bottom:20px;
+    left:0;
+    width:50%;
+    @include desktop {
+        left:$asideWidth;
+        
+    }
+    z-index:1;
+   
+    
+}
+    
+.notify {
+    max-width:100%;
+    margin-top:10px;
+    @include desktop {
+        max-width:50%;
+    }
+    display:none;
+    color:#fff;
+    a {
+        text-decoration: none;
+    }
+}
+
+.notifyContent {   
+    color:#fff;
+    font-size:1.2em;
+    padding:20px;
+    position:relative;
+    left:-100%;
+    background: RGBA(0, 200, 141, 1);
+    .notifyMessage {
+        width:80%;
+        float:left;
+    }
+    
+    
+    .notifyClose {
+        color:#fff;
+        
+        float:right;
+        margin-top:4px;
+    }
+    
+    @include clear;
+}

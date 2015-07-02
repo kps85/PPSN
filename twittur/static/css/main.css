@@ -453,22 +453,24 @@ textarea, input {
       min-width: 0; }
 
 /* Layout */
-@media screen and (min-width: 1024px) {
-  #aside {
-    width: 30%;
-    height: 100%;
-    position: fixed; } }
-@media screen and (max-width: 1023px) {
-  #aside {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 20;
-    background: #282B37;
-    left: -100%; } }
+#aside {
+  z-index: 3; }
+  @media screen and (min-width: 1024px) {
+    #aside {
+      width: 30%;
+      height: 100%;
+      position: fixed; } }
+  @media screen and (max-width: 1023px) {
+    #aside {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 20;
+      background: #282B37;
+      left: -100%; } }
 
 @media screen and (min-width: 1024px) {
   nav {
@@ -734,17 +736,17 @@ header {
   #main {
     padding-top: 60px; } }
 
-#content {
+#content, .width {
   margin: 30px auto; }
   @media screen and (min-width: 1024px) {
-    #content {
+    #content, .width {
       width: 80%; } }
   @media screen and (max-width: 1023px) {
-    #content {
+    #content, .width {
       width: 94%;
       margin-top: 120px; } }
   @media screen and (max-width: 639px) {
-    #content {
+    #content, .width {
       margin-top: 30px !important; } }
 
 .post {
@@ -1040,5 +1042,45 @@ header {
 
 .msgEditSave {
   padding-top: 15px; }
+
+.liveNotifications {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  width: 50%;
+  z-index: 1; }
+  @media screen and (min-width: 1024px) {
+    .liveNotifications {
+      left: 30%; } }
+
+.notify {
+  max-width: 100%;
+  margin-top: 10px;
+  display: none;
+  color: #fff; }
+  @media screen and (min-width: 1024px) {
+    .notify {
+      max-width: 50%; } }
+  .notify a {
+    text-decoration: none; }
+
+.notifyContent {
+  color: #fff;
+  font-size: 1.2em;
+  padding: 20px;
+  position: relative;
+  left: -100%;
+  background: RGBA(0, 200, 141, 1); }
+  .notifyContent .notifyMessage {
+    width: 80%;
+    float: left; }
+  .notifyContent .notifyClose {
+    color: #fff;
+    float: right;
+    margin-top: 4px; }
+  .notifyContent:after {
+    content: "";
+    display: table;
+    clear: both; }
 
 /*# sourceMappingURL=main.css.map */

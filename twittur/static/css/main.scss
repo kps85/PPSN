@@ -187,6 +187,8 @@ $navWidthMobile:60px;
 		height:100%;
 		position:fixed;
 	}
+    
+    z-index:3;
 	
 	@include tablet {
 		display:none;
@@ -569,7 +571,7 @@ header {
     }
 }
 
-#content {
+#content, .width {
 	
 	@include desktop {
 		width:80%;
@@ -1001,3 +1003,4 @@ $iconWidth:50px;
     padding-top:15px;
 }
     
+@import 'notifications';

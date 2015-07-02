@@ -150,6 +150,72 @@ function initList() {
 	});
 }
 
+// Notifications
+var notificationTime = 5000;
+
+function showNotification($notify) {
+    // Blendet eine einzelne Notification ein
+    $notify.fadeIn(500);
+    $notify.children(".notifyContent").animate({'left':'0'},500);
+}
+
+function deleteNotification($notify, timer) {
+    // Timer clearen
+    clearTimeout(timer);
+    // So ausblenden, dass die anderen Notifications nicht ruckeln
+    var height = $notify.outerHeight(true);
+    var margin = 10;
+    $notify.fadeTo(300, 0.01).animate({marginTop: -height + margin, left:'-100%' }, 500, function() {
+        $(this).remove();
+    });
+}
+
+
+function notify(content) {
+    // Template holen (s. template/layout/notificationBox.html)
+    var $template = $(".notify.template");
+    var $new = $template.clone().removeClass("template");
+    // Funktion zum loeschen der Notification
+    var timer = null;
+    var fnDelete = function() {
+        deleteNotification($new, timer);
+    }
+    // Automatisch loeschen
+    timer = setTimeout(fnDelete, notificationTime);
+    // Oder durch Klick
+    $new.find(".notifyClose").click(fnDelete);
+    // Beim Hover wird der Timer kurz gestoppt
+    $new.hover(function() {
+        clearTimeout(timer);
+    }, function() {
+        timer = setTimeout(fnDelete, notificationTime);
+    });
+    
+    // Text einfuegen
+    $new.find(".notifyMessage").html(content);
+    
+    // In die Notificationleiste einfuegen
+    $new.prependTo(".liveNotifications");
+    
+    // Anzeigen!
+    showNotification($new);
+    return $new;
+}
+
+function notificationTest(message, delay) {
+    // Methode zum Testen der Notifications - message wird nach delay (ms) eingeblendet
+    setTimeout(function() {
+        notify(message);
+    }, delay);
+}
+    
+
+function initNotifications() {
+    if(!$(".liveNotifications").length) return;
+    notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
+    notificationTest("@wilee hat das Notification-Backend erfolgreich implementiert",10000);
+}
+
 function validateFtu() {
 	// Validiert die Daten der Login/Registrierungsseite
 	// TODO: Einfacher gestalten...	
@@ -657,6 +723,7 @@ $(document).ready(function() {
 	initMenu();
 	initList();
 	initFtu();
+    initNotifications();
 	initInfoSettings();
 	initSearchResults();
 	initInputValidation();
