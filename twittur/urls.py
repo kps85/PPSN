@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^notification/$', views.NotificationView, name='notification'),
     url(r'^more/$', views.load_more, name='more'),
     url(r'^update/$', views.update, name='update'),
-
+    url(r'^404/$', views.vierNullVier, name='404'),
 
     # views_into
     url(r'^info/$', views_info.InfoView, name='info'),

@@ -151,7 +151,7 @@ function initList() {
 }
 
 // Notifications
-var notificationTime = 5000;
+var notificationTime = 7000;
 
 function showNotification($notify) {
     // Blendet eine einzelne Notification ein

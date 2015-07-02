@@ -731,7 +731,7 @@ $iconWidth:50px;
     	right: 15px;
     	top: 15px;
     	z-index: 99;
-    	background-color: #f50000
+    	background-color: RGBA(0, 200, 141, 1);
     }
     
     @include tablet {
@@ -1004,3 +1004,4 @@ $iconWidth:50px;
 }
     
 @import 'notifications';
+@import '404';

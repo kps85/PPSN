@@ -531,3 +531,8 @@ def update(request):
         response = "Something went wrong."
 
     return HttpResponse(response)
+
+
+def vierNullVier(request):
+    context = getContext(request, '404', user=request.user)
+    return render(request, '404.html', context)
