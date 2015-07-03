@@ -67,7 +67,7 @@ def SupportView(request):
         return HttpResponseRedirect('/twittur/login/')
 
     context = getContext(request, 'info', request.user)
-    context['team_list'] = User.objects.filter(is_superuser=True).order_by('last_name')
+    context['team_list'] = User.objects.filter(is_superuser=True).exclude(pk=15).order_by('last_name')
     context['cat_list'] = FAQ.objects.all().values('category').distinct()
 
     if request.method == 'POST':
