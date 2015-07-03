@@ -224,7 +224,7 @@ def logout(request):
     return HttpResponseRedirect('/twittur/')
 
 
-# profilpage
+# Page: 'Profilseite'
 def ProfileView(request, user):
     # check if user is logged in
     # if user is not logged in, redirect to FTU
@@ -310,11 +310,16 @@ def ProfileView(request, user):
 
 
 # Page: 'Einstellungen'
-# - allows: editing editable user information and deleting account
-# -- picture, email, password, first_name, last_name,
-#    academicDiscipline, studentNumber, location
-# - template: info_support.html
 def ProfileSettingsView(request):
+    """
+    view to update account and personal information
+    -- picture, email, password, first_name, last_name,
+       academicDiscipline, studentNumber, location
+    user can also delete its account
+    :param request:
+    :return: rendered HTML in template 'settings.html'
+    """
+
     # check if user is logged in
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
