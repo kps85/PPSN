@@ -1,3 +1,15 @@
+"""
+@package twittur
+@author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
+Standard Views
+- IndexView:            landing page for logged-in users
+- LoginView:            landing page for guests
+- ProfileView:          profile page for logged-in users
+- ProfileSettingsView:  settings for logged-in users
+- MessageView:          page to show single messages or conversations
+- NotificationView:     page to show notifications
+"""
+
 import random, re
 
 from django.contrib import auth
@@ -390,6 +402,13 @@ def ProfileSettingsView(request):
 
 
 def MessageView(request, msg):
+    """
+    view to show messages / conversations
+    :param request:
+    :param msg: ID of displayed message
+    :return: rendered HTML in template 'message.html'
+    """
+
     # initialize data dictionary 'context'
     context = getContext(request, page='message', user=request.user)
     context['msg_id'] = msg
@@ -399,7 +418,7 @@ def MessageView(request, msg):
     if request.method == 'POST':
         context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
-    # Messages
+    # gets all Messages
     messages = getMessages(data={'page': msg, 'data': request.user, 'request': request})
     context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg'],
 
@@ -408,10 +427,13 @@ def MessageView(request, msg):
 
 
 def NotificationView(request):
-    # initialize data dictionary 'context'
+    """
+    view that shows notifications
+    after getting the notification list, all notifications will be marked as read
+    :param request:
+    :return: rendered HTML in template 'notification.html'
+    """
     context = getContext(request, page='notification', user=request.user)
-
-    # for context
     context['ntfc_list'] = Notification.objects.filter(Q(user=request.user)).order_by("-date").distinct()
 
     # saving boolean extra, because it will deleted by next for loop
@@ -432,10 +454,17 @@ def NotificationView(request):
 
 
 def load_more(request):
+    """
+    loads further messages to current view
+    :param request:
+    :return: rendered HTML in Template 'message_box_reload.html'
+    """
     dict = request.GET
     page = dict.get('page')
     context = getContext(request, page=page, user=request.user)
 
+    # Stellt fest, welche Daten für die Anzeige weiterer Nachrichten benoetigt werden.
+    # Cases: 'index, profile, group, search, hashtag'
     if page == 'index':
         data = request.user
     elif page == 'profile':
@@ -464,7 +493,17 @@ def load_more(request):
 
 
 def update(request):
+    """
+    processes request to update a message / comment
+    - 'hide_msg', 'hide_cmt':   puts message / comment on message-ignore-list
+    - 'del_msg', 'del_cmt':     deletes message / comments and its comments, as well as its picture from the database
+    - 'upd_msg':                updates a message / comment with current information
+    :param request:
+    :return: String with update status
+    """
     dict = request.GET
+
+    # message / comment will be added to user's message-ignore-list
     if dict['what'] in ('hide_msg', 'hide_cmt'):
         userProfile = request.user.userprofile
         ignore_list = userProfile.ignoreM.all()
@@ -484,13 +523,15 @@ def update(request):
                     userProfile.ignoreM.add(msg)
                     response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
                                "Nachricht erfolgreich ausgeblendet!"
+
+    # message / comment and its data (comments, hashtag) will be delete from the database
     elif dict['what'] in ('del_msg', 'del_cmt'):
-        if Message.objects.filter(pk=dict['id']).exists():                      # if Message exists
-            msg = Message.objects.get(pk=dict['id'])                            # select Message
+        if Message.objects.filter(pk=dict['id']).exists():
+            msg = Message.objects.get(pk=dict['id'])
             if Message.objects.filter(comment=dict['id']).exists():
                 comments = Message.objects.filter(comment=msg)
                 for obj in comments:
-                    hashtaglist = []                                            # check for comments hashtag in db
+                    hashtaglist = []
                     for hashtag in obj.hashtags.all():
                         hashtaglist.append(hashtag)
                     if hashtaglist:
@@ -499,18 +540,22 @@ def update(request):
             if msg.picture:
                 pic = msg.picture
                 pic.delete()
-            hashtaglist = []                                                    # check for message hashtag in db
+            hashtaglist = []
             for hashtag in msg.hashtags.all():
                 hashtaglist.append(hashtag)
             if hashtaglist:
                 checkhashtag(msg, hashtaglist)
-            msg.delete()                                                        # delete selected Message
+            msg.delete()
         response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
-                   "Nachricht gel&ouml;scht!"                                   # return info
+                   "Nachricht gel&ouml;scht!"
+
+    # message will be updated with current information.
+    # may clear the picture and delete it from its folder
+    # may change safetyLevel
     elif dict['what'] == 'upd_msg':
         if Message.objects.filter(pk=dict['id']).exists():
             msg = Message.objects.get(pk=dict['id'])
-            msg.text = dict['val']                                              # set Message text
+            msg.text = dict['val']
             if 'clear' in dict and dict['clear'] == 'true':
                 if msg.picture is not None:
                     pic = msg.picture
@@ -524,8 +569,8 @@ def update(request):
                 else:
                     group = GroupProfile.objects.get(name__exact=dict['safety'])
                 msg.group = group
-            msg.save()                                                       # save and update Message
-            msg_to_db(msg)                                                     # ???
+            msg.save()
+            msg_to_db(msg)
             response = dbm_to_m(msg).text
     else:
         response = "Something went wrong."
