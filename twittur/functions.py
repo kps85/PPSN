@@ -186,9 +186,10 @@ def dbm_to_m(message):
             # now find in text all words start with "@". Its important to find this user in database.
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
-            if word[0] == "@" and (User.objects.get(username=word[1:]) in attag_list):
-                href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
-                message.text = message.text.replace(word, href)
+            if word[0] == "@":
+                if User.objects.get(username=word[1:]).exists() and User.objects.get(username=word[1:]) in attag_list:
+                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+                    message.text = message.text.replace(word, href)
 
             if word[0] == '&' and group.short == word[1:]:
                 href = '<a href="/twittur/group/' + word[1:] + '">' + word +'</a>'
