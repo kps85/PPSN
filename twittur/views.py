@@ -463,8 +463,8 @@ def load_more(request):
     page = dict.get('page')
     context = getContext(request, page=page, user=request.user)
 
-    # Stellt fest, welche Daten für die Anzeige weiterer Nachrichten benoetigt werden.
-    # Cases: 'index, profile, group, search, hashtag'
+    # gets specific data to display new messages for different pages
+    # cases: 'index, profile, group, search, hashtag'
     if page == 'index':
         data = request.user
     elif page == 'profile':
