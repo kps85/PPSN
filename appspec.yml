@@ -2,9 +2,9 @@ version: 0.0
 os: linux 
 files:
   - source: /PPSN/
-    destination: /home/ubuntu/PPSN/
+    destination: /home/ubuntu/PPSN/PPSN
   - source: /twittur/
-    destination: /home/ubuntu/PPSN/
+    destination: /home/ubuntu/PPSN/twittur
 permissions:
   - object: /home/ubuntu/PPSN/media
     pattern: "**"
