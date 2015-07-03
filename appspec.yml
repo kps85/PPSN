@@ -6,13 +6,33 @@ files:
 permissions:
   - object: /home/ubuntu/PPSN
     pattern: "**"
+    except: [db.sqlite3]
     owner: ubuntu
     mode: 644
     type:
       - file
   - object: /home/ubuntu/PPSN
+    pattern: "db.sqlite3"
+    owner: www-data
+    mode: 664
+    type:
+      - file
+  - object: /home/ubuntu/PPSN
     pattern: "**"
+    except: [media, media/picture]
     owner: ubuntu
     mode: 755
+    type:
+      - directory
+  - object: /home/ubuntu/PPSN
+    pattern: "media"
+    owner: www-data
+    mode: 664
+    type:
+      - directory
+  - object: /home/ubuntu/PPSN/media
+    pattern: "picture"
+    owner: www-data
+    mode: 664
     type:
       - directory
