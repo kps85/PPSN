@@ -7,12 +7,12 @@ permissions:
   - object: /home/ubuntu/PPSN
     pattern: "**"
     owner: ubuntu
-    mode: 766
+    mode: 755
     type:
       - file
   - object: /home/ubuntu/PPSN
     pattern: "**"
     owner: ubuntu
-    mode: 766
+    mode: 755
     type:
       - directory
