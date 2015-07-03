@@ -3,3 +3,16 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/PPSN
+permissions:
+  - object: /home/ubuntu/PPSN
+  - pattern: "**"
+  - owner: ubuntu
+  - mode: 766
+  - type:
+      - file
+  - object: /home/ubuntu/PPSN
+  - pattern: "**"
+  - owner: ubuntu
+  - mode: 766
+  - type:
+      - directory
