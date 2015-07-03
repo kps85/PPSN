@@ -30,9 +30,3 @@ permissions:
     mode: 664
     type:
       - directory
-  - object: /home/ubuntu/PPSN/media
-    pattern: "picture"
-    owner: www-data
-    mode: 664
-    type:
-      - directory
