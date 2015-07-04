@@ -161,7 +161,7 @@ def login_view(request):
             if len(mail) == 1\
                     or not (mail[1].endswith(".tu-berlin.de")
                             or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
-                error_msg['error_reg_mail'] = "Keine g&uuml;tige TU E-Mail Adresse!"
+                error_msg['error_reg_mail'] = "Keine g&uuml;ltige TU E-Mail Adresse!"
             else:
                 try:
                     User.objects.get(email=email)
