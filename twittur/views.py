@@ -19,11 +19,12 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 
 from .models import GroupProfile, Message, Nav, Notification, UserProfile
 from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, getContext, getDisciplines, getSafetyLevels, getMessages, \
-    msg_to_db, setNotification, pw_generator, checkhashtag
+    msg_to_db, setNotification, pw_generator, checkhashtag, login_user, verification_mail
 
 
 # startpage
@@ -219,6 +220,7 @@ def LoginView(request):
                                   academicDiscipline=academicDiscipline, location="Irgendwo",
                                   verifyHash=newHash)
         userProfile.save()
+        verification_mail(user, request)
 
         # academic discipline (required user in db)
         # -> add user to group uni, fac whatever and his academic discipline
@@ -235,8 +237,8 @@ def LoginView(request):
             print("error, something went wrong")
             pass
 
-        
-        return HttpResponseRedirect('/twittur/login/pleaseVerify')
+        location = reverse("twittur:pleaseVerify")
+        return HttpResponseRedirect(location)
 
     context = {
         'active_page': 'ftu',
@@ -663,13 +665,29 @@ def vierNullVier(request):
 
     return render(request, '404.html', context)
 
+def PleaseVerifyView(request):
+
+    # initialize data dictionary 'context' with relevant display information
+    #context = getContext(request, 'pleaseVerify')
+
+    return render(request, 'pleaseVerify.html', {'active_page':'pleaseVerify'})
+
 def Verify(request, user, hash):
+    
     user = user.lower()
     pUser = User.objects.get(username=user)
     pHash = pUser.userprofile.verifyHash
+    
     response = ""
     if(hash == pHash):
-        response = "YAY"
+        # Only works if user is inactive :-)
+        if(pUser.is_active == False):
+            pUser.is_active = True
+            pUser.save()
+            login_user(request, pUser)
+            return HttpResponseRedirect('/twittur/')
+        else:
+            response = "Du bist schon aktiviert Alter"
     else: 
         response = "Leider nein, leider gar nicht" 
     

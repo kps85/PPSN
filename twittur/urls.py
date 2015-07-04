@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^settings/$', views.ProfileSettingsView, name='settings'),
     url(r'^profile/(?P<user>\w+)$', views.ProfileView, name='profile'),
     url(r'^login/$', views.LoginView, name='login'),
+    url(r'^login/pleaseVerify', views.PleaseVerifyView, name='pleaseVerify'),
     url(r'^verify/(?P<user>\w\S+)/(?P<hash>\w\S+)$', views.Verify, name='verify'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^message/(?P<msg>[0-9]+)$', views.MessageView, name='message'),

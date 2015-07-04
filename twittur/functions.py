@@ -24,7 +24,8 @@ import copy, datetime, string, hashlib
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 from django.utils import timezone
-
+from django.core.urlresolvers import reverse
+from django.conf import settings
 from .views import *
 from .models import GroupProfile, Message, Hashtag, Notification
 from .forms import MessageForm
@@ -451,3 +452,30 @@ def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found 
     m = hashlib.md5()
     m.update(''.join(random.choice(chars) for _ in range(size))) # extended with md5 hashing
     return m.hexdigest()
+
+def login_user(request, user): # https://djangosnippets.org/snippets/1547/
+    """
+    Log in a user without requiring credentials (using ``login`` from
+    ``django.contrib.auth``, first finding a matching backend).
+
+    """
+    from django.contrib.auth import load_backend, login
+    if not hasattr(user, 'backend'):
+        for backend in settings.AUTHENTICATION_BACKENDS:
+            if user == load_backend(backend).get_user(user.pk):
+                user.backend = backend
+                break
+    if hasattr(user, 'backend'):
+        return login(request, user)
+    
+def verification_mail(user,request):
+    # sends a verification mail to the user
+    profile = user.userprofile
+    location = reverse("twittur:verify", kwargs={'user':user.username, 'hash':profile.verifyHash})
+    
+    url = request.build_absolute_uri(location)
+    message =  "Hallo @" + user.username + "!\n Dein Konto bei twitTUr wurde erstellt. Bitte verwende den folgenden Link, um dein Konto zu aktivieren: \n\n" + url
+    
+    send_mail("Willkommen bei twitTUr", message, "twittur.sn@gmail.com", [user.email] )
+
+    

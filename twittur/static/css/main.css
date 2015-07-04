@@ -1098,19 +1098,18 @@ header {
     display: table;
     clear: both; }
 
-#body_404 {
+#body_404, #body_pleaseVerify {
   background: #eee;
   width: 100%;
   height: 100%;
   position: absolute; }
-  #body_404 .vierNullVier {
+  #body_404 .width, #body_pleaseVerify .width {
     padding: 40px 0;
     width: 98%;
     max-width: 300px;
     text-align: center;
     margin: 0 auto; }
-    #body_404 .vierNullVier .bird {
-      background: url("img/viernullvier.png");
+    #body_404 .width .bird, #body_pleaseVerify .width .bird {
       background-repeat: no-repeat;
       background-position: top center;
       height: 258px;
@@ -1122,24 +1121,30 @@ header {
       box-sizing: border-box;
       color: #fff; }
       @media screen and (max-width: 639px) {
-        #body_404 .vierNullVier .bird {
+        #body_404 .width .bird, #body_pleaseVerify .width .bird {
           font-size: 1.6em;
           width: 150px;
           padding-top: 40px;
           height: 129px;
           background-size: contain; } }
-    #body_404 .vierNullVier h1 {
+    #body_404 .width h1, #body_pleaseVerify .width h1 {
       font-weight: 100; }
-    #body_404 .vierNullVier p {
+    #body_404 .width p, #body_pleaseVerify .width p {
       margin: 20px 0; }
-    #body_404 .vierNullVier a {
+    #body_404 .width a, #body_pleaseVerify .width a {
       display: block;
       color: #555;
       padding: 10px;
       border-radius: 5px;
       margin: 5px 0;
       border: 1px solid #bbb; }
-      #body_404 .vierNullVier a:hover {
+      #body_404 .width a:hover, #body_pleaseVerify .width a:hover {
         border: 1px solid #999; }
+
+#body_pleaseVerify .bird {
+  background-image: url("img/pleaseVerify.png"); }
+
+#body_404 .bird {
+  background: url("img/viernullvier.png"); }
 
 /*# sourceMappingURL=main.css.map */
