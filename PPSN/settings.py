@@ -130,6 +130,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AUTH_PROFILE_MODULE = 'twittur.UserProfile'
+ADMIN_MEDIA_PREFIX = '/usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/admin/'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USE_TLS = True

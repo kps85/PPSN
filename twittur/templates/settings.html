@@ -45,7 +45,8 @@
             <div id="profBildUpdate">
               <span><strong>Aktuelles {% if group %}Gruppenbild{% else %}Profilbild{% endif %}</strong>: </span>
               {% if group %}
-  	            {{ gpeForm.picture }}              	
+  	            {{ gpeForm.picture }}   
+  	            {{ gpeForm.picture.errors }}              	
               {% else %}
   	            {{ userDataForm.picture }}
 	              {{ userDataForm.picture.errors }}
