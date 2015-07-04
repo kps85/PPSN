@@ -1,37 +1,57 @@
 """
+-*- coding: utf-8 -*-
 @package twittur
 @author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
 Method Collection
-- getContext
-- msgDialog
-- editMessage
+- logout                ends the users session
+- getContext            returns context dictionary with relevant display information
+- msgDialog             returns message form for new message or comment
 - msg_to_db             prepares the message to be stored in db
 - checkhashtag          checks for existing hashtags in a message
+- dbm_to_m              gets a message from database with attags, hashtags and groups linked
 - getMessages           returns a dictionary of message lists
 - getMessageList        returns a list of messages
 - getComments           returns comments of specific message
 - getCommentCount       returns count of comments for specific message
+- load_more             loads further messages for different views
+- update                updates a message with current information
 - setNotification       returns users notifications
-- getNotificationCount  returns count of users 'new' notifications
-- getDisciplines
-- getSafetyLevels
-- elimDups
-- pw_generator
+- getDisciplines        returns a list of academic disciplines
+- getSafetyLevels       returns a list of safety levels for current user
+- elimDups              eliminates duplicates in a message list
+- pw_generator          generates a random password
 """
 
-import copy, datetime, string
+import copy
+import datetime
+import random
+import re
+import string
 
+from django.contrib import auth
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from django.utils import timezone
 
-from .views import *
-from .models import GroupProfile, Message, Hashtag, Notification
+from .models import FAQ, GroupProfile, Hashtag, Message, Nav, Notification, User, UserProfile
 from .forms import MessageForm
 
 
+def logout(request):
+    """
+    method to end logged-in users session
+    :param request:
+    :return: redirect to index (landing-page)
+    """
+
+    auth.logout(request)
+    return HttpResponseRedirect('/twittur/')
+
+
 # initialize global data dictionary
-def getContext(request, page=None, user=None):
+def get_context(request, page=None, user=None):
     """
 
     :param request:
@@ -40,12 +60,12 @@ def getContext(request, page=None, user=None):
     :return:
     """
 
-    userProfile = UserProfile.objects.get(userprofile=request.user)
+    user_profile = UserProfile.objects.get(userprofile=request.user)
     group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_sb_list = GroupProfile.objects.filter(
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
-    follow_list = userProfile.follow.all()
+    follow_list = user_profile.follow.all()
 
     # intialize data dictionary with relevant display information
     context = {
@@ -53,30 +73,36 @@ def getContext(request, page=None, user=None):
         'nav': Nav.nav,
         'error_msg': {},
         'success_msg': None,
-        'new': getNotificationCount(request.user), # Notifications
-        'msgForm': msgDialog(request),
+        'new': Notification.objects.filter(Q(read=False) & Q(user=request.user)).count(),
+        'msgForm': msg_dialog(request),
 
         'user': user,
-        'userProfile': userProfile,
-        'follow_list': follow_list, # Follow List
+        'userProfile': user_profile,
+        'follow_list': follow_list,
         'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
-        'group_sb_list': group_sb_list, # Group List
-        'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')) \
-                   .order_by('-hashtag_count')[:5], # Beliebte Themen
+        'group_sb_list': group_sb_list,
+        'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')
+                                             ).order_by('-hashtag_count')[:5],
 
         'list_end': 5,
-        'safetyLevels': getSafetyLevels(request.user, True)
+        'safetyLevels': get_safety_levels(request.user, True)
     }
 
     return context
 
 
 # messagebox clicked on pencil button
-def msgDialog(request):
+def msg_dialog(request):
+    """
+
+    :param request:
+    :return:
+    """
+
     if request.method == 'POST':
         if request.POST.get('codename') == 'message':
-            msgForm = MessageForm(request.POST, request.FILES)
-            if msgForm.is_valid():
+            msg_form = MessageForm(request.POST, request.FILES)
+            if msg_form.is_valid():
                 if 'safety' in request.POST:
                     if request.POST['safety'][:1] == '&':
                         group = GroupProfile.objects.get(short__exact=request.POST['safety'][1:])
@@ -84,53 +110,36 @@ def msgDialog(request):
                         group = None
                     else:
                         group = GroupProfile.objects.get(name__exact=request.POST['safety'])
-                    msgForm.instance.group = group
-                msgForm.save()
-                msg_to_db(msgForm.instance)
-                msgForm.save()
-                # save this shit for the next step
+                    msg_form.instance.group = group
+                msg_form.save()
+                msg_to_db(msg_form.instance)
+                msg_form.save()                 # save this shit for the next step
 
         elif request.POST.get('codename') == 'comment':
-            msgForm = MessageForm(request.POST)
-            if msgForm.is_valid():
-                msgForm.save()
+            msg_form = MessageForm(request.POST)
+            if msg_form.is_valid():
+                msg_form.save()
                 message = Message.objects.get(id=request.POST.get('cmtToId'))
-                msgForm.instance.comment = message
-                msg_to_db(msgForm.instance)
-                msgForm.save()
+                msg_form.instance.comment = message
+                msg_to_db(msg_form.instance)
+                msg_form.save()                 # save this shit for the next step
                 if message.user != request.user:
                     note = request.user.username + ' hat auf deine Nachricht geantwortet.'
-                    setNotification('comment', data={'user': message.user, 'message': msgForm.instance, 'note': note})
-                # save this shit for the next step
+                    set_notification('comment', data={'user': message.user, 'message': msg_form.instance, 'note': note})
 
-    msgForm = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()})
-    return msgForm
-
-
-# edit or update Message
-def editMessage(request):
-    if 'remUser' in request.POST:
-        group = GroupProfile.objects.get(pk=request.POST['group'])
-        member = User.objects.get(pk=request.POST['remUser'])
-        setNotification('group', data={'group': group, 'member': member})
-        group.member.remove(member)
-        return "Mitglied erfolgreich entfernt."
-
-    elif 'promUser' in request.POST:
-        group = GroupProfile.objects.get(pk=request.POST['group'])
-        member = User.objects.get(pk=request.POST['promUser'])
-        setNotification('group_admin', data={'group': group, 'member': member})
-        group.admin = member
-        group.save()
-        return "Mitglied erfolgreich bef&ouml;rdert."
-
-    else:                                                                   # if Message should be posted
-        return 'Nachricht erfolgreich gesendet!'                            # return info, post routine in msgDialog()
+    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()})
+    return msg_form
 
 
 # Message to database, save hashtags and attags in text into database
 # (2) edit: changed message may contains other hashtags and attags or hashtags and attags may removed
 def msg_to_db(message):
+    """
+
+    :param message:
+    :return:
+    """
+
     hashtaglist, attaglist = [], []
 
     # Step 1: replace all # and @ with link
@@ -158,7 +167,7 @@ def msg_to_db(message):
                 pass
             else:
                 if message.user != user:
-                    setNotification('message', data={'user': user, 'message': message})
+                    set_notification('message', data={'user': user, 'message': message})
                 attaglist.append(user)
 
         if word[0] == "&":
@@ -167,7 +176,7 @@ def msg_to_db(message):
                 group = GroupProfile.objects.get(short__exact=str(word[1:]))
 
             except ObjectDoesNotExist:
-                if message.group != None:
+                if message.group is not None:
                     message.group = None
                 pass
             else:
@@ -178,14 +187,20 @@ def msg_to_db(message):
 
     for dbattag in message.attags.all():
         if dbattag not in attaglist:
-            attag = Notification.objects.get(
-                Q(user=dbattag) & Q(message=message)
-            )
+            attag = Notification.objects.get(Q(user=dbattag) & Q(message=message))
             attag.delete()
+
     return message
 
 
 def checkhashtag(message, hashtaglist):
+    """
+
+    :param message:
+    :param hashtaglist:
+    :return:
+    """
+
     for dbhashtag in message.hashtags.all():
         if dbhashtag not in hashtaglist:
             message.hashtags.remove(dbhashtag)
@@ -198,15 +213,21 @@ def checkhashtag(message, hashtaglist):
 
 # Database message to message (in template), replace all hashtags and attags in message with links
 def dbm_to_m(message):
+    """
+
+    :param message:
+    :return:
+    """
+
     # get hashtags and attags (models.ManyToMany) in message from database
     hashtag_list = message.hashtags.all()
     attag_list = message.attags.all()
     group = message.group
     urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.text)
+
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
-            href = ""
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
             if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
                 href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
@@ -215,25 +236,30 @@ def dbm_to_m(message):
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
             if word[0] == "@":
-                if User.objects.filter(username=word[1:]).exists() and User.objects.get(username=word[1:]) in attag_list:
+                if User.objects.filter(username=word[1:]).exists()\
+                        and User.objects.get(username=word[1:]) in attag_list:
                     href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
-
             if word[0] == '&' and group.short == word[1:]:
-                href = '<a href="/twittur/group/' + word[1:] + '">' + word +'</a>'
+                href = '<a href="/twittur/group/' + word[1:] + '">' + word + '</a>'
                 message.text = message.text.replace(word, href)
 
     if urls:
         for url in urls:
             href = '<a href="' + url + '">' + url + '</a>'
             message.text = message.text.replace(url, href)
+
     return message
 
 
-def getMessages(data):
-    result = {
-        'has_msg': False
-    }
+def get_messages(data):
+    """
+
+    :param data:
+    :return:
+    """
+
+    result = {'has_msg': False}
 
     if 'end' not in data:
         result['list_end'] = 5
@@ -248,44 +274,43 @@ def getMessages(data):
     if 'end' in data['request'].POST:
         result['list_end'] = int(data['request'].POST.get('end'))
 
-    dbmessage_list = getMessageList(data['page'], data['data'])
-    curDate = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
-                                  timezone.get_current_timezone())
+    dbmessage_list = get_message_list(data['page'], data['data'])
+    cur_date = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
+                                   timezone.get_current_timezone())
 
     if 'post' in data['request'].GET:
-        lastPostID = int(data['request'].GET.get('post'))
+        last_post_id = int(data['request'].GET.get('post'))
         result['list_start'] = 0
         for msg in dbmessage_list:
             result['list_start'] += 1
-            if msg.id == lastPostID:
+            if msg.id == last_post_id:
                 break
     else:
         result['list_start'] = None
 
-    userprofile = UserProfile.objects.get(userprofile=data['request'].user)
-    ignoreM_list = userprofile.ignoreM.all()
-    ignoreU_list = userprofile.ignoreU.all()
+    user_profile = UserProfile.objects.get(userprofile=data['request'].user)
+    ignore_m_list = user_profile.ignoreM.all()
+    ignore_u_list = user_profile.ignoreU.all()
 
     message_list, message_forms, comment_list, comment_count = [], [], [], []
     for message in dbmessage_list[result['list_start']:result['list_end']]:
-        if message.date > curDate:
+        if message.date > cur_date:
             message.editable = True
-        c = getComments(data={
-            'message': message, 'curDate': curDate, 'ignMsgList': ignoreM_list, 'ignUsrList': ignoreU_list
+        c = get_comments(data={
+            'message': message, 'curDate': cur_date, 'ignMsgList': ignore_m_list, 'ignUsrList': ignore_u_list
         })
         comment_list.append(c)
-        comment_count.append(getCommentCount(message))
+        comment_count.append(get_comment_count(message))
 
         # if User ignored this message -> boolean ignore = True, this change will not effect db (no save())
-        if message in ignoreM_list or message.user in ignoreU_list:
+        if message in ignore_m_list or message.user in ignore_u_list:
             message.ignore = True
             message_list.append(message)
         else:
             copy_message = copy.copy(message)
             message_list.append(dbm_to_m(copy_message))
 
-        msgForm = MessageForm(instance=message)
-        message_forms.append(msgForm)
+        message_forms.append(MessageForm(instance=message))
 
     if len(dbmessage_list) > 0:
         result['has_msg'] = True
@@ -309,46 +334,52 @@ def getMessages(data):
 
 
 # return Full Message List
-def getMessageList(page, data):
+def get_message_list(page, data):
+    """
+
+    :param page:
+    :param data:
+    :return:
+    """
+
     if page == 'index':
-        dbmessage_list = Message.objects.all().filter(
-            ( Q(user__exact=data) | Q(user__exact=data.userprofile.follow.all())
-            | Q(attags = data) ) | Q(group__member=data)
-            & Q(comment = None)
+        db_message_list = Message.objects.filter(
+            ((Q(user__exact=data) | Q(user__exact=data.userprofile.follow.all()) | Q(attags=data))
+             | Q(group__member=data))
+            & Q(comment=None)
         ).order_by('-date')
     elif page == 'group':
-        dbmessage_list = Message.objects.all().filter(
-            Q(group=data) & Q(comment=None)
-        ).order_by('-date')
+        db_message_list = Message.objects.filter(Q(group=data) & Q(comment=None)).order_by('-date')
     elif page == 'profile':
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
+        db_message_list = Message.objects.filter(
             Q(user__exact=data) | Q(attags__username__exact=data.username)
         ).order_by('-date')
     elif page == 'hashtag':
-        dbmessage_list = Message.objects.all().filter(
-            hashtags__name=data
-        ).order_by('-date')
+        db_message_list = Message.objects.filter(hashtags__name=data).order_by('-date')
     elif page == 'search':
         query = Q(user__username__in=data)
         for term in data:
             query |= Q(text__contains=term) | Q(user__username__contains=term)
-        dbmessage_list = Message.objects.all().select_related('user__userprofile').filter(
-            query
-        ).order_by('-date')
-
+        db_message_list = Message.objects.filter(query).order_by('-date')
     else:
-        dbmessage_list = Message.objects.filter(pk=page)
+        db_message_list = Message.objects.filter(pk=page)
 
-    return dbmessage_list.distinct()
+    return db_message_list.distinct()
 
 
 # return Comment List for specific Message
-def getComments(data):
+def get_comments(data):
+    """
+
+    :param data:
+    :return:
+    """
+
     comments = Message.objects.filter(comment=data['message'])
     c = []
     if comments:
         for co in comments:
-            cc, ccc = [], getComments(data={
+            cc, ccc = [], get_comments(data={
                 'message': co, 'curDate': data['curDate'],
                 'ignMsgList': data['ignMsgList'], 'ignUsrList': data['ignUsrList']
             })
@@ -363,68 +394,220 @@ def getComments(data):
     return c
 
 
-def getCommentCount(message):
-    count = 0
-    comments = Message.objects.filter(comment=message)
+def get_comment_count(message):
+    """
+    counts comments recursive for a specific message (direct comments and comments of comments)
+    :param message: message to get comment count for
+    :return: the comment count
+    """
+
+    count, comments = 0, Message.objects.filter(comment=message)
     for comment in comments:
-        count += getCommentCount(comment) + 1
+        count += get_comment_count(comment) + 1
     return count
 
 
-def setNotification(type, data):
+def load_more(request):
+    """
+    loads further messages to current view
+    :param request:
+    :return: rendered HTML in Template 'message_box_reload.html'
+    """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
+    data, data_dict = None, request.GET
+    page = data_dict.get('page')
+
+    # initialize data dictionary 'context' with relevant display information
+    context = get_context(request, page=page, user=request.user)
+
+    # gets specific data to display new messages for different pages
+    # cases: 'index, profile, group, search, hashtag'
+    if page == 'index':
+        data = request.user
+    elif page == 'profile':
+        data = User.objects.get(username=dict['user'])
+        context['pUser'] = data
+    elif page == 'group':
+        data = GroupProfile.objects.get(short=dict['group'])
+        context['group'] = data
+    elif page == 'search':
+        data = data_dict['search_input'].split(" ")
+        context['search_input'] = data_dict['search_input']
+    elif page == 'hashtag':
+        data = data_dict.get('hash')
+        context['is_hash'] = data_dict['hash']
+
+    messages = get_messages(data={'page': page, 'data': data,
+                                  'end': (int(data_dict['length'])+5), 'request': request})
+
+    context['list_length'], context['list_end'] = messages['list_length'], messages['list_end']
+    context['has_msg'], context['message_list'] = messages['has_msg'], messages['message_list']
+
+    if 'new_msgs' in messages:
+        context['new_msgs'] = messages['new_msgs']
+
+    return render(request, 'message_box_reload.html', context)
+
+
+def update(request):
+    """
+    processes request to update a message / comment
+    - 'hide_msg', 'hide_cmt':   puts message / comment on message-ignore-list
+    - 'del_msg', 'del_cmt':     deletes message / comments and its comments, as well as its picture from the database
+    - 'upd_msg':                updates a message / comment with current information
+    :param request:
+    :return: String with update status
+    """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
+    data_dict, response = request.GET, None
+
+    # message / comment will be added to user's message-ignore-list
+    if data_dict['what'] in ('hide_msg', 'hide_cmt'):
+        user_profile = request.user.userprofile
+        ignore_list = user_profile.ignoreM.all()
+        if Message.objects.filter(pk=data_dict['id']).exists():
+            msg = Message.objects.get(pk=data_dict['id'])
+            if msg.user in user_profile.ignoreU.all():
+                response = "<span class='glyphicon glyphicon-warning'></span>&nbsp;" \
+                           "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
+                           "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
+            else:
+                if msg in ignore_list:
+                    user_profile.ignoreM.remove(msg)
+                    response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
+                               "Nachricht wird nicht mehr ausgeblendet!"
+
+                else:
+                    user_profile.ignoreM.add(msg)
+                    response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
+                               "Nachricht erfolgreich ausgeblendet!"
+
+    # message / comment and its data (comments, hashtag) will be delete from the database
+    elif data_dict['what'] in ('del_msg', 'del_cmt'):
+        if Message.objects.filter(pk=data_dict['id']).exists():
+            msg = Message.objects.get(pk=data_dict['id'])
+            if Message.objects.filter(comment=data_dict['id']).exists():
+                comments = Message.objects.filter(comment=msg)
+                for obj in comments:
+                    hashtaglist = []
+                    for hashtag in obj.hashtags.all():
+                        hashtaglist.append(hashtag)
+                    if hashtaglist:
+                        checkhashtag(obj, hashtaglist)
+                    obj.delete()
+            if msg.picture:
+                pic = msg.picture
+                pic.delete()
+            hashtaglist = []
+            for hashtag in msg.hashtags.all():
+                hashtaglist.append(hashtag)
+            if hashtaglist:
+                checkhashtag(msg, hashtaglist)
+            msg.delete()
+        response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
+                   "Nachricht gel&ouml;scht!"
+
+    # message will be updated with current information.
+    # may clear the picture and delete it from its folder
+    # may change safetyLevel
+    elif data_dict['what'] == 'upd_msg':
+        if Message.objects.filter(pk=data_dict['id']).exists():
+            msg = Message.objects.get(pk=data_dict['id'])
+            msg.text = data_dict['val']
+            if 'clear' in data_dict and data_dict['clear'] == 'true':
+                if msg.picture is not None:
+                    pic = msg.picture
+                    pic.delete()
+                    msg.picture = None
+            if 'safety' in data_dict:
+                if data_dict['safety'][:1] == '&':
+                    group = GroupProfile.objects.get(short__exact=data_dict['safety'][1:])
+                elif data_dict['safety'] == 'Public':
+                    group = None
+                else:
+                    group = GroupProfile.objects.get(name__exact=data_dict['safety'])
+                msg.group = group
+            msg.save()
+            msg_to_db(msg)
+            response = dbm_to_m(msg).text
+    else:
+        response = "Something went wrong."
+
+    return HttpResponse(response)
+
+
+def set_notification(what, data):
+    """
+
+    :param what:
+    :param data:
+    :return:
+    """
+
     ntfc = None
-    if type == 'follower':
+    if what == 'follower':
         ntfc = Notification(user=data['user'], follower=data['follower'], note=data['note'])
-    elif type == 'message':
+    elif what == 'message':
         ntfc = Notification(
             user=data['user'], message=data['message'],
             note='Du wurdest in einer Nachricht erw&auml;hnt.'
         )
-    elif type == 'comment':
+    elif what == 'comment':
         ntfc = Notification(user=data['user'], message=data['message'], comment=True, note=data['note'])
-    elif type == 'group':
+    elif what == 'group':
         if 'note' not in data:
             data['note'] = 'Du wurdest aus der Gruppe entfernt.'
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
-    elif type == 'group_admin':
+    elif what == 'group_admin':
         if 'note' not in data:
             data['note'] = 'Du wurdest in der Gruppe ' + data['group'].short + ' zum Admin bef&ouml;rdert.'
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
-
     ntfc.save()
     return ntfc
 
 
-def getNotificationCount(user):
-    return Notification.objects.filter(
-        Q(read=False) & Q(user=user)
-    ).count()
+def get_disciplines():
+    """
+    generates a list of academicDisciplines in hierarchical order (TU-Berlin -> Fak -> Discipline)
+    :return: list of academicDisciplines
+    """
 
-
-def getDisciplines():
     discs, uni, faks = [], [], []
 
     tub = GroupProfile.objects.get(short='uni')
     fak = GroupProfile.objects.filter(supergroup=tub).order_by('name')
     for item in fak:
         ad = GroupProfile.objects.filter(supergroup=item).order_by('name')
-        adList = []
+        ad_list = []
         for disc in ad:
-            adList.append(disc.name)
-        faks.append(adList)
+            ad_list.append(disc.name)
+        faks.append(ad_list)
         uni.append(item.name)
-    discs.append(zip(uni,faks))
+    discs.append(zip(uni, faks))
     return discs
 
 
-def getSafetyLevels(user, group=False):
-    safetyLevel = ['Public']
+def get_safety_levels(user, group=False):
+    """
+    generates a list of safety levels
+    :param user: current user
+    :param group: boolean to check if user groups should be displayed as well
+    :return: a list of safety levels for current user
+    """
+
+    safety_level = ['Public']
     disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
     fak = GroupProfile.objects.get(name=disc.supergroup)
     uni = GroupProfile.objects.get(name=fak.supergroup)
-    safetyLevel.append(uni.name)
-    safetyLevel.append(fak.name)
-    safetyLevel.append(disc.name)
+    safety_level.append(uni.name)
+    safety_level.append(fak.name)
+    safety_level.append(disc.name)
     if group:
         group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
         group_list = GroupProfile.objects.filter(
@@ -433,19 +616,47 @@ def getSafetyLevels(user, group=False):
         gl = []
         for group in group_list:
             gl.append(group.short)
-        safetyLevel.append(gl)
-    return safetyLevel
+        safety_level.append(gl)
+    return safety_level
 
 
-# Entfernt Duplikate aus einer Liste und gibt die Liste ohne Duplikate zurueck
-def elimDups(list):
+def get_faqs():
+    """
+    creates a list of frequently asked questions
+    :return: list of FAQs
+    """
+
+    # initialize FAQ list for each category
+    faqs, faq_cats = [], FAQ.objects.all().values('category').distinct().order_by('category')
+    for cat in faq_cats:
+        faq_list = FAQ.objects.filter(category=cat['category']).order_by('question')
+        faqs.append(faq_list)
+    return faqs
+
+
+def elim_dups(data):
+    """
+    eliminates duplicates in a list of messages
+    similar to '.distinct()', but this is not usable in our context
+    :param data: a message list
+    :return:
+    """
+
     dups, final = [], []
-    for sub in list:
+    for sub in data:
         for item in sub:
-            if item in final: dups.append(item)
-            else: final.append(item)
+            if item in final:
+                dups.append(item)
+            else:
+                final.append(item)
     return final
 
 
-def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
+def pw_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    """
+    a random password generator found on http://goo.gl/RH995X
+    :param size: length of password
+    :param chars: possible chars to be used in generated password
+    :return: random generated password
+    """
     return ''.join(random.choice(chars) for _ in range(size))

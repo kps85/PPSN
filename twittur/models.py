@@ -1,4 +1,17 @@
-# -*- coding: utf-8 -*-
+"""
+-*- coding: utf-8 -*-
+@package twittur
+@author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
+Models
+- Hashtag       a hashtag represents a topic mentioned in a message
+- GroupProfile  model for a group
+- Message       model for a message (comments are messages with the comment attribute set)
+- UserProfile   specific user data
+- Notification  notification model
+- FAQ           frequently asked question
+- Nav           navigation bar elements
+"""
+
 from datetime import date
 
 from django.contrib.auth.models import User
@@ -8,6 +21,7 @@ from django.utils import timezone
 
 
 class Hashtag(models.Model):
+    """ a hashtag represents a specific topic, which can be added to a message """
     name = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -16,7 +30,12 @@ class Hashtag(models.Model):
     def __str__(self):
         return self.name
 
+
 class GroupProfile(models.Model):
+    """
+    a group can be password protected as well as not joinable (for automatic generated groups like TU Berlin,
+    the faculty groups or specific academic discipline groups, as well as it can have a supergroup
+    """
     name = models.CharField(max_length=50)
     short = models.CharField(max_length=10)
     admin = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='admin')
@@ -38,8 +57,8 @@ class GroupProfile(models.Model):
         return self.name
 
 
-# - message from User (message_from_self) to User (message_to_user)
 class Message(models.Model):
+    """ a message can also have topics, targets (user or groups) and a parent message (comment) """
     user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
     text = models.CharField(max_length=254)
     picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
@@ -60,8 +79,8 @@ class Message(models.Model):
         return self.user.username + ': ' + '"' + self.text + '"'
 
 
-# - user
 class UserProfile(models.Model):
+    """ the user profile contains additional information for a user """
     userprofile = models.OneToOneField(User)
 
     follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='Notification')
@@ -95,6 +114,7 @@ class UserProfile(models.Model):
 
 
 class Notification(models.Model):
+    """ a notification for different events on the page """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ntfcUser')
     follower = models.ForeignKey(UserProfile, related_name='ntfcFollower', blank=True, null=True)
     group = models.ForeignKey(GroupProfile, related_name='ntfcGroup2', blank=True, null=True)
@@ -128,20 +148,16 @@ class Notification(models.Model):
         return self.__class__.__name__
 
 
-# FAQ model
-# - author: FAQ respondent REFERENCES User
-# - question: a frequently asked question
-# - category: a category the question is assigned to by the respondent
-# - answer: an answer the respondent has given
 class FAQ(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    question = models.CharField(max_length=100)
-    category = models.CharField(max_length=100)
-    answer = models.TextField(max_length=1000)
+    """ a frequently asked question, which is shown on the FAQ info page """
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)    # FAQ respondent REFERENCES User
+    question = models.CharField(max_length=100)             # a frequently asked question
+    category = models.CharField(max_length=100)             # a category the question is assigned to by the respondent
+    answer = models.TextField(max_length=1000)              # an answer the respondent has given
 
 
-# Navbar
 class Nav(models.Model):
+    """ returns a list of navigation bar elements, which are shown on every page for logged-in users """
     nav = [
         {'name': 'index', 'title': 'Startseite'},
         {'name': 'profile', 'title': 'Profil'},

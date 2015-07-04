@@ -1,33 +1,24 @@
+"""
+-*- coding: utf-8 -*-
+@package twittur
+@author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
+Forms
+- UserForm              form to edit user account information
+- UserDataForm          form to edit user profile information
+- GroupProfileForm      form to create a new group
+- GroupProfileEditForm  form to edit a group profile
+- MessageForm           form to create a new message
+- FAQForm               form to create a new FAQ entry
+"""
+
 from django import forms
 
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
-from django.utils.safestring import mark_safe
 
 from .models import User, UserProfile, Message, FAQ, GroupProfile
 
 
-AD_CHOICES = (
-    (mark_safe('Fakult&auml;t I'), ()),
-    (mark_safe('Fakult&auml;t II'), ()),
-    (mark_safe('Fakult&auml;t III'), ()),
-    (mark_safe('Fakult&auml;t IV'), (
-        ('Automotive Systems', 'Automotive Systems'),
-        ('Computational Neuroscience', 'Computational Neuroscience'),
-        ('Elektrotechnik', 'Elektrotechnik'),
-        ('ICT Innovation', 'ICT Innovation'),
-        ('Informatik', 'Informatik'),
-        ('Medieninformatik', 'Medieninformatik'),
-        ('Technische Informatik', 'Technische Informatik'),
-        ('Wirtschaftsinformatik', 'Wirtschaftsinformatik'),
-    )),
-    (mark_safe('Fakult&auml;t V'), ()),
-    (mark_safe('Fakult&auml;t VI'), ()),
-    (mark_safe('Fakult&auml;t VII'), ()),
-)
-
-
-# form to update user's account information
 class UserForm(ModelForm):
     # initialize second pw input for confirmation
     ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
@@ -81,7 +72,6 @@ class UserForm(ModelForm):
         return instance
 
 
-# form to update user's personal information
 class UserDataForm(ModelForm):
     # referencing UserProfile model as basis for the form
     # initializing form input fields
@@ -98,8 +88,6 @@ class UserDataForm(ModelForm):
         self.fields['location'].required = False
         # set studentNumber type to text
         self.fields['studentNumber'].widget = forms.TextInput()
-        # set academicDiscipline type to select and fill with AD_CHOICES
-        self.fields['academicDiscipline'].widget = forms.Select(choices=AD_CHOICES)
 
         # for each field set class to 'form-control' except 'picture',
         # set class to 'checkNumeric' for studentNumber and
@@ -120,7 +108,7 @@ class UserDataForm(ModelForm):
         # this is the current picture, nothing will happen if checkbox not clicked
         picture = self.cleaned_data.get('picture')
         # checkbox (False if clicked) -> return default picture
-        if picture == False:
+        if not picture:
             return 'picture/default.gif'
         return picture
 
@@ -155,7 +143,6 @@ class GroupProfileEditForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        instance = kwargs.get('instance')
         super(GroupProfileEditForm, self).__init__(*args, **kwargs)
         self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
         for field in self.fields:
@@ -182,12 +169,11 @@ class GroupProfileEditForm(ModelForm):
         # this is the current picture, nothing will happen if checkbox not clicked
         picture = self.cleaned_data.get('picture')
         # checkbox (False if clicked) -> return default picture
-        if picture == False:
+        if not picture:
             return 'picture/gdefault.gif'
         return picture
 
 
-# form to add a new message
 class MessageForm(ModelForm):
     # referencing Message model as basis for the form
     # initializing form input fields
@@ -232,7 +218,7 @@ class FAQForm(ModelForm):
         # set question input type to text and add class and placeholder
         self.fields['question'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Frage'})
         # define question categories, set category input type to select and add categories as options
-        catChoices = (
+        cat_choices = (
             ('Allgemeine Frage', 'Allgemeine Frage'),
             ('Startseite', 'Startseite'),
             ('Profilseite', 'Profilseite'),
@@ -244,7 +230,7 @@ class FAQForm(ModelForm):
             ('Benachrichtigungen', 'Benachrichtigungen'),
             ('Nachrichtenanzeige', 'Nachrichtenanzeige')
         )
-        self.fields['category'] = forms.ChoiceField(choices=catChoices, widget=forms.Select)
+        self.fields['category'] = forms.ChoiceField(choices=cat_choices, widget=forms.Select)
         # set answer input type to textarea, set size and placeholder
         self.fields['answer'].widget = forms.Textarea(attrs={'rows': '5', 'placeholder': 'Antwort'})
         # set class to 'form-control' for each input

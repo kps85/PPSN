@@ -1,4 +1,5 @@
 """
+-*- coding: utf-8 -*-
 @package twittur
 @author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
 Admin Interface
@@ -29,7 +30,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location', 'safety']}),
         ('Other',   {'fields': ['ignoreM', 'ignoreU', 'ignore']}),
     ]
-    #overview
+    # overview
     list_display = ('studentNumber', 'userprofile', 'academicDiscipline')
     list_display_links = ('studentNumber', 'userprofile')
     ordering = ('academicDiscipline', 'studentNumber', 'userprofile')
@@ -48,7 +49,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('Info',        {'fields': ['name', 'short', 'desc', 'password', 'picture', 'date', 'member', 'joinable']}),
         ('Admin',       {'fields': ['admin']}),
     ]
-    #overview
+    # overview
     list_display = ('name', 'supergroup', 'admin')
     list_display_links = ('supergroup', 'name')
     ordering = ('-supergroup', 'name')
@@ -67,7 +68,7 @@ class MsgAdmin(admin.ModelAdmin):
         ('Content', {'fields': ['text', 'picture']}),
         ('Meta',   {'fields': ['hashtags', 'group', 'ignore', 'comment']}),
     ]
-    #overview
+    # overview
     list_display = ('date', 'text', 'user', 'group')
     list_display_links = ('date', 'text')
     ordering = ('-date', 'user', 'group')
@@ -85,7 +86,7 @@ class NTFCAdmin(admin.ModelAdmin):
         ('Meta',    {'fields': ['user', 'date', 'read']}),
         ('Content', {'fields': ['follower', 'group', 'message', 'comment', 'note']}),
     ]
-    #overview
+    # overview
     list_display = ('date', 'user', 'note', 'read')
     list_display_links = ('date', 'note')
     ordering = ('-date', 'user', 'read')
@@ -103,13 +104,13 @@ class FAQAdmin(admin.ModelAdmin):
         ('Frage',               {'fields': ['question', 'answer']}),
         ('Autor',               {'fields': ['author']}),
     ]
-    #overview
+    # overview
     list_display = ('category', 'question', 'author')
     list_display_links = ('category', 'question')
     ordering = ('category', 'question')
 
 # set attributes to be displayed in user overview
-UserAdmin.list_display = ('username' ,'email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
+UserAdmin.list_display = ('username', 'email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff')
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
@@ -118,4 +119,4 @@ admin.site.register(Message, MsgAdmin)
 admin.site.register(Hashtag)
 admin.site.register(GroupProfile, GroupAdmin)
 admin.site.register(Notification, NTFCAdmin)
-admin.site.register(FAQ, FAQAdmin) # register FAQ for admin page
+admin.site.register(FAQ, FAQAdmin)                  # register FAQ for admin page

@@ -1,18 +1,37 @@
-import copy, random
+"""
+-*- coding: utf-8 -*-
+@package twittur
+@author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
+Search Views
+- SearchView:   a view for all search results
+- HashtagView:  a view for a single topic
+"""
+
+import copy
 
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .functions import dbm_to_m, elimDups, getContext, getMessages
+from .functions import dbm_to_m, elim_dups, get_context, get_messages
 from .models import GroupProfile, Hashtag, Message
-from .views import IndexView
+from .views import index_view
 
 
 # search input
-def SearchView(request):
-    # initialize various information
-    context = getContext(request, 'search', request.user)
+def search_view(request):
+    """
+    displays all results for a specific search query
+    :param request:
+    :return: rendered HTML in template 'search.html'
+    """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+
+    # initialize data dictionary 'context' with relevant display information
+    context = get_context(request, 'search', request.user)
 
     if 'search_input' in request.GET:
         search_input = request.GET['search_input'].strip().split(" ")
@@ -24,7 +43,7 @@ def SearchView(request):
     context['search_input'] = ' '.join(search_input)
         
     if search_input is None or search_input[0] == "":
-        return IndexView(request)
+        return index_view(request)
 
     # filter all messages contain the word  or all users contain the word
     # search_input contains @ -> cut @ off and set flag
@@ -32,7 +51,7 @@ def SearchView(request):
     # @kps for example, we wont find him, because the database don't know him
 
     user_list, group_list, hashtag_list, message_list = [], [], [], []
-    messages = getMessages(data={'page': 'search', 'data': search_input, 'end': None, 'request': request})
+    messages = get_messages(data={'page': 'search', 'data': search_input, 'end': None, 'request': request})
     messages_list = list(messages['message_list'])
 
     if messages['list_length'] <= context['list_end']:
@@ -46,29 +65,26 @@ def SearchView(request):
         context['list_end'] = int(request.POST['list_end'])
 
     for term in search_input:
-        # special case: flag for @
-        attag = False
         if term[:1] == "#":
-            HashtagView(request, term)
+            hashtag_view(request, term)
         elif term[:1] == "@":
-            attag = True
             term = term[1:]
 
-        mList, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
+        m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
         for message in messages_list:
             copy_message = copy.copy(message[1])
-            mList.append(dbm_to_m(copy_message))
+            m_list.append(dbm_to_m(copy_message))
             dbmessage_list.append(message[1])
             message_forms.append(message[2])
             comment_list.append(message[3])
             comment_count.append(message[4])
 
-        mZip = zip(mList, dbmessage_list, message_forms, comment_list, comment_count)
-        message_list.append(mZip)
+        m_zip = zip(m_list, dbmessage_list, message_forms, comment_list, comment_count)
+        message_list.append(m_zip)
 
         user_list.append(User.objects.all().filter(Q(username__contains=term)
-                                            | Q(first_name__contains=term)
-                                            | Q(last_name__contains=term)))
+                                                   | Q(first_name__contains=term)
+                                                   | Q(last_name__contains=term)))
 
         group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term) | Q(desc__contains=term))
         if len(group) > 0:
@@ -78,14 +94,9 @@ def SearchView(request):
         hashtag_count = [Message.objects.filter(hashtags__in=hashtag).count()]
         hashtag_list.append(zip(hashtag, hashtag_count))
 
-        # flag was set -> back to normal input
-        if attag:
-            term = '@' + term
-
-    user_list = elimDups(user_list)
-    hashtag_list = elimDups(hashtag_list)
-    group_list = elimDups(group_list)
-    message_list = elimDups(message_list)
+    # eliminate duplicates from each list and sort message list by date
+    user_list, hashtag_list = elim_dups(user_list), elim_dups(hashtag_list)
+    group_list, message_list = elim_dups(group_list), elim_dups(message_list)
     message_list.sort(key=lambda x: x[0].date, reverse=True)
 
     context['user_list'], context['user_list_length'] = user_list, len(user_list)
@@ -102,15 +113,26 @@ def SearchView(request):
 
 
 # click on hashtaglinks will redirect to this function.
-def HashtagView(request, text):
-    context = getContext(request, 'hashtag', request.user)
+def hashtag_view(request, text):
+    """
+    displays messages which mentioned a specific topic (text)
+    :param request:
+    :param text: the topic
+    :return: rendered HTML in template 'search.html'
+    """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+
+    # initialize data dictionary 'context' with relevant display information
+    context = get_context(request, 'hashtag', request.user)
 
     # if message was sent to view: return success message
     if request.method == 'POST':
         context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
     # Messages
-    messages = getMessages(data={'page': 'hashtag', 'data': text, 'request': request})
+    messages = get_messages(data={'page': 'hashtag', 'data': text, 'request': request})
 
     context['search'] = 'Beitr&auml;ge zum Thema "#' + text + '"'
     context['is_hash'], context['list_end'] = text, messages['list_end']
