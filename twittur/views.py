@@ -28,6 +28,12 @@ from .functions import dbm_to_m, getContext, getDisciplines, getSafetyLevels, ge
 
 # startpage
 def IndexView(request):
+    """
+    view to display all messages the user is eligible to see
+    :param request:
+    :return: rendered HTML in template 'index.html'
+    """
+
     # check if user is logged in
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
@@ -56,15 +62,23 @@ def IndexView(request):
 
 # login/registration page
 def LoginView(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/')
+    """
+
+    :param request:
+    :return:
+    """
+
+    # check if user is logged in
+    # if user is not logged in, redirect to FTU
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/twittur/login/')
 
     # Public Messages:
     message_list = Message.objects.filter(
-        Q(comment=None) & Q(user__userprofile__safety='public')
+        Q(comment=None) & Q(attags=None) & Q(group=None)
     ).order_by('-date').distinct()
 
-    # login
+    # if user tries to log in
     if request.method == "GET":
         if 'login' in request.GET:
             username = request.GET.get('username')
@@ -80,12 +94,14 @@ def LoginView(request):
                 return render(request, 'ftu.html',
                               {'active_page': 'ftu', 'error_login': error_login, 'message_list': message_list})
 
-    # Registration
+    # if user tries to register or to reset his password
     if request.method == 'POST':
-        query_dict, data, errors, success_msg = request.POST, {}, {}, None
+        query_dict, data, error_msg, success_msg = request.POST, {}, {}, None
         username, password, email, first_name, last_name, academicDiscipline, studentNumber = \
             None, None, None, None, None, None, None
 
+        # if user tries to reset his password, generate new one and send per mail
+        # confirm user identity by checking his student number
         if 'password_reset' in request.POST:
             try:
                 user = User.objects.get(email=request.POST['pwResetMail'])
@@ -109,14 +125,15 @@ def LoginView(request):
                     user.save()
                     success_msg = 'Dein neues Passwort hast du per E-Mail erhalten!'
                 else:
-                    errors['error_number_not_identic'] = "Die eingegebene Matrikel-Nummer stimmt nicht mit der " \
-                                                         "Matrikel-Nummer &uuml;berein, die uns bekannt ist.<br>" \
-                                                         "Wenn Du Deine eingegebe Matrikel-Nummer vergessen hast, " \
-                                                         "kontaktiere ein twittur-Teammmitglied. (siehe " \
-                                                         "<a href='/twittur/info'>Impressum</a>)"
+                    error_msg['error_stud_number'] = "Die eingegebene Matrikel-Nummer stimmt nicht mit der " \
+                                                     "Matrikel-Nummer &uuml;berein, die uns bekannt ist.<br>" \
+                                                     "Wenn Du Deine eingegebe Matrikel-Nummer vergessen hast, " \
+                                                     "kontaktiere ein twittur-Teammmitglied. (siehe " \
+                                                     "<a href='/twittur/info'>Impressum</a>)"
             except:
-                errors['error_not_registered'] = "Die eingegebene E-Mail Adresse ist nicht registriert."
+                error_msg['error_not_registered'] = "Die eingegebene E-Mail Adresse ist nicht registriert."
 
+        # if a guest wants to register
         else:
             userList, username = User.objects.all(), query_dict.get('name')
 
@@ -173,7 +190,10 @@ def LoginView(request):
 
         # context for html
         context = {
-            'active_page': 'ftu', 'nav': Nav.nav, 'data': data, 'errors': errors,
+            'active_page': 'ftu',
+            'nav': Nav.nav,
+            'data': data,
+            'errors': errors,
             'message_list': message_list
         }
 
@@ -220,12 +240,25 @@ def LoginView(request):
 
 # logout
 def logout(request):
+    """
+    method to end logged-in users session
+    :param request:
+    :return: redirect to index (landing-page)
+    """
+
     auth.logout(request)
     return HttpResponseRedirect('/twittur/')
 
 
 # Page: 'Profilseite'
 def ProfileView(request, user):
+    """
+    view to display specific users information
+    :param request:
+    :param user: username of user to be displayed
+    :return: rendered HTML in template 'profile.html'
+    """
+
     # check if user is logged in
     # if user is not logged in, redirect to FTU
     if not request.user.is_authenticated():
@@ -362,11 +395,14 @@ def ProfileSettingsView(request):
                         pass
                     userForm.save()
                     userDataForm.save()
+
+                    # re-authenticate user if he changed his password
                     if 'password' in dict and len(dict['password']) > 0:
                         username = dict['username']
                         password = dict['password']
                         user = authenticate(username=username, password=password)
                         auth.login(request, user)
+
                     context['success_msg'] = 'Benutzerdaten wurden erfolgreich aktualisiert.'
                 else:
                     # return errors if userDataForm is not valid
@@ -375,7 +411,8 @@ def ProfileSettingsView(request):
                 # return errors if userForm is not valid
                 context['error_msg'] = userForm.errors
 
-            # academic discipline (required user in db) -> add user to group uni, fac whatever and his academic discipline
+            # academic discipline (required user in db)
+            # -> add user to group uni, fac whatever and his academic discipline
             try:
                 group = GroupProfile.objects.get(name=userProfile.academicDiscipline)
                 group_list = GroupProfile.objects.filter(Q(member__exact=request.user))
@@ -398,6 +435,12 @@ def ProfileSettingsView(request):
             except:
                 print("error, something went wrong")
                 pass
+
+    # update current users information if changed
+    if request.method == 'POST':
+        user = User.objects.get(pk=request.user.id)
+        userProfile = user.userprofile
+        context['user'], context['userProfile'] = user, userProfile
 
     # initialize UserForm and UserDataForm with current users information
     context['userForm'], context['userDataForm'] = UserForm(instance=user), UserDataForm(instance=userProfile)

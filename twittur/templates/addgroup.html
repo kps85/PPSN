@@ -18,15 +18,15 @@
           <div class="col-xs-12 col-sm-6 form-group">
             <label class="control-label" for="id_name">Gruppenname</label>
           	{{ groupProfileForm.name }}
-            {% if errors.error_groupname %}
-              <p><font color="#FF0000">{{ errors.error_groupname|safe }}</font></p>
+            {% if error_msg.error_groupname %}
+              <p><font color="#FF0000">{{ error_msg.error_groupname|safe }}</font></p>
             {% endif %}
           </div>
           <div class="col-xs-12 col-sm-6 form-group">
             <label class="control-label" for="id_short">Abk&uuml;rzung</label>
           	{{ groupProfileForm.short }}
-            {% if errors.error_groupshort %}
-              <p><font color="#FF0000">{{ errors.error_groupshort|safe }}</font></p>
+            {% if error_msg.error_groupshort %}
+              <p><font color="#FF0000">{{ error_msg.error_groupshort|safe }}</font></p>
             {% endif %}
           </div>
           <div class="col-xs-12 form-group">
@@ -36,8 +36,8 @@
           <div class="col-xs-12 col-sm-6 form-group">
             <label class="control-label" for="id_password">Passwort</label>
           	{{ groupProfileForm.password }}
-            {% if errors.error_grouppassword %}
-              <p><font color="#FF0000">{{ errors.error_grouppassword|safe }}</font></p>
+            {% if error_msg.error_grouppassword %}
+              <p><font color="#FF0000">{{ error_msg.error_grouppassword|safe }}</font></p>
             {% endif %}
           </div>
           <div class="col-xs-12 col-sm-6 form-group">

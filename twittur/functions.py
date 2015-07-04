@@ -12,7 +12,7 @@ from .forms import MessageForm
 # initialize global data dictionary
 def getContext(request, page=None, user=None):
 
-    userProfile = UserProfile.objects.get(userprofile=request.user)
+    userProfile = UserProfile.objects.get(userprofile=request.user.userprofile)
     group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_sb_list = GroupProfile.objects.filter(
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
@@ -187,7 +187,7 @@ def dbm_to_m(message):
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
             if word[0] == "@":
-                if User.objects.get(username=word[1:]).exists() and User.objects.get(username=word[1:]) in attag_list:
+                if User.objects.filter(username=word[1:]).exists() and User.objects.get(username=word[1:]) in attag_list:
                     href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
 
