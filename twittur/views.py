@@ -23,7 +23,7 @@ from django.shortcuts import render
 from .models import GroupProfile, Message, Nav, Notification, UserProfile
 from .forms import UserForm, UserDataForm
 from .functions import dbm_to_m, getContext, getDisciplines, getSafetyLevels, getMessages, \
-                       msg_to_db, setNotification, pw_generator, checkhashtag
+    msg_to_db, setNotification, pw_generator, checkhashtag
 
 
 # startpage
@@ -34,13 +34,12 @@ def IndexView(request):
     :return: rendered HTML in template 'index.html'
     """
 
-    # check if user is logged in
-    # if user is not logged in, redirect to FTU
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
 
     # context for template
     context = getContext(request, 'index', request.user)
+
     # if request was sent to view: return success message
     if request.method == 'POST':
         context['success_msg'] = 'Nachricht erfolgreich gesendet!'
@@ -67,11 +66,6 @@ def LoginView(request):
     :param request:
     :return:
     """
-
-    # check if user is logged in
-    # if user is not logged in, redirect to FTU
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
 
     # Public Messages:
     message_list = Message.objects.filter(
@@ -140,29 +134,29 @@ def LoginView(request):
             # case if username is available
             for user in userList:
                 if username.lower() == user.username.lower():
-                    errors['error_reg_user_n'] = "Sorry, Username ist vergeben."
-            if 'error_reg_user_n' not in errors:
+                    error_msg['error_reg_user_n'] = "Sorry, Username ist vergeben."
+            if 'error_reg_user_n' not in error_msg:
                 if re.match("^[a-zA-Z0-9-_.]*$", username):
                     data['username'] = username
                 else:
-                    errors['error_reg_user_n'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' im Usernamen erlaubt!"
+                    error_msg['error_reg_user_n'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' im Usernamen erlaubt!"
 
             # Password validation
             password = query_dict.get('password')
             ack_password = query_dict.get('ack_password')
             if password != ack_password:
-                errors['error_reg_user_p'] = "Passw&ouml;rter sind nicht gleich."
+                error_msg['error_reg_user_p'] = "Passw&ouml;rter sind nicht gleich."
 
             # EMail validation
             email = query_dict.get('email')
             mail = email.split('@')
             if len(mail) == 1 or not (
                 mail[1].endswith(".tu-berlin.de") or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
-                errors['error_reg_mail'] = "Keine g&uuml;tige TU E-Mail Adresse!"
+                error_msg['error_reg_mail'] = "Keine g&uuml;tige TU E-Mail Adresse!"
             else:
                 try:
                     User.objects.get(email=email)
-                    errors['error_reg_mail'] = "Ein Benutzer mit dieser E-Mail Adresse existiert bereits!"
+                    error_msg['error_reg_mail'] = "Ein Benutzer mit dieser E-Mail Adresse existiert bereits!"
                 except:
                     data['email'] = email
 
@@ -177,36 +171,37 @@ def LoginView(request):
                 studentNumber = query_dict.get('studentNumber')
                 try:
                     UserProfile.objects.get(studentNumber=studentNumber)
-                    errors["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."
+                    error_msg["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."
                 except:
                     data['studentNumber'] = studentNumber
             else:
-                errors['error_student_number'] = "Die eingegebene Matrikel-Nummer ist ung&uuml;ltig!"
+                error_msg['error_student_number'] = "Die eingegebene Matrikel-Nummer ist ung&uuml;ltig!"
             academicDiscipline = query_dict.get('academicDiscipline')
             if len(academicDiscipline) > 0:
                 data['academicDiscipline'] = academicDiscipline
             else:
-                errors['error_reg_userprofile_ad'] = "Bitte Studiengang ausw&auml;hlen!"
+                error_msg['error_reg_userprofile_ad'] = "Bitte Studiengang ausw&auml;hlen!"
 
         # context for html
         context = {
             'active_page': 'ftu',
             'nav': Nav.nav,
             'data': data,
-            'errors': errors,
+            'errors': error_msg,
             'message_list': message_list
         }
 
         # error?
-        if len(errors) > 0 or 'password_reset' in request.POST:
+        if len(error_msg) > 0 or 'password_reset' in request.POST:
             if 'password_reset' in request.POST:
                 context['pActive'] = 'active'
                 if success_msg: context['success_msg'] = success_msg
             else:
                 context['rActive'] = 'active'
+
             return render(request, 'ftu.html', context)
 
-        # create User and Userprofile
+        # if data is correct -> create User and Userprofile
         user = User.objects.create_user(username, email, password)
         user.first_name = first_name
         user.last_name = last_name
@@ -215,7 +210,8 @@ def LoginView(request):
                                   academicDiscipline=academicDiscipline, location="Irgendwo")
         userProfile.save()
 
-        # academic discipline (required user in db) -> add user to group uni, fac whatever and his academic discipline
+        # academic discipline (required user in db)
+        # -> add user to group uni, fac whatever and his academic discipline
         try:
             group = GroupProfile.objects.get(name=academicDiscipline)
             while True:
@@ -234,7 +230,12 @@ def LoginView(request):
         auth.login(request, user)
         return HttpResponseRedirect('/twittur/')
 
-    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list, 'discList': getDisciplines()}
+    context = {
+        'active_page': 'ftu',
+        'nav': Nav.nav,
+        'message_list': message_list,
+        'discList': getDisciplines()
+    }
     return render(request, 'ftu.html', context)
 
 
@@ -259,10 +260,8 @@ def ProfileView(request, user):
     :return: rendered HTML in template 'profile.html'
     """
 
-    # check if user is logged in
-    # if user is not logged in, redirect to FTU
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
 
     # context for template
     context = getContext(request, 'profile', user)
@@ -353,12 +352,9 @@ def ProfileSettingsView(request):
     :return: rendered HTML in template 'settings.html'
     """
 
-    # check if user is logged in
-    # if user is not logged in, redirect to FTU
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/twittur/login/')
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
 
-    # return relevant information to render settings.html
     context = getContext(request, page='settings', user=request.user)
 
     # get current users information and initialize return messages
@@ -457,7 +453,10 @@ def MessageView(request, msg):
     :return: rendered HTML in template 'message.html'
     """
 
-    # initialize data dictionary 'context'
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
+    # initialize data dictionary 'context' with relevant display information
     context = getContext(request, page='message', user=request.user)
     context['msg_id'] = msg
 
@@ -481,6 +480,11 @@ def NotificationView(request):
     :param request:
     :return: rendered HTML in template 'notification.html'
     """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
+    # initialize data dictionary 'context' with relevant display information
     context = getContext(request, page='notification', user=request.user)
     context['ntfc_list'] = Notification.objects.filter(Q(user=request.user)).order_by("-date").distinct()
 
@@ -507,8 +511,14 @@ def load_more(request):
     :param request:
     :return: rendered HTML in Template 'message_box_reload.html'
     """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
     dict = request.GET
     page = dict.get('page')
+
+    # initialize data dictionary 'context' with relevant display information
     context = getContext(request, page=page, user=request.user)
 
     # gets specific data to display new messages for different pages
@@ -549,6 +559,10 @@ def update(request):
     :param request:
     :return: String with update status
     """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
     dict = request.GET
 
     # message / comment will be added to user's message-ignore-list
@@ -627,5 +641,16 @@ def update(request):
 
 
 def vierNullVier(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
+    # initialize data dictionary 'context' with relevant display information
     context = getContext(request, '404', user=request.user)
+
     return render(request, '404.html', context)

@@ -1,4 +1,25 @@
-import copy, datetime, re, string
+"""
+@package twittur
+@author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
+Method Collection
+- getContext
+- msgDialog
+- editMessage
+- msg_to_db             prepares the message to be stored in db
+- checkhashtag          checks for existing hashtags in a message
+- getMessages           returns a dictionary of message lists
+- getMessageList        returns a list of messages
+- getComments           returns comments of specific message
+- getCommentCount       returns count of comments for specific message
+- setNotification       returns users notifications
+- getNotificationCount  returns count of users 'new' notifications
+- getDisciplines
+- getSafetyLevels
+- elimDups
+- pw_generator
+"""
+
+import copy, datetime, string
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -11,15 +32,22 @@ from .forms import MessageForm
 
 # initialize global data dictionary
 def getContext(request, page=None, user=None):
+    """
 
-    userProfile = UserProfile.objects.get(userprofile=request.user.userprofile)
+    :param request:
+    :param page:
+    :param user:
+    :return:
+    """
+
+    userProfile = UserProfile.objects.get(userprofile=request.user)
     group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_sb_list = GroupProfile.objects.filter(
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
     follow_list = userProfile.follow.all()
 
-    # intialize data dictionary
+    # intialize data dictionary with relevant display information
     context = {
         'active_page': page,
         'nav': Nav.nav,
