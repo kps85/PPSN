@@ -19,7 +19,7 @@ Method Collection
 - pw_generator
 """
 
-import copy, datetime, string
+import copy, datetime, string, hashlib
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -448,4 +448,6 @@ def elimDups(list):
 
 
 def pw_generator(size=6, chars=string.ascii_uppercase + string.digits): # found on http://goo.gl/RH995X
-    return ''.join(random.choice(chars) for _ in range(size))
+    m = hashlib.md5()
+    m.update(''.join(random.choice(chars) for _ in range(size))) # extended with md5 hashing
+    return m.hexdigest()

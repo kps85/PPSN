@@ -83,6 +83,10 @@ def LoginView(request):
                 if user.is_active:
                     auth.login(request, user)
                     return HttpResponseRedirect('/twittur/')
+                else:
+                    error_login = "Dein Account wurde noch nicht verifiziert!"
+                    return render(request, 'ftu.html',
+                              {'active_page': 'ftu', 'error_login': error_login, 'message_list': message_list})
             else:
                 error_login = "Ups, Username oder Passwort falsch."
                 return render(request, 'ftu.html',
@@ -205,9 +209,15 @@ def LoginView(request):
         user = User.objects.create_user(username, email, password)
         user.first_name = first_name
         user.last_name = last_name
+        user.is_active = False
         user.save()
+        
+        # Hash for verification
+        newHash = pw_generator()
+        
         userProfile = UserProfile(userprofile=user, studentNumber=studentNumber,
-                                  academicDiscipline=academicDiscipline, location="Irgendwo")
+                                  academicDiscipline=academicDiscipline, location="Irgendwo",
+                                  verifyHash=newHash)
         userProfile.save()
 
         # academic discipline (required user in db)
@@ -225,10 +235,8 @@ def LoginView(request):
             print("error, something went wrong")
             pass
 
-        # log user in and redirect to index page
-        user = authenticate(username=username, password=password)
-        auth.login(request, user)
-        return HttpResponseRedirect('/twittur/')
+        
+        return HttpResponseRedirect('/twittur/login/pleaseVerify')
 
     context = {
         'active_page': 'ftu',
@@ -654,3 +662,15 @@ def vierNullVier(request):
     context = getContext(request, '404', user=request.user)
 
     return render(request, '404.html', context)
+
+def Verify(request, user, hash):
+    user = user.lower()
+    pUser = User.objects.get(username=user)
+    pHash = pUser.userprofile.verifyHash
+    response = ""
+    if(hash == pHash):
+        response = "YAY"
+    else: 
+        response = "Leider nein, leider gar nicht" 
+    
+    return HttpResponse(response)

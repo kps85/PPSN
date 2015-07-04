@@ -81,6 +81,9 @@ class UserProfile(models.Model):
     ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU', blank=True)
     ignore = models.BooleanField(default=False)
     safety = models.CharField(max_length=15, default='public')
+    
+    #for verification
+    verifyHash = models.CharField(max_length=16, default='' )
 
     def __unicode__(self):
         return self.userprofile.username + ' (' + self.userprofile.first_name + ' ' + self.userprofile.last_name + ')'

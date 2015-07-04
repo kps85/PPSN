@@ -25,7 +25,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     """
     # single-view
     fieldsets = [
-        ('User',    {'fields': ['userprofile']}),
+        ('User',    {'fields': ['userprofile', 'verifyHash']}),
         ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location', 'safety']}),
         ('Other',   {'fields': ['ignoreM', 'ignoreU', 'ignore']}),
     ]
