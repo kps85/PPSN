@@ -27,9 +27,13 @@ import datetime
 import random
 import re
 import string
+import hashlib
 
+from django.conf import settings
 from django.contrib import auth
+from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -659,4 +663,56 @@ def pw_generator(size=6, chars=string.ascii_uppercase + string.digits):
     :param chars: possible chars to be used in generated password
     :return: random generated password
     """
-    return ''.join(random.choice(chars) for _ in range(size))
+    m = hashlib.md5()
+    m.update(''.join(random.choice(chars) for _ in range(size)))            # extended with md5 hashing
+    return m.hexdigest()
+
+
+def login_user(request, user):
+    """
+    snippet found on https://djangosnippets.org/snippets/1547/
+    Log in a user without requiring credentials
+    (using ``login`` from ``django.contrib.auth``, first finding a matching backend).
+    """
+    from django.contrib.auth import load_backend, login
+    if not hasattr(user, 'backend'):
+        for backend in settings.AUTHENTICATION_BACKENDS:
+            if user == load_backend(backend).get_user(user.pk):
+                user.backend = backend
+                break
+    if hasattr(user, 'backend'):
+        return login(request, user)
+
+
+def verification_mail(request, user):
+    # sends a verification mail to the user
+    profile = user.userprofile
+    location = reverse("twittur:verify", kwargs={'user': user.username, 'hash': profile.verifyHash})
+    
+    url = request.build_absolute_uri(location)
+    message = "Hallo @" + user.username + "!\n" \
+                                          "Dein Konto bei twittur wurde erstellt." \
+                                          "Bitte verwende den folgenden Link, um dein Konto zu aktivieren: \n\n" + url
+    
+    send_mail("Willkommen bei twitTUr", message, "twittur.sn@gmail.com", [user.email])
+
+
+def verify(request, user, hash_item):
+
+    user = user.lower()
+    p_user = User.objects.get(username=user)
+    p_hash = p_user.userprofile.verifyHash
+
+    if hash_item == p_hash:
+        # Only works if user is inactive :-)
+        if not p_user.is_active:
+            p_user.is_active = True
+            p_user.save()
+            login_user(request, p_user)
+            return HttpResponseRedirect('/twittur/')
+        else:
+            response = "Du bist schon aktiviert Alter"
+    else:
+        response = "Leider nein, leider gar nicht"
+
+    return HttpResponse(response)

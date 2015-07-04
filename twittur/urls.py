@@ -19,6 +19,7 @@ urlpatterns = [
     # views_general
     url(r'^$', views.index_view, name='index'),
     url(r'^login/$', views.login_view, name='login'),
+    url(r'^login/pleaseVerify', views.please_verify_view, name='pleaseVerify'),
     url(r'^settings/$', views.profile_settings_view, name='settings'),
     url(r'^profile/(?P<user>\w+)$', views.profile_view, name='profile'),
     url(r'^message/(?P<msg>[0-9]+)$', views.message_view, name='message'),
@@ -44,4 +45,5 @@ urlpatterns = [
     url(r'^logout/$', functions.logout, name='logout'),
     url(r'^more/$', functions.load_more, name='more'),
     url(r'^update/$', functions.update, name='update'),
+    url(r'^verify/(?P<user>\w\S+)/(?P<hash>\w\S+)$', functions.verify, name='verify'),
 ]

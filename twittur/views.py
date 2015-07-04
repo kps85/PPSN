@@ -22,10 +22,12 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 
 from .models import GroupProfile, Message, Nav, Notification, UserProfile
 from .forms import UserForm, UserDataForm
-from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification
+from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
+    verification_mail
 
 
 # Page: "Startseite"
@@ -84,6 +86,10 @@ def login_view(request):
                 if user.is_active:
                     auth.login(request, user)
                     return HttpResponseRedirect('/twittur/')
+                else:
+                    error_login = "Dein Account wurde noch nicht verifiziert!"
+                    return render(request, 'ftu.html',
+                                  {'active_page': 'ftu', 'error_login': error_login, 'message_list': message_list})
             else:
                 error_login = "Ups, Username oder Passwort falsch."
                 return render(request, 'ftu.html',
@@ -211,10 +217,15 @@ def login_view(request):
         user = User.objects.create_user(username, email, password)
         user.first_name = first_name
         user.last_name = last_name
+        user.is_active = False
         user.save()
+
+        # Hash for verification
+        new_hash = pw_generator()
         user_profile = UserProfile(userprofile=user, studentNumber=student_number,
-                                   academicDiscipline=academic_discipline, location="Irgendwo")
+                                   academicDiscipline=academic_discipline, location="Irgendwo", verifyHash=new_hash)
         user_profile.save()
+        verification_mail(user, request)
 
         # academic discipline (required user in db)
         # -> add user to group uni, fac whatever and his academic discipline
@@ -231,10 +242,8 @@ def login_view(request):
             print(e.__traceback__)
             pass
 
-        # log user in and redirect to index page
-        user = authenticate(username=username, password=password)
-        auth.login(request, user)
-        return HttpResponseRedirect('/twittur/')
+        location = reverse("twittur:pleaseVerify")
+        return HttpResponseRedirect(location)
 
     context = {
         'active_page': 'ftu',
@@ -513,3 +522,7 @@ def vier_null_vier(request):
     context = get_context(request, '404', user=request.user)
 
     return render(request, '404.html', context)
+
+
+def please_verify_view(request):
+    return render(request, 'pleaseVerify.html', {'active_page': 'pleaseVerify'})
