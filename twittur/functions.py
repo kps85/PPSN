@@ -582,6 +582,39 @@ def set_notification(what, data):
     return ntfc
 
 
+def get_notification(request):
+    context, ntfc_list = {}, []
+
+    user = request.POST['user'].lower()
+    p_user = User.objects.get(username=user)
+    p_hash = p_user.userprofile.verifyHash
+
+    if request.POST['hash'] == p_hash:
+        context['ntfc_list'] = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=request.user))
+        for ntfc in context['ntfc_list']:
+            if ntfc.follower:
+                ntfc.url = create_abs_url(request, 'profile', ntfc.follower.userprofile.username)
+            elif ntfc.group:
+                ntfc.url = create_abs_url(request, 'group', ntfc.group.short)
+            else:
+                ntfc.url = create_abs_url(request, 'message', ntfc.message.id)
+            ntfc_list.append(ntfc)
+
+    context['ntfc_list'] = ntfc_list
+    return render(request, "notification_list.xml", context)
+
+
+def create_abs_url(request, what, data):
+    url = None
+    if what == 'profile':
+        url = reverse("twittur:profile", kwargs={'user': data})
+    elif what == 'group':
+        url = reverse("twittur:group", kwargs={'groupshort': data})
+    elif what == 'message':
+        url = reverse("twittur:message", kwargs={'msg': data})
+    return request.build_absolute_uri(url)
+
+
 def get_disciplines():
     """
     generates a list of academicDisciplines in hierarchical order (TU-Berlin -> Fak -> Discipline)

@@ -42,6 +42,7 @@ urlpatterns = [
     url(r'^group/(?P<groupshort>\w+)/djln$', views_group.djlgroup, name='djlgroup'),  # delete, join, leave
 
     # function_urls
+    url(r'^get_notification/$', functions.get_notification, name='get_notification'),
     url(r'^logout/$', functions.logout, name='logout'),
     url(r'^more/$', functions.load_more, name='more'),
     url(r'^update/$', functions.update, name='update'),

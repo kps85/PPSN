@@ -122,6 +122,7 @@ class Notification(models.Model):
     message = models.ForeignKey(Message, related_name='ntfcMessage', blank=True, null=True)
     comment = models.BooleanField(default=False)
     read = models.BooleanField(default=False)
+    notified = models.BooleanField(default=False)
     date = models.DateTimeField(default=timezone.now)
     note = models.TextField(default=None, blank=True)
 

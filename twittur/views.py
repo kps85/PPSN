@@ -27,7 +27,7 @@ from django.core.urlresolvers import reverse
 from .models import GroupProfile, Hashtag, Message, Nav, Notification, UserProfile
 from .forms import UserForm, UserDataForm
 from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
-    verification_mail
+    verification_mail, get_notification
 
 
 # Page: "Startseite"
@@ -40,6 +40,9 @@ def index_view(request):
 
     if not request.user.is_authenticated():             # check if user is logged in
         return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+
+    print(render(request, "notification_list.xml",
+                 {'ntfc_list': Notification.objects.filter(Q(user=request.user))}))
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'index', request.user)
