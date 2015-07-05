@@ -411,19 +411,7 @@ a.title {
 		
 	}
 	
-	@include phone {
-		float:left;
-        display:inline-block;
-        width:70%;
-        position:absolute;
-        left:15%;
-        background:url('img/twittur_mobile.png') no-repeat;
-        background-position: center center;
-        background-size:40px 48px;
-        height:$navWidthMobile;
-        box-sizing:border-box;
-      
-	}
+	
 }
 
 
@@ -436,6 +424,21 @@ header {
 	
 	min-height:$navWidthDesktop;
 	
+    
+    @include phone {
+        a.title {
+            float:left;
+            display:inline-block;
+            width:70%;
+            position:absolute;
+            left:15%;
+            background:url('img/twittur_mobile.png') no-repeat;
+            background-position: center center;
+            background-size:40px 48px;
+            height:$navWidthMobile;
+            box-sizing:border-box;
+	   }
+    }
 	
 	@include tablet {
 		position:fixed;

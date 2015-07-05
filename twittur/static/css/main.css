@@ -617,8 +617,15 @@ a.title {
   @media screen and (min-width: 1024px) {
     a.title {
       margin-left: 6%; } }
+
+header {
+  top: 0;
+  opacity: 0.95;
+  display: block;
+  width: 100%;
+  min-height: 90px; }
   @media screen and (max-width: 639px) {
-    a.title {
+    header a.title {
       float: left;
       display: inline-block;
       width: 70%;
@@ -629,13 +636,6 @@ a.title {
       background-size: 40px 48px;
       height: 60px;
       box-sizing: border-box; } }
-
-header {
-  top: 0;
-  opacity: 0.95;
-  display: block;
-  width: 100%;
-  min-height: 90px; }
   @media screen and (max-width: 1023px) {
     header {
       position: fixed;
