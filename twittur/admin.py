@@ -83,11 +83,11 @@ class NTFCAdmin(admin.ModelAdmin):
     """
     # single-view
     fieldsets = [
-        ('Meta',    {'fields': ['user', 'date', 'read']}),
+        ('Meta',    {'fields': ['user', 'date', 'read', 'notified']}),
         ('Content', {'fields': ['follower', 'group', 'message', 'comment', 'note']}),
     ]
     # overview
-    list_display = ('date', 'user', 'note', 'read')
+    list_display = ('date', 'user', 'note', 'read', 'notified')
     list_display_links = ('date', 'note')
     ordering = ('-date', 'user', 'read')
 
