@@ -590,8 +590,8 @@ def get_notification(request):
     p_hash = p_user.userprofile.verifyHash
 
     if request.POST['hash'] == p_hash:
-        context['ntfc_list'] = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=request.user))
-        for ntfc in context['ntfc_list']:
+        ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=request.user))
+        for ntfc in ntfc_list_old:
             if ntfc.follower:
                 ntfc.url = create_abs_url(request, 'profile', ntfc.follower.userprofile.username)
             elif ntfc.group:
@@ -599,6 +599,8 @@ def get_notification(request):
             else:
                 ntfc.url = create_abs_url(request, 'message', ntfc.message.id)
             ntfc_list.append(ntfc)
+            ntfc.notified = True
+            ntfc.save()
 
     context['ntfc_list'] = ntfc_list
     return render(request, "notification_list.xml", context)
