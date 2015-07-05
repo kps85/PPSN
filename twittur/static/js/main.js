@@ -20,6 +20,9 @@ function fph() {
 
 var tspeed = 500;
 
+// API fuer Scrollbalken
+var scrollApi = null;
+
 // First Time Use
 function initFtu() {
 	if($("#ftu").length <= 0) return;	
@@ -66,6 +69,9 @@ function initMenu() {
 			$a.show();
 			$a.animate({'left':0}, 300);
 		} 
+        if(scrollApi != null) {
+            scrollApi.reinitialise();
+        }
 	});	
 	
 	var $menuCloser = $("<a>", {'class':'menuCloser', 'html':'Zur&uuml;ck'});
@@ -139,6 +145,27 @@ function initList() {
 				$(this).scrollTop(scrollTo + $(this).scrollTop());
 		}
 	});
+    
+    
+    // Huebsche Scrollbalken
+    $('.scrollable').each(function() {
+          $(this).jScrollPane({
+              showArrows: $(this).is('.arrow')
+          });
+          scrollApi = $(this).data('jsp');
+          var scrollTimeout;
+          $(window).bind('resize',function() {
+                  if (!scrollTimeout) {
+                      scrollTimeout = setTimeout(function() {
+                              scrollApi.reinitialise();
+                              scrollTimeout = null;
+                          }, 50);
+                  }
+              }
+          );
+      }
+  );
+
 }
 
 // Notifications
