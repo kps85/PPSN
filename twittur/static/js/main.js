@@ -272,14 +272,19 @@ function initInputValidation() {
 		validateFtu();
 	});
 
-	$('#newMessage, .newComment').on("keyup", function(e) {
+	function check_input(e) {
 		// Ueberprueft ob Textfeld leer ist oder nur Leerzeichen enthaelt
-		if($(this).find("textarea").val().replace( /\s/g, "") != '') {
-			$(this).find('button[type=submit]').prop("disabled", false);
+		if($(e).find("textarea").val().replace( /\s/g, "") != '') {
+			$(e).find('button[type=submit]').prop("disabled", false);
 		} else {
-			$(this).find('button[type=submit]').prop("disabled", true);
+			$(e).find('button[type=submit]').prop("disabled", true);
 		}
-	});
+	}
+
+	$('#newMessage').on("keyup", function(e) { check_input(this); });
+	$('div.newComment').each(function(index, element) {
+    $(element).on("keyup", function(e) { check_input(this); });
+  });
 	
 	$(".newMsgPctr span").click(function(e) {
 		$(".newMsgPctr .glyphicon").toggleClass("glyphicon-plus glyphicon-minus");
@@ -524,12 +529,13 @@ function msgManagement() {
 	$(".newMsg, .postToUser, .postToGroup").click(function(e) {
 		var target = $(this).attr("data-hint");
 		var symbol = ($(this).is(".postToUser")) ? "@" : "&";
-		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {
-			var val = $("#id_text").val().replace(symbol + target + " ", '');
-			$("#newMessage").find("textarea").val(symbol + target + " " + val);		
+		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {	
 			if ($(this).is(".postToGroup")) {
 				$("#newMessage select.superDropdown").val(symbol+target);
 				$("#newMessage").find("div.superDropdown p").text(symbol+target);
+			} else {
+				var val = $("#id_text").val().replace(symbol + target + " ", '');
+				$("#newMessage").find("textarea").val(symbol + target + " " + val);	
 			}
 		}
     setTimeout(function() {
@@ -731,7 +737,7 @@ $(document).ready(function() {
 	initMenu();
 	initList();
 	initFtu();
-    initNotifications();
+  initNotifications();
 	initInfoSettings();
 	initSearchResults();
 	initInputValidation();

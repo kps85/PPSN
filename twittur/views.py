@@ -71,15 +71,12 @@ def login_view(request):
     """
 
     # Public Messages:
-    message_list = Message.objects.filter(
-        Q(comment=None) & Q(attags=None) & Q(group=None)
-    ).order_by('-date').distinct()
+    message_list = Message.objects.filter(Q(comment=None) & Q(attags=None) & Q(group=None)).order_by('-date')
 
     # if user tries to log in
     if request.method == "GET":
         if 'login' in request.GET:
-            username = request.GET.get('username')
-            password = request.GET.get('password')
+            username, password = request.GET.get('username'), request.GET.get('password')
             user = authenticate(username=username, password=password)
 
             if user is not None:
@@ -132,12 +129,12 @@ def login_view(request):
                                                      "kontaktiere ein twittur-Teammmitglied. (siehe " \
                                                      "<a href='/twittur/info'>Impressum</a>)"
             except ObjectDoesNotExist as e:
-                print(e.__traceback__)
+                print(e)
                 error_msg['error_not_registered'] = "Die eingegebene E-Mail Adresse ist nicht registriert."
 
         # if a guest wants to register
         else:
-            user_list, username = User.objects.all(), query_dict.get('name')
+            user_list, username = User.objects.all(), query_dict['name']
 
             # case if username is available
             for user in user_list:
@@ -150,57 +147,49 @@ def login_view(request):
                     error_msg['error_reg_user_n'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' im Usernamen erlaubt!"
 
             # Password validation
-            password = query_dict.get('password')
-            ack_password = query_dict.get('ack_password')
+            password, ack_password = query_dict['password'], query_dict['ack_password']
             if password != ack_password:
                 error_msg['error_reg_user_p'] = "Passw&ouml;rter sind nicht gleich."
 
             # EMail validation
-            email = query_dict.get('email')
+            email = query_dict['email']
             mail = email.split('@')
-            if len(mail) == 1\
-                    or not (mail[1].endswith(".tu-berlin.de")
-                            or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
+            if len(mail) == 1 or not (mail[1].endswith(".tu-berlin.de")
+                                      or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
                 error_msg['error_reg_mail'] = "Keine g&uuml;ltige TU E-Mail Adresse!"
             else:
                 try:
                     User.objects.get(email=email)
                     error_msg['error_reg_mail'] = "Ein Benutzer mit dieser E-Mail Adresse existiert bereits!"
                 except ObjectDoesNotExist as e:
-                    print(e.__traceback__)
+                    print(e)
                     data['email'] = email
 
             # fill the rest for model User and Userprofile
-            first_name = query_dict.get('first_name')
+            first_name, last_name = query_dict['first_name'], query_dict['last_name']
+            academic_discipline = query_dict['academicDiscipline']
             if len(first_name) > 0:
                 data['first_name'] = first_name
-            last_name = query_dict.get('last_name')
             if len(last_name) > 0:
                 data['last_name'] = last_name
-            if len(query_dict.get('studentNumber')) == 6:
-                student_number = query_dict.get('studentNumber')
+            if len(query_dict['studentNumber']) == 6:
+                student_number = query_dict['studentNumber']
                 try:
                     UserProfile.objects.get(studentNumber=student_number)
                     error_msg["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."
                 except ObjectDoesNotExist as e:
-                    print(e.__traceback__)
+                    print(e)
                     data['studentNumber'] = student_number
             else:
                 error_msg['error_student_number'] = "Die eingegebene Matrikel-Nummer ist ung&uuml;ltig!"
-            academic_discipline = query_dict.get('academicDiscipline')
             if len(academic_discipline) > 0:
                 data['academicDiscipline'] = academic_discipline
             else:
                 error_msg['error_reg_userprofile_ad'] = "Bitte Studiengang ausw&auml;hlen!"
 
         # context for html
-        context = {
-            'active_page': 'ftu',
-            'nav': Nav.nav,
-            'data': data,
-            'errors': error_msg,
-            'message_list': message_list
-        }
+        context = {'active_page': 'ftu', 'nav': Nav.nav, 'data': data, 'errors': error_msg,
+                   'message_list': message_list}
 
         # error?
         if len(error_msg) > 0 or 'password_reset' in request.POST:
@@ -215,15 +204,14 @@ def login_view(request):
 
         # if data is correct -> create User and Userprofile
         user = User.objects.create_user(username, email, password)
-        user.first_name = first_name
-        user.last_name = last_name
-        user.is_active = False
+        user.first_name, user.last_name, user.is_active = first_name, last_name, False
         user.save()
 
         # Hash for verification
         new_hash = pw_generator()
         user_profile = UserProfile(userprofile=user, studentNumber=student_number,
-                                   academicDiscipline=academic_discipline, location="Irgendwo", verifyHash=new_hash)
+                                   academicDiscipline=academic_discipline, location="Irgendwo",
+                                   verifyHash=new_hash)
         user_profile.save()
         verification_mail(user, request)
 
@@ -239,18 +227,13 @@ def login_view(request):
                     group = group.supergroup
 
         except ObjectDoesNotExist as e:
-            print(e.__traceback__)
+            print(e)
             pass
 
         location = reverse("twittur:pleaseVerify")
         return HttpResponseRedirect(location)
 
-    context = {
-        'active_page': 'ftu',
-        'nav': Nav.nav,
-        'message_list': message_list,
-        'discList': get_disciplines()
-    }
+    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list, 'discList': get_disciplines()}
     return render(request, 'ftu.html', context)
 
 
@@ -278,31 +261,22 @@ def profile_view(request, user):
     try:
         p_user = User.objects.get(username=user.lower())  # this is the user displayed in html
         context['pUser'], context['pUserProf'] = p_user, p_user.userprofile
+        data_dict = None
         if request.method == 'POST':
             data_dict = request.POST
-            if 'ignoreUser' in data_dict:                                     # clicked User ignorieren
-                ignore_user_list = context['userProfile'].ignoreU.all()
-                if p_user in ignore_user_list:                                # unignore(?) if user is ignored
-                    context['userProfile'].ignoreU.remove(p_user)
-                    context['success_msg'] = p_user.username + " wird nicht mehr ignoriert."
-                else:                                                       # ignore dat biatch
-                    context['userProfile'].ignoreU.add(p_user)
-                    context['success_msg'] = p_user.username + " wird fortan ignoriert."
+        elif request.method == 'GET':
+            data_dict = request.GET
 
-            elif 'entfollow' in data_dict:
-                entfollow = User.objects.get(id=data_dict['entfollow'])
-                follow = Notification.objects.get(Q(user__exact=entfollow) & Q(follower__exact=context['userProfile']))
-                follow.delete()
-                context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
+        if 'ignoreUser' in data_dict:                                     # clicked User ignorieren
+            ignore_user_list = context['userProfile'].ignoreU.all()
+            if p_user in ignore_user_list:                                # unignore(?) if user is ignored
+                context['userProfile'].ignoreU.remove(p_user)
+                context['success_msg'] = p_user.username + " wird nicht mehr ignoriert."
+            else:                                                       # ignore dat biatch
+                context['userProfile'].ignoreU.add(p_user)
+                context['success_msg'] = p_user.username + " wird fortan ignoriert."
 
-            elif 'leaveGroup' in data_dict:
-                group = GroupProfile.objects.get(id=data_dict['leaveGroup'])
-                group.member.remove(request.user)
-                note = request.user.username + ' hat deine Gruppe verlassen.'
-                set_notification('group', data={'group': group, 'member': group.admin, 'note': note})
-                context['success_msg'] = 'Ihr habt die Gruppe "' + group.name + '" verlassen.'
-
-        elif 'follow' in request.GET:
+        if 'follow' in request.GET:
             if p_user in context['follow_list']:
                 follow = Notification.objects.get(Q(user__exact=p_user) & Q(follower__exact=context['userProfile']))
                 follow.delete()
@@ -311,6 +285,19 @@ def profile_view(request, user):
                 note = request.user.username + ' folgt Dir jetzt!'
                 set_notification('follower', data={'user': p_user, 'follower': context['userProfile'], 'note': note})
                 context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
+
+        elif 'entfollow' in data_dict:
+            entfollow = User.objects.get(id=data_dict['entfollow'])
+            follow = Notification.objects.get(Q(user__exact=entfollow) & Q(follower__exact=context['userProfile']))
+            follow.delete()
+            context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
+
+        elif 'leaveGroup' in data_dict:
+            group = GroupProfile.objects.get(id=data_dict['leaveGroup'])
+            group.member.remove(request.user)
+            note = request.user.username + ' hat deine Gruppe verlassen.'
+            set_notification('group', data={'group': group, 'member': group.admin, 'note': note})
+            context['success_msg'] = 'Ihr habt die Gruppe "' + group.name + '" verlassen.'
 
         context['follow_list'] = context['userProfile'].follow.all()
 
@@ -332,7 +319,7 @@ def profile_view(request, user):
         if 'delMessage' or 'ignoreMsg' not in request.POST:
             context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
-        print(e.__traceback__)
+        print(e)
         context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
 
     context['follow_sb_list'] = sorted(context['follow_list'], key=lambda x: random.random())[:5]

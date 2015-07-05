@@ -30,9 +30,9 @@
           
           <div class="col-xs-12 form-group">
             <div class="col-xs-12 text-center profilePictures">
-              <a href="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" target="_blank">
-                <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
-                {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
+              <a href="{% if group %}{{ group.picture.url }}{% else %}{{ request.user.userprofile.picture.url }}{% endif %}" target="_blank">
+                <img src="{% if group %}{{ group.picture.url }}{% else %}{{ request.user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
+                {% if not group %}<img src="{{ request.user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
               </a>
               <p class="help-block">
               	{% if group %}
@@ -130,7 +130,7 @@
           <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>) 
                                {% if member == group.admin %}
                                   <span class="pull-right"> [admin]</span>
-                               {% elif user == group.admin %}
+                               {% elif request.user == group.admin %}
                                   <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ member.id }}Modal" id="remUser{{ member.id }}Button" title="Mitglied entfernen">
                                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                   </a>
@@ -206,7 +206,7 @@
                   {% for fac, ad in list %}
                   	<optgroup label="{{ fac }}">
                     {% for disc in ad %}
-                    	<option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
+                    	<option value="{{ disc }}"{% if disc == request.user.userprofile.academicdiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
                     {% endfor %}
                     </optgroup>
                   {% endfor %}
@@ -242,7 +242,7 @@
               <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
               <select class="form-control" id="id_safetyLevel" name="safety">
                 {% for level in safetyLevelList %}
-                	<option value="{{ level }}"{% if level == user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
+                	<option value="{{ level }}"{% if level == request.user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
                 {% endfor %}
               </select>
           </div>

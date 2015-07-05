@@ -12,18 +12,19 @@
 {% if not error_msg %}
 <div class="container-fluid">
   <div class="profil clearfix">
-    {% if group and user == group.admin %}
+    {% if group and request.user == group.admin %}
     <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="profilEdit" title="Gruppe bearbeiten">
       <span class="glyphicon glyphicon-cog"></span>
     </a>
-    {% elif active_page == 'profile' and user == pUser %}
+    {% elif active_page == 'profile' and request.user == pUser %}
     <a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
       <span class="glyphicon glyphicon-cog"></span>
     </a>
-    {% elif active_page == 'profile' and user != pUser %}
+    {% elif active_page == 'profile' and request.user != pUser %}
       <form action="{% url 'twittur:profile' user=pUser %}" method="POST" class="pull-right">
           {% csrf_token %}
           <input type="hidden" name="ignoreUser" value="{{ pUser }}">
+          {% if not ignored and pUser in request.user.userprofile.follow.all %}<input type="hidden" name="entfollow" value="{{ pUser.id }}">{% endif %}
           <button class="ignoreMsgButton profilEdit" type="submit" title="{% if not ignored %}Benutzer ignorieren{% else %}Benutzer nicht mehr ignorieren{% endif %}">
           {% if not ignored %}
             <span class="glyphicon glyphicon-eye-close"></span>
@@ -96,6 +97,7 @@
   {% if request.user != pUser and not group %}
   <form action="{% url 'twittur:profile' user=pUser %}" method="GET" >
     <input name="follow" type="hidden" value="follow" />
+    {% if pUser in request.user.userprofile.ignoreU.all %}<input type="hidden" name="ignoreUser" value="{{ pUser }}">{% endif %}
     <button class="col-xs-6 text-center btn btn-default profileButton" id="id_follow" type="submit">
       <strong>{{ follow_text|safe }}</strong>
     </button>
@@ -169,7 +171,7 @@
       <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>)
                            {% if member == group.admin %}
                               <span class="pull-right"> [admin]</span>
-                           {% elif user == group.admin %}
+                           {% elif request.user == group.admin %}
                               <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ member.id }}Modal" id="remUser{{ member.id }}Button" title="Mitglied entfernen">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                               </a>
@@ -221,14 +223,14 @@
   {% endif %}
   {% if show_favs or show_groups %}
   <div class="profileMessages container-fluid">
-    <a href="{% url 'twittur:profile' user=user %}">&laquo; Nachrichten anzeigen</a><br />
+    <a href="{% url 'twittur:profile' user=request.user %}">&laquo; Nachrichten anzeigen</a><br />
     <br />
     <ul class="post memberList">
     {% if show_favs %}
       {% for fav in follow_list %}
         <li class="clearfix">{{ fav.first_name }} {{ fav.last_name }} (@<a href="{% url 'twittur:profile' user=fav.username %}">{{ fav.username }}</a>)
           <span class="pull-right">
-            <form action="{% url 'twittur:profile' user=user %}" method="POST">
+            <form action="{% url 'twittur:profile' user=request.user %}" method="POST">
               {% csrf_token %}
               <input name="favorits" type="hidden" value="true" >
               <input type="hidden" name="entfollow" value="{{ fav.id }}">
@@ -244,15 +246,19 @@
         <li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)
         {% if group.joinable and group.admin != request.user %}
           <span class="pull-right">
-            <form action="{% url 'twittur:profile' user=user %}" method="POST">
+            <form action="{% url 'twittur:profile' user=request.user %}" method="POST">
               {% csrf_token %}
               <input name="group" type="hidden" value="true" >
               <input type="hidden" name="leaveGroup" value="{{ group.id }}">
-              <button type="submit">verlassen</button>
+              <button class="remFav" title="Gruppe verlassen" type="submit"><span class="glyphicon glyphicon-log-out"></span></button>
             </form>
           </span>
         {% elif group.joinable and group.admin == request.user %}
-          <span class="pull-right"><a href="/twittur/group/{{group.short}}/settings">bearbeiten</a></span>
+          <span class="pull-right">
+          	<a href="/twittur/group/{{group.short}}/settings">
+            	<span class="glyphicon glyphicon-cog" title="Gruppe bearbeiten"></span>
+            </a>
+          </span>
         {% endif %}
       {% endfor %}
     {% endif %}
@@ -261,11 +267,11 @@
   {% endif %}
   
   {% if not ignored %}
-    {% if user in group.member.all or active_page == 'profile' %}
+    {% if request.user in group.member.all or active_page == 'profile' %}
       {% if has_msg %}
         <div class="profileMessages container-fluid{% if show_member or show_favs or show_groups %} hidden{% endif %}"> 
           {% for message, dbmessage, form, comments, count in message_list %}        
-            {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
+            {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
           {% endfor %}
           </div>
           <div class="text-center{% if show_member or show_favs or show_groups or list_end == True or list_end == 'True' %} hidden{% endif %}">

@@ -258,13 +258,14 @@ def dbm_to_m(message):
 
 def get_messages(data):
     """
-
-    :param data:
-    :return:
+    creates a bundle of information to display messages
+    :param data: a dictionary of page specific information
+    :return: a dictionary with information to display messages
     """
 
     result = {'has_msg': False}
 
+    # how many items should be displayed at first?
     if 'end' not in data:
         result['list_end'] = 5
     else:
@@ -278,14 +279,16 @@ def get_messages(data):
     if 'end' in data['request'].POST:
         result['list_end'] = int(data['request'].POST.get('end'))
 
-    dbmessage_list = get_message_list(data['page'], data['data'])
+    # get a page specific list of messages
+    db_message_list = get_message_list(data['page'], data['data'])
     cur_date = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                    timezone.get_current_timezone())
 
+    # set the first item, where to start
     if 'post' in data['request'].GET:
         last_post_id = int(data['request'].GET.get('post'))
         result['list_start'] = 0
-        for msg in dbmessage_list:
+        for msg in db_message_list:
             result['list_start'] += 1
             if msg.id == last_post_id:
                 break
@@ -293,11 +296,11 @@ def get_messages(data):
         result['list_start'] = None
 
     user_profile = UserProfile.objects.get(userprofile=data['request'].user)
-    ignore_m_list = user_profile.ignoreM.all()
-    ignore_u_list = user_profile.ignoreU.all()
+    ignore_m_list, ignore_u_list = user_profile.ignoreM.all(), user_profile.ignoreU.all()
 
+    # create a bundle of data for the message_list (messages, forms, comments, counts)
     message_list, message_forms, comment_list, comment_count = [], [], [], []
-    for message in dbmessage_list[result['list_start']:result['list_end']]:
+    for message in db_message_list[result['list_start']:result['list_end']]:
         if message.date > cur_date:
             message.editable = True
         c = get_comments(data={
@@ -316,17 +319,20 @@ def get_messages(data):
 
         message_forms.append(MessageForm(instance=message))
 
-    if len(dbmessage_list) > 0:
+    # check if messages exist, set boolean for frontend
+    if len(db_message_list) > 0:
         result['has_msg'] = True
 
-    result['list_length'] = len(dbmessage_list)
+    # set list length and zip lists
+    result['list_length'] = len(db_message_list)
     result['message_list'] = zip(
         message_list,
-        dbmessage_list[result['list_start']:result['list_end']],
+        db_message_list[result['list_start']:result['list_end']],
         message_forms, comment_list, comment_count
     )
 
-    if result['list_end'] is None or result['list_end'] >= len(dbmessage_list):
+    # check if last items where loaded
+    if result['list_end'] is None or result['list_end'] >= len(db_message_list):
         result['list_end'] = True
 
     if 'length' in data['request'].GET:
@@ -340,10 +346,10 @@ def get_messages(data):
 # return Full Message List
 def get_message_list(page, data):
     """
-
-    :param page:
-    :param data:
-    :return:
+    get all of the messages for a specific page
+    :param page: page, where the message list will be displayed
+    :param data: page specific data
+    :return: unformatted message list
     """
 
     if page == 'index':

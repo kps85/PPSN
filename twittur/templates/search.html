@@ -35,14 +35,14 @@
     <div class="container-fluid searchResultBox searchUser" id="searchUser">
     <h4> Folgende Benutzer wurden gefunden:</h4>
     <ul>
-    {% for user in user_list %}
+    {% for object in user_list %}
       <li class="search_user_result clearfix container-fluid">
-        <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail pull-left"/>
+        <img src="{{ object.userprofile.picture.url }}" class="profilbild-s img-thumbnail pull-left"/>
         <div class="pull-left">
-          <strong>{{ user.first_name }} {{ user.last_name }} (@<a href="{% url 'twittur:profile' user=user.username %}" >{{ user.username }}</a>)</strong><br />
-          <em class="pull-left">studiert: {{ user.userprofile.academicDiscipline }}</em>
+          <strong>{{ object.first_name }} {{ object.last_name }} (@<a href="{% url 'twittur:profile' user=object.username %}" >{{ object.username }}</a>)</strong><br />
+          <em class="pull-left">studiert: {{ object.userprofile.academicDiscipline }}</em>
         </div>
-        <p class="pull-right text-right"><em>registriert seit<br />{{ user.date_joined|date:"d.m.Y" }}</em></p>
+        <p class="pull-right text-right"><em>registriert seit<br />{{ object.date_joined|date:"d.m.Y" }}</em></p>
     {% endfor %}
     </div>  
   {% else %}
@@ -94,7 +94,7 @@
     <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
     {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
     {% for message, dbmessage, form, comments, count in message_list %}
-      {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count page=active_page user=user  %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
     {% endfor %}
     </div>
     <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center{% if list_end == True or list_end == 'True' %} hidden{% endif %}">

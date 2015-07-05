@@ -2,14 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="88ab18aa-0f46-4975-a197-48b0dc6c1483" name="Default" comment="">
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\.idea\.name" afterPath="" />
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\.idea\PPSN.iml" afterPath="" />
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\.idea\dictionaries\KarlPhilipp.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\.idea\misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\.idea\modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\.idea\vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\test" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\twittur\templates\twittur\base_test.html" afterPath="" />
+      <change type="DELETED" beforePath="D:\SkyDrive\GitHub\PPSN\twittur\templates\twittur\index_test.html" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/base.html" afterPath="$PROJECT_DIR$/twittur/templates/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/comments.html" afterPath="$PROJECT_DIR$/twittur/templates/comments.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/functions.py" afterPath="$PROJECT_DIR$/twittur/functions.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/index.html" afterPath="$PROJECT_DIR$/twittur/templates/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/info_faq.html" afterPath="$PROJECT_DIR$/twittur/templates/info_faq.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/info_support.html" afterPath="$PROJECT_DIR$/twittur/templates/info_support.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/static/js/main.js" afterPath="$PROJECT_DIR$/twittur/static/js/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/message.html" afterPath="$PROJECT_DIR$/twittur/templates/message.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/message_box.html" afterPath="$PROJECT_DIR$/twittur/templates/message_box.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/message_box_reload.html" afterPath="$PROJECT_DIR$/twittur/templates/message_box_reload.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/layout/nav.html" afterPath="$PROJECT_DIR$/twittur/templates/layout/nav.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/profile.html" afterPath="$PROJECT_DIR$/twittur/templates/profile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/search.html" afterPath="$PROJECT_DIR$/twittur/templates/search.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/settings.html" afterPath="$PROJECT_DIR$/twittur/templates/settings.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/layout/sidebar.html" afterPath="$PROJECT_DIR$/twittur/templates/layout/sidebar.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/views.py" afterPath="$PROJECT_DIR$/twittur/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PPSN.iws" />
@@ -30,7 +41,36 @@
     <favorites_list name="PPSN" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twittur/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="290" column="34" selection-start-line="290" selection-start-column="34" selection-end-line="290" selection-end-column="34" />
+              <folding>
+                <element signature="e#484#497#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="functions.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/twittur/functions.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.63031626">
+              <caret line="81" column="0" selection-start-line="81" selection-start-column="0" selection-end-line="82" selection-end-column="21" />
+              <folding>
+                <element signature="e#1261#1272#0" expanded="true" />
+                <element signature="e#1866#2056#0" expanded="false" />
+                <element signature="e#3485#5157#0" expanded="false" />
+                <element signature="e#5360#7317#0" expanded="false" />
+                <element signature="e#7364#7810#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -47,11 +87,11 @@
         <option value="$PROJECT_DIR$/twittur/views_info.py" />
         <option value="$PROJECT_DIR$/twittur/admin.py" />
         <option value="$PROJECT_DIR$/twittur/views_search.py" />
-        <option value="$PROJECT_DIR$/twittur/functions.py" />
         <option value="$PROJECT_DIR$/twittur/urls.py" />
-        <option value="$PROJECT_DIR$/twittur/views.py" />
         <option value="$PROJECT_DIR$/twittur/models.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/twittur/views.py" />
+        <option value="$PROJECT_DIR$/twittur/functions.py" />
       </list>
     </option>
   </component>
@@ -306,9 +346,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1" y="0" width="1918" height="1050" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13774973" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13774973" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298647" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -585,6 +625,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.36916396">
           <caret line="21" column="6" selection-start-line="21" selection-start-column="6" selection-end-line="21" selection-end-column="6" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -613,6 +654,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33260632">
           <caret line="435" column="6" selection-start-line="435" selection-start-column="6" selection-end-line="435" selection-end-column="6" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -655,20 +697,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.1472192">
           <caret line="175" column="0" selection-start-line="175" selection-start-column="0" selection-end-line="175" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/twittur/functions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.5943294">
-          <caret line="636" column="29" selection-start-line="636" selection-start-column="29" selection-end-line="636" selection-end-column="29" />
-          <folding>
-            <element signature="e#1261#1272#0" expanded="true" />
-            <element signature="e#1866#2056#0" expanded="false" />
-            <element signature="e#3485#5157#0" expanded="false" />
-            <element signature="e#5360#7317#0" expanded="false" />
-            <element signature="e#7364#7810#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -735,10 +763,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/twittur/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.0218103">
-          <caret line="163" column="61" selection-start-line="163" selection-start-column="61" selection-end-line="163" selection-end-column="61" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="290" column="34" selection-start-line="290" selection-start-column="34" selection-end-line="290" selection-end-column="34" />
           <folding>
             <element signature="e#484#497#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twittur/functions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.63031626">
+          <caret line="81" column="0" selection-start-line="81" selection-start-column="0" selection-end-line="82" selection-end-column="21" />
+          <folding>
+            <element signature="e#1261#1272#0" expanded="true" />
+            <element signature="e#1866#2056#0" expanded="false" />
+            <element signature="e#3485#5157#0" expanded="false" />
+            <element signature="e#5360#7317#0" expanded="false" />
+            <element signature="e#7364#7810#0" expanded="false" />
           </folding>
         </state>
       </provider>

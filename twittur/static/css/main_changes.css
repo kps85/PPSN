@@ -59,6 +59,7 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 #list ul { margin-bottom: 0; }
 #list ul h3 { margin-top: 0; }
 #list button:focus { box-shadow: none; }
+#list .glyphicon { top: 5px; font-size: 12px; }
 
 
 /* message_box bessere Abgrenzung der Elemente, Platz sparen */
@@ -67,6 +68,7 @@ body.modal-open { overflow: visible; padding-right: 0px !important; }
 
 /* post Button Delete has weird margin */
 .postFoot a { margin-right: 0px; }
+.postFoot .glyphicon { top: 3px; }
 
 
 /*

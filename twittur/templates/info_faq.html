@@ -10,7 +10,7 @@
 
 {% block content %}
 
-{% if user.is_superuser %}
+{% if request.user.is_superuser %}
 	<h3 class="text-uppercase" id="faq-hinzufuegen">FAQ Hinzuf&uuml;gen</h3>
   
   <form action="{% url 'twittur:faq' %}" method="POST">

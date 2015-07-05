@@ -18,11 +18,11 @@
        {% for follow in follow_sb_list %}
         <li><a class="ullink {{ follow.username }}" href="{% url 'twittur:profile' user=follow.username %}">@{{ follow.username }}</a></li>
       {% endfor %}
-      <form action="{% url 'twittur:profile' user=user %}" method="get">
+      <form action="{% url 'twittur:profile' user=request.user %}" method="get">
         <input name="favorits" type="hidden" value="true" />
         <button class="showFavList{% if show_favs %} active{% endif %} text-left ullink" type="submit" />
-        	Alle anzeigen          
-          <span class="pull-right">&raquo;</span>
+        	Alle anzeigen
+          <span class="glyphicon glyphicon-list pull-right"></span>
         </button>
       </form>
  		</ul>
@@ -31,19 +31,18 @@
   <ul class="groups">
     {% if group_sb_list %}
       <h3>Meine Gruppen</h3>
-    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup' %}"> Gruppe hinzufügen<span class="glpyhicon glyphicon-plus pull-right"></span></a>
+    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup' %}"> Gruppe hinzufügen<span class="glyphicon glyphicon-plus pull-right"></span></a>
       {% for group in group_sb_list %}
-        <li class="{% if false %}active{% endif %}">
-        <a class="ullink {{ group.short }}" href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>
+        <li><a class="ullink {{ group.short }}" href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>
       {% endfor %}
     {% else %}
-    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen<span class="glpyhicon glyphicon-plus pull-right"></span></a>
+    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen<span class="glyphicon glyphicon-plus pull-right"></span></a>
     {% endif %}
       <form action="{% url 'twittur:profile' user=user %}" method="get">
 	      <input name="group" type="hidden" value="true" />
   	    <button class="showFavList{% if show_groups %} active{% endif %} text-left clearfix" type="submit" />
         	Alle Anzeigen
-          <span class="pull-right">&raquo;</span>
+          <span class="glyphicon glyphicon-list pull-right"></span>
         </button>          
       </form>
   </ul>
@@ -58,7 +57,7 @@
   </ul>
   <ul>
     <li><h3 class="text-uppercase"> FAQ </h3>
-    {% if user.is_superuser %}<li><a href="{% url 'twittur:faq' %}#faq-hinzufuegen" class="menuCloser ullink faq-hinzufuegen">FAQ hinzuf&uuml;gen</a></li>{% endif %}
+    {% if request.user.is_superuser %}<li><a href="{% url 'twittur:faq' %}#faq-hinzufuegen" class="menuCloser ullink faq-hinzufuegen">FAQ hinzuf&uuml;gen</a></li>{% endif %}
     {% for faq in FAQs %}
       <li><a href="{% url 'twittur:faq' %}#{{ faq.0.category|slugify }}" class="menuCloser ullink {{ faq.0.category|slugify }}">{{ faq.0.category }}</a></li>
     {% endfor %}
