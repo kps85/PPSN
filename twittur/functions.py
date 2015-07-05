@@ -583,13 +583,18 @@ def set_notification(what, data):
 
 
 def get_notification(request):
+    """
+
+    :param request:
+    :return:
+    """
     context, ntfc_list = {}, []
 
-    user = request.POST['user'].lower()
+    user = request.GET['user'].lower()
     p_user = User.objects.get(username=user)
     p_hash = p_user.userprofile.verifyHash
 
-    if request.POST['hash'] == p_hash:
+    if request.GET['hash'] == p_hash:
         ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=request.user))
         for ntfc in ntfc_list_old:
             if ntfc.follower:
@@ -607,6 +612,13 @@ def get_notification(request):
 
 
 def create_abs_url(request, what, data):
+    """
+
+    :param request:
+    :param what:
+    :param data:
+    :return:
+    """
     url = None
     if what == 'profile':
         url = reverse("twittur:profile", kwargs={'user': data})
