@@ -1044,7 +1044,8 @@ header {
   bottom: 20px;
   left: 0;
   width: 50%;
-  z-index: 1; }
+  z-index: 1;
+  display: none; }
   @media screen and (min-width: 1024px) {
     .liveNotifications {
       left: 30%; } }

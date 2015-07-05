@@ -173,6 +173,7 @@ var notificationTime = 7000;
 
 function showNotification($notify) {
 	// Blendet eine einzelne Notification ein
+    $(".liveNotifications").show();
 	$notify.fadeIn(500);
 	$notify.children(".notifyContent").animate({'left':'0'},500);
 }
@@ -185,6 +186,9 @@ function deleteNotification($notify, timer) {
 	var margin = 10;
 	$notify.fadeTo(300, 0.01).animate({marginTop: -height + margin, left:'-100%'}, 500, function() {
 		$(this).remove();
+        if($(".liveNotifications .notify").length <= 0) {
+            $(".liveNotifications").hide();
+        }
 	});
 }
 
@@ -235,8 +239,7 @@ function notificationTest(message, delay) {
 
 function initNotifications() {
 	if(!$(".liveNotifications").length) return;
-	notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
-	notificationTest("@wilee hat das Notification-Backend erfolgreich implementiert",10000);
+	//notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
 }
 
 function validateFtu() {
