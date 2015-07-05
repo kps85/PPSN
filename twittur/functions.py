@@ -595,7 +595,7 @@ def get_notification(request):
     p_hash = p_user.userprofile.verifyHash
 
     if request.GET['hash'] == p_hash:
-        ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=request.user))
+        ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=p_user))
         for ntfc in ntfc_list_old:
             if ntfc.follower:
                 ntfc.url = create_abs_url(request, 'profile', ntfc.follower.userprofile.username)
