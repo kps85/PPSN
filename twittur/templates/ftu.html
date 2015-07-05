@@ -128,13 +128,9 @@
     <div class="column column-right ftuTags">
       <h2>Beliebte Themen</h2>
       <ul>
-        <li><a href="#">#yolo</a></li>
-        <li><a href="#">#swag</a></li>
-        <li><a href="#">#wprnervt</a></li>
-        <li><a href="#">#burgerindermensa</a></li>
-        <li><a href="#">#prokrastination</a></li>
-        <li><a href="#">#montag</a></li>
-        <li><a href="#">#telbrennt</a></li>
+      {% for tag in hashtag_list %}
+        <li>#{{ tag }}</li>
+      {% endfor %}
       </ul>
     </div>
     <div class="column column-left">

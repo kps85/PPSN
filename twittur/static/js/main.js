@@ -61,37 +61,32 @@ function initMenu() {
 	$menuOpener.prependTo("#head");
 	
 	$(".menuOpener, .menuOpener > *").click(function() {
-
 		var $a = $("#aside");
 		if($a.is(":hidden")) {
 			$a.show();
 			$a.animate({'left':0}, 300);
 		} 
-	});
-	
+	});	
 	
 	var $menuCloser = $("<a>", {'class':'menuCloser', 'html':'Zur&uuml;ck'});
 	$menuCloser.appendTo("nav");
 	
 	$(".menuCloser").click(function() {
 		var $a = $("#aside");
-		if($a.is(":visible") && $menuOpener.is(":visible")) {
-			
+		if($a.is(":visible") && $menuOpener.is(":visible")) {			
 			$a.animate({'left':'-100%'}, 300, function() {
 				$a.hide();
 			});
 		} 
-	});
+	});    
     
-    
-    var $searchOpener = $("<a>", {'class':'searchOpener', 'href':'javascript:;', 'html':'<span class="glyphicon glyphicon-search"></span>'});
-    $searchOpener.appendTo("#head");
-    
-    $searchOpener.click(function() {
-        scrollToTop();
-        $(".searchBar").slideToggle(300);
-    })
+	var $searchOpener = $("<a>", {'class':'searchOpener', 'href':'javascript:;', 'html':'<span class="glyphicon glyphicon-search"></span>'});
+	$searchOpener.appendTo("#head");
 	
+	$searchOpener.click(function() {
+		scrollToTop();
+		$(".searchBar").slideToggle(300);
+	})	
 	
 	var menuOpenerWasVisible = false;
 	if($(".menuOpener").is(":visible")) {
@@ -122,31 +117,27 @@ function initMenu() {
 			$("#aside").css({'left':'-100%'})
 			$("#aside").hide();
 			menuOpenerWasVisible = true;
+		}        
+		if($(".searchOpener").is(":hidden")) {
+				$(".searchBar").hide();
 		}
-        
-        if($(".searchOpener").is(":hidden")) {
-            $(".searchBar").hide();
-        }
 	})
 }
 
-function initList() {
-	
+function initList() {	
 	// Hauptfenster nicht mitscrollen
 	$('#list, .scrollfix').bind('mousewheel DOMMouseScroll', function(e) {
-	    var scrollTo = null;
-
-	    if (e.type == 'mousewheel') {
-	        scrollTo = (e.originalEvent.wheelDelta * -1);
-	    }
-	    else if (e.type == 'DOMMouseScroll') {
-	        scrollTo = 40 * e.originalEvent.detail;
-	    }
-
-	    if (scrollTo) {
-	        e.preventDefault();
-	        $(this).scrollTop(scrollTo + $(this).scrollTop());
-	    }
+		var scrollTo = null;
+		if (e.type == 'mousewheel') {
+				scrollTo = (e.originalEvent.wheelDelta * -1);
+		}
+		else if (e.type == 'DOMMouseScroll') {
+				scrollTo = 40 * e.originalEvent.detail;
+		}
+		if (scrollTo) {
+				e.preventDefault();
+				$(this).scrollTop(scrollTo + $(this).scrollTop());
+		}
 	});
 }
 
@@ -154,74 +145,71 @@ function initList() {
 var notificationTime = 7000;
 
 function showNotification($notify) {
-    // Blendet eine einzelne Notification ein
-    $notify.fadeIn(500);
-    $notify.children(".notifyContent").animate({'left':'0'},500);
+	// Blendet eine einzelne Notification ein
+	$notify.fadeIn(500);
+	$notify.children(".notifyContent").animate({'left':'0'},500);
 }
 
 function deleteNotification($notify, timer) {
-    // Timer clearen
-    clearTimeout(timer);
-    // So ausblenden, dass die anderen Notifications nicht ruckeln
-    var height = $notify.outerHeight(true);
-    var margin = 10;
-    $notify.fadeTo(300, 0.01).animate({marginTop: -height + margin, left:'-100%' }, 500, function() {
-        $(this).remove();
-    });
+	// Timer clearen
+	clearTimeout(timer);
+	// So ausblenden, dass die anderen Notifications nicht ruckeln
+	var height = $notify.outerHeight(true);
+	var margin = 10;
+	$notify.fadeTo(300, 0.01).animate({marginTop: -height + margin, left:'-100%'}, 500, function() {
+		$(this).remove();
+	});
 }
 
 
 function notify(content, link) {
-    // Template holen (s. template/layout/notificationBox.html)
-    var $template = $(".notify.template");
-    var $new = $template.clone().removeClass("template");
-    // Funktion zum loeschen der Notification
-    var timer = null;
-    var fnDelete = function() {
-        deleteNotification($new, timer);
-    }
-    // Automatisch loeschen
-    timer = setTimeout(fnDelete, notificationTime);
-    // Oder durch Klick
-    $new.find(".notifyClose").click(fnDelete);
-    // Beim Hover wird der Timer kurz gestoppt
-    $new.hover(function() {
-        clearTimeout(timer);
-    }, function() {
-        timer = setTimeout(fnDelete, notificationTime);
-    });
-    
-    // Text einfuegen
-    var $message = $new.find(".notifyMessage");
-    $message.html(content);
-    // Link einfuegen
-    if(link != null) {
-        $message.attr('href',link);
-        $message.addClass("hover");
-    }
-    
-    
-    
-    // In die Notificationleiste einfuegen
-    $new.prependTo(".liveNotifications");
-    
-    // Anzeigen!
-    showNotification($new);
-    return $new;
+	// Template holen (s. template/layout/notificationBox.html)
+	var $template = $(".notify.template");
+	var $new = $template.clone().removeClass("template");
+	// Funktion zum loeschen der Notification
+	var timer = null;
+	var fnDelete = function() {
+		deleteNotification($new, timer);
+	}
+	// Automatisch loeschen
+	timer = setTimeout(fnDelete, notificationTime);
+	// Oder durch Klick
+	$new.find(".notifyClose").click(fnDelete);
+	// Beim Hover wird der Timer kurz gestoppt
+	$new.hover(function() {
+		clearTimeout(timer);
+	}, function() {
+		timer = setTimeout(fnDelete, notificationTime);
+	});
+	
+	// Text einfuegen
+	var $message = $new.find(".notifyMessage");
+	$message.html(content);
+	// Link einfuegen
+	if(link != null) {
+		$message.attr('href',link);
+		$message.addClass("hover");
+	}	
+	
+	// In die Notificationleiste einfuegen
+	$new.prependTo(".liveNotifications");
+	
+	// Anzeigen!
+	showNotification($new);
+	return $new;
 }
 
 function notificationTest(message, delay) {
-    // Methode zum Testen der Notifications - message wird nach delay (ms) eingeblendet
-    setTimeout(function() {
-        notify(message);
-    }, delay);
+	// Methode zum Testen der Notifications - message wird nach delay (ms) eingeblendet
+	setTimeout(function() {
+		notify(message);
+	}, delay);
 }
-    
 
 function initNotifications() {
-    if(!$(".liveNotifications").length) return;
-    notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
-    notificationTest("@wilee hat das Notification-Backend erfolgreich implementiert",10000);
+	if(!$(".liveNotifications").length) return;
+	notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
+	notificationTest("@wilee hat das Notification-Backend erfolgreich implementiert",10000);
 }
 
 function validateFtu() {
@@ -241,16 +229,7 @@ function validateFtu() {
 }
 
 
-function initInputValidation() {
-	/*$(".checkNumeric").keypress(function(e) {
-		// Erlaubt nur numerische Eingaben
-		if( ( (e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 8 ) || $(this).val().length > 5) {
-			e.preventDefault();
-			e.returnValue = false;
-			return false;
-		}
-	});*/
-	
+function initInputValidation() {	
 	$(".faqContainer .post").click(function() {
 		// Blendet Infotext ein und wechselt + zu - 
 		var isActive = $(this).hasClass("active");
@@ -420,74 +399,62 @@ function initVarious() {
 	  $mainP.appendTo($div);
 	  $content.appendTo($mainDiv);
 	  $mainUl.appendTo($content);
-	  $mainDiv.appendTo($div);
-	  
-	  
+	  $mainDiv.appendTo($div);  
 	  
 	  $(this).children("optgroup").each(function() {
 		  var $ul = $("<ul>", {'class':'superDropdownSub'});
 		  var $p = $("<p>", {'class':'superSubOpener', 'text':$(this).attr('label')});
 		  var $span = $("<span>", {'class':'superBack', 'html':'&larr; Zur&uuml;ck'});
 		  
-		  
-		  
 		  $span.click(function() {
 			  $ul.fadeOut("slow");
 		  	$content.animate({'left':'0'});
-			$mainDiv.height("inherit");
+				$mainDiv.height("inherit");
 		  });
 		  
 		  $ul.hide();
-		  $p.click(function() {
-			  
-			  $(".superDropdownSub").hide();
-			  
-			  $mainDiv.height($ul.outerHeight(true));
-			  $content.css({'left':'0'});
-			  
-			  $ul.show();
-			  $content.animate({'left':'-100%'});
-
+		  $p.click(function() {			  
+				$(".superDropdownSub").hide();				
+				$mainDiv.height($ul.outerHeight(true));
+				$content.css({'left':'0'});				
+				$ul.show();
+				$content.animate({'left':'-100%'});
 		  })
+			
 		  $(this).children("option").each(function() {
-			var $li = $("<li>", {'text': $(this).val()});
-			$li.click(function() {
-				$select.val($(this).text());
-				$mainUl.fadeOut(0);
-				$mainP.text($(this).text());
-				$content.animate({'left':'0'});
-				$(".superDropdownSub").hide();
-				$mainDiv.height("inherit");
-				$mainP.addClass("active");
-				$mainP.removeClass("opened");
-				
-			})
-			$li.appendTo($ul);
+				var $li = $("<li>", {'text': $(this).val()});
+				$li.click(function() {
+					$select.val($(this).text());
+					$mainUl.fadeOut(0);
+					$mainP.text($(this).text());
+					$content.animate({'left':'0'});
+					$(".superDropdownSub").hide();
+					$mainDiv.height("inherit");
+					$mainP.addClass("active");
+					$mainP.removeClass("opened");					
+				})
+				$li.appendTo($ul);
 		  });
 		  
 		  $span.appendTo($ul);
 		  $p.appendTo($mainUl);
-		$ul.appendTo($content);
-	  });
+			$ul.appendTo($content);
+	  });     
       
-      
-      $(this).children("option").each(function() {
-          var $li = $("<li>", {'class':'superSubOpener', 'text':$(this).text()});
-          var optionVal = $(this).val()
-          $li.click(function() {
-			$select.val(optionVal);
-            console.log($select.val() + " gewaehlt");
-			$mainUl.fadeOut(0);
-			$mainP.text($(this).text());
-
-            $(".superDropdownSub").hide();
-			$mainP.addClass("active");
-			$mainP.removeClass("opened");
-          })
-          
-          $li.appendTo($mainUl);
-      })
-      
+		$(this).children("option").each(function() {
+			var $li = $("<li>", {'class':'superSubOpener', 'text':$(this).text()});
+			var optionVal = $(this).val()
+			$li.click(function() {
+				$select.val(optionVal);
+				console.log($select.val() + " gewaehlt");
+				$mainUl.fadeOut(0);
+				$mainP.text($(this).text());
+				$(".superDropdownSub").hide();
+				$mainP.addClass("active");
+				$mainP.removeClass("opened");
+			})
+			$li.appendTo($mainUl);
+		})
       
 	  $div.insertAfter($(this));
 	  
@@ -498,15 +465,15 @@ function initVarious() {
 			$mainDiv.height("inherit");
 		  $mainUl.fadeToggle(0);
 		  $(this).toggleClass("opened");
-	  });
-	  
+	  });	  
   });  
+	
 	/* Smoothes Scrollen */
 	$(function() {
 	  $('a.scrollTop[href*=#]:not([href=#])').click(function() {
 	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {     
-	        scrollToTop();
-	        return false;
+				scrollToTop();
+				return false;
 	    }
 	  });
 	});
@@ -697,12 +664,12 @@ function loadMore() {
 				if ($(".list_end").length > 0) {
 					$(".load_more").hide();
 				} else {
-					$(".load_more").find("span").removeClass("glyphicon-time").addClass("glyphicon-refresh");
+					$(".load_more").find("span").toggleClass("glyphicon-refresh glyphicon-time");
 					$(".load_more").attr("data-length", $(".post").length);
 				}
 				msgManagement();
 			}
-			$(this).find("span").removeClass("glyphicon-refresh").addClass("glyphicon-time");
+			$(this).find("span").toggleClass("glyphicon-refresh glyphicon-time");
 			getIt(url)
 		});
 	} else if ($(".notification.panel").length > 0) {
@@ -727,9 +694,9 @@ function loadMore() {
 
 /* Nach oben scrollen */
 function scrollToTop() {
-    $('html,body').animate({
-      scrollTop: 0
-    }, 200);
+	$('html,body').animate({
+		scrollTop: 0
+	}, 200);
 }
 
 

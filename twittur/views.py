@@ -19,12 +19,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from .models import GroupProfile, Message, Nav, Notification, UserProfile
+from .models import GroupProfile, Hashtag, Message, Nav, Notification, UserProfile
 from .forms import UserForm, UserDataForm
 from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
     verification_mail
@@ -72,6 +72,9 @@ def login_view(request):
 
     # Public Messages:
     message_list = Message.objects.filter(Q(comment=None) & Q(attags=None) & Q(group=None)).order_by('-date')
+    hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')).order_by('-hashtag_count')
+    context = {'active_page': 'ftu',
+               'message_list': message_list, 'hashtag_list': hashtag_list, 'discList': get_disciplines()}
 
     # if user tries to log in
     if request.method == "GET":
@@ -84,13 +87,10 @@ def login_view(request):
                     auth.login(request, user)
                     return HttpResponseRedirect('/twittur/')
                 else:
-                    error_login = "Dein Account wurde noch nicht verifiziert!"
-                    return render(request, 'ftu.html',
-                                  {'active_page': 'ftu', 'error_login': error_login, 'message_list': message_list})
+                    context['error_login'] = "Dein Account wurde noch nicht verifiziert!"
             else:
-                error_login = "Ups, Username oder Passwort falsch."
-                return render(request, 'ftu.html',
-                              {'active_page': 'ftu', 'error_login': error_login, 'message_list': message_list})
+                context['error_login'] = "Ups, Username oder Passwort falsch."
+            return render(request, 'ftu.html', context)
 
     # if user tries to register or to reset his password
     if request.method == 'POST':
@@ -188,8 +188,7 @@ def login_view(request):
                 error_msg['error_reg_userprofile_ad'] = "Bitte Studiengang ausw&auml;hlen!"
 
         # context for html
-        context = {'active_page': 'ftu', 'nav': Nav.nav, 'data': data, 'errors': error_msg,
-                   'message_list': message_list}
+        context['data'], context['errors'] = data, error_msg
 
         # error?
         if len(error_msg) > 0 or 'password_reset' in request.POST:
@@ -233,7 +232,6 @@ def login_view(request):
         location = reverse("twittur:pleaseVerify")
         return HttpResponseRedirect(location)
 
-    context = {'active_page': 'ftu', 'nav': Nav.nav, 'message_list': message_list, 'discList': get_disciplines()}
     return render(request, 'ftu.html', context)
 
 

@@ -1,6 +1,15 @@
 a:hover { color: #f50000; cursor: pointer; }
 a:focus { color: #f50000; text-decoration: none; }
 
+/* überschrieben, da keine links mehr vorhanden */
+#ftuPosts .ftuTags ul li {
+  color: #fff;
+  padding: 10px;
+  display: inline-block;
+  background: #111;
+  margin: 0 0 10px 5px;
+}
+
 /* Antworten Link :hover */
 a.reply_link:hover { cursor: pointer; }
 
