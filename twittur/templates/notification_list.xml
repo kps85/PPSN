@@ -1,15 +1,11 @@
-<?xml version='1.0' encoding='UTF-8'?>
-
+{% if ntfc_list|length %}
+<?xml version='1.0' encoding='utf-8'?>
 <notifications>
-	{% for notification in ntfc_list %}<notification>
-		<date>{{ notification.date|date:"U" }}</date>
-		{% if notification.follower %}<text>{{ notification.follower.userprofile.username }} folgt dir jetzt!</text>
-		<link>{{ notification.url }}</link>
-		{% elif notification.message and not notification.comment %}<text>{{ notification.message.user.username }} hat Dich in seiner Nachricht erw&auml;hnt!</text>
-		<link>{{ notification.url }}</link>
-		{% elif notification.group %}<text>{{ notification.group.short|upper }}: {{ notification.note|safe }}</text>
-		<link>{{ notification.url }}</link>
-		{% else %}<text>{{ notification.note|safe }}</text>
-		<link>{{ notification.url }}</link>{% endif %}
-	</notification>{% endfor %}
+	{% for notification in ntfc_list %}<notification date="{{ notification.date|date:"U" }}" link="{{ notification.url }}">
+    {% if notification.follower %}{{ notification.follower.userprofile.username }} folgt dir jetzt!
+    {% elif notification.message and not notification.comment %}{{ notification.message.user.username }} hat Dich in seiner Nachricht erwähnt!
+    {% elif notification.group %}{{ notification.group.short|upper }}: {{ notification.note|safe }}
+		{% else %}{{ notification.note|safe }}{% endif %}
+    </notification>{% endfor %}
 </notifications>
+{% endif %}

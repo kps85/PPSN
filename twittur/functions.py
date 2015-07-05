@@ -70,6 +70,12 @@ def get_context(request, page=None, user=None):
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
     follow_list = user_profile.follow.all()
+    
+    
+    # generate URL for API
+    location = reverse("twittur:get_notification")
+    
+    apiUrl = request.build_absolute_uri(location)
 
     # intialize data dictionary with relevant display information
     context = {
@@ -79,9 +85,10 @@ def get_context(request, page=None, user=None):
         'success_msg': None,
         'new': Notification.objects.filter(Q(read=False) & Q(user=request.user)).count(),
         'msgForm': msg_dialog(request),
-
+        'apiUrl': apiUrl,
         'user': user,
         'userProfile': user_profile,
+        'verifyHash': user_profile.verifyHash,
         'follow_list': follow_list,
         'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
@@ -590,11 +597,11 @@ def get_notification(request):
     """
     context, ntfc_list = {}, []
 
-    user = request.GET['user'].lower()
+    user = request.POST['user'].lower()
     p_user = User.objects.get(username=user)
     p_hash = p_user.userprofile.verifyHash
 
-    if request.GET['hash'] == p_hash:
+    if request.POST['hash'] == p_hash:
         ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=p_user))
         for ntfc in ntfc_list_old:
             if ntfc.follower:
@@ -609,6 +616,14 @@ def get_notification(request):
 
     context['ntfc_list'] = ntfc_list
     return render(request, "notification_list.xml", context)
+
+def test_notification(request):
+    msg =  Message.objects.get(id=380)
+    user = request.user
+    
+    set_notification('message', data={'user': user, 'message': msg, 'note': "test"})
+    return render(request, '404.html')
+    
 
 
 def create_abs_url(request, what, data):

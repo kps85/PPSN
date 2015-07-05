@@ -169,7 +169,8 @@ function initList() {
 }
 
 // Notifications
-var notificationTime = 7000;
+var notificationShown = 7000; // Wie lange eine Notification angezeigt wird
+var notificationPoll = 1000; // Wie oft auf neue Notifications geprüft werden soll
 
 function showNotification($notify) {
 	// Blendet eine einzelne Notification ein
@@ -203,14 +204,14 @@ function notify(content, link) {
 		deleteNotification($new, timer);
 	}
 	// Automatisch loeschen
-	timer = setTimeout(fnDelete, notificationTime);
+	timer = setTimeout(fnDelete, notificationShown);
 	// Oder durch Klick
 	$new.find(".notifyClose").click(fnDelete);
 	// Beim Hover wird der Timer kurz gestoppt
 	$new.hover(function() {
 		clearTimeout(timer);
 	}, function() {
-		timer = setTimeout(fnDelete, notificationTime);
+		timer = setTimeout(fnDelete, notificationShown);
 	});
 	
 	// Text einfuegen
@@ -237,9 +238,30 @@ function notificationTest(message, delay) {
 	}, delay);
 }
 
+function getNotifications(user, verify, url) {
+    $.post( url, { 'user': user, 'hash':verify }, function(data) {
+        if(data != "") {
+            var $xml = $(data);
+            $xml.find("notification").each(function() {
+                // unused:  var date = $(this).attr("date");
+                var link = $(this).attr("link");
+                var text = $(this).text();
+                notify(text, link);   
+            });
+        }
+    });
+}
+
 function initNotifications() {
 	if(!$(".liveNotifications").length) return;
-	//notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
+    var user = $("body").attr('data-user');
+    var verify = $("body").attr('data-verify');
+    var url = $('link[rel="api"]').attr('href');
+    if(user == "" || verify == "") return;
+    setInterval(function() {
+        getNotifications(user, verify, url);
+    }, notificationPoll);
+    
 }
 
 function validateFtu() {
