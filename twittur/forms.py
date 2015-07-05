@@ -144,6 +144,7 @@ class GroupProfileEditForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GroupProfileEditForm, self).__init__(*args, **kwargs)
+        self.fields['ack_password'].widget = forms.PasswordInput(attrs=self.fields['ack_password'].widget.attrs)
         self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
         for field in self.fields:
             if field != 'picture':
