@@ -20,6 +20,9 @@ function fph() {
 
 var tspeed = 500;
 
+// API fuer Scrollbalken
+var scrollApi = null;
+
 // First Time Use
 function initFtu() {
 	if($("#ftu").length <= 0) return;	
@@ -66,6 +69,9 @@ function initMenu() {
 			$a.show();
 			$a.animate({'left':0}, 300);
 		} 
+        if(scrollApi != null) {
+            scrollApi.reinitialise();
+        }
 	});	
 	
 	var $menuCloser = $("<a>", {'class':'menuCloser', 'html':'Zur&uuml;ck'});
@@ -139,6 +145,27 @@ function initList() {
 				$(this).scrollTop(scrollTo + $(this).scrollTop());
 		}
 	});
+    
+    
+    // Huebsche Scrollbalken
+    $('.scrollable').each(function() {
+          $(this).jScrollPane({
+              showArrows: $(this).is('.arrow')
+          });
+          scrollApi = $(this).data('jsp');
+          var scrollTimeout;
+          $(window).bind('resize',function() {
+                  if (!scrollTimeout) {
+                      scrollTimeout = setTimeout(function() {
+                              scrollApi.reinitialise();
+                              scrollTimeout = null;
+                          }, 50);
+                  }
+              }
+          );
+      }
+  );
+
 }
 
 // Notifications
@@ -146,6 +173,7 @@ var notificationTime = 7000;
 
 function showNotification($notify) {
 	// Blendet eine einzelne Notification ein
+    $(".liveNotifications").show();
 	$notify.fadeIn(500);
 	$notify.children(".notifyContent").animate({'left':'0'},500);
 }
@@ -158,6 +186,9 @@ function deleteNotification($notify, timer) {
 	var margin = 10;
 	$notify.fadeTo(300, 0.01).animate({marginTop: -height + margin, left:'-100%'}, 500, function() {
 		$(this).remove();
+        if($(".liveNotifications .notify").length <= 0) {
+            $(".liveNotifications").hide();
+        }
 	});
 }
 
@@ -208,8 +239,7 @@ function notificationTest(message, delay) {
 
 function initNotifications() {
 	if(!$(".liveNotifications").length) return;
-	notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
-	notificationTest("@wilee hat das Notification-Backend erfolgreich implementiert",10000);
+	//notify("@kps hat dich in einer Nachricht erw&auml;hnt.");
 }
 
 function validateFtu() {

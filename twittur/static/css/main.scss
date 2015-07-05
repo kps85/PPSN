@@ -337,12 +337,15 @@ nav {
 	box-sizing:border-box;
 	@include clear;
 	max-height:100%;
-	
-	overflow:auto;
-	overflow:hidden;
+
 	width:100%;
 	height:100%;
-	overflow-y:auto;
+
+    .scrollable {
+        height:100%;
+    }
+    
+    
 	@include desktop {
 		
 		
@@ -408,19 +411,7 @@ a.title {
 		
 	}
 	
-	@include phone {
-		float:left;
-        display:inline-block;
-        width:70%;
-        position:absolute;
-        left:15%;
-        background:url('img/twittur_mobile.png') no-repeat;
-        background-position: center center;
-        background-size:40px 48px;
-        height:$navWidthMobile;
-        box-sizing:border-box;
-      
-	}
+	
 }
 
 
@@ -433,6 +424,21 @@ header {
 	
 	min-height:$navWidthDesktop;
 	
+    
+    @include phone {
+        a.title {
+            float:left;
+            display:inline-block;
+            width:70%;
+            position:absolute;
+            left:15%;
+            background:url('img/twittur_mobile.png') no-repeat;
+            background-position: center center;
+            background-size:40px 48px;
+            height:$navWidthMobile;
+            box-sizing:border-box;
+	   }
+    }
 	
 	@include tablet {
 		position:fixed;
@@ -1005,3 +1011,4 @@ $iconWidth:50px;
     
 @import 'notifications';
 @import '404';
+@import '../js/jScrollPane/jquery.jscrollpane';
