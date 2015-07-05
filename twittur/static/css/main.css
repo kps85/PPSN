@@ -195,7 +195,7 @@ header {
           display: none; } }
     @media screen and (max-width: 1023px) {
       #ftu .showRegister {
-        background: #000;
+        background: #00C88D;
         display: block;
         position: fixed;
         z-index: 400;
