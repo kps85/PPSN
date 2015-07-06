@@ -36,17 +36,18 @@ def group_view(request, groupshort):
     context = get_context(request, 'group', request.user)
     context['groupshort'] = groupshort.lower()
 
-    # if message was sent to view: return success message
-    if request.method == 'POST':
-        if 'delete_join_group' in request.POST:
-            context['error_msg'] = {'error_pw': 'Falsches Passwort eingegeben!'}
-        else:
-            context['success_msg'] = 'Nachricht erfolgreich gesendet!'
-
     try:
-        group = GroupProfile.objects.get(short__contains=context['groupshort'])
+        group = GroupProfile.objects.get(short__exact=context['groupshort'])
         context['group'] = group
         context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
+
+        # if message was sent to view: return success message
+        if request.method == 'POST':
+            if 'delete_join_group' in request.POST:
+                context['error_msg'] = {'error_pw': 'Falsches Passwort eingegeben!'}
+            else:
+                context['success_msg'] = 'Nachricht erfolgreich gesendet!'
+
         if request.user in group.member.all():
             context['is_member'] = True
             if group.admin == request.user:
@@ -66,7 +67,7 @@ def group_view(request, groupshort):
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
         context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
-        print(e.__traceback__)
+        return HttpResponseRedirect('/twittur/404/')
         context['error_msg'] = {'error_group': 'Keine Gruppe mit der Abk&uuml;rzung '
                                                + context['groupshort'] + ' gefunden!'}
 

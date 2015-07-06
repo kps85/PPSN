@@ -320,8 +320,9 @@ def profile_view(request, user):
         if 'delMessage' or 'ignoreMsg' not in request.POST:
             context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
-        print(e)
-        context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
+        # TODO Formular -> supportanfrage !!!
+        return HttpResponseRedirect('/twittur/404/')
+        # context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
 
     context['follow_sb_list'] = sorted(context['follow_list'], key=lambda x: random.random())[:5]
 
@@ -454,10 +455,13 @@ def message_view(request, msg):
 
     # gets all Messages
     messages = get_messages(data={'page': msg, 'data': request.user, 'request': request})
-    context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg'],
+    if not messages['message_list']:
+        return HttpResponseRedirect('/twittur/404/')
+    else:
+        context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg'],
 
-    # return relevant information to render message.html
-    return render(request, 'message.html', context)
+        # return relevant information to render message.html
+        return render(request, 'message.html', context)
 
 
 # Page: "Benachrichtigungen"
