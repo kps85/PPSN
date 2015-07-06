@@ -732,7 +732,7 @@ def pw_generator(size=6, chars=string.ascii_uppercase + string.digits):
     :return: random generated password
     """
     m = hashlib.md5()
-    m.update(''.join(random.choice(chars) for _ in range(size)))            # extended with md5 hashing
+    m.update((''.join(random.choice(chars) for _ in range(size))).encode('utf-8'))          # extended with md5 hashing
     return m.hexdigest()
 
 
@@ -754,6 +754,7 @@ def login_user(request, user):
 
 def verification_mail(request, user):
     # sends a verification mail to the user
+    print(user)
     profile = user.userprofile
     location = reverse("twittur:verify", kwargs={'user': user.username, 'hash': profile.verifyHash})
     
@@ -766,6 +767,10 @@ def verification_mail(request, user):
 
 
 def verify(request, user, hash_item):
+
+    print(request)
+    print(user)
+    print(hash_item)
 
     user = user.lower()
     p_user = User.objects.get(username=user)

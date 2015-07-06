@@ -207,15 +207,15 @@ def login_view(request):
         # if data is correct -> create User and Userprofile
         user = User.objects.create_user(username, email, password)
         user.first_name, user.last_name, user.is_active = first_name, last_name, False
-        user.save()
 
         # Hash for verification
         new_hash = pw_generator()
         user_profile = UserProfile(userprofile=user, studentNumber=student_number,
                                    academicDiscipline=academic_discipline, location="Irgendwo",
                                    verifyHash=new_hash)
+        verification_mail(request, user)
+        user.save()
         user_profile.save()
-        verification_mail(user, request)
 
         # academic discipline (required user in db)
         # -> add user to group uni, fac whatever and his academic discipline
