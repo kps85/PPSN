@@ -756,14 +756,14 @@ def verification_mail(request, user):
     # sends a verification mail to the user
     print(user)
     profile = user.userprofile
-    location = reverse("twittur:verify", kwargs={'user': user.username, 'hash': profile.verifyHash})
+    location = reverse("twittur:verify", kwargs={'user': user.username, 'hash_item': profile.verifyHash})
     
     url = request.build_absolute_uri(location)
     message = "Hallo @" + user.username + "!\n" \
                                           "Dein Konto bei twittur wurde erstellt." \
                                           "Bitte verwende den folgenden Link, um dein Konto zu aktivieren: \n\n" + url
     
-    send_mail("Willkommen bei twitTUr", message, "twittur.sn@gmail.com", [user.email])
+    send_mail("Willkommen bei twittur", message, "twittur.sn@gmail.com", [user.email])
 
 
 def verify(request, user, hash_item):
