@@ -48,5 +48,5 @@ urlpatterns = [
     url(r'^logout/$', functions.logout, name='logout'),
     url(r'^more/$', functions.load_more, name='more'),
     url(r'^update/$', functions.update, name='update'),
-    url(r'^verify/(?P<user>\w\S+)/(?P<hash>\w\S+)$', functions.verify, name='verify'),
+    url(r'^verify/(?P<user>\w\S+)/(?P<hash_item>\w\S+)$', functions.verify, name='verify'),
 ]
