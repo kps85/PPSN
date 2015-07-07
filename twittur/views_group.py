@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 -*- coding: utf-8 -*-
 @package twittur
@@ -50,7 +51,7 @@ def group_view(request, groupshort):
                 set_notification('group_admin', data={'group': group, 'member': member})
                 group.admin = member
                 group.save()
-                context['success_msg'] = "Mitglied erfolgreich bef&ouml;rdert."
+                context['success_msg'] = "Mitglied erfolgreich befördert."
             else:
                 context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
@@ -74,8 +75,8 @@ def group_view(request, groupshort):
         context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
         return HttpResponseRedirect('/twittur/404/')
-        context['error_msg'] = {'error_group': 'Keine Gruppe mit der Abk&uuml;rzung '
-                                               + context['groupshort'] + ' gefunden!'}
+        # context['error_msg'] = {'error_group': 'Keine Gruppe mit der Abkürzung'
+        #                                      + context['groupshort'] + ' gefunden!'}
 
     return render(request, 'profile.html', context)
 

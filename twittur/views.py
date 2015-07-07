@@ -175,7 +175,7 @@ def login_view(request):
                 data['last_name'] = last_name
             if len(query_dict['studentNumber']) == 6:
                 student_number = query_dict['studentNumber']
-                if re.match("^[0-9]*$", studentNumber) is None:
+                if re.match("^[0-9]*$", student_number) is None:
                     error_msg['error_student_number'] = "Die Matrikel-Nummer darf nur aus sechs Ziffern bestehen!"
                 elif UserProfile.objects.filter(studentNumber=student_number).exists():
                     error_msg["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."

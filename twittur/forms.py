@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
 -*- coding: utf-8 -*-
 @package twittur
@@ -150,22 +151,23 @@ class GroupProfileForm(ModelForm):
                 self.fields[field].widget.attrs['class'] = 'form-control'
 
     def clean(self):
+        error_dict = {}
         name = self.cleaned_data.get('name')
         short = self.cleaned_data.get('short')
         password = self.cleaned_data.get('password')
         ack_password = self.cleaned_data.get('ack_password')
-        error_dict = {}
+
         group_list = GroupProfile.objects.all()
         for group in group_list:
             if name.lower() == group.name.lower():
                 error_dict['name'] = "Sorry, Gruppenname ist bereits vergeben."
             if short.lower() == group.short.lower():
-                error_dict['short'] = "Sorry, Gruppenabk&uuml;rzung ist bereits vergeben."
+                error_dict['short'] = "Sorry, Gruppenabkürzung ist bereits vergeben."
         if 'name' or 'short' not in error_dict:
             if re.match("^[a-zA-Z0-9-_.]*$", short) is None:
-                error_dict['short'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' in der Gruppenabk&uuml;rzung erlaubt!"
+                error_dict['short'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' in der Gruppenabkürzung erlaubt!"
         if password != ack_password:
-            error_dict['ack_password'] = 'Passw&ouml;rter stimmen nicht &uuml;berein!'
+            error_dict['ack_password'] = 'Passwörter stimmen nicht überein!'
         if ' ' in password:
             error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
         if len(error_dict) > 0:

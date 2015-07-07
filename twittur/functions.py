@@ -98,6 +98,11 @@ def get_context(request, page=None, user=None):
         'safetyLevels': get_safety_levels(request.user, True)
     }
 
+    x= Hashtag.objects.annotate(
+            hashtag_count=Count('hashtags__hashtags__name')
+        ).order_by('-hashtag_count')[:5]
+    print (x)
+
     return context
 
 
@@ -155,7 +160,7 @@ def msg_to_db(message):
     # Step 1: replace all # and @ with link
     for word in message.text.split():
 
-        # find all words starts with "#". No "/" allowed in hashtag.
+        # find all words starts with "#".
         if word[0] == "#":
             check = re.findall(r'[a-zA-Z0-9-_äöüÄÖÜß]+', word[1:].encode('utf-8'))
             for item in check:
