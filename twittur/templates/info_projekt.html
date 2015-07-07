@@ -15,7 +15,7 @@
       <img src="{{ ma.userprofile.picture.url }}" class="img-thumbnail">
     </div>
     <div class="col-xs-8 col-sm-8">
-    	<dt>Name</dt><dd>{{ ma.first_name }} {{ ma.last_name }} (@<a href="{% url 'twittur:profile' user=ma %}">{{ ma.username }}</a>)</dd>
+    	<dt>Name</dt><dd>{{ ma.first_name }} {{ ma.last_name }} (<a href="{% url 'twittur:profile' user=ma %}">@{{ ma.username }}</a>)</dd>
     	<dt>Studiengang</dt><dd>{{ ma.userprofile.academicDiscipline }}</dd>
     	<dt>E-Mail</dt><dd>{{ ma.email }}</dd>
     </div>

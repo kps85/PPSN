@@ -45,6 +45,7 @@ def search_view(request):
     if search_input is None or search_input[0] == "":
         return index_view(request)
 
+
     # filter all messages contain the word  or all users contain the word
     # search_input contains @ -> cut @ off and set flag
     # the reason behind this is we save username instead of @username, so if someone is looking for
@@ -65,9 +66,9 @@ def search_view(request):
         context['list_end'] = int(request.POST['list_end'])
 
     for term in search_input:
-        if term[:1] == "#":
-            hashtag_view(request, term)
-        elif term[:1] == "@":
+        if term[0] == "#" and len(search_input) == 1:
+            return hashtag_view(request, term[1:])
+        elif term[0] == "@":
             term = term[1:]
 
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
@@ -89,8 +90,10 @@ def search_view(request):
         group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term) | Q(desc__contains=term))
         if len(group) > 0:
             group_list.append(group.distinct())
-
-        hashtag = Hashtag.objects.all().filter(Q(name__contains=term))
+        if term[0] == '#':
+            hashtag = Hashtag.objects.all().filter(Q(name__contains=term[1:]))
+        else:
+            hashtag = Hashtag.objects.all().filter(Q(name__contains=term))
         hashtag_count = [Message.objects.filter(hashtags__in=hashtag).count()]
         hashtag_list.append(zip(hashtag, hashtag_count))
 

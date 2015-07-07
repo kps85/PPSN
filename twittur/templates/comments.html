@@ -6,7 +6,7 @@
       {% if active_page == 'ftu' %}
         @{{ comment.user.username }}
       {% else %}
-        @<a href="{% url 'twittur:profile' user=comment.0.user %}">{{ comment.0.user.username }}</a>
+        <a href="{% url 'twittur:profile' user=comment.0.user %}">@{{ comment.0.user.username }}</a>
       {% endif %} 
     </div>
     <small class="cmtTime">am {{ comment.0.date|date:"j. F Y, \u\m H:i \U\h\r" }}</small>

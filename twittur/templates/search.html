@@ -41,6 +41,7 @@
 	        <img src="{{ object.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/>
         </div>
         <div class="col-xs-10 pull-left">
+
           <strong>{{ object.first_name }} {{ object.last_name }} (<a href="{% url 'twittur:profile' user=object.username %}" >@{{ object.username }}</a>)</strong><br />
           <em class="pull-left">studiert: {{ object.userprofile.academicDiscipline }}</em>
         </div>

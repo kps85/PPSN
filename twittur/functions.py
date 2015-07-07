@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 -*- coding: utf-8 -*-
 @package twittur
@@ -21,7 +22,6 @@ Method Collection
 - elimDups              eliminates duplicates in a message list
 - pw_generator          generates a random password
 """
-
 import copy
 import datetime
 import random
@@ -70,7 +70,7 @@ def get_context(request, page=None, user=None):
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
     follow_list = user_profile.follow.all()
-    
+
     # generate URL for API
     location = reverse("twittur:get_notification")
     api_url = request.build_absolute_uri(location)
@@ -151,19 +151,22 @@ def msg_to_db(message):
     """
 
     hashtaglist, attaglist = [], []
-
+    regex_passed = False
     # Step 1: replace all # and @ with link
     for word in message.text.split():
+
         # find all words starts with "#". No "/" allowed in hashtag.
         if word[0] == "#":
-            if "/" in word:
-                pass
-            else:
-                # database will save hashtag instead of #hashtag
+            check = re.findall(r'[a-zA-Z0-9-_äöüÄÖÜß]+', word[1:].encode('utf-8'))
+            for item in check:
+                item = item.decode('utf-8')
+                if word[1:] == item:
+                    regex_passed = True
+            if regex_passed:
                 try:
-                    hashtag = Hashtag.objects.get(name__exact=str(word[1:]))
+                    hashtag = Hashtag.objects.get(name__exact=word[1:].encode('utf-8'))
                 except ObjectDoesNotExist:
-                    hashtag = Hashtag(name=str(word[1:]))
+                    hashtag = Hashtag(name=word[1:].encode('utf-8'))
                     hashtag.save()
 
                 message.hashtags.add(hashtag)
@@ -172,7 +175,7 @@ def msg_to_db(message):
         if word[0] == "@":
             # database will save user instead of @user
             try:
-                user = User.objects.get(username__exact=str(word[1:]))
+                user = User.objects.get(username__exact=word[1:].encode('utf-8'))
             except ObjectDoesNotExist:
                 pass
             else:
@@ -233,27 +236,37 @@ def dbm_to_m(message):
     hashtag_list = message.hashtags.all()
     attag_list = message.attags.all()
     group = message.group
-    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.text)
+    urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_#@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.text)
 
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
-            # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-            if word[0] == "#" and (Hashtag.objects.get(name=word[1:]) in hashtag_list):
-                href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                message.text = message.text.replace(word, href)
-            # now find in text all words start with "@". Its important to find this user in database.
-            # if this user doesnt exist -> no need to set a link
-            # else we will set a link to his profile
-            if word[0] == "@":
-                if User.objects.filter(username=word[1:]).exists()\
-                        and User.objects.get(username=word[1:]) in attag_list:
-                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+            try:
+                ha = Hashtag.objects.get(name=word[1:])
+            except:
+                pass
+            else:
+                # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
+                if word[0] == "#" and (ha in hashtag_list) and (word not in urls):
+                    '''
+                    href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
+                    print href
                     message.text = message.text.replace(word, href)
-            if word[0] == '&' and group.short == word[1:]:
-                href = '<a href="/twittur/group/' + word[1:] + '">' + word + '</a>'
-                message.text = message.text.replace(word, href)
+                    '''
+                    href = r'<a href="/twittur/hashtag/%s">%s</a>' % (word[1:], word)
+                    message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
 
+                # now find in text all words start with "@". Its important to find this user in database.
+                # if this user doesnt exist -> no need to set a link
+                # else we will set a link to his profile
+                if word[0] == "@" and word not in urls:
+                    if User.objects.filter(username=word[1:]).exists()\
+                            and User.objects.get(username=word[1:]) in attag_list:
+                        href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+                        message.text = message.text.replace(word, href)
+                if word[0] == '&' and group.short == word[1:] and word not in urls:
+                    href = '<a href="/twittur/group/' + word[1:] + '">' + word + '</a>'
+                    message.text = message.text.replace(word, href)
     if urls:
         for url in urls:
             href = '<a href="' + url + '">' + url + '</a>'
@@ -622,7 +635,14 @@ def get_notification(request):
     context['ntfc_list'] = ntfc_list
     return render(request, "notification_list.xml", context)
 
-
+'''
+def test_notification(request):
+    msg =  Message.objects.get(id=380)
+    user = request.user
+    
+    set_notification('message', data={'user': user, 'message': msg, 'note': "test"})
+    return render(request, '404.html')
+'''
 def create_abs_url(request, what, data):
     """
 

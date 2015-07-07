@@ -226,7 +226,7 @@
     <ul class="post memberList">
     {% if show_favs %}
       {% for fav in follow_list %}
-        <li class="clearfix">{{ fav.first_name }} {{ fav.last_name }} (@<a href="{% url 'twittur:profile' user=fav.username %}">{{ fav.username }}</a>)
+        <li class="clearfix">{{ fav.first_name }} {{ fav.last_name }} (<a href="{% url 'twittur:profile' user=fav.username %}">@{{ fav.username }}</a>)
           <span class="pull-right">
             <form action="{% url 'twittur:profile' user=request.user %}" method="POST">
               {% csrf_token %}
