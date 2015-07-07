@@ -22,9 +22,9 @@
         
         <div class="col-xs-12 form-group">
           <div class="col-xs-12 text-center profilePictures">
-            <a href="{% if group %}{{ group.picture.url }}{% else %}{{ request.user.userprofile.picture.url }}{% endif %}" target="_blank">
-              <img src="{% if group %}{{ group.picture.url }}{% else %}{{ request.user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
-              {% if not group %}<img src="{{ request.user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
+            <a href="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" target="_blank">
+              <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
+              {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
             </a>
             <p class="help-block">
               {% if group %}
@@ -150,7 +150,7 @@
               {% for fac, ad in list %}
                 <optgroup label="{{ fac }}">
                 {% for disc in ad %}
-                  <option value="{{ disc }}"{% if disc == request.user.userprofile.academicdiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
+                  <option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
                 {% endfor %}
                 </optgroup>
               {% endfor %}
@@ -176,16 +176,19 @@
     <div class="post" id="seite">      
       <h4>Seiteneinstellungen</h4>
       
-      {% if safetyLevelList %}
       <div class="col-xs-12 form-group">
-          <label class="control-label" for="stdSafetylevelSelect">Standard-Sicherheitsstufe</label>
+          <label class="control-label" for="id_safetyLevel">Standard-Sicherheitsstufe</label>
           <select class="form-control" id="id_safetyLevel" name="safety">
             {% for level in safetyLevelList %}
-              <option value="{{ level }}"{% if level == request.user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
+              <option value="{{ level }}"{% if level == user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
             {% endfor %}
           </select>
       </div>
-      {% endif %}        
+      <div class="col-xs-12 form-group">
+          <label class="control-label" for="verifyHash">API Key</label>
+          <input class="form-control" id="id_verifyHash" name="verifyHash" type="text" value="{{ user.userprofile.verifyHash }}" disabled="disabled" />
+          <p class="help-block">Diesen Key ben&ouml;tigst Du f&uuml;r unsere APIs.</p>
+      </div>             
     </div>
     {% endif %}
           

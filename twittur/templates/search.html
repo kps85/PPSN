@@ -37,12 +37,13 @@
     <ul>
     {% for object in user_list %}
       <li class="search_user_result clearfix container-fluid">
-        <img src="{{ object.userprofile.picture.url }}" class="profilbild-s img-thumbnail pull-left"/>
-        <div class="pull-left">
-          <strong>{{ object.first_name }} {{ object.last_name }} (@<a href="{% url 'twittur:profile' user=object.username %}" >{{ object.username }}</a>)</strong><br />
+      	<div class="col-xs-2 pull-left text-center">
+	        <img src="{{ object.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/>
+        </div>
+        <div class="col-xs-10 pull-left">
+          <strong>{{ object.first_name }} {{ object.last_name }} (<a href="{% url 'twittur:profile' user=object.username %}" >@{{ object.username }}</a>)</strong><br />
           <em class="pull-left">studiert: {{ object.userprofile.academicDiscipline }}</em>
         </div>
-        <p class="pull-right text-right"><em>registriert seit<br />{{ object.date_joined|date:"d.m.Y" }}</em></p>
     {% endfor %}
     </div>  
   {% else %}
@@ -58,12 +59,11 @@
       <ul>    
   	{% for group in group_list %}
         <li class="search_group_result clearfix container-fluid">
-        	<img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail pull-left"/>
-          <div class="pull-left">
-            <strong><a href="{% url 'twittur:group' groupshort=group.short %}" class="pull-left">{{ group.name }}</a>&nbsp;(&amp;{{ group.short|lower }})</strong><br />
+        	<div class="col-xs-2 pull-left text-center"><img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/></div>
+          <div class="col-xs-10 pull-left">
+            <strong>{{ group.name }}&nbsp;(<a href="{% url 'twittur:group' groupshort=group.short %}">&amp;{{ group.short|lower }}</a>)</strong><br />
             {% if group.supergroup %}<em class="pull-left">Untergruppe von: {{ group.supergroup }}</em>{% endif %}
           </div>
-          <p class="pull-right">{{ group.member.all.count }} {% if group.member.all.count == 1 %}Mitglied{% else %}Mitglieder{% endif %}</p>
     {% endfor %}
     </div>  
   {% else %}
@@ -78,9 +78,9 @@
       <h4> Folgende Themen wurden gefunden:</h4>
       <ul>
       {% for hashtag, count in hashtag_list %}      
-        <li class="search_hash_result clearfix">
-          <strong><a href="/twittur/hashtag/{{ hashtag.name }}" class="pull-left">#{{ hashtag.name }}</a></strong>
-          <p class="pull-right">{{ count }} {% if count == 1 %}Beitrag{% else %}Beitr&auml;ge{% endif %}</p>
+        <li class="search_hash_result container-fluid clearfix">
+          <strong class="col-xs-10 pull-left"><a href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a></strong>
+          <p class="col-xs-2 pull-right text-center">{{ count }} {% if count == 1 %}Beitrag{% else %}Beitr&auml;ge{% endif %}</p>
       {% endfor %}
     </div>  
   {% else %}

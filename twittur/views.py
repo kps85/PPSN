@@ -161,11 +161,9 @@ def login_view(request):
                                       or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
                 error_msg['error_reg_mail'] = "Keine g&uuml;ltige TU E-Mail Adresse!"
             else:
-                try:
-                    User.objects.get(email=email)
+                if User.objects.filter(email=email).exists():
                     error_msg['error_reg_mail'] = "Ein Benutzer mit dieser E-Mail Adresse existiert bereits!"
-                except ObjectDoesNotExist as e:
-                    print(e)
+                else:
                     data['email'] = email
 
             # fill the rest for model User and Userprofile
@@ -177,11 +175,11 @@ def login_view(request):
                 data['last_name'] = last_name
             if len(query_dict['studentNumber']) == 6:
                 student_number = query_dict['studentNumber']
-                try:
-                    UserProfile.objects.get(studentNumber=student_number)
+                if re.match("^[0-9]*$", studentNumber) is None:
+                    error_msg['error_student_number'] = "Die Matrikel-Nummer darf nur aus sechs Ziffern bestehen!"
+                elif UserProfile.objects.filter(studentNumber=student_number).exists():
                     error_msg["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."
-                except ObjectDoesNotExist as e:
-                    print(e)
+                else:
                     data['studentNumber'] = student_number
             else:
                 error_msg['error_student_number'] = "Die eingegebene Matrikel-Nummer ist ung&uuml;ltig!"
@@ -209,7 +207,7 @@ def login_view(request):
         user.first_name, user.last_name, user.is_active = first_name, last_name, False
 
         # Hash for verification
-        new_hash = pw_generator()
+        new_hash = pw_generator(hashed=True)
         user_profile = UserProfile(userprofile=user, studentNumber=student_number,
                                    academicDiscipline=academic_discipline, location="Irgendwo",
                                    verifyHash=new_hash)

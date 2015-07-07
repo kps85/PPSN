@@ -150,7 +150,7 @@ nav a:focus { color: #fff; } /* Wenn Nav Item angeklickt, weird blue Effekt entf
 /* search_results ordentlich darstellen */
 .search_user_result, .search_hash_result, .search_group_result { background-color: #fff; border: 1px solid #E4E8EA; margin: 5px 0; padding: 5px 10px; }
 .search_user_result img, .search_group_result img { width: 50px; }
-.search_user_result div, .search_group_result div { margin: 5px 10px; }
+.search_user_result div, .search_group_result div:nth-of-type(2) { margin: 5px 0px; }
 .search_hash_result p { margin: 0px; }
 .search_user_result p { margin: 5px 0px; }
 .search_group_result p { margin: 15px 0px; }

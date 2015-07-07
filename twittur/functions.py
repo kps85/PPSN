@@ -584,6 +584,7 @@ def set_notification(what, data):
         if 'note' not in data:
             data['note'] = 'Du wurdest in der Gruppe ' + data['group'].short + ' zum Admin bef&ouml;rdert.'
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
+
     ntfc.save()
     return ntfc
 
@@ -596,11 +597,16 @@ def get_notification(request):
     """
     context, ntfc_list = {}, []
 
-    user = request.POST['user'].lower()
+    if request.method == "POST":
+        data_dict = request.POST
+    else:
+        data_dict = request.GET
+
+    user = data_dict['user'].lower()
     p_user = User.objects.get(username=user)
     p_hash = p_user.userprofile.verifyHash
 
-    if request.POST['hash'] == p_hash:
+    if data_dict['hash'] == p_hash:
         ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=p_user))
         for ntfc in ntfc_list_old:
             if ntfc.follower:
@@ -716,16 +722,20 @@ def elim_dups(data):
     return final
 
 
-def pw_generator(size=6, chars=string.ascii_uppercase + string.digits):
+def pw_generator(size=6, chars=string.ascii_uppercase + string.digits, hashed=False):
     """
     a random password generator found on http://goo.gl/RH995X
     :param size: length of password
     :param chars: possible chars to be used in generated password
     :return: random generated password
     """
-    m = hashlib.md5()
-    m.update((''.join(random.choice(chars) for _ in range(size))).encode('utf-8'))          # extended with md5 hashing
-    return m.hexdigest()
+    if hashed:
+        m = hashlib.md5()
+        m.update((''.join(random.choice(chars) for _ in range(size))).encode('utf-8'))      # extended with md5 hashing
+        pw = m.hexdigest()
+    else:
+        pw = ''.join(random.choice(chars) for _ in range(size))
+    return pw
 
 
 def login_user(request, user):

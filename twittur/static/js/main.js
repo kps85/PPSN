@@ -32,7 +32,9 @@ function initFtu() {
 	});
 	
 	$("#register input[type='reset']").click(function(e) {
-		$("#register").fadeOut(tspeed);
+		$("#register").fadeOut(tspeed, function() {
+			$(this).removeClass("active");
+		});
 		$("#register").find(".superDropdown").each(function() {
 			$(this).find("p.id").text($(this).attr('default'));
 		});		
@@ -100,16 +102,19 @@ function initMenu() {
 	}
 	
 	var page = window.location.href.split("/")
-	switch (page[4]) {
-		case 'group':
-			$(".groups ."+page[5]).addClass("active");
-			break;
-		case 'hashtag':
-			$(".hashs ."+page[5]).addClass("active");
-			break;
-		case 'profile':
-			$(".following ."+page[5]).addClass("active");
-			break;
+	if ($.inArray(page[4], ["group", "hashtag", "profile"]) > -1) {
+		var current = page[5].split('?');
+		switch (page[4]) {
+			case 'group':
+				$(".groups ."+current[0]).addClass("active");
+				break;
+			case 'hashtag':
+				$(".hashs ."+current[0]).addClass("active");
+				break;
+			case 'profile':
+				$(".following ."+current[0]).addClass("active");
+				break;
+		}
 	}
 	
 	$(window).resize(function() {
@@ -324,9 +329,7 @@ function initInputValidation() {
 		
 	$(".newMsgPctr input[type=file]").change(function(e) {
 		var path = URL.createObjectURL(e.target.files[0]);
-		$(".newMsgPctr img").each(function(index, element) {
-			$(element).attr("src", path);
-		});
+		$(".newMsgPctr div").prepend("<center><img class='img-thumbnail' src='"+path+"' width='200'></center>");
 	});
 	
 	$(".msgPctr").each(function(index, element) {
@@ -648,8 +651,13 @@ function msgManagement() {
 						case 'upd_msg':
 							var togElements = ".showMsgEdit."+info.id+", .showCmtEdit."+info.id+", .postText."+info.id+", .postTextEdit."+info.id+", .cmtText."+info.id+", .cmtTextEdit."+info.id;
 							$(togElements).toggleClass("hidden");
-							if ($(".postTextEdit."+info.id).length > 0) { $(".postText."+info.id).find("p").html(data); }
-							else { $(".cmtText."+info.id).find("p").html(data); }
+							if ($(".postTextEdit."+info.id).length > 0) {
+								$(".postText."+info.id).find("p").html(data);
+								$(".delMsg"+info.id+"Modal").find(".modal-body").html("<em>"+data+"</em>");
+							} else {
+								$(".cmtText."+info.id).find("p").html(data);
+								$(".delCmt"+info.id+"Modal").find(".modal-body").html("<em>"+data+"</em>");
+							}
 							if (info.clear) $("#post"+info.id).find(".msgPctr, .msgPctrEdit, .msgPctrModal").remove();
 							break;
 					}

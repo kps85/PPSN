@@ -106,7 +106,7 @@
       {% endfor %}
     {% endif %}
     
-    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentnumber %} value="{{ data.studentNumber }}"{% endif %}/>
+    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
     <br />
     {% if errors.error_reg_userprofile_ad %}
     	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>

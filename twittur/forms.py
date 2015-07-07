@@ -113,6 +113,15 @@ class UserDataForm(ModelForm):
             else:
                 self.fields['academicDiscipline'].initial = getattr(instance, field)
 
+    def clean(self):
+        studentNumber = self.cleaned_data.get("studentNumber")
+        error_dict = {}
+        if re.match("^[0-9]*$", studentNumber) is None:
+            error_dict['studentNumber'] = "Die Matrikel-Nummer darf nur aus sechs Ziffern bestehen!"
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+        return self.cleaned_data
+
     # validation: check after submit before save
     def clean_picture(self):
         # this is the current picture, nothing will happen if checkbox not clicked
@@ -130,7 +139,7 @@ class GroupProfileForm(ModelForm):
         model = GroupProfile
         fields = ['name', 'short', 'desc', 'password', 'picture']
         widgets = {
-            'desc': forms.Textarea(attrs={'rows': 4}),
+            'desc': forms.Textarea(attrs={'rows': 4, 'style': 'resize: none;'}),
             'password': forms.PasswordInput(),
         }
 
@@ -172,7 +181,7 @@ class GroupProfileEditForm(ModelForm):
         fields = ['name', 'short', 'desc', 'password', 'picture']
         widgets = {
             'password': forms.PasswordInput,
-            'desc': forms.Textarea(attrs={'rows': 4}),
+            'desc': forms.Textarea(attrs={'rows': 4, 'style': 'resize: none;'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -236,9 +245,11 @@ class MessageForm(ModelForm):
         # set visibility field
         
         # set text input type to textarea and add class 'form-control'
-        self.fields['text'].widget = forms.Textarea(attrs=self.fields['text'].widget.attrs)
-        self.fields['text'].widget.attrs['class'] = 'form-control'
-        self.fields['text'].widget.attrs['rows'] = '5'
+        self.fields['text'].widget = forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 5,
+            'style': 'resize: none;'
+        })
 
     # return checked text input value
     def clean_text(self):
@@ -278,7 +289,11 @@ class FAQForm(ModelForm):
         )
         self.fields['category'] = forms.ChoiceField(choices=cat_choices, widget=forms.Select)
         # set answer input type to textarea, set size and placeholder
-        self.fields['answer'].widget = forms.Textarea(attrs={'rows': '5', 'placeholder': 'Antwort'})
+        self.fields['answer'].widget = forms.Textarea(attrs={
+            'rows': '5',
+            'placeholder': 'Antwort',
+            'style': 'resize: none;'
+        })
         # set class to 'form-control' for each input
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
