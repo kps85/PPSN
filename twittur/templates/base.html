@@ -130,6 +130,8 @@
                   {% endfor %}
                 </select>
               </div>
+              {{ msgForm.user }}
+              {{ msgForm.date }}
               <input type="hidden" name="codename" value="message" />
               <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
               <button type="submit" class="btn btn-primary" disabled="disabled">Nachricht senden</button>

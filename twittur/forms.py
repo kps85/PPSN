@@ -256,6 +256,12 @@ class MessageForm(ModelForm):
         text = self.cleaned_data.get('text')
         return text
 
+    def save(self, commit=True):
+        instance = super(MessageForm, self).save(commit=False)
+        if commit:
+            instance.save()
+        return instance
+
 
 class FAQForm(ModelForm):
     # referencing FAQ model as basis for the form

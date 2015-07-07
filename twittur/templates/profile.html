@@ -163,10 +163,10 @@
     <a href="{% url 'twittur:group' groupshort=group.short %}">&laquo; Nachrichten anzeigen</a><br />
     <br />
     <ul class="post memberList">
-      <li class="clearfix">{{ group.admin.first_name }} {{ group.admin.last_name }} (@<a href="{% url 'twittur:profile' user=group.admin.username %}">{{ group.admin.username }}</a>)
+      <li class="clearfix">{{ group.admin.first_name }} {{ group.admin.last_name }} (<a href="{% url 'twittur:profile' user=group.admin.username %}">@{{ group.admin.username }}</a>)
                             <span class="pull-right"> [admin]</span>
     {% for member in member_list %}
-      <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (@<a href="{% url 'twittur:profile' user=member.username %}">{{ member.username }}</a>)
+      <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (<a href="{% url 'twittur:profile' user=member.username %}">@{{ member.username }}</a>)
                            {% if member == group.admin %}
                               <span class="pull-right"> [admin]</span>
                            {% elif request.user == group.admin %}
