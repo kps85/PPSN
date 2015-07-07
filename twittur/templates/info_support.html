@@ -13,7 +13,7 @@
 <div class="hidden" data-hint="{{ hash }}" id="hash"></div>
 {% endif %}
 <div class="supportCont {% if hash == 'kontaktformular' %}hidden{% endif %}" id="nachricht">
-	<h3 class="text-uppercase" id="nachricht">Nachricht an Teammitglied schicken</h3>
+	<h3 class="text-uppercase" id="nachricht">Nachricht an Teammitglied schicken </h3>
   <form action="{% url 'twittur:support' %}" method="POST">
     {% csrf_token %}
     <input id="id_user" name="user" type="hidden" value="{{ curUser.username }}" />
@@ -46,7 +46,7 @@
 </div>
 
 <div class="supportCont {% if hash == 'nachricht' %}hidden{% endif %}" id="kontaktformular">
-	<h3 class="text-uppercase" id="nachricht">Supportanfrage senden</h3>
+	<h3 class="text-uppercase" id="nachricht">Supportanfrage senden </h3>
   <form action="{% url 'twittur:support' %}" method="POST">
     {% csrf_token %}
     <input id="id_user" name="user" type="hidden" value="text" />

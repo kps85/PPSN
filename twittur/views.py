@@ -318,8 +318,10 @@ def profile_view(request, user):
         if 'delMessage' or 'ignoreMsg' not in request.POST:
             context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
-        # TODO Formular -> supportanfrage !!!
-        return HttpResponseRedirect('/twittur/404/')
+        context = get_context(request, '404', user=request.user)
+        context['error_type'] = 'ObjectDoesNotExist'
+        context['error_site'] = 'profile'
+        return render(request, '404.html', context)
         # context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
 
     context['follow_sb_list'] = sorted(context['follow_list'], key=lambda x: random.random())[:5]

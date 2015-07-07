@@ -87,7 +87,12 @@ def support_view(request):
     context['team_list'] = User.objects.filter(is_superuser=True).exclude(pk=15).order_by('last_name')
     context['cat_list'] = FAQ.objects.all().values('category').distinct()
     context['FAQs'] = get_faqs()
-
+    print context['FAQs']
+    if ('error_site' and 'error_type') in request.GET:
+        context['error_site'] = request.GET.get('error_site')
+        context['error_type'] = request.GET.get('error_type')
+        context['text'] = "text"
+        print context
     if request.method == 'POST':
         sender, recipient, subject = request.user, [], request.POST['subject']
         context['hash'] = request.POST['hash']

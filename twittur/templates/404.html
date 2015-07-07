@@ -4,6 +4,17 @@
     <h1>Der frühe Vogel fängt den Wurm.</h1>
     <p>Naja, normalerweise jedenfalls. Diesmal hat es nicht geklappt. Was du jetzt tun kannst:</p>
     <a href="{% url 'twittur:index' %}">Zurück zur Startseite gehen</a>
-    <a href="{% url 'twittur:support' %}">Uns diesen Fehler melden!</a>
+    {% if error_type and error_site %}
+        <form action="{% url 'twittur:support' %}" method="GET" >
+            <input name="error_type" type="hidden" value={{ error_type }} />
+            <input type="hidden" name="error_site" value="{{ error_site }}" />
+            <button id="report_error" type="submit">
+            Uns diesen Fehler melden! yaaa
+            </button>
+        </form>
+    {% else %}
+        <a href="{% url 'twittur:support' %}">Uns diesen Fehler melden!</a>
+    {% endif %}
+
 </div>
 {% include 'footer.html' %}

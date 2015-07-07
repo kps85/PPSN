@@ -180,7 +180,7 @@ def msg_to_db(message):
         if word[0] == "@":
             # database will save user instead of @user
             try:
-                user = User.objects.get(username__exact=word[1:].encode('utf-8'))
+                user = User.objects.get(username__exact=word[1:])
             except ObjectDoesNotExist:
                 pass
             else:
@@ -246,13 +246,14 @@ def dbm_to_m(message):
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
-            try:
-                ha = Hashtag.objects.get(name=word[1:])
-            except:
-                pass
-            else:
-                # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-                if word[0] == "#" and (ha in hashtag_list) and (word not in urls):
+
+            # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
+            if word[0] == "#" and (ha in hashtag_list) and (word not in urls):
+                try:
+                    ha = Hashtag.objects.get(name=word[1:])
+                except:
+                    pass
+                else:
                     '''
                     href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
                     print href
@@ -261,17 +262,18 @@ def dbm_to_m(message):
                     href = r'<a href="/twittur/hashtag/%s">%s</a>' % (word[1:], word)
                     message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
 
-                # now find in text all words start with "@". Its important to find this user in database.
-                # if this user doesnt exist -> no need to set a link
-                # else we will set a link to his profile
-                if word[0] == "@" and word not in urls:
-                    if User.objects.filter(username=word[1:]).exists()\
-                            and User.objects.get(username=word[1:]) in attag_list:
-                        href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
-                        message.text = message.text.replace(word, href)
-                if word[0] == '&' and group.short == word[1:] and word not in urls:
-                    href = '<a href="/twittur/group/' + word[1:] + '">' + word + '</a>'
+            # now find in text all words start with "@". Its important to find this user in database.
+            # if this user doesnt exist -> no need to set a link
+            # else we will set a link to his profile
+            print(word[0] == "@" and word not in urls)
+            if word[0] == "@" and word not in urls:
+                if User.objects.filter(username=word[1:]).exists()\
+                        and User.objects.get(username=word[1:]) in attag_list:
+                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
+            if word[0] == '&' and group.short == word[1:] and word not in urls:
+                href = '<a href="/twittur/group/' + word[1:] + '">' + word + '</a>'
+                message.text = message.text.replace(word, href)
     if urls:
         for url in urls:
             href = '<a href="' + url + '">' + url + '</a>'
