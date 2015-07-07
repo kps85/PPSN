@@ -3,11 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="88ab18aa-0f46-4975-a197-48b0dc6c1483" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/addgroup.html" afterPath="$PROJECT_DIR$/twittur/templates/addgroup.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/forms.py" afterPath="$PROJECT_DIR$/twittur/forms.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/functions.py" afterPath="$PROJECT_DIR$/twittur/functions.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/settings.html" afterPath="$PROJECT_DIR$/twittur/templates/settings.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/urls.py" afterPath="$PROJECT_DIR$/twittur/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/views_group.py" afterPath="$PROJECT_DIR$/twittur/views_group.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/base.html" afterPath="$PROJECT_DIR$/twittur/templates/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/info_faq_box.html" afterPath="$PROJECT_DIR$/twittur/templates/info_faq_box.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/info_projekt.html" afterPath="$PROJECT_DIR$/twittur/templates/info_projekt.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/static/css/main_changes.css" afterPath="$PROJECT_DIR$/twittur/static/css/main_changes.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/notification.html" afterPath="$PROJECT_DIR$/twittur/templates/notification.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/profile.html" afterPath="$PROJECT_DIR$/twittur/templates/profile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/twittur/templates/search.html" afterPath="$PROJECT_DIR$/twittur/templates/search.html" />
     </list>
     <ignored path="PPSN.iws" />
     <ignored path=".idea/workspace.xml" />
