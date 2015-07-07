@@ -11,8 +11,10 @@ Forms
 - FAQForm               form to create a new FAQ entry
 """
 
-from django import forms
+import re
 
+from django import forms
+from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
@@ -51,11 +53,19 @@ class UserForm(ModelForm):
     def clean(self):
         password = self.cleaned_data.get('password')
         ack_password = self.cleaned_data.get('ack_password')
+        email = self.cleaned_data.get('email')
         error_dict = {}
         if password != ack_password:
             error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
         if ' ' in password:
             error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+
+        # EMail validation
+        mail = email.split('@')
+        if len(mail) == 1 or not (mail[1].endswith(".tu-berlin.de")
+                                  or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
+            error_dict['email'] = "Keine gültige TU E-Mail Adresse!"
+
         if len(error_dict) > 0:
             raise ValidationError(error_dict, code='invalid')
         return self.cleaned_data
@@ -130,6 +140,29 @@ class GroupProfileForm(ModelForm):
             if field != 'picture':
                 self.fields[field].widget.attrs['class'] = 'form-control'
 
+    def clean(self):
+        name = self.cleaned_data.get('name')
+        short = self.cleaned_data.get('short')
+        password = self.cleaned_data.get('password')
+        ack_password = self.cleaned_data.get('ack_password')
+        error_dict = {}
+        group_list = GroupProfile.objects.all()
+        for group in group_list:
+            if name.lower() == group.name.lower():
+                error_dict['name'] = "Sorry, Gruppenname ist bereits vergeben."
+            if short.lower() == group.short.lower():
+                error_dict['short'] = "Sorry, Gruppenabkürzung ist bereits vergeben."
+        if 'name' or 'short' not in error_dict:
+            if re.match("^[a-zA-Z0-9-_.]*$", short) is None:
+                error_dict['short'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' in der Gruppenabkürzung erlaubt!"
+        if password != ack_password:
+            error_dict['ack_password'] = 'Passwörter stimmen nicht überein!'
+        if ' ' in password:
+            error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+        return self.cleaned_data
+
 
 class GroupProfileEditForm(ModelForm):
     ack_password = forms.CharField(max_length=128, required=False)
@@ -154,13 +187,25 @@ class GroupProfileEditForm(ModelForm):
     # if equal: return password
     # else: return error message
     def clean(self):
-        password = self.cleaned_data.get('password')
-        ack_password = self.cleaned_data.get('ack_password')
+        name, short = self.cleaned_data.get('name'), self.cleaned_data.get('short')
+        password, ack_password = self.cleaned_data.get('password'), self.cleaned_data.get('ack_password')
+        group, group_list = GroupProfile.objects.get(short__exact=short), GroupProfile.objects.all()
         error_dict = {}
-        if password != ack_password:
-            error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
-        if ' ' in password:
-            error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+        for item in group_list:
+            if item.name == name and item != group:
+                error_dict['name'] = 'Eine Gruppe mit diesem Namen existiert bereits!'
+            if item.short == short and item != group:
+                error_dict['short'] = 'Eine Gruppe mit dieser Abkürzung existiert bereits!'
+        if password != '':
+            if password != ack_password:
+                error_dict['ack_password'] = 'Passwörter stimmen nicht überein!'
+            elif ' ' in password:
+                error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+            else:
+                self.cleaned_data['password'] = make_password(password)
+        elif not check_password(password, group.password):
+            self.cleaned_data['password'] = group.password
+
         if len(error_dict) > 0:
             raise ValidationError(error_dict, code='invalid')
         return self.cleaned_data

@@ -37,7 +37,7 @@ def group_view(request, groupshort):
     context['groupshort'] = groupshort.lower()
 
     try:
-        group = GroupProfile.objects.get(short__exact=context['groupshort'])
+        group = GroupProfile.objects.get(short__contains=context['groupshort'])
         context['group'] = group
         context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
 
@@ -45,6 +45,12 @@ def group_view(request, groupshort):
         if request.method == 'POST':
             if 'delete_join_group' in request.POST:
                 context['error_msg'] = {'error_pw': 'Falsches Passwort eingegeben!'}
+            elif 'promUser' in request.POST:
+                member = User.objects.get(pk=request.POST['promUser'])
+                set_notification('group_admin', data={'group': group, 'member': member})
+                group.admin = member
+                group.save()
+                context['success_msg'] = "Mitglied erfolgreich bef&ouml;rdert."
             else:
                 context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
@@ -89,35 +95,15 @@ def group_add_view(request):
     context = get_context(request, 'group', request.user)
 
     if request.method == 'POST':
-        data_dict = request.POST
-        group_profile_form = GroupProfileForm(data_dict)
+        group_profile_form = GroupProfileForm(request.POST)
         if group_profile_form.is_valid():
-            error_msg = {}
-            try:
-                GroupProfile.objects.get(name__exact=group_profile_form.instance.name)
-            except ObjectDoesNotExist:
-                # case if group short is available
-                group_list = GroupProfile.objects.all()
-                for group in group_list:
-                    if data_dict['short'].lower() == group.short.lower():
-                        error_msg['error_groupshort'] = "Sorry, Gruppenabk&uuml;rzung ist bereits vergeben."
-                if 'error_groupshort' not in error_msg:
-                    if re.match("^[a-zA-Z0-9-_.]*$", data_dict['short']) is None:
-                        error_msg['error_groupshort'] = \
-                            "Nur 'A-Z, a-z, 0-9, -, _' und '.' in der Gruppenabk&uuml;rzung erlaubt!"
-                if data_dict['password'] != data_dict['ack_password']:
-                    error_msg['error_grouppassword'] = "Passw&ouml;rter sind nicht gleich!"
-                if len(error_msg) == 0:
-                    group_profile_form.instance.groupprofile = group_profile_form.instance
-                    group_profile_form.instance.admin = request.user
-                    if group_profile_form.instance.password != '':
-                        group_profile_form.instance.password = make_password(group_profile_form.instance.password)
-                    group_profile_form.save()
-                    group_profile_form.instance.member.add(request.user)
-                    return HttpResponseRedirect('/twittur/group/' + group_profile_form.instance.short)
-            else:
-                error_msg['error_groupname'] = "Gruppenname ist schon vergeben!"
-            context['error_msg'] = error_msg
+            group_profile_form.instance.groupprofile = group_profile_form.instance
+            group_profile_form.instance.admin = request.user
+            if group_profile_form.instance.password != '':
+                group_profile_form.instance.password = make_password(group_profile_form.instance.password)
+            group_profile_form.save()
+            group_profile_form.instance.member.add(request.user)
+            return HttpResponseRedirect('/twittur/group/' + group_profile_form.instance.short)
     else:
         group_profile_form = GroupProfileForm()
     context['groupProfileForm'] = group_profile_form
@@ -186,11 +172,14 @@ def group_settings_view(request, groupshort):
     context = get_context(request, 'settings', request.user)
     context['group'], context['member_list'] = group, group.member.all()
 
+    # initialize GroupProfileEditForm with current groups information
+    context['gpeForm'] = GroupProfileEditForm(instance=group)
+
     # else: validate GroupProfileEditForm and save changes
     if request.method == 'POST':
         # check if group should be deleted
         # if true: delete group, return to index
-        if request.POST['delete'] == 'true':
+        if 'delete' in request.POST and request.POST['delete'] == 'true':
             group.delete()
             return HttpResponseRedirect('/twittur/')
         elif any(item in request.POST for item in ['promUser', 'remUser']):
@@ -200,29 +189,23 @@ def group_settings_view(request, groupshort):
                 set_notification('group', data={'group': group, 'member': member})
                 group.member.remove(member)
                 context['success_msg'] = "Mitglied erfolgreich entfernt."
-            elif 'promUser' in request.POST:
-                member = User.objects.get(pk=request.POST['promUser'])
-                set_notification('group_admin', data={'group': group, 'member': member})
-                group.admin = member
-                group.save()
-                context['success_msg'] = "Mitglied erfolgreich bef&ouml;rdert."
         else:
             gpe_form = GroupProfileEditForm(request.POST, request.FILES, instance=group)
-            # if picture has changed, delete old picture
-            # do not, if old picture was default picture
-            if 'picture' in request.FILES or 'picture-clear' in request.POST:
-                gpe_form.oldPicture = group.picture
-                if gpe_form.oldPicture != 'picture/gdefault.gif':
-                    gpe_form.oldPicture.delete()
+            if 'group_public' in request.POST:
+                group.password = ''
+                group.save()
             if gpe_form.is_valid():
+                # if picture has changed, delete old picture
+                # do not, if old picture was default picture
+                if 'picture' in request.FILES or 'picture-clear' in request.POST:
+                    gpe_form.oldPicture = group.picture
+                    if gpe_form.oldPicture != 'picture/gdefault.gif':
+                        gpe_form.oldPicture.delete()
                 gpe_form.save()
                 context['success_msg'] = 'Gruppendaten wurden erfolgreich aktualisiert.'
             else:
                 # return errors if GroupProfileEditForm is not valid
                 context['error_msg'] = gpe_form.errors
-
-    # initialize GroupProfileEditForm with current groups information
-    context['gpeForm'] = GroupProfileEditForm(instance=group)
 
     # return information to render settings.html
     return render(request, 'settings.html', context)

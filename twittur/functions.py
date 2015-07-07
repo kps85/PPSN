@@ -71,11 +71,9 @@ def get_context(request, page=None, user=None):
     )
     follow_list = user_profile.follow.all()
     
-    
     # generate URL for API
     location = reverse("twittur:get_notification")
-    
-    apiUrl = request.build_absolute_uri(location)
+    api_url = request.build_absolute_uri(location)
 
     # intialize data dictionary with relevant display information
     context = {
@@ -85,15 +83,16 @@ def get_context(request, page=None, user=None):
         'success_msg': None,
         'new': Notification.objects.filter(Q(read=False) & Q(user=request.user)).count(),
         'msgForm': msg_dialog(request),
-        'apiUrl': apiUrl,
+        'apiUrl': api_url,
         'user': user,
         'userProfile': user_profile,
         'verifyHash': user_profile.verifyHash,
         'follow_list': follow_list,
         'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
         'group_sb_list': group_sb_list,
-        'hot_list': Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')
-                                             ).order_by('-hashtag_count')[:5],
+        'hot_list': Hashtag.objects.annotate(
+            hashtag_count=Count('hashtags__hashtags__name')
+        ).order_by('-hashtag_count')[:5],
 
         'list_end': 5,
         'safetyLevels': get_safety_levels(request.user, True)
@@ -445,10 +444,10 @@ def load_more(request):
     if page == 'index':
         data = request.user
     elif page == 'profile':
-        data = User.objects.get(username=dict['user'])
+        data = User.objects.get(username=data_dict['user'])
         context['pUser'] = data
     elif page == 'group':
-        data = GroupProfile.objects.get(short=dict['group'])
+        data = GroupProfile.objects.get(short=data_dict['group'])
         context['group'] = data
     elif page == 'search':
         data = data_dict['search_input'].split(" ")
@@ -617,14 +616,6 @@ def get_notification(request):
     context['ntfc_list'] = ntfc_list
     return render(request, "notification_list.xml", context)
 
-def test_notification(request):
-    msg =  Message.objects.get(id=380)
-    user = request.user
-    
-    set_notification('message', data={'user': user, 'message': msg, 'note': "test"})
-    return render(request, '404.html')
-    
-
 
 def create_abs_url(request, what, data):
     """
@@ -652,16 +643,17 @@ def get_disciplines():
 
     discs, uni, faks = [], [], []
 
-    tub = GroupProfile.objects.get(short='uni')
-    fak = GroupProfile.objects.filter(supergroup=tub).order_by('name')
-    for item in fak:
-        ad = GroupProfile.objects.filter(supergroup=item).order_by('name')
-        ad_list = []
-        for disc in ad:
-            ad_list.append(disc.name)
-        faks.append(ad_list)
-        uni.append(item.name)
-    discs.append(zip(uni, faks))
+    if GroupProfile.objects.filter(short='uni').exists():
+        tub = GroupProfile.objects.get(short='uni')
+        fak = GroupProfile.objects.filter(supergroup=tub).order_by('name')
+        for item in fak:
+            ad = GroupProfile.objects.filter(supergroup=item).order_by('name')
+            ad_list = []
+            for disc in ad:
+                ad_list.append(disc.name)
+            faks.append(ad_list)
+            uni.append(item.name)
+        discs.append(zip(uni, faks))
     return discs
 
 
@@ -741,6 +733,9 @@ def login_user(request, user):
     snippet found on https://djangosnippets.org/snippets/1547/
     Log in a user without requiring credentials
     (using ``login`` from ``django.contrib.auth``, first finding a matching backend).
+    :param request:
+    :param user:
+    :return:
     """
     from django.contrib.auth import load_backend, login
     if not hasattr(user, 'backend'):
@@ -753,24 +748,25 @@ def login_user(request, user):
 
 
 def verification_mail(request, user):
-    # sends a verification mail to the user
-    print(user)
+    """
+    sends a verification mail to the user
+    :param request:
+    :param user:
+    :return:
+    """
+
     profile = user.userprofile
     location = reverse("twittur:verify", kwargs={'user': user.username, 'hash_item': profile.verifyHash})
     
     url = request.build_absolute_uri(location)
     message = "Hallo @" + user.username + "!\n" \
-                                          "Dein Konto bei twittur wurde erstellt." \
-                                          "Bitte verwende den folgenden Link, um dein Konto zu aktivieren: \n\n" + url
+              "Dein Konto bei twittur wurde erstellt." \
+              "Bitte verwende den folgenden Link, um dein Konto zu aktivieren: \n\n" + url
     
     send_mail("Willkommen bei twittur", message, "twittur.sn@gmail.com", [user.email])
 
 
 def verify(request, user, hash_item):
-
-    print(request)
-    print(user)
-    print(hash_item)
 
     user = user.lower()
     p_user = User.objects.get(username=user)

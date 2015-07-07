@@ -44,7 +44,6 @@ urlpatterns = [
 
     # function_urls
     url(r'^get_notification/$', csrf_exempt(functions.get_notification), name='get_notification'),
-    url(r'^test_notification/$', functions.test_notification, name='test_notification'),
     url(r'^logout/$', functions.logout, name='logout'),
     url(r'^more/$', functions.load_more, name='more'),
     url(r'^update/$', functions.update, name='update'),
