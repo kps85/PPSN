@@ -64,7 +64,7 @@ class UserForm(ModelForm):
         mail = email.split('@')
         if len(mail) == 1 or not (mail[1].endswith(".tu-berlin.de")
                                   or (email[(len(email) - 13):len(email)] == '@tu-berlin.de')):
-            error_dict['email'] = "Keine gültige TU E-Mail Adresse!"
+            error_dict['email'] = "Keine g&uuml;ltige TU E-Mail Adresse!"
 
         if len(error_dict) > 0:
             raise ValidationError(error_dict, code='invalid')
@@ -160,12 +160,12 @@ class GroupProfileForm(ModelForm):
             if name.lower() == group.name.lower():
                 error_dict['name'] = "Sorry, Gruppenname ist bereits vergeben."
             if short.lower() == group.short.lower():
-                error_dict['short'] = "Sorry, Gruppenabkürzung ist bereits vergeben."
+                error_dict['short'] = "Sorry, Gruppenabk&uuml;rzung ist bereits vergeben."
         if 'name' or 'short' not in error_dict:
             if re.match("^[a-zA-Z0-9-_.]*$", short) is None:
-                error_dict['short'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' in der Gruppenabkürzung erlaubt!"
+                error_dict['short'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' in der Gruppenabk&uuml;rzung erlaubt!"
         if password != ack_password:
-            error_dict['ack_password'] = 'Passwörter stimmen nicht überein!'
+            error_dict['ack_password'] = 'Passw&ouml;rter stimmen nicht &uuml;berein!'
         if ' ' in password:
             error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
         if len(error_dict) > 0:
@@ -204,10 +204,10 @@ class GroupProfileEditForm(ModelForm):
             if item.name == name and item != group:
                 error_dict['name'] = 'Eine Gruppe mit diesem Namen existiert bereits!'
             if item.short == short and item != group:
-                error_dict['short'] = 'Eine Gruppe mit dieser Abkürzung existiert bereits!'
+                error_dict['short'] = 'Eine Gruppe mit dieser Abk&uuml;rzung existiert bereits!'
         if password != '':
             if password != ack_password:
-                error_dict['ack_password'] = 'Passwörter stimmen nicht überein!'
+                error_dict['ack_password'] = 'Passw&ouml;rter stimmen nicht &uuml;berein!'
             elif ' ' in password:
                 error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
             else:
