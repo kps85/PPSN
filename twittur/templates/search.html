@@ -11,7 +11,7 @@
 {% block content %}
   <h2>{{ search|safe }}</h2>
   {% if not is_hash %}
-  <div class="container-fluid">
+  <div class="clearfix">
     <a href="#searchUser" class="col-xs-3 btn btn-default searchResultButton searchUser" data-hint="{{ user_list_length }}" title="Benutzer-Ergebnisse">
       <span class="glyphicon glyphicon-user"></span>&nbsp; {{ user_list_length }}
       <span class="hidden-xs">Benutzer</span>
@@ -32,7 +32,7 @@
   {% endif %}
   
   {% if user_list_length > 0 %}
-    <div class="container-fluid searchResultBox searchUser" id="searchUser">
+    <div class="searchResultBox searchUser" id="searchUser">
     <h4> Folgende Benutzer wurden gefunden:</h4>
     <ul>
     {% for object in user_list %}
@@ -46,14 +46,14 @@
     {% endfor %}
     </div>  
   {% else %}
-    <div class="container-fluid searchResultBox searchUser text-center" id="searchUser">
+    <div class="searchResultBox searchUser text-center" id="searchUser">
       <br />
       <em>Keine Benutzer zum Anzeigen gefunden!</em>
     </div> 
   {% endif  %}
   
   {% if group_list_length > 0 %}
-    <div class="container-fluid searchResultBox searchGroup" id="searchGroup">
+    <div class="searchResultBox searchGroup" id="searchGroup">
       <h4> Folgende Gruppen wurden gefunden:</h4>
       <ul>    
   	{% for group in group_list %}
@@ -67,14 +67,14 @@
     {% endfor %}
     </div>  
   {% else %}
-    <div class="container-fluid searchResultBox searchGroup text-center" id="searchGroup">
+    <div class="searchResultBox searchGroup text-center" id="searchGroup">
       <br />
       <em>Keine Gruppen zum Anzeigen gefunden!</em>
     </div> 
   {% endif  %}
   
   {% if hashtag_list_length > 0 %}
-    <div class="container-fluid searchResultBox searchHash" id="searchHash">
+    <div class="searchResultBox searchHash" id="searchHash">
       <h4> Folgende Themen wurden gefunden:</h4>
       <ul>
       {% for hashtag, count in hashtag_list %}      
@@ -84,14 +84,14 @@
       {% endfor %}
     </div>  
   {% else %}
-    <div class="container-fluid searchResultBox searchHash text-center" id="searchHash">
+    <div class="searchResultBox searchHash text-center" id="searchHash">
       <br />
       <em>Keine Themen zum Anzeigen gefunden!</em>
     </div>    
   {% endif %}
   
   {% if message_list_length > 0 or hash_list_length > 0 %}
-    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
+    <div class="searchResultBox searchMsg {% if is_hash %}active{% endif %}" id="searchMsg">
     {% if not is_hash %}<h4> Folgende Nachrichten wurden gefunden:</h4>{% endif %}
     {% for message, dbmessage, form, comments, count in message_list %}
       {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
@@ -105,14 +105,14 @@
       </button>
     </div>
   {% else %}
-    <div class="container-fluid searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center" id="searchMsg">
+    <div class="searchResultBox searchMsg {% if is_hash %}active{% endif %} text-center" id="searchMsg">
       <br />
       <em>Keine Nachrichten zum Anzeigen gefunden!</em>
     </div>
   {% endif %}
   
   {% if not user_list and not group_list and not hashtag_list and not message_list and not is_hash %}
-    <div class="container-fluid searchResultBox active text-center">
+    <div class="searchResultBox active text-center">
       <br />
       <em>Keine Suchergebnisse zum Anzeigen gefunden!</em>
     </div>  

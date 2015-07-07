@@ -38,13 +38,12 @@
           <input class="form-control" id="search_input" name="search_input" type="text" placeholder="Suche" title="Suchbegriff eingeben">
         </div>
         <button type="submit" class="col-xs-2 col-sm-1 btn btn-default pull-right" title="Suche starten">
-          Los
+          <span class="glyphicon glyphicon-search"></span>
         </button>
       </form>      
     </div>
-    <div id="content">
+    <div class="container-fluid" id="content">
     	{% if success_msg or error_msg %}
-    	<div class="container-fluid">
         {% if success_msg %}
           <div class="infoMessage alert alert-{% if 'entsperren' in success_msg %}warning{% else %}success{% endif %}" role="alert">
             <span class="glyphicon glyphicon-{% if 'entsperren' in success_msg %}exclamation-sign{% else %}ok{% endif %}" aria-hidden="true"></span>
@@ -62,7 +61,6 @@
           {% endfor %}
           </div>
         {% endif %}
-      </div>
       {% endif %}
       
     	{% block content %}	

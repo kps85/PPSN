@@ -10,7 +10,6 @@
 
 {% block content %}
 {% if not error_msg %}
-<div class="container-fluid">
   <div class="profil clearfix">
     {% if group and request.user == group.admin %}
     <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="profilEdit" title="Gruppe bearbeiten">
@@ -158,10 +157,9 @@
     <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
   </button>
   {% endif %}
-  </div>
   <br />
   {% if show_member %}
-  <div class="profileMessages container-fluid">
+  <div class="profileMessages">
     <a href="{% url 'twittur:group' groupshort=group.short %}">&laquo; Nachrichten anzeigen</a><br />
     <br />
     <ul class="post memberList">
@@ -222,7 +220,7 @@
   </div>
   {% endif %}
   {% if show_favs or show_groups %}
-  <div class="profileMessages container-fluid">
+  <div class="profileMessages">
     <a href="{% url 'twittur:profile' user=request.user %}">&laquo; Nachrichten anzeigen</a><br />
     <br />
     <ul class="post memberList">
@@ -269,7 +267,7 @@
   {% if not ignored %}
     {% if request.user in group.member.all or active_page == 'profile' %}
       {% if has_msg %}
-        <div class="profileMessages container-fluid{% if show_member or show_favs or show_groups %} hidden{% endif %}"> 
+        <div class="profileMessages {% if show_member or show_favs or show_groups %} hidden{% endif %}"> 
           {% for message, dbmessage, form, comments, count in message_list %}        
             {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
           {% endfor %}
