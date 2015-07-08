@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^message/(?P<msg>[0-9]+)$', views.message_view, name='message'),
     url(r'^notification/$', views.notification_view, name='notification'),
     url(r'^404/$', views.vier_null_vier, name='404'),
-    url(r'^\w+', views.vier_null_vier, name='404'),
     url(r'^noscript/$', views.no_script, name='no_script'),
 
     # views_info
@@ -52,6 +51,6 @@ urlpatterns = [
     url(r'^verify/(?P<user>\w\S+)/(?P<hash_item>\w\S+)$', functions.verify, name='verify'),
 
     # api_urls
-    url(r'^messages/set/(?P<user>\w+)/(?P<hash_item>\w+)$', csrf_exempt(views_api.message_set), name='message_set'),
-    url(r'^messages/get$', csrf_exempt(views_api.message_get), name='message_get'),
+    url(r'^api/set/(?P<user>\w+)/(?P<hash_item>\w+)$', csrf_exempt(views_api.message_set), name='message_set'),
+    url(r'^api/get$', csrf_exempt(views_api.message_get), name='message_get'),
 ]
