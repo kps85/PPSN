@@ -103,16 +103,16 @@ function initMenu() {
 	
 	var page = window.location.href.split("/")
 	if ($.inArray(page[4], ["group", "hashtag", "profile"]) > -1) {
-		var current = page[5].split('?');
+		var current = slug(decodeURI(page[5].split('?')[0]));
 		switch (page[4]) {
 			case 'group':
-				$(".groups ."+current[0]).addClass("active");
+				$(".groups ."+current).addClass("active");
 				break;
 			case 'hashtag':
-				$(".hashs ."+current[0]).addClass("active");
+				$(".hashs ."+current).addClass("active");
 				break;
 			case 'profile':
-				$(".following ."+current[0]).addClass("active");
+				$(".following ."+current).addClass("active");
 				break;
 		}
 	}
@@ -796,6 +796,25 @@ function scrollToTop() {
 		scrollTop: 0
 	}, 200);
 }
+
+/* slugify string snippet found on http://stackoverflow.com/questions/1053902/how-to-convert-a-title-to-a-url-slug-in-jquery */
+var slug = function(str) {
+  str = str.replace(/^\s+|\s+$/g, ''); // trim
+  str = str.toLowerCase();
+
+  // remove accents, swap ñ for n, etc
+  var from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/_,:;";
+  var to   = "aaaaaeeeeeiiiiooooouuuunc------";
+  for (var i=0, l=from.length ; i<l ; i++) {
+    str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+  }
+
+  str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-'); // collapse dashes
+
+  return str;
+};
 
 
 $(document).ready(function() {
