@@ -20,7 +20,7 @@
     <input id="id_hash" name="hash" type="hidden" value="nachricht" />
   	<div class="col-xs-6 form-group">
     	<label for="id_subject">Betreff</label>
-      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text" />
+      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text"/>
     </div>
   	<div class="col-xs-6 form-group pull-right">
     	<label for="id_staff">Ansprechpartner w&auml;hlen</label>
@@ -53,7 +53,7 @@
     <input id="id_hash" name="hash" type="hidden" value="kontaktformular" />
   	<div class="col-xs-6 form-group">
     	<label for="id_subject">Betreff</label>
-      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text" />
+      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text" {% if error_object %}value="Profil '{{ error_object }}' existiert nicht ({{ error_type }})"{% endif %}/>
     </div>
   	<div class="col-xs-6 form-group pull-right">
     	<label for="id_topic">Thema w&auml;hlen</label>

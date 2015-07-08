@@ -6,9 +6,10 @@
     <a href="{% url 'twittur:index' %}">Zurück zur Startseite gehen</a>
     {% if error_type and error_site %}
         <form action="{% url 'twittur:support' %}" method="GET" >
-            <input name="error_type" type="hidden" value={{ error_type }} />
+            <input name="error_type" type="hidden" value="{{ error_type }}" />
             <input type="hidden" name="error_site" value="{{ error_site }}" />
-            <button id="report_error" type="submit">
+             <input type="hidden" name="error_object" value="{{ error_object }}" />
+            <button class="btn" id="report_error" type="submit">
             Uns diesen Fehler melden! yaaa
             </button>
         </form>

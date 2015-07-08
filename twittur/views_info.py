@@ -84,6 +84,7 @@ def support_view(request):
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'info', request.user)
+    
     context['team_list'] = User.objects.filter(is_superuser=True).exclude(pk=15).order_by('last_name')
     context['cat_list'] = FAQ.objects.all().values('category').distinct()
     context['FAQs'] = get_faqs()
@@ -91,6 +92,8 @@ def support_view(request):
     if ('error_site' and 'error_type') in request.GET:
         context['error_site'] = request.GET.get('error_site')
         context['error_type'] = request.GET.get('error_type')
+        context['hash'] = 'kontaktformular'
+        context['error_object'] = request.GET.get('error_object')
 
     if request.method == 'POST':
         sender, recipient, subject = request.user, [], request.POST['subject']
