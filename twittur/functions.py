@@ -308,7 +308,7 @@ def get_messages(data):
         result['list_end'] = int(data['request'].POST.get('end'))
 
     # get a page specific list of messages
-    db_message_list = get_message_list(data['page'], data['data'])
+    db_message_list = get_message_list(data)
     cur_date = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(minutes=10),
                                    timezone.get_current_timezone())
 
@@ -372,32 +372,36 @@ def get_messages(data):
 
 
 # return Full Message List
-def get_message_list(page, data):
+def get_message_list(data):
     """
     get all of the messages for a specific page
     :param page: page, where the message list will be displayed
     :param data: page specific data
     :return: unformatted message list
     """
-    print(page)
-    print(data)
+
+    page, data, request = data['page'], data['data'], data['request']
+    usr_grps = GroupProfile.objects.filter(member=request.user)
 
     if page == 'index':
         db_message_list = Message.objects.filter(
-            ((Q(user__exact=data) | Q(user__exact=data.userprofile.follow.all()) | Q(attags=data))
-             | Q(group__member=data))
-            & Q(comment=None)
+            ((Q(user__exact=data)
+              | (Q(user__exact=data.userprofile.follow.all()) & (Q(group__in=usr_grps) | Q(group=None)))
+              | Q(attags=data))) & Q(comment=None)
         ).order_by('-date')
     elif page == 'group':
         db_message_list = Message.objects.filter(Q(group=data) & Q(comment=None)).order_by('-date')
     elif page == 'profile':
         db_message_list = Message.objects.filter(
-            Q(user__exact=data) | Q(attags__username__exact=data.username)
+            (Q(user__exact=data) & (Q(group__in=usr_grps) | Q(group=None)))
+            | Q(attags__username__exact=data.username)
         ).order_by('-date')
     elif page == 'hashtag':
-        db_message_list = Message.objects.filter(hashtags__name=data).order_by('-date')
+        db_message_list = Message.objects.filter(
+            Q(hashtags__name=data) & (Q(group__in=usr_grps) | Q(group=None))
+        ).order_by('-date')
     elif page == 'search':
-        query = Q(user__username__in=data)
+        query = Q(user__username__in=data) & (Q(group__in=usr_grps) | Q(group=None))
         for term in data:
             query |= Q(text__contains=term) | Q(user__username__contains=term)
         db_message_list = Message.objects.filter(query).order_by('-date')
