@@ -248,7 +248,7 @@ def dbm_to_m(message):
         for word in message.text.split():
 
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-            if word[0] == "#" and (ha in hashtag_list) and (word not in urls):
+            if word[0] == "#" and (word not in urls):
                 try:
                     ha = Hashtag.objects.get(name=word[1:])
                 except:
