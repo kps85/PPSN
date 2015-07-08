@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 """
--*- coding: utf-8 -*-
 @package twittur
 @author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
 URLs
@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^info/support/$', views_info.support_view, name='support'),
 
     # views_search
-    url(r'^hashtag/(?P<text>\w\S+)$', views_search.hashtag_view, name='hashtag'),
+    url(r'^hashtag/(?P<text>[a-zA-Z0-9-_()+-/=]+|\w+)$', views_search.hashtag_view, name='hashtag'),
     url(r'^search/$', views_search.search_view, name='search'),
 
     # views_group
