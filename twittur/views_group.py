@@ -214,6 +214,7 @@ def group_settings_view(request, groupshort):
             else:
                 # return errors if GroupProfileEditForm is not valid
                 context['error_msg'] = gpe_form.errors
+            context['gpeForm'] = gpe_form
 
     # return information to render settings.html
     return render(request, 'settings.html', context)

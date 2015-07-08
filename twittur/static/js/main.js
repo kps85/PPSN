@@ -519,7 +519,7 @@ function initVarious() {
 				$li.click(function() {
 					$select.val($(this).text());
 					$mainUl.fadeOut(0);
-					$mainP.text($(this).text());
+					$mainP.html($(this).text()+'<span class="glyphicon glyphicon-chevron-down pull-right"></span>');
 					$content.animate({'left':'0'});
 					$(".superDropdownSub").hide();
 					$mainDiv.height("inherit");
@@ -541,7 +541,7 @@ function initVarious() {
 				$select.val(optionVal);
 				console.log($select.val() + " gewaehlt");
 				$mainUl.fadeOut(0);
-				$mainP.text($(this).text());
+				$mainP.html($(this).text()+'<span class="glyphicon glyphicon-chevron-down pull-right"></span>');
 				$(".superDropdownSub").hide();
 				$mainP.addClass("active");
 				$mainP.removeClass("opened");
