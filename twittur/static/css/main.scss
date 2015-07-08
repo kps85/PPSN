@@ -1,10 +1,16 @@
+
+// Bootstrap
+@import '../bootstrap/css/bootstrap-theme.min';
+@import '../bootstrap/css/bootstrap.min';
+//@import 'dashicons/css/dashicons';
+
+// twittur
 @import 'sass';
 @import 'colors';
-
 @import 'ftu';
 
 
-
+// Font
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600);
 
 /* Basics */
@@ -1009,6 +1015,8 @@ $iconWidth:50px;
     padding-top:15px;
 }
     
+
 @import 'notifications';
 @import '404';
 @import '../js/jScrollPane/jquery.jscrollpane';
+@import 'main_changes';
