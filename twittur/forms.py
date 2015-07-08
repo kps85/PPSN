@@ -12,6 +12,7 @@ Forms
 - FAQForm               form to create a new FAQ entry
 """
 
+import datetime
 import re
 
 from django import forms
@@ -240,12 +241,13 @@ class MessageForm(ModelForm):
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
+        self.user_id = kwargs.pop("user_id", None)
         super(MessageForm, self).__init__(*args, **kwargs)
         # set user input and date input type to hidden
         self.fields['user'].widget = forms.HiddenInput()
         self.fields['date'].widget = forms.HiddenInput()
         # set visibility field
-        
+
         # set text input type to textarea and add class 'form-control'
         self.fields['text'].widget = forms.Textarea(attrs={
             'class': 'form-control',
@@ -260,8 +262,10 @@ class MessageForm(ModelForm):
         text = self.cleaned_data['text']
         return text
 
-    def save(self, commit=True):
+    def save(self, commit=True, *args, **kwargs):
         instance = super(MessageForm, self).save(commit=False)
+        instance.user = User.objects.get(pk=self.user_id)
+        instance.date = datetime.datetime.now()
         if commit:
             instance.save()
         return instance

@@ -55,8 +55,8 @@
             <label class="control-label" for="id_name">Name</label>
             {{ gpeForm.name }}
           {% else %}  
-            <label class="control-label" for="id_username">Username</label>
-            {{ userForm.username }}
+            <label class="control-label" for="id_username">Username (ID)</label>
+            <input class="form-control" id="id_username" maxlength="30" name="username" type="text" value="{{ user.username }} ({{ user.id }})" readonly="">
             <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
           {% endif %}  
         </div>

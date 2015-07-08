@@ -41,9 +41,6 @@ def index_view(request):
     if not request.user.is_authenticated():             # check if user is logged in
         return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
 
-    print(render(request, "notification_list.xml",
-                 {'ntfc_list': Notification.objects.filter(Q(user=request.user))}))
-
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'index', request.user)
 
@@ -524,3 +521,20 @@ def vier_null_vier(request):
 
 def please_verify_view(request):
     return render(request, 'pleaseVerify.html', {'active_page': 'pleaseVerify'})
+
+
+# Page: "NoScript-Fehler"
+def no_script(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if not request.user.is_authenticated():             # check if user is logged in
+        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+
+    # initialize data dictionary 'context' with relevant display information
+    context = get_context(request, 'noscript', user=request.user)
+
+    return render(request, 'no_script.html', context)

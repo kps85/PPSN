@@ -1,0 +1,10 @@
+{% if message_list|length %}
+<?xml version='1.0' encoding='utf-8'?>
+<messages>
+	{% for message in message_list %}
+	<message date="{{ message.date|date:"U" }}" link="{{ message.url }}">
+	{{ message.text }}
+	</message>
+	{% endfor %}
+</messages>
+{% endif %}

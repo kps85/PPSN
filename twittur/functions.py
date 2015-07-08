@@ -22,6 +22,7 @@ Method Collection
 - elimDups              eliminates duplicates in a message list
 - pw_generator          generates a random password
 """
+
 import copy
 import datetime
 import random
@@ -110,8 +111,8 @@ def msg_dialog(request):
     """
 
     if request.method == 'POST':
-        if request.POST.get('codename') == 'message':
-            msg_form = MessageForm(request.POST, request.FILES)
+        if request.POST['codename'] == 'message':
+            msg_form = MessageForm(request.POST, request.FILES, user_id=request.user.id)
             if msg_form.is_valid():
                 if 'safety' in request.POST:
                     if request.POST['safety'][:1] == '&':
@@ -125,11 +126,11 @@ def msg_dialog(request):
                 msg_to_db(msg_form.instance)
                 msg_form.save()                 # save this shit for the next step
 
-        elif request.POST.get('codename') == 'comment':
-            msg_form = MessageForm(request.POST)
+        elif request.POST['codename'] == 'comment':
+            msg_form = MessageForm(request.POST, user_id=request.user.id)
             if msg_form.is_valid():
                 msg_form.save()
-                message = Message.objects.get(id=request.POST.get('cmtToId'))
+                message = Message.objects.get(id=request.POST['cmtToId'])
                 msg_form.instance.comment = message
                 msg_to_db(msg_form.instance)
                 msg_form.save()                 # save this shit for the next step
@@ -137,7 +138,7 @@ def msg_dialog(request):
                     note = request.user.username + ' hat auf deine Nachricht geantwortet.'
                     set_notification('comment', data={'user': message.user, 'message': msg_form.instance, 'note': note})
 
-    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()})
+    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()}, user_id=request.user.id)
     return msg_form
 
 

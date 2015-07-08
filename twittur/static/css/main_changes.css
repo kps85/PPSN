@@ -189,3 +189,49 @@ nav a:focus { color: #fff; } /* Wenn Nav Item angeklickt, weird blue Effekt entf
 .faqContainer .post.active { background-color: rgba(92,184,92,.1); }
 .faqContainer h4 { position: relative; width: 100%; }
 .faqContainer h4 span { position: absolute; right: 0; }
+
+#body_noscript {
+  background: #eee;
+  width: 100%;
+  height: 100%;
+  position: absolute; }
+  #body_noscript .width {
+    padding: 40px 0;
+    width: 98%;
+    max-width: 300px;
+    text-align: center;
+    margin: 0 auto; }
+    #body_noscript .width .bird {
+      background-repeat: no-repeat;
+      background-position: top center;
+      height: 258px;
+      width: 300px;
+      padding-top: 90px;
+      font-size: 3em;
+      font-weight: 100;
+      margin: 20px auto;
+      box-sizing: border-box;
+      color: #fff; }
+      @media screen and (max-width: 639px) {
+        #body_noscript .width .bird {
+          font-size: 1.6em;
+          width: 150px;
+          padding-top: 40px;
+          height: 129px;
+          background-size: contain; } }
+    #body_noscript .width h1 {
+      font-weight: 100; }
+    #body_noscript .width p {
+      margin: 20px 0; }
+    #body_noscript .width a {
+      display: block;
+      color: #555;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px 0;
+      border: 1px solid #bbb; }
+      #body_noscript .width a:hover {
+        border: 1px solid #999; }
+
+#body_noscript .bird {
+  background: url("img/viernullvier.png"); }
