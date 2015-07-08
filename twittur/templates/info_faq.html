@@ -13,7 +13,7 @@
 {% if request.user.is_superuser %}
 	<h3 class="text-uppercase" id="faq-hinzufuegen">FAQ Hinzuf&uuml;gen</h3>
   
-  <form action="{% url 'twittur:faq' %}" method="POST">
+  <form action="{% url 'twittur:faq' %}" class="clearfix" method="POST">
     {% csrf_token %}
     {{ faqForm.author }}
   	<div class="col-xs-6 form-group">
@@ -22,9 +22,24 @@
     </div>
   	<div class="col-xs-6 form-group pull-right">
     	<label for="katSelect">Kategorie w&auml;hlen</label>
-      {{ faqForm.category }}
+      <select class="form-control" id="id_category" name="category">
+      	{% if faqForm.categories|length > 0 %}
+        <optgroup label="Kategorien">
+        	{% for item in faqForm.categories %}
+          <option value="{{ item.category }}">{{ item.category }}</option>
+          {% endfor %}
+        </optgroup>
+        {% endif %}
+        <optgroup label="Weitere">
+          <option value="Kategorie erstellen">Kategorie erstellen</option>
+        </optgroup>
+      </select>
+      {{ faqForm.other }}
+      {% if faqForm.category.errors %}
+        <p><font color="#FF0000">{{ faqForm.category.errors|safe }}</font></p>
+      {% endif %}
     </div>
-  	<div class="col-xs-12 form-group">
+  	<div class="col-xs-12 form-group clearfix">
     	<label for="answerInput">Antwort eintragen</label>
     	{{ faqForm.answer }}
     </div>

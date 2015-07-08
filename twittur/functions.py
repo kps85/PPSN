@@ -98,11 +98,6 @@ def get_context(request, page=None, user=None):
         'safetyLevels': get_safety_levels(request.user, True)
     }
 
-    x= Hashtag.objects.annotate(
-            hashtag_count=Count('hashtags__hashtags__name')
-        ).order_by('-hashtag_count')[:5]
-    print (x)
-
     return context
 
 
@@ -246,12 +241,11 @@ def dbm_to_m(message):
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
-
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-            if word[0] == "#" and (ha in hashtag_list) and (word not in urls):
+            if word[0] == "#" and (word not in urls):
                 try:
                     ha = Hashtag.objects.get(name=word[1:])
-                except:
+                except ObjectDoesNotExist as e:
                     pass
                 else:
                     '''

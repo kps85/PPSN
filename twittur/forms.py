@@ -97,18 +97,19 @@ class UserDataForm(ModelForm):
         super(UserDataForm, self).__init__(*args, **kwargs)
         # unset location as required
         self.fields['location'].required = False
+        # picture only accepts images
+        self.fields['picture'].widget.attrs['accept'] = 'image/*'
         # set studentNumber type to text
-        self.fields['studentNumber'].widget = forms.TextInput()
+        self.fields['studentNumber'].widget = forms.TextInput(attrs={
+            'pattern': '[0-9]{6}'
+        })
 
         # for each field set class to 'form-control' except 'picture',
         # set class to 'checkNumeric' for studentNumber and
         # set initial value to user's personal information
         for field in self.fields:
             if field != 'picture':
-                if field != 'studentNumber':
-                    self.fields[field].widget.attrs['class'] = 'form-control'
-                else:
-                    self.fields[field].widget.attrs['class'] = 'form-control checkNumeric'
+                self.fields[field].widget.attrs['class'] = 'form-control'
             if field != 'academicDiscipline':
                 self.fields[field].widget.attrs['value'] = getattr(instance, field)
             else:
@@ -266,6 +267,8 @@ class MessageForm(ModelForm):
 
 
 class FAQForm(ModelForm):
+    other = forms.CharField(max_length=128, required=False)
+
     # referencing FAQ model as basis for the form
     # initializing form input fields
     class Meta:
@@ -275,6 +278,7 @@ class FAQForm(ModelForm):
     # method to initialize the form
     def __init__(self, *args, **kwargs):
         super(FAQForm, self).__init__(*args, **kwargs)
+        self.categories = FAQ.objects.all().values('category').distinct()
         # set author initial value to current user, if not on admin page
         if 'instance' in kwargs:
             self.fields['author'].widget = forms.HiddenInput()
@@ -283,19 +287,6 @@ class FAQForm(ModelForm):
         # set question input type to text and add class and placeholder
         self.fields['question'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Frage'})
         # define question categories, set category input type to select and add categories as options
-        cat_choices = (
-            ('Allgemeine Frage', 'Allgemeine Frage'),
-            ('Startseite', 'Startseite'),
-            ('Profilseite', 'Profilseite'),
-            ('Gruppenseite', 'Gruppenseite'),
-            ('Gruppeneinstellungen', 'Gruppeneinstellungen'),
-            ('Infoseite', 'Infoseite'),
-            ('Suche', 'Suche'),
-            ('Einstellungen', 'Einstellungen'),
-            ('Benachrichtigungen', 'Benachrichtigungen'),
-            ('Nachrichtenanzeige', 'Nachrichtenanzeige')
-        )
-        self.fields['category'] = forms.ChoiceField(choices=cat_choices, widget=forms.Select)
         # set answer input type to textarea, set size and placeholder
         self.fields['answer'].widget = forms.Textarea(attrs={
             'rows': '5',
@@ -304,4 +295,25 @@ class FAQForm(ModelForm):
         })
         # set class to 'form-control' for each input
         for field in self.fields:
-            self.fields[field].widget.attrs['class'] = 'form-control'
+            if field is 'other':
+                self.fields[field].widget.attrs['class'] = 'form-control hidden'
+                self.fields[field].widget.attrs['placeholder'] = 'Neue Kategorie eintragen ...'
+            else:
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
+    def clean(self):
+        other = self.cleaned_data['other']
+        error_dict = {}
+        if other == 'Kategorie erstellen':
+            error_dict['category'] = "Kategorie-Name nicht erlaubt!"
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+        return self.cleaned_data
+
+    def save(self, commit=True):
+        instance = super(FAQForm, self).save(commit=False)
+        if instance.category == 'Kategorie erstellen':
+            instance.category = self.cleaned_data['other']
+        if commit:
+            instance.save()
+        return instance

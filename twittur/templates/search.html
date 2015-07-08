@@ -38,7 +38,7 @@
     {% for object in user_list %}
       <li class="search_user_result clearfix container-fluid">
       	<div class="col-xs-2 pull-left text-center">
-	        <img src="{{ object.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/>
+	        {% if object.userprofile.picture %}<img src="{{ object.userprofile.picture.url }}" class="profilbild-s img-thumbnail"/>{% endif %}
         </div>
         <div class="col-xs-10 pull-left">
 
@@ -60,7 +60,9 @@
       <ul>    
   	{% for group in group_list %}
         <li class="search_group_result clearfix container-fluid">
-        	<div class="col-xs-2 pull-left text-center"><img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/></div>
+        	<div class="col-xs-2 pull-left text-center">
+          	{% if group.picture %}<img src="{{ group.picture.url }}" class="profilbild-s img-thumbnail"/>{% endif %}
+          </div>
           <div class="col-xs-10 pull-left">
             <strong>{{ group.name }}&nbsp;(<a href="{% url 'twittur:group' groupshort=group.short %}">&amp;{{ group.short|lower }}</a>)</strong><br />
             {% if group.supergroup %}<em class="pull-left">Untergruppe von: {{ group.supergroup }}</em>{% endif %}

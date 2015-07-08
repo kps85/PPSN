@@ -34,10 +34,12 @@
         </form>
     {% endif %}
     <div class="col-xs-12 col-sm-4 text-center">
-      {% if group %}
-        <img src="{{ group.picture.url }}" class="profilbild-l img-thumbnail"/>
-      {% else %}
-        <img src="{{ pUserProf.picture.url }}" class="profilbild-l img-thumbnail"/>
+    	{% if group.picture or pUserProf.picture %}
+        {% if group %}
+          <img src="{{ group.picture.url }}" class="profilbild-l img-thumbnail"/>
+        {% else %}
+          <img src="{{ pUserProf.picture.url }}" class="profilbild-l img-thumbnail"/>
+        {% endif %}
       {% endif %}
     </div>
     <div class="col-xs-12 col-sm-8 clearfix">
@@ -105,59 +107,63 @@
     <strong><span class="glyphicon glyphicon-edit"></span> {{ pUser|upper }} schreiben</strong>
   </button>
   {% endif %}
+  
   {% if group %}
-  {% if group.joinable %}
-    {% if not group.password and not is_member or is_member %}
-      {% if 'bearbeiten' in button_text %}
-        <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="col-xs-6 text-center btn btn-default profileButton">
-          <strong>{{ button_text|safe }}</strong>
-        </a>        
-      {% else %}
-        <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
-            {% csrf_token %}
-          <input name="delete_join_group" type="hidden" value="delete" />
-          <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
+    {% if group.joinable %}
+      {% if not group.password and not is_member or is_member %}
+        {% if 'bearbeiten' in button_text %}
+          <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="col-xs-6 text-center btn btn-default profileButton">
             <strong>{{ button_text|safe }}</strong>
-          </button>
-        </form>
-      {% endif %}
-    {% else %}
-      <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#enterPWforGroup" id="joinGroup" title="Gruppe beitreten" type="button">
-        <strong><span class="glyphicon glyphicon-edit"></span> {{ group.short|upper }} beitreten</strong>
-      </button>
-      <div class="modal fade" id="enterPWforGroup" tabindex="-1" role="dialog" aria-labelledby="enterPWforGroupLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Passwort f&uuml;r {{ group.short|upper }} eingeben!</h4>
-            </div>
-            <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST">
-            {% csrf_token %}
-            <div class="modal-body">
-              <input class="form-control" name="password" type="password" />
-            </div>
-            <div class="modal-footer">
-                <input name="delete_join_group" type="hidden" value="join_pw" />
-                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-                <button type="submit" class="btn btn-primary">Beitreten</button>
-              </form>
+          </a>        
+        {% else %}
+          <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
+              {% csrf_token %}
+            <input name="delete_join_group" type="hidden" value="delete" />
+            <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
+              <strong>{{ button_text|safe }}</strong>
+            </button>
+          </form>
+        {% endif %}
+      {% else %}
+        <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#enterPWforGroup" id="joinGroup" title="Gruppe beitreten" type="button">
+          <strong><span class="glyphicon glyphicon-edit"></span> {{ group.short|upper }} beitreten</strong>
+        </button>
+        <div class="modal fade" id="enterPWforGroup" tabindex="-1" role="dialog" aria-labelledby="enterPWforGroupLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Passwort f&uuml;r {{ group.short|upper }} eingeben!</h4>
+              </div>
+              <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST">
+              {% csrf_token %}
+              <div class="modal-body">
+                <input class="form-control" name="password" type="password" />
+              </div>
+              <div class="modal-footer">
+                  <input name="delete_join_group" type="hidden" value="join_pw" />
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                  <button type="submit" class="btn btn-primary">Beitreten</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      {% endif %}
+    {% else %}  
+      <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit" disabled="disabled">
+        <strong>{{ button_text|safe }}</strong>
+      </button>    
     {% endif %}
-  {% else %}  
-    <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit" disabled="disabled">
-      <strong>{{ button_text|safe }}</strong>
-    </button>    
-  {% endif %}
 
-  <button {% if request.user not in group.member.all %} disabled="disabled" {% endif %} class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
-    <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
-  </button>
+    <button {% if request.user not in group.member.all %} disabled="disabled" {% endif %} class="col-xs-6 text-center btn btn-default profileButton postToGroup" 
+    				data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
+      <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
+    </button>
   {% endif %}
-  <br /><br /><br />
+  
+  <div class="clear_box"></div>
+  
   {% if show_member %}
   <div class="profileMessages">
     <a href="{% url 'twittur:group' groupshort=group.short %}">&laquo; Nachrichten anzeigen</a><br />

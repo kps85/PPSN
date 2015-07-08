@@ -16,7 +16,8 @@ from django.shortcuts import render
 
 from .functions import dbm_to_m, elim_dups, get_context, get_messages
 from .models import GroupProfile, Hashtag, Message
-from .views import index_view
+from .views import index_view, profile_view
+from .views_group import group_view
 
 
 # search input
@@ -45,7 +46,6 @@ def search_view(request):
     if search_input is None or search_input[0] == "":
         return index_view(request)
 
-
     # filter all messages contain the word  or all users contain the word
     # search_input contains @ -> cut @ off and set flag
     # the reason behind this is we save username instead of @username, so if someone is looking for
@@ -66,9 +66,22 @@ def search_view(request):
         context['list_end'] = int(request.POST['list_end'])
 
     for term in search_input:
-        if term[0] == "#" and len(search_input) == 1:
-            return hashtag_view(request, term[1:])
-        elif term[0] == "@":
+        if len(search_input) == 1:
+            if term[0] == "#" and Hashtag.objects.filter(name__contains=term[1:]).exists() \
+                    and len(Hashtag.objects.filter(name__contains=term[1:])) == 1:
+                hashtag = Hashtag.objects.get(name__contains=term[1:])
+                return hashtag_view(request, hashtag.name)
+            elif term[0] == "&" and GroupProfile.objects.filter(short__contains=term[1:]).exists()\
+                    and len(GroupProfile.objects.filter(short__contains=term[1:])) == 1:
+                group = GroupProfile.objects.get(short__contains=term[1:])
+                return group_view(request, group.short)
+            elif term[0] == "@" and User.objects.filter(username__contains=term[1:]).exists() \
+                    and len(User.objects.filter(username__contains=term[1:])) == 1:
+                user = User.objects.get(username__contains=term[1:])
+                return profile_view(request, user.username)
+            else:
+                term = term[1:]
+        elif term[0] in "@, &, #":
             term = term[1:]
 
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []

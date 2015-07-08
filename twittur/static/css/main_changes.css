@@ -1,3 +1,7 @@
+.postText { word-break: break-all }
+.scrollTop { z-index: 2 }
+.clear_box { display: block; height: 20px; clear: both; } /* just to get some space between items */
+
 a:hover { color: #f50000; cursor: pointer; }
 a:focus { color: #f50000; text-decoration: none; }
 

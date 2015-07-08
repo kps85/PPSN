@@ -57,11 +57,19 @@
     </div>
   	<div class="col-xs-6 form-group pull-right">
     	<label for="id_topic">Thema w&auml;hlen</label>
-      <select class="form-control" id="id_topic" name="topic">
-      	{% for item in cat_list %}
-      	<option value="{{ item.category }}">{{ item.category }}</option>
-        {% endfor %}
+      <select class="form-control" id="id_category" name="topic">
+      	{% if cat_list|length > 0 %}
+        <optgroup label="Themen">
+        	{% for item in cat_list %}
+          <option value="{{ item.category }}">{{ item.category }}</option>
+          {% endfor %}
+        </optgroup>
+        {% endif %}
+        <optgroup label="Weitere">
+          <option value="anderes Thema">anderes Thema</option>
+        </optgroup>
       </select>
+      <input class="form-control hidden" id="id_other" maxlength="128" name="other" placeholder="anderes Thema angeben ..." type="text">
     </div>
   	<div class="col-xs-12 form-group">
     	<label for="id_message">Nachricht schreiben</label>

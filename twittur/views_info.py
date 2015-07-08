@@ -87,12 +87,11 @@ def support_view(request):
     context['team_list'] = User.objects.filter(is_superuser=True).exclude(pk=15).order_by('last_name')
     context['cat_list'] = FAQ.objects.all().values('category').distinct()
     context['FAQs'] = get_faqs()
-    print context['FAQs']
+
     if ('error_site' and 'error_type') in request.GET:
         context['error_site'] = request.GET.get('error_site')
         context['error_type'] = request.GET.get('error_type')
-        context['text'] = "text"
-        print context
+
     if request.method == 'POST':
         sender, recipient, subject = request.user, [], request.POST['subject']
         context['hash'] = request.POST['hash']
@@ -108,6 +107,10 @@ def support_view(request):
             for member in context['team_list']:
                 recipient.append(member.email)
             topic = request.POST['topic']
+            if topic == 'anderes Thema':
+                topic = request.POST['other']
+                if topic == '':
+                    topic = "Kein Thema angegeben."
             message = sender.first_name + " " + sender.last_name + " (@" + sender.username + ") hat eine "
             message += "Frage zum Thema: " + topic + "\n\n"
             message += request.POST['message'] + "\n\n"

@@ -46,7 +46,7 @@
     {% if errors.error_not_registered %}
     	<p><font color="#FF0000">{{ errors.error_not_registered|safe }}</font></p>
     {% endif %}
-    <input class="checkNumeric" id="id_pwResetStudNumb" name="pwResetStudNumb" placeholder="Deine Matrikel-Nummer zur Sicherheit" type="text" />
+    <input id="id_pwResetStudNumb" name="pwResetStudNumb" pattern="[0-9]{6}" placeholder="Deine Matrikel-Nummer zur Sicherheit" type="text" />
     {% if errors.error_number_not_identic %}
     	<p><font color="#FF0000">{{ errors.error_number_not_identic|safe }}</font></p>
     {% endif %}
@@ -106,15 +106,16 @@
       {% endfor %}
     {% endif %}
     
-    <input class="checkNumeric" id="id_studentNumber" name="studentNumber" placeholder="Matrikelnummer *" required="required" type="text" {% if data.studentNumber %} value="{{ data.studentNumber }}"{% endif %}/>
-    <br />
+    <input id="id_studentNumber" name="studentNumber" pattern="[0-9]{6}" placeholder="Matrikelnummer *" 
+    			 required="required" type="text" {% if data.studentnumber %} value="{{ data.studentNumber }}"{% endif %}/>
+    <p class="help-block">(Muss aus 6 Ziffern bestehen)</p>
     {% if errors.error_reg_userprofile_ad %}
     	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>
     {% endif %}
     {% if errors.error_student_number %}
     	<p><font color="#FF0000"> &nbsp; {{ errors.error_student_number|safe }}</font></p>
     {% endif %}
-    <p class="help-block">Mit * gekennzeichnete Felder sind notwendig!</p>
+    <p class="help-block pull-left">Mit * gekennzeichnete Felder sind notwendig!</p>
   </div>
   <div id="registerButtons">
     <input type="reset" value="Abbrechen" />

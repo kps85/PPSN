@@ -2,8 +2,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <notifications>
 	{% for notification in ntfc_list %}<notification date="{{ notification.date|date:"U" }}" link="{{ notification.url }}">
-    {% if notification.follower %}{{ notification.follower.userprofile.username }} folgt dir jetzt!
-    {% elif notification.message and not notification.comment %}{{ notification.message.user.username }} hat Dich in seiner Nachricht erwähnt!
+    {% if notification.follower %}{{ notification.follower.userprofile.username }} folgt Dir jetzt!
+    {% elif notification.message and not notification.comment %}{{ notification.message.user.username }} hat Dich in einer Nachricht erwähnt!
     {% elif notification.group %}{{ notification.group.short|upper }}: {{ notification.note|safe }}
 		{% else %}{{ notification.note|safe }}{% endif %}
     </notification>{% endfor %}

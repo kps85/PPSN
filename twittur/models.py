@@ -82,7 +82,7 @@ class Message(models.Model):
 class UserProfile(models.Model):
     """ the user profile contains additional information for a user """
     userprofile = models.OneToOneField(User)
-    verifyHash = models.CharField(max_length=16, default='')            # for verification
+    verifyHash = models.CharField(max_length=32, default='')            # for verification
 
     follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='Notification')
     studentNumber = models.CharField(max_length=6, default='000000',

@@ -23,8 +23,10 @@
         <div class="col-xs-12 form-group">
           <div class="col-xs-12 text-center profilePictures">
             <a href="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" target="_blank">
-              <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
-              {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
+              {% if group.picture or user.userprofile.picture %}
+                <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
+                {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
+              {% endif %}
             </a>
             <p class="help-block">
               {% if group %}
@@ -150,7 +152,7 @@
               {% for fac, ad in list %}
                 <optgroup label="{{ fac }}">
                 {% for disc in ad %}
-                  <option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
+                  <option value="{{ disc }}"{% if disc == user.userprofile.academicdiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
                 {% endfor %}
                 </optgroup>
               {% endfor %}

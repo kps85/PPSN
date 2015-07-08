@@ -1,12 +1,14 @@
 <div class="post{% if message.ignore %} postIgnore{% endif %}" data-hint="{{ message.id }}" id="post{{ message.id }}">
   
   <div class="icon{% if message.ignore %} hidden{% endif %}">
-  	{% if active_page == 'ftu' %}
-    	<img src="{{ message.user.userprofile.picture.url }}" class="img-thumbnail">
-    {% else %}
-      <a href="{% url 'twittur:profile' user=message.user %}">
+		{% if message.user.userprofile.picture %}
+      {% if active_page == 'ftu' %}
         <img src="{{ message.user.userprofile.picture.url }}" class="img-thumbnail">
-      </a>
+      {% else %}
+        <a href="{% url 'twittur:profile' user=message.user %}">
+          <img src="{{ message.user.userprofile.picture.url }}" class="img-thumbnail">
+        </a>
+      {% endif %}
     {% endif %}
   </div>
 

@@ -328,14 +328,35 @@ function initInputValidation() {
   });	
 		
 	$(".newMsgPctr input[type=file]").change(function(e) {
+		var html = ""
 		var path = URL.createObjectURL(e.target.files[0]);
-		$(".newMsgPctr div").prepend("<center><img class='img-thumbnail' src='"+path+"' width='200'></center>");
+		if (checkImage(this)) {
+			$(this).val("");
+			html = "<div class='img_prev text-center'><font color='#ff0000'>Nur Bilddateien erlaubt!</font></div>";
+		} else {
+			html = "<div class='img_prev text-center'><img class='img-thumbnail' src='"+path+"' width='200'></div>";
+		}
+		$(".newMsgPctr div").find(".img_prev").remove();
+		$(".newMsgPctr div").prepend(html);
 	});
 	
 	$(".msgPctr").each(function(index, element) {
 		var bgImg = $(element).attr("data-hint");
     $(element).css("background-image", "url("+bgImg+")");
   });
+	
+	function checkImage(element) {
+		var error = false
+		var val = $(element).val();
+		switch(val.substring(val.lastIndexOf('.') + 1).toLowerCase()) {
+			case 'gif': case 'jpg': case 'png': case 'jpeg':
+				break;
+			default:
+				error = true
+				break;
+		}
+		return error
+	}
 }
 
 function initInfoSettings() {
@@ -395,6 +416,16 @@ function initInfoSettings() {
 		$(".memberHead").click(function(e) {
       $(".memberList").toggleClass("hidden");
       $(this).find("span").toggleClass("glyphicon-minus glyphicon-plus");
+    });
+		
+		if ($("#id_category").val() == "Kategorie erstellen" || $("#id_category").val() == "anderes Thema") $("#id_other").removeClass("hidden");
+		$("#id_category").on('change', function(e) {
+      if ($(this).val() == 'Kategorie erstellen' || $(this).val() == 'anderes Thema') {
+				$("#id_other").removeClass('hidden');
+			} else {
+				if (!$("#id_other").is("hidden")) $("#id_other").addClass("hidden");
+				$("#id_other").val("");
+			}
     });
 	}
 }

@@ -52,8 +52,14 @@ def group_view(request, groupshort):
                 group.admin = member
                 group.save()
                 context['success_msg'] = "Mitglied erfolgreich befördert."
+            elif 'remUser' in request.POST:
+                member = User.objects.get(pk=request.POST['remUser'])
+                set_notification('group', data={'group': group, 'member': member})
+                group.member.remove(member)
+                context['success_msg'] = "Mitglied erfolgreich entfernt."
             else:
                 context['success_msg'] = 'Nachricht erfolgreich gesendet!'
+            context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
 
         if request.user in group.member.all():
             context['is_member'] = True
