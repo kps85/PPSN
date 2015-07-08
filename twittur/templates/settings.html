@@ -50,16 +50,22 @@
     <div class="post" id="{% if group %}gruppe{% else %}account{% endif %}">    
       <h4>{% if group %}Gruppendaten{% else %}Accountverwaltung{% endif %}</h4>
     
-        <div class="col-xs-12 form-group">
+        <div class="col-xs-12{% if not group %} col-sm-6{% endif %} form-group">
           {% if group %}
             <label class="control-label" for="id_name">Name</label>
             {{ gpeForm.name }}
           {% else %}  
-            <label class="control-label" for="id_username">Username (ID)</label>
-            <input class="form-control" id="id_username" maxlength="30" name="username" type="text" value="{{ user.username }} ({{ user.id }})" readonly="">
+            <label class="control-label" for="id_username">Username</label>
+            {{ userForm.username }}
             <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
           {% endif %}  
         </div>
+        {% if not group %}    
+        <div class="col-xs-12 col-sm-6 form-group">
+            <label class="control-label" for="id_id">ID</label>
+            <input class="form-control" id="id_id" name="id" type="text" value="{{ user.id }}">
+        </div>        
+        {% endif %}
         
         <div class="col-xs-12 form-group">
           {% if group %}

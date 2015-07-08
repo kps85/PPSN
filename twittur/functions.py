@@ -110,7 +110,7 @@ def msg_dialog(request):
     :return:
     """
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'codename' in request.POST:
         if request.POST['codename'] == 'message':
             msg_form = MessageForm(request.POST, request.FILES, user_id=request.user.id)
             if msg_form.is_valid():

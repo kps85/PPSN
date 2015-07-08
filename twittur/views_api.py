@@ -25,7 +25,7 @@ def message_get(request):
     if p_hash == request.GET['hash']:
         messages = Message.objects.filter(
             Q(user=p_user) & Q(group=None) & Q(attags=None) & Q(comment=None) & Q(ignore=False)
-        )
+        ).order_by('-date')
         for msg in messages:
             msg.url = create_abs_url(request, 'message', msg.id)
             context['message_list'].append(msg)
