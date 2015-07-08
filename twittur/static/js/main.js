@@ -339,11 +339,6 @@ function initInputValidation() {
 		$(".newMsgPctr div").find(".img_prev").remove();
 		$(".newMsgPctr div").prepend(html);
 	});
-	
-	$(".msgPctr").each(function(index, element) {
-		var bgImg = $(element).attr("data-hint");
-    $(element).css("background-image", "url("+bgImg+")");
-  });
 }
 	
 function checkImage(element) {
