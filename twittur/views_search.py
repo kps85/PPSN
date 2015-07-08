@@ -93,7 +93,7 @@ def search_view(request):
         #if term[0] in "@, &, #":
         #    term = term[1:]
 
-        print (term)
+        print (len(term))
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
         for message in messages_list:
             copy_message = copy.copy(message[1])
@@ -105,30 +105,38 @@ def search_view(request):
 
         m_zip = zip(m_list, dbmessage_list, message_forms, comment_list, comment_count)
         message_list.append(m_zip)
-        if term[0] == '@' and len(term) > 0:
+        if term[0] == '@' and len(term) > 1:
             user_list.append(User.objects.all().filter(Q(username__contains=term[1:])))
+        elif term[0] == '@' and len(term) == 1:
+            user_list.append(User.objects.all())
         else:
-            user_list.append(User.objects.all().filter(Q(username__contains=term)
-                                                   | Q(first_name__contains=term)
-                                                   | Q(last_name__contains=term)))
-        if term[0] == '&' and len(term) > 0:
+            user_list.append(User.objects.all().filter(Q(username__contains=term)))
+
+        if term[0] == '&' and len(term) > 1:
             group = GroupProfile.objects.filter(Q(short__contains=term[1:]))
         else:
             group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term))
+
         if len(group) > 0:
             group_list.append(group.distinct())
 
-        if len(term) > 0 and term[0] == '#':
+        if len(term) > 1 and term[0] == '#':
             hashtag = Hashtag.objects.all().filter(Q(name__contains=term[1:]))
+        elif len(term) == 1 and term[0] == '#':
+            hashtag = Hashtag.objects.all()
         else:
             hashtag = Hashtag.objects.all().filter(Q(name__contains=term))
-        hashtag_count = [Message.objects.filter(hashtags__in=hashtag).count()]
-        hashtag_list.append(zip(hashtag, hashtag_count))
 
+        hashtag_count = []
+        for item in hashtag:
+            hashtag_count.append(Message.objects.filter(hashtags__name__exact=item.name).count())
+
+        hashtag_list.append(zip(hashtag, hashtag_count))
     # eliminate duplicates from each list and sort message list by date
     user_list, hashtag_list = elim_dups(user_list), elim_dups(hashtag_list)
     group_list, message_list = elim_dups(group_list), elim_dups(message_list)
     message_list.sort(key=lambda x: x[0].date, reverse=True)
+    print(hashtag_list)
 
     context['user_list'], context['user_list_length'] = user_list, len(user_list)
     context['group_list'], context['group_list_length'] = group_list, len(group_list)

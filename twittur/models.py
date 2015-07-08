@@ -78,7 +78,6 @@ class Message(models.Model):
     def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
-
 class UserProfile(models.Model):
     """ the user profile contains additional information for a user """
     userprofile = models.OneToOneField(User)

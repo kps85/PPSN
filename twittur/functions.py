@@ -629,7 +629,6 @@ def get_notification(request):
     user = data_dict['user'].lower()
     p_user = User.objects.get(username=user)
     p_hash = p_user.userprofile.verifyHash
-
     if data_dict['hash'] == p_hash:
         ntfc_list_old = Notification.objects.filter(Q(notified=False) & Q(read=False) & Q(user=p_user))
         for ntfc in ntfc_list_old:
@@ -821,7 +820,7 @@ def verify(request, user, hash_item):
             login_user(request, p_user)
             return HttpResponseRedirect('/twittur/')
         else:
-            response = "Du bist schon aktiviert Alter"
+            response = "Du bist schon aktiviert, Alter!"
     else:
         response = "Leider nein, leider gar nicht"
 
