@@ -344,19 +344,19 @@ function initInputValidation() {
 		var bgImg = $(element).attr("data-hint");
     $(element).css("background-image", "url("+bgImg+")");
   });
+}
 	
-	function checkImage(element) {
-		var error = false
-		var val = $(element).val();
-		switch(val.substring(val.lastIndexOf('.') + 1).toLowerCase()) {
-			case 'gif': case 'jpg': case 'png': case 'jpeg':
-				break;
-			default:
-				error = true
-				break;
-		}
-		return error
+function checkImage(element) {
+	var error = false
+	var val = $(element).val();
+	switch(val.substring(val.lastIndexOf('.') + 1).toLowerCase()) {
+		case 'gif': case 'jpg': case 'png': case 'jpeg':
+			break;
+		default:
+			error = true
+			break;
 	}
+	return error
 }
 
 function initInfoSettings() {
@@ -401,16 +401,23 @@ function initInfoSettings() {
     });
 		
 		$("#profBildUpdate input[type=file]").change(function(e) {
+			var html = ""
 			var path = URL.createObjectURL(e.target.files[0]);
 			var help_text = ((window.location.href.split("/"))[4] == 'settings') ? 
 													"Dieses Bild wird auf Deinem Profil (gro&szlig;) und in deinen Nachrichten (klein) angezeigt." :
 													"Dieses Bild wird auf der Gruppenseite zu sehen sein!";
-			help_text += "<br><strong>Achtung!</strong> Dies ist nur eine Vorschau.<br>" + 
-									 "Die &Auml;nderung wird erst beim Speichern des Formulars &uuml;bernommen."
-			$(".profilePictures img").each(function(index, element) {
-        $(element).attr("src", path);
-      });
+			if (checkImage(this)) {
+				$(this).val("");
+				help_text += "<div class='img_prev text-center'><font color='#ff0000'>Nur Bilddateien erlaubt!</font></div>";				
+			} else {
+				help_text += "<br><strong>Achtung!</strong> Dies ist nur eine Vorschau.<br>" + 
+										 "Die &Auml;nderung wird erst beim Speichern des Formulars &uuml;bernommen."
+				$(".profilePictures img").each(function(index, element) {
+					$(element).attr("src", path);
+				});				
+			}
 			$(".profilePictures").find(".help-block").html(help_text);
+			
     });
 		
 		$(".memberHead").click(function(e) {

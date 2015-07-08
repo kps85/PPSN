@@ -52,9 +52,8 @@ class UserForm(ModelForm):
     # if equal: return password
     # else: return error message
     def clean(self):
-        password = self.cleaned_data.get('password')
-        ack_password = self.cleaned_data.get('ack_password')
-        email = self.cleaned_data.get('email')
+        password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
+        email = self.cleaned_data['email']
         error_dict = {}
         if password != ack_password:
             error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
@@ -75,7 +74,7 @@ class UserForm(ModelForm):
     # 'set_password' is for encoding raw text password
     def save(self, commit=True):
         instance = super(UserForm, self).save(commit=False)
-        password = self.cleaned_data.get('password')
+        password = self.cleaned_data['password']
         if password:
             instance.set_password(password)
         if commit:
@@ -116,9 +115,9 @@ class UserDataForm(ModelForm):
                 self.fields['academicDiscipline'].initial = getattr(instance, field)
 
     def clean(self):
-        studentNumber = self.cleaned_data.get("studentNumber")
+        student_number = self.cleaned_data["studentNumber"]
         error_dict = {}
-        if re.match("^[0-9]*$", studentNumber) is None:
+        if re.match("^[0-9]*$", student_number) is None:
             error_dict['studentNumber'] = "Die Matrikel-Nummer darf nur aus sechs Ziffern bestehen!"
         if len(error_dict) > 0:
             raise ValidationError(error_dict, code='invalid')
@@ -127,7 +126,7 @@ class UserDataForm(ModelForm):
     # validation: check after submit before save
     def clean_picture(self):
         # this is the current picture, nothing will happen if checkbox not clicked
-        picture = self.cleaned_data.get('picture')
+        picture = self.cleaned_data['picture']
         # checkbox (False if clicked) -> return default picture
         if not picture:
             return 'picture/default.gif'
@@ -147,16 +146,15 @@ class GroupProfileForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GroupProfileForm, self).__init__(*args, **kwargs)
+        self.fields['picture'].widget.attrs['accept'] = 'image/*'
         for field in self.fields:
             if field != 'picture':
                 self.fields[field].widget.attrs['class'] = 'form-control'
 
     def clean(self):
         error_dict = {}
-        name = self.cleaned_data.get('name')
-        short = self.cleaned_data.get('short')
-        password = self.cleaned_data.get('password')
-        ack_password = self.cleaned_data.get('ack_password')
+        name, short = self.cleaned_data['name'], self.cleaned_data['short']
+        password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
 
         group_list = GroupProfile.objects.all()
         for group in group_list:
@@ -191,6 +189,7 @@ class GroupProfileEditForm(ModelForm):
         super(GroupProfileEditForm, self).__init__(*args, **kwargs)
         self.fields['ack_password'].widget = forms.PasswordInput(attrs=self.fields['ack_password'].widget.attrs)
         self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
+        self.fields['picture'].widget.attrs['accept'] = 'image/*'
         for field in self.fields:
             if field != 'picture':
                 self.fields[field].widget.attrs['class'] = 'form-control'
@@ -199,8 +198,8 @@ class GroupProfileEditForm(ModelForm):
     # if equal: return password
     # else: return error message
     def clean(self):
-        name, short = self.cleaned_data.get('name'), self.cleaned_data.get('short')
-        password, ack_password = self.cleaned_data.get('password'), self.cleaned_data.get('ack_password')
+        name, short = self.cleaned_data['name'], self.cleaned_data['short']
+        password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
         group, group_list = GroupProfile.objects.get(short__exact=short), GroupProfile.objects.all()
         error_dict = {}
         for item in group_list:
@@ -225,7 +224,7 @@ class GroupProfileEditForm(ModelForm):
     # validation: check after submit before save
     def clean_picture(self):
         # this is the current picture, nothing will happen if checkbox not clicked
-        picture = self.cleaned_data.get('picture')
+        picture = self.cleaned_data['picture']
         # checkbox (False if clicked) -> return default picture
         if not picture:
             return 'picture/gdefault.gif'
@@ -254,9 +253,11 @@ class MessageForm(ModelForm):
             'style': 'resize: none;'
         })
 
+        self.fields['picture'].widget.attrs['accept'] = 'image/*'
+
     # return checked text input value
     def clean_text(self):
-        text = self.cleaned_data.get('text')
+        text = self.cleaned_data['text']
         return text
 
     def save(self, commit=True):

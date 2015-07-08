@@ -84,7 +84,7 @@ def support_view(request):
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'info', request.user)
-    
+
     context['team_list'] = User.objects.filter(is_superuser=True).exclude(pk=15).order_by('last_name')
     context['cat_list'] = FAQ.objects.all().values('category').distinct()
     context['FAQs'] = get_faqs()

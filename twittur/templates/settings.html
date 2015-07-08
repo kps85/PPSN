@@ -22,12 +22,12 @@
         
         <div class="col-xs-12 form-group">
           <div class="col-xs-12 text-center profilePictures">
+            {% if group.picture.url or user.userprofile.picture.url %}
             <a href="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" target="_blank">
-              {% if group.picture or user.userprofile.picture %}
-                <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
-                {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
-              {% endif %}
+              <img src="{% if group %}{{ group.picture.url }}{% else %}{{ user.userprofile.picture.url }}{% endif %}" class="profilbild-l img-thumbnail">
+              {% if not group %}<img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">{% endif %}
             </a>
+            {% endif %}
             <p class="help-block">
               {% if group %}
                 {{ gpeForm.picture.help_text | safe }}

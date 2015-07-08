@@ -322,7 +322,7 @@ def profile_view(request, user):
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Profilseite'
         context['error_object'] = user
-        print context['error_object']
+
         return render(request, '404.html', context)
         # context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
 

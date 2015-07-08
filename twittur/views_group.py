@@ -201,13 +201,14 @@ def group_settings_view(request, groupshort):
             if 'group_public' in request.POST:
                 group.password = ''
                 group.save()
+            # if picture has changed, delete old picture
+            # do not, if old picture was default picture
+            if 'picture' in request.FILES or 'picture-clear' in request.POST:
+                print("test")
+                gpe_form.oldPicture = group.picture
+                if gpe_form.oldPicture != 'picture/gdefault.gif':
+                    gpe_form.oldPicture.delete()
             if gpe_form.is_valid():
-                # if picture has changed, delete old picture
-                # do not, if old picture was default picture
-                if 'picture' in request.FILES or 'picture-clear' in request.POST:
-                    gpe_form.oldPicture = group.picture
-                    if gpe_form.oldPicture != 'picture/gdefault.gif':
-                        gpe_form.oldPicture.delete()
                 gpe_form.save()
                 context['success_msg'] = 'Gruppendaten wurden erfolgreich aktualisiert.'
             else:
