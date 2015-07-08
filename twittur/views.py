@@ -325,7 +325,7 @@ def profile_view(request, user):
         return render(request, '404.html', context)
         # context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
 
-    context['follow_sb_list'] = sorted(context['follow_list'], key=lambda x: random.random())[:5]
+    context['follow_sb_list'] = get_context(request, 'profile', user)['follow_sb_list']
 
     return render(request, 'profile.html', context)
 
