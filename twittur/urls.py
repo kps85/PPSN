@@ -48,4 +48,7 @@ urlpatterns = [
     url(r'^more/$', functions.load_more, name='more'),
     url(r'^update/$', functions.update, name='update'),
     url(r'^verify/(?P<user>\w\S+)/(?P<hash_item>\w\S+)$', functions.verify, name='verify'),
+
+    # 404
+    url(r'^\w+', views.vier_null_vier, name='404'),
 ]
