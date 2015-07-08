@@ -1132,14 +1132,16 @@ header {
       font-weight: 100; }
     #body_404 .width p, #body_pleaseVerify .width p {
       margin: 20px 0; }
-    #body_404 .width a, #body_pleaseVerify .width a {
+    #body_404 .width a, #body_404 .width button, #body_pleaseVerify .width a, #body_pleaseVerify .width button {
       display: block;
       color: #555;
+      background: transparent;
+      width: 100%;
       padding: 10px;
       border-radius: 5px;
       margin: 5px 0;
       border: 1px solid #bbb; }
-      #body_404 .width a:hover, #body_pleaseVerify .width a:hover {
+      #body_404 .width a:hover, #body_404 .width button:hover, #body_pleaseVerify .width a:hover, #body_pleaseVerify .width button:hover {
         border: 1px solid #999; }
 
 #body_pleaseVerify .bird {

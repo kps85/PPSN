@@ -42,9 +42,11 @@
             margin:20px 0;
         }
         
-        a {
+        a, button {
             display:block;
             color:#555;
+            background:transparent;
+            width:100%;
             padding:10px;
             border-radius:5px;
             margin:5px 0;
