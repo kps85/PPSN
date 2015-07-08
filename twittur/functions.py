@@ -25,6 +25,7 @@ Method Collection
 
 import copy
 import datetime
+import operator
 import random
 import re
 import string
@@ -78,7 +79,19 @@ def get_context(request, page=None, user=None):
         usr = User.objects.get(pk=item['user'])
         if usr not in follow_sb_list:
             follow_sb_list.append(usr)
-
+    # collect hashtags, count them and order them by count reversed
+    hashtag_count, hot_list = {}, []
+    hashtag_list = Message.objects.all().exclude(hashtags=None).values("hashtags")
+    for ht in hashtag_list:
+        if ht['hashtags'] not in hashtag_count:
+            hashtag_count[ht['hashtags']] = 1
+        else:
+            hashtag_count[ht['hashtags']] += 1
+    hashtag_count_list = sorted(hashtag_count.items(), key=operator.itemgetter(1), reverse=True)
+    for htc in hashtag_count_list[:5]:
+        ht = Hashtag.objects.get(pk=htc[0])
+        hot_list.append(ht)
+        
     # generate URL for API
     location = reverse("twittur:get_notification")
     api_url = request.build_absolute_uri(location)
@@ -98,9 +111,7 @@ def get_context(request, page=None, user=None):
         'follow_list': follow_list,
         'follow_sb_list': follow_sb_list[:5],
         'group_sb_list': group_sb_list,
-        'hot_list': Hashtag.objects.annotate(
-            hashtag_count=Count('hashtags__hashtags__name')
-        ).order_by('-hashtag_count')[:5],
+        'hot_list': hot_list[:5],
 
         'list_end': 5,
         'safetyLevels': get_safety_levels(request.user, True)
