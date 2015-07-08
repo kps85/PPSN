@@ -114,6 +114,8 @@ def search_view(request):
 
         if term[0] == '&' and len(term) > 1:
             group = GroupProfile.objects.filter(Q(short__contains=term[1:]))
+        elif term[0] == '&' and len(term) == 1:
+            group = GroupProfile.objects.all()
         else:
             group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term))
 
