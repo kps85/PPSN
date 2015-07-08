@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^message/(?P<msg>[0-9]+)$', views.message_view, name='message'),
     url(r'^notification/$', views.notification_view, name='notification'),
     url(r'^404/$', views.vier_null_vier, name='404'),
+    url(r'^\w+', views.vier_null_vier, name='404'),
     url(r'^noscript/$', views.no_script, name='no_script'),
 
     # views_info

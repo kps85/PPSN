@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+    {% if not no_input %}
   <h2>{{ search|safe }}</h2>
   {% if not is_hash %}
   <div class="clearfix">
@@ -30,7 +31,20 @@
     </a>
   </div>
   {% endif %}
-  
+  {% else %}
+        <h2>{{ no_input }}</h2>
+
+        <form action="{% url 'twittur:search' %}" id="search" method="GET" class="searchForm">
+        <div class="form-group ">
+          <input id="search_input" name="search_input" type="text" class="form-control" placeholder="Suche" title="Suchbegriff eingeben">
+        </div>
+        <button type="submit" class="btn btn-primary " title="Suche starten">
+          Suchen
+        </button>
+      </form>
+        <br/>
+        <p>... oder haben sie ein Problem bei der Suche? <a href="/twittur/info/support/#kontaktformular">Melde es uns!</a></p>
+    {% endif %}
   {% if user_list_length > 0 %}
     <div class="searchResultBox searchUser" id="searchUser">
     <h4> Folgende Benutzer wurden gefunden:</h4>
@@ -114,7 +128,7 @@
     </div>
   {% endif %}
   
-  {% if not user_list and not group_list and not hashtag_list and not message_list and not is_hash %}
+  {% if not user_list and not group_list and not hashtag_list and not message_list and not is_hash and not no_input %}
     <div class="searchResultBox active text-center">
       <br />
       <em>Keine Suchergebnisse zum Anzeigen gefunden!</em>

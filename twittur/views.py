@@ -253,6 +253,8 @@ def profile_view(request, user):
         context['show_favs'] = True
     elif 'group' in request.GET or 'group' in request.POST:
         context['show_groups'] = True
+        # group_sb_list = GroupProfile.objects.filter(Q(member__exact=request.user))
+        context['show_group_list'] = GroupProfile.objects.filter(Q(member__exact=request.user))
 
     try:
         p_user = User.objects.get(username=user.lower())  # this is the user displayed in html

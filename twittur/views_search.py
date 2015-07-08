@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 
 from .functions import dbm_to_m, elim_dups, get_context, get_messages
 from .models import GroupProfile, Hashtag, Message
@@ -44,7 +45,8 @@ def search_view(request):
     context['search_input'] = ' '.join(search_input)
         
     if search_input is None or search_input[0] == "":
-        return index_view(request)
+        context['no_input'] = 'So geht das aber nicht! Geben sie ein Wort ein!'
+        return render(request, 'search.html', context)
 
     # filter all messages contain the word  or all users contain the word
     # search_input contains @ -> cut @ off and set flag
@@ -66,24 +68,32 @@ def search_view(request):
         context['list_end'] = int(request.POST['list_end'])
 
     for term in search_input:
-        if len(search_input) == 1:
-            if term[0] == "#" and Hashtag.objects.filter(name__contains=term[1:]).exists() \
-                    and len(Hashtag.objects.filter(name__contains=term[1:])) == 1:
-                hashtag = Hashtag.objects.get(name__contains=term[1:])
-                return hashtag_view(request, hashtag.name)
-            elif term[0] == "&" and GroupProfile.objects.filter(short__contains=term[1:]).exists()\
-                    and len(GroupProfile.objects.filter(short__contains=term[1:])) == 1:
-                group = GroupProfile.objects.get(short__contains=term[1:])
-                return group_view(request, group.short)
-            elif term[0] == "@" and User.objects.filter(username__contains=term[1:]).exists() \
-                    and len(User.objects.filter(username__contains=term[1:])) == 1:
-                user = User.objects.get(username__contains=term[1:])
-                return profile_view(request, user.username)
-            else:
-                term = term[1:]
-        elif term[0] in "@, &, #":
-            term = term[1:]
+        if len(search_input) == 1 and len(term) > 1:
+            if term[0] == "#":
+                try:
+                    hashtag = Hashtag.objects.get(name__exact=term[1:])
+                except ObjectDoesNotExist:
+                    pass
+                else:
+                    return hashtag_view(request, hashtag.name)
+            elif term[0] == "&":
+                try:
+                    group = GroupProfile.objects.get(short__exact=term[1:])
+                except ObjectDoesNotExist:
+                    pass
+                else:
+                    return group_view(request, group.short)
+            elif term[0] == "@":
+                try:
+                    user = User.objects.get(username__exact=term[1:])
+                except ObjectDoesNotExist:
+                    pass
+                else:
+                    return profile_view(request, user.username)
+        #if term[0] in "@, &, #":
+        #    term = term[1:]
 
+        print (term)
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
         for message in messages_list:
             copy_message = copy.copy(message[1])
@@ -95,15 +105,20 @@ def search_view(request):
 
         m_zip = zip(m_list, dbmessage_list, message_forms, comment_list, comment_count)
         message_list.append(m_zip)
-
-        user_list.append(User.objects.all().filter(Q(username__contains=term)
+        if term[0] == '@' and len(term) > 0:
+            user_list.append(User.objects.all().filter(Q(username__contains=term[1:])))
+        else:
+            user_list.append(User.objects.all().filter(Q(username__contains=term)
                                                    | Q(first_name__contains=term)
                                                    | Q(last_name__contains=term)))
-
-        group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term) | Q(desc__contains=term))
+        if term[0] == '&' and len(term) > 0:
+            group = GroupProfile.objects.filter(Q(short__contains=term[1:]))
+        else:
+            group = GroupProfile.objects.filter(Q(short__contains=term) | Q(name__contains=term))
         if len(group) > 0:
             group_list.append(group.distinct())
-        if term[0] == '#':
+
+        if len(term) > 0 and term[0] == '#':
             hashtag = Hashtag.objects.all().filter(Q(name__contains=term[1:]))
         else:
             hashtag = Hashtag.objects.all().filter(Q(name__contains=term))

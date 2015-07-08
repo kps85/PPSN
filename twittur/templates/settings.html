@@ -152,7 +152,7 @@
               {% for fac, ad in list %}
                 <optgroup label="{{ fac }}">
                 {% for disc in ad %}
-                  <option value="{{ disc }}"{% if disc == user.userprofile.academicdiscipline %} selected="selected"{% endif %}>{{ disc }}</option>
+                  <option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected{% endif %}>{{ disc }}</option>
                 {% endfor %}
                 </optgroup>
               {% endfor %}
