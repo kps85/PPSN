@@ -458,7 +458,11 @@ def message_view(request, msg):
     # gets all Messages
     messages = get_messages(data={'page': msg, 'data': request.user, 'request': request})
     if not messages['message_list']:
-        return HttpResponseRedirect('/twittur/404/')
+        context = get_context(request, '404', user=request.user)
+        context['error_type'] = 'ObjectDoesNotExist'
+        context['error_site'] = 'Nachrichtenanzeige'
+        context['error_object'] = msg
+        return render(request, '404.html', context)
     else:
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg'],
 

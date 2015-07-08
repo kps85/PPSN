@@ -53,7 +53,8 @@
     <input id="id_hash" name="hash" type="hidden" value="kontaktformular" />
   	<div class="col-xs-6 form-group">
     	<label for="id_subject">Betreff</label>
-      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text" {% if error_object %}value="Profil '{{ error_object }}' existiert nicht ({{ error_type }})"{% endif %}/>
+      <input class="form-control" id="id_subject" name="subject" placeholder="Betreff eingeben *" type="text"
+             {% if error_text %}value="{{ error_text }}"{% endif %}/>
     </div>
   	<div class="col-xs-6 form-group pull-right">
     	<label for="id_topic">Thema w&auml;hlen</label>
@@ -61,7 +62,7 @@
       	{% if cat_list|length > 0 %}
         <optgroup label="Themen">
         	{% for item in cat_list %}
-          <option value="{{ item.category }}">{{ item.category }}</option>
+          <option value="{{ item.category }}" {% if error_site == item.category %}selected{% endif %}>{{ item.category }}</option>
           {% endfor %}
         </optgroup>
         {% endif %}

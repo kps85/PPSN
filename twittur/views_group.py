@@ -38,7 +38,7 @@ def group_view(request, groupshort):
     context['groupshort'] = groupshort.lower()
 
     try:
-        group = GroupProfile.objects.get(short__contains=context['groupshort'])
+        group = GroupProfile.objects.get(short__exact=context['groupshort'])
         context['group'] = group
         context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
 
@@ -80,9 +80,11 @@ def group_view(request, groupshort):
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
         context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
-        return HttpResponseRedirect('/twittur/404/')
-        # context['error_msg'] = {'error_group': 'Keine Gruppe mit der Abkürzung'
-        #                                      + context['groupshort'] + ' gefunden!'}
+        context = get_context(request, '404', user=request.user)
+        context['error_type'] = 'ObjectDoesNotExist'
+        context['error_site'] = 'Gruppenseite'
+        context['error_object'] = groupshort
+        return render(request, '404.html', context)
 
     return render(request, 'profile.html', context)
 
@@ -130,30 +132,38 @@ def djlgroup(request, groupshort):
 
     # Be sure this is the right function, true -> get group object
     if 'delete_join_group' in request.POST:
-        group = GroupProfile.objects.get(short__exact=groupshort)
-        admin, data_dict = group.admin, request.POST
-
-        # Member function:
-        # check if user is in group or not
         try:
-            group.member.get(username__exact=request.user.username)
-        # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
+            group = GroupProfile.objects.get(short__exact=groupshort)
         except ObjectDoesNotExist:
-            if data_dict['delete_join_group'] == 'join_pw':
-                if check_password(data_dict['password'], group.password):
-                    group.member.add(request.user)
-                else:
-                    return group_view(request, groupshort)
-            else:
-                group.member.add(request.user)
-            note = request.user.username + ' ist deiner Gruppe beigetreten.'
-        # User exists -> delete him from group
+            context = get_context(request, '404', user=request.user)
+            context['error_type'] = 'ObjectDoesNotExist'
+            context['error_site'] = 'Gruppenseite'
+            context['error_object'] = groupshort
+            return render(request, '404.html', context)
         else:
-            group.member.remove(request.user)
-            note = request.user.username + ' hat deine Gruppe verlassen.'
-        set_notification('group', data={'group': group, 'member': admin, 'note': note})
+            admin, data_dict = group.admin, request.POST
 
-    return HttpResponseRedirect('/twittur/group/'+groupshort)
+            # Member function:
+            # check if user is in group or not
+            try:
+                group.member.get(username__exact=request.user.username)
+            # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
+            except ObjectDoesNotExist:
+                if data_dict['delete_join_group'] == 'join_pw':
+                    if check_password(data_dict['password'], group.password):
+                        group.member.add(request.user)
+                    else:
+                        return group_view(request, groupshort)
+                else:
+                    group.member.add(request.user)
+                note = request.user.username + ' ist deiner Gruppe beigetreten.'
+            # User exists -> delete him from group
+            else:
+                group.member.remove(request.user)
+                note = request.user.username + ' hat deine Gruppe verlassen.'
+            set_notification('group', data={'group': group, 'member': admin, 'note': note})
+
+        return HttpResponseRedirect('/twittur/group/'+groupshort)
 
 
 # Page: "Gruppen Einstellungen"
@@ -170,51 +180,58 @@ def group_settings_view(request, groupshort):
         return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
 
     # get current groups information and initialize return messages
-    group = GroupProfile.objects.get(short__exact=groupshort)
+    try:
+        group = GroupProfile.objects.get(short__exact=groupshort)
+    except ObjectDoesNotExist:
+        context = get_context(request, '404', user=request.user)
+        context['error_type'] = 'ObjectDoesNotExist'
+        context['error_site'] = 'Gruppenseite'
+        context['error_object'] = groupshort
+        return render(request, '404.html', context)
 
-    if request.user != group.admin:                                 # check if user is group admin
-        return HttpResponseRedirect('/twittur/group/'+groupshort)   # if not -> redirect to group page
+    else:
+        if request.user != group.admin:                                 # check if user is group admin
+            return HttpResponseRedirect('/twittur/group/'+groupshort)   # if not -> redirect to group page
+        # initialize data dictionary 'context' with relevant display information
+        context = get_context(request, 'settings', request.user)
+        context['group'], context['member_list'] = group, group.member.all()
 
-    # initialize data dictionary 'context' with relevant display information
-    context = get_context(request, 'settings', request.user)
-    context['group'], context['member_list'] = group, group.member.all()
+        # initialize GroupProfileEditForm with current groups information
+        context['gpeForm'] = GroupProfileEditForm(instance=group)
 
-    # initialize GroupProfileEditForm with current groups information
-    context['gpeForm'] = GroupProfileEditForm(instance=group)
-
-    # else: validate GroupProfileEditForm and save changes
-    if request.method == 'POST':
-        # check if group should be deleted
-        # if true: delete group, return to index
-        if 'delete' in request.POST and request.POST['delete'] == 'true':
-            group.delete()
-            return HttpResponseRedirect('/twittur/')
-        elif any(item in request.POST for item in ['promUser', 'remUser']):
-            group = GroupProfile.objects.get(pk=request.POST['group'])
-            if 'remUser' in request.POST:
-                member = User.objects.get(pk=request.POST['remUser'])
-                set_notification('group', data={'group': group, 'member': member})
-                group.member.remove(member)
-                context['success_msg'] = "Mitglied erfolgreich entfernt."
-        else:
-            gpe_form = GroupProfileEditForm(request.POST, request.FILES, instance=group)
-            if 'group_public' in request.POST:
-                group.password = ''
-                group.save()
-            # if picture has changed, delete old picture
-            # do not, if old picture was default picture
-            if 'picture' in request.FILES or 'picture-clear' in request.POST:
-                print("test")
-                gpe_form.oldPicture = group.picture
-                if gpe_form.oldPicture != 'picture/gdefault.gif':
-                    gpe_form.oldPicture.delete()
-            if gpe_form.is_valid():
-                gpe_form.save()
-                context['success_msg'] = 'Gruppendaten wurden erfolgreich aktualisiert.'
+        # else: validate GroupProfileEditForm and save changes
+        if request.method == 'POST':
+            # check if group should be deleted
+            # if true: delete group, return to index
+            if 'delete' in request.POST and request.POST['delete'] == 'true':
+                group.delete()
+                return HttpResponseRedirect('/twittur/')
+            elif any(item in request.POST for item in ['promUser', 'remUser']):
+                group = GroupProfile.objects.get(pk=request.POST['group'])
+                if 'remUser' in request.POST:
+                    member = User.objects.get(pk=request.POST['remUser'])
+                    set_notification('group', data={'group': group, 'member': member})
+                    group.member.remove(member)
+                    context['success_msg'] = "Mitglied erfolgreich entfernt."
             else:
-                # return errors if GroupProfileEditForm is not valid
-                context['error_msg'] = gpe_form.errors
-            context['gpeForm'] = gpe_form
+                gpe_form = GroupProfileEditForm(request.POST, request.FILES, instance=group)
+                if 'group_public' in request.POST:
+                    group.password = ''
+                    group.save()
+                # if picture has changed, delete old picture
+                # do not, if old picture was default picture
+                if 'picture' in request.FILES or 'picture-clear' in request.POST:
+                    print("test")
+                    gpe_form.oldPicture = group.picture
+                    if gpe_form.oldPicture != 'picture/gdefault.gif':
+                        gpe_form.oldPicture.delete()
+                if gpe_form.is_valid():
+                    gpe_form.save()
+                    context['success_msg'] = 'Gruppendaten wurden erfolgreich aktualisiert.'
+                else:
+                    # return errors if GroupProfileEditForm is not valid
+                    context['error_msg'] = gpe_form.errors
+                context['gpeForm'] = gpe_form
 
-    # return information to render settings.html
-    return render(request, 'settings.html', context)
+        # return information to render settings.html
+        return render(request, 'settings.html', context)
