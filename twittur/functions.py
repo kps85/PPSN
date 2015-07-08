@@ -71,6 +71,13 @@ def get_context(request, page=None, user=None):
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
     follow_list = user_profile.follow.all()
+    # set fav list, order by date of last message
+    follow_sb_list = []
+    messages = Message.objects.filter(user__in=follow_list).order_by('-date').values('user')
+    for item in messages:
+        user = User.objects.get(pk=item['user'])
+        if user not in follow_sb_list:
+            follow_sb_list.append(user)
 
     # generate URL for API
     location = reverse("twittur:get_notification")
@@ -89,7 +96,7 @@ def get_context(request, page=None, user=None):
         'userProfile': user_profile,
         'verifyHash': user_profile.verifyHash,
         'follow_list': follow_list,
-        'follow_sb_list': sorted(follow_list, key=lambda x: random.random())[:5],
+        'follow_sb_list': follow_sb_list[:5],
         'group_sb_list': group_sb_list,
         'hot_list': Hashtag.objects.annotate(
             hashtag_count=Count('hashtags__hashtags__name')
