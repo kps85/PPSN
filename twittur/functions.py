@@ -75,9 +75,9 @@ def get_context(request, page=None, user=None):
     follow_sb_list = []
     messages = Message.objects.filter(user__in=follow_list).order_by('-date').values('user')
     for item in messages:
-        user = User.objects.get(pk=item['user'])
-        if user not in follow_sb_list:
-            follow_sb_list.append(user)
+        usr = User.objects.get(pk=item['user'])
+        if usr not in follow_sb_list:
+            follow_sb_list.append(usr)
 
     # generate URL for API
     location = reverse("twittur:get_notification")
@@ -379,6 +379,8 @@ def get_message_list(page, data):
     :param data: page specific data
     :return: unformatted message list
     """
+    print(page)
+    print(data)
 
     if page == 'index':
         db_message_list = Message.objects.filter(
