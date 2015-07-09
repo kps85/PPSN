@@ -67,7 +67,7 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
    - `python manage.py makemigrations`    
    - `python manage.py migrate`    
    - `python manage.py runserver`    
-08. Im Browser auf die Seite http://localhost:8000/twittur/install/ gehen
+08. Im Browser auf die Seite `http://localhost:8000/twittur/install/` gehen
 09. Ein gültiges Admin-Passwort und eine gültige TU Berlin E-Mail Adresse angeben und auf `Senden` klicken.
 10. Den Admin-Account über den Link, der per E-Mail an die angegebene Adresse geschickt wurde, aktivieren.
 11. **Herzlichen Glückwunsch, Sie können jetzt twittur verwenden!**
