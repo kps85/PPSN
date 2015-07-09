@@ -145,7 +145,6 @@ def msg_dialog(request):
         if request.POST['codename'] == 'message':
             msg_form = MessageForm(request.POST, request.FILES, user_id=request.user.id)
             if msg_form.is_valid():
-                print(request.POST['safety'])
                 if 'safety' in request.POST:
                     if request.POST['safety'][:1] == '&':
                         group = GroupProfile.objects.get(short__exact=request.POST['safety'][1:])
