@@ -111,6 +111,7 @@
             </div>
             <div class="modal-footer">
               <div class="visibility" title="Sichtbarkeit einstellen">
+              {{ request.user.userprofile.safety }}
               	<p class="text-center">
                 	<span class="glyphicon glyphicon-eye-open"></span>
                 </p>
@@ -119,11 +120,11 @@
                     {% if item.0 and item != 'Public' %}
                       <optgroup label="Gruppe ausw&auml;hlen">
                         {% for grp in item %}
-                          <option value="&amp;{{ grp.short }}" {% if request.user.userprofile.safety == grp %} selected="selected"{% endif %}>{{ grp.short }}</option>
+                          <option value="&amp;{{ grp.short }}" {% if request.user.userprofile.safety == grp.name %} selected="selected"{% endif %}>{{ grp.short }}</option>
                         {% endfor %}
                       </optgroup>
                     {% else %}
-                      <option value="{% if item != 'Public' %}&amp;{{ item.short }}{% endif %}" {% if request.user.userprofile.safety == item %} selected="selected"{% endif %}>
+                      <option value="{% if item != 'Public' %}&amp;{{ item.short }}{% else %}Public{% endif %}" {% if request.user.userprofile.safety == item.name %} selected="selected"{% endif %}>
                       	{% if item != 'Public' %}{{ item.name }}{% else %}{{ item }}{% endif %}</option>
                     {% endif %}
                   {% endfor %}

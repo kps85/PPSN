@@ -732,7 +732,6 @@ def get_safety_levels(user, group=False):
             gl.append(group)
         safety_level.append(gl)
 
-    print(safety_level)
     return safety_level
 
 
