@@ -11,6 +11,7 @@ Group Views
 
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -111,7 +112,8 @@ def group_add_view(request):
                 group_profile_form.instance.password = make_password(group_profile_form.instance.password)
             group_profile_form.save()
             group_profile_form.instance.member.add(request.user)
-            return HttpResponseRedirect('/twittur/group/' + group_profile_form.instance.short)
+            url = reverse("twittur:group", kwargs={'groupshort': group_profile_form.instance.short})
+            return HttpResponseRedirect(url)
     else:
         group_profile_form = GroupProfileForm()
     context['groupProfileForm'] = group_profile_form
