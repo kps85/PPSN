@@ -55,21 +55,22 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 --
 
 ######**INSTALLATION**
-1. Python installieren. (https://www.python.org/doc/)  
+01. Python installieren. (https://www.python.org/doc/)  
    *Auf gesetzte Umgebungsvariabeln achten!*
-2. Django installieren (https://docs.djangoproject.com/en/1.8/intro/install/)
-3. Gepacktes Repository in gewünschten Ordner entpacken.  
+02. Django installieren (https://docs.djangoproject.com/en/1.8/intro/install/)
+03. Gepacktes Repository in gewünschten Ordner entpacken.  
    (ZIP: https://github.com/kps85/PPSN/archive/master.zip)
-4. Kommandozeile mit Administratorrechten ausführen.
-5. Pillow installieren. (Kommandozeile: `pip install pillow` )
-6. Mittels Kommandozeile in den Ordner des entpackten Projekts wechseln, in dem sich die `manage.py` befindet.
-7. Folgende Befehler in derselben Reihenfolge ausführen:  
+04. Kommandozeile mit Administratorrechten ausführen.
+05. Pillow installieren. (Kommandozeile: `pip install pillow` )
+06. Mittels Kommandozeile in den Ordner des entpackten Projekts wechseln, in dem sich die `manage.py` befindet.
+07. Folgende Befehler in derselben Reihenfolge ausführen:  
    - `python manage.py makemigrations`    
    - `python manage.py migrate`    
    - `python manage.py runserver`    
-8. Im Browser auf die Seite http://localhost:8000/twittur/install/ gehen
-9. Ein gültiges Admin-Passwort und eine gültige TU Berlin E-Mail Adresse angeben und auf `Senden` klicken.
-10. **Herzlichen Glückwunsch, Sie können jetzt twittur verwenden!**
+08. Im Browser auf die Seite http://localhost:8000/twittur/install/ gehen
+09. Ein gültiges Admin-Passwort und eine gültige TU Berlin E-Mail Adresse angeben und auf `Senden` klicken.
+10. Den Admin-Account über den Link, der per E-Mail an die angegebene Adresse geschickt wurde, aktivieren.
+11. **Herzlichen Glückwunsch, Sie können jetzt twittur verwenden!**
 
 *In der `views_api.py` können Studiengänge und Co im Dictionary `grp_list` angepasst werden.*
 
