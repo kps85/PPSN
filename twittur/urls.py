@@ -19,6 +19,7 @@ from . import functions, views, views_api, views_info, views_search, views_group
 urlpatterns = [
     # views_general
     url(r'^$', views.index_view, name='index'),
+    url(r'^install/$', views_api.install_view, name='install'),
     url(r'^login/$', views.login_view, name='login'),
     url(r'^login/pleaseVerify', views.please_verify_view, name='pleaseVerify'),
     url(r'^settings/$', views.profile_settings_view, name='settings'),

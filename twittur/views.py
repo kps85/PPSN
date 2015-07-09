@@ -24,10 +24,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from .models import GroupProfile, Hashtag, Message, Nav, Notification, UserProfile
+from .models import GroupProfile, Hashtag, Message, Notification, UserProfile
 from .forms import UserForm, UserDataForm
 from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
-    verification_mail, get_notification
+    verification_mail
 
 
 # Page: "Startseite"
@@ -37,6 +37,9 @@ def index_view(request):
     :param request:
     :return: rendered HTML in template 'index.html'
     """
+
+    if len(User.objects.all()) == 0:
+        return HttpResponseRedirect('/twittur/install/')
 
     if not request.user.is_authenticated():             # check if user is logged in
         return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
