@@ -262,10 +262,10 @@
       {% endfor %}
     {% endif %}
 
-    {% if show_groups and group_sb_list %}
+    {% if show_groups and group_list %}
     <ul class="post memberList">
         <li class="clearfix"><b>Meine Gruppen:</b></li>
-      {% for group in group_sb_list %}
+      {% for group in group_list %}
           {% if group.joinable %}
         <li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)
         {% if group.joinable and group.admin != request.user %}

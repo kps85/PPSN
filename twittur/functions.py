@@ -123,6 +123,7 @@ def get_context(request, page=None, user=None):
         'verifyHash': user_profile.verifyHash,
         'follow_list': follow_list,
         'follow_sb_list': follow_sb_list[:5],
+        'group_list': group_list,
         'group_sb_list': group_sb_list[:5],
         'hot_list': hot_list[:5],
 
