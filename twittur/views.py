@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 """
--*- coding: utf-8 -*-
 @package twittur
 @author twittur-Team (Lilia B., Ming C., William C., Karl S., Thomas T., Steffen Z.)
 Standard Views
