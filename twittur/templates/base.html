@@ -116,16 +116,15 @@
                 </p>
                 <select class="superDropdown" id="id_safety" name="safety" placeholder="{{ request.user.userprofile.safety }}" default="{{ request.user.userprofile.safety }}">
                 	{% for item in safetyLevels %}
-                  	{% if item.0|length > 0 %}
-                      {% if item.0|length > 1 %}
-                        <optgroup label="Gruppe ausw&auml;hlen">
-                          {% for grp in item %}
-                            <option value="&amp;{{ grp }}" {% if request.user.userprofile.safety == grp %} selected="selected"{% endif %}></option>
-                          {% endfor %}
-                        </optgroup>
-                      {% else %}
-                        <option value="{{ item }}" {% if request.user.userprofile.safety == item %} selected="selected"{% endif %}>{{ item }}</option>
-                      {% endif %}
+                    {% if item.0 and item != 'Public' %}
+                      <optgroup label="Gruppe ausw&auml;hlen">
+                        {% for grp in item %}
+                          <option value="&amp;{{ grp.short }}" {% if request.user.userprofile.safety == grp %} selected="selected"{% endif %}>{{ grp.short }}</option>
+                        {% endfor %}
+                      </optgroup>
+                    {% else %}
+                      <option value="{% if item != 'Public' %}&amp;{{ item.short }}{% endif %}" {% if request.user.userprofile.safety == item %} selected="selected"{% endif %}>
+                      	{% if item != 'Public' %}{{ item.name }}{% else %}{{ item }}{% endif %}</option>
                     {% endif %}
                   {% endfor %}
                 </select>

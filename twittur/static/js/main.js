@@ -587,7 +587,7 @@ function msgManagement() {
 		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {	
 			if ($(this).is(".postToGroup")) {
 				$("#newMessage select.superDropdown").val(symbol+target);
-				$("#newMessage").find("div.superDropdown p").text(symbol+target);
+				$("#newMessage").find("div.superDropdown > p").html(symbol+target+'<span class="glyphicon glyphicon-chevron-down pull-right"></span>');
 			} else {
 				var val = $("#id_text").val().replace(symbol + target + " ", '');
 				$("#newMessage").find("textarea").val(symbol + target + " " + val);	
@@ -709,7 +709,7 @@ function msgManagement() {
 function loadMore() {	
 	if ($("#body_index").length > 0 || $("#body_profile").length > 0 || $("#body_group").length > 0 || 
 			$("#body_hashtag").length > 0 || $("#body_search").length > 0) {
-		$(".load_more").unbind("click").click(function(e) {
+		$(".load_more").click(function(e) {
 			var url = $(this).attr("data-hint");
 			var info = {
 				page: $(this).attr("data-page"),
@@ -774,7 +774,7 @@ function loadMore() {
 			});
 			($(".notification.panel").length > count) ? $(".load_more").removeClass("hidden") : $(".load_more").addClass("hidden");
 		}
-		$(".load_more").unbind("click").click(function(e) {
+		$(".load_more").click(function(e) {
 			var gIcon = $(this).find("span");
 			gIcon.toggleClass("glyphicon-refresh glyphicon-time");
       setNtfcLength(true);

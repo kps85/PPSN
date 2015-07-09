@@ -40,6 +40,7 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.html import mark_safe
 
 from .models import FAQ, GroupProfile, Hashtag, Message, Nav, Notification, User, UserProfile
 from .forms import MessageForm
@@ -67,10 +68,13 @@ def get_context(request, page=None, user=None):
     """
 
     user_profile = UserProfile.objects.get(userprofile=request.user)
-    group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     follow_list = user_profile.follow.all()
+    # group_super_list is to hide default groups from sidebar // DISABLED for the moment
+    # group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_list = GroupProfile.objects.filter(
-        Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
+        Q(member__exact=request.user)
+        # uncomment this and group_super_list to hide default groups from sidebar
+        # & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
 
     # collect hashtags, count them and order them by count reversed
@@ -142,6 +146,7 @@ def msg_dialog(request):
         if request.POST['codename'] == 'message':
             msg_form = MessageForm(request.POST, request.FILES, user_id=request.user.id)
             if msg_form.is_valid():
+                print(request.POST['safety'])
                 if 'safety' in request.POST:
                     if request.POST['safety'][:1] == '&':
                         group = GroupProfile.objects.get(short__exact=request.POST['safety'][1:])
@@ -400,7 +405,10 @@ def get_message_list(data):
               | Q(attags=data))) & Q(comment=None)
         ).order_by('-date')
     elif page == 'group':
-        db_message_list = Message.objects.filter(Q(group=data) & Q(comment=None)).order_by('-date')
+        grp = GroupProfile.objects.get(name=data)
+        db_message_list = Message.objects.filter(
+            Q(group=grp.id) & Q(comment=None)
+        ).order_by('-date')
     elif page == 'profile':
         db_message_list = Message.objects.filter(
             (Q(user__exact=data) & (Q(group__in=usr_grps) | Q(group=None)))
@@ -712,9 +720,9 @@ def get_safety_levels(user, group=False):
     disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
     fak = GroupProfile.objects.get(name=disc.supergroup)
     uni = GroupProfile.objects.get(name=fak.supergroup)
-    safety_level.append(uni.name)
-    safety_level.append(fak.name)
-    safety_level.append(disc.name)
+    safety_level.append(uni)
+    safety_level.append(fak)
+    safety_level.append(disc)
     if group:
         group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
         group_list = GroupProfile.objects.filter(
@@ -722,8 +730,10 @@ def get_safety_levels(user, group=False):
         ).order_by('name')
         gl = []
         for group in group_list:
-            gl.append(group.short)
+            gl.append(group)
         safety_level.append(gl)
+
+    print(safety_level)
     return safety_level
 
 

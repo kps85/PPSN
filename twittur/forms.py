@@ -12,13 +12,14 @@ Forms
 - FAQForm               form to create a new FAQ entry
 """
 
-import datetime
 import re
 
 from django import forms
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
+from django.utils import timezone
+
 
 from .models import User, UserProfile, Message, FAQ, GroupProfile
 
@@ -265,7 +266,7 @@ class MessageForm(ModelForm):
     def save(self, commit=True, *args, **kwargs):
         instance = super(MessageForm, self).save(commit=False)
         instance.user = User.objects.get(pk=self.user_id)
-        instance.date = datetime.datetime.now()
+        instance.date = timezone.now()
         if commit:
             instance.save()
         return instance
