@@ -77,7 +77,7 @@ def login_view(request):
     message_list = Message.objects.filter(Q(comment=None) & Q(attags=None) & Q(group=None)).order_by('-date')
     hashtag_list = Hashtag.objects.annotate(hashtag_count=Count('hashtags__hashtags__name')).order_by('-hashtag_count')
     context = {'active_page': 'ftu',
-               'message_list': message_list, 'hashtag_list': hashtag_list, 'discList': get_disciplines()}
+               'message_list': message_list[:10], 'hashtag_list': hashtag_list, 'discList': get_disciplines()}
 
     # if user tries to log in
     if request.method == "GET":
