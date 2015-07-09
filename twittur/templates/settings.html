@@ -188,7 +188,7 @@
           <label class="control-label" for="id_safetyLevel">Standard-Sicherheitsstufe</label>
           <select class="form-control" id="id_safetyLevel" name="safety">
             {% for level in safetyLevelList %}
-              <option value="{{ level }}"{% if level == user.userprofile.safety %} selected="selected"{% endif %}>{{ level }}</option>
+              <option value="{% if level != 'Public' %}{{ level.name }}{% else %}Public{% endif %}"{% if level.name == user.userprofile.safety %} selected="selected"{% endif %}>{% if level != 'Public' %}{{ level.name }}{% else %}Public{% endif %}</option>
             {% endfor %}
           </select>
       </div>
