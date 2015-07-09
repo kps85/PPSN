@@ -1,9 +1,9 @@
 {% include 'header.html' %}
 <div class="width">
     <div class="bird">404</div>
-    <h1>Der frühe Vogel fängt den Wurm.</h1>
-    <p>Naja, normalerweise jedenfalls. Diesmal hat es nicht geklappt. Was du jetzt tun kannst:</p>
-    <a href="{% url 'twittur:index' %}">Zurück zur Startseite gehen</a>
+    <h1>Der fr&uuml;he Vogel f&auml;ngt den Wurm.</h1>
+    <p>Naja, normalerweise jedenfalls. Diesmal hat es nicht geklappt. Was Sie jetzt machen k&ouml;nnen:</p>
+    <a href="{% url 'twittur:index' %}">Zur&uuml;ck zur Startseite gehen</a>
     {% if error_type and error_site %}
         <form action="{% url 'twittur:support' %}" method="GET" >
             <input name="error_type" type="hidden" value="{{ error_type }}" />

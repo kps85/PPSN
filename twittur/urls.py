@@ -10,6 +10,7 @@ URLs
 - function_urls     simple interface to return further information
 """
 
+
 from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
 

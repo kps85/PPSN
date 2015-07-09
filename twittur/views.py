@@ -11,7 +11,7 @@ Standard Views
 - NotificationView:     page to show notifications
 """
 
-import random
+
 import re
 
 from django.contrib import auth
@@ -53,7 +53,7 @@ def index_view(request):
         if 'list_end' in request.POST:
             context['list_end'] = request.POST['list_end']
     elif request.method == 'GET' and 'search_input' in request.GET:
-        context['error_msg'] = {'error_search': 'Kein Suchbegriff eingegeben!'}
+        context['error_msg'] = {'error_search': 'Geben Sie einen Suchbegriff ein!'}
 
     # Messages
     messages = get_messages(data={'page': 'index', 'data': context['user'],
@@ -90,7 +90,7 @@ def login_view(request):
                     auth.login(request, user)
                     return HttpResponseRedirect('/twittur/')
                 else:
-                    context['error_login'] = "Dein Account wurde noch nicht verifiziert!"
+                    context['error_login'] = "Ihr Account wurde noch nicht verifiziert!"
             else:
                 context['error_login'] = "Ups, Username oder Passwort falsch."
             return render(request, 'ftu.html', context)
@@ -110,26 +110,27 @@ def login_view(request):
                     password = pw_generator(10)
                     message = "Hallo!\n" \
                               "\n" \
-                              "Du hast ein neues Passwort fuer deinen Account bei twittur beantragt.\n" \
+                              "Sie haben ein neues Passwort fuer Ihren Account bei twittur beantragt.\n" \
                               "\n" \
-                              "Dein neues Passwort lautet: " + password + "\n" \
+                              "Ihr neues Passwort lautet: " + password + "\n" \
                               "\n" \
-                              "Bitte aendere Dein Passwort schnellstmoeglich, indem Du dich mit dem oben genannten " \
-                              "Passwort einloggst und unter Einstellungen ein neues Passwort festlegst.\n" \
+                              "Bitte aendern Sie Ihr Passwort schnellstmoeglich, indem Sie sich mit dem oben " \
+                              "genannten Passwort einloggen und unter Einstellungen ein neues Passwort festlegen.\n" \
                               "\n" \
-                              "Wir freuen uns auf Deinen Besuch!\n" \
+                              "Wir freuen uns auf Ihren Besuch!\n" \
                               "\n" \
                               "Mit freundlichen Gruessen,\n" \
-                              "Dein twittur Team!"
-                    send_mail("PW Reset", message, "twittur.sn@gmail.com", [request.POST['pwResetMail']])
+                              "Ihr twittur Team!"
+                    send_mail("Neues Passwort beantragt", message, "twittur.sn@gmail.com",
+                              [request.POST['pwResetMail']])
                     user.set_password(password)
                     user.save()
-                    success_msg = 'Dein neues Passwort hast du per E-Mail erhalten!'
+                    success_msg = 'Ihr neues Passwort haben Sie per E-Mail erhalten!'
                 else:
                     error_msg['error_stud_number'] = "Die eingegebene Matrikel-Nummer stimmt nicht mit der " \
                                                      "Matrikel-Nummer &uuml;berein, die uns bekannt ist.<br>" \
-                                                     "Wenn Du Deine eingegebe Matrikel-Nummer vergessen hast, " \
-                                                     "kontaktiere ein twittur-Teammmitglied. (siehe " \
+                                                     "Wenn Sie Ihre eingegebe Matrikel-Nummer vergessen haben, " \
+                                                     "kontaktieren Sie ein twittur-Teammmitglied. (siehe " \
                                                      "<a href='/twittur/info'>Impressum</a>)"
             except ObjectDoesNotExist as e:
                 print(e)
@@ -186,7 +187,7 @@ def login_view(request):
             if len(academic_discipline) > 0:
                 data['academicDiscipline'] = academic_discipline
             else:
-                error_msg['error_reg_userprofile_ad'] = "Bitte Studiengang ausw&auml;hlen!"
+                error_msg['error_reg_userprofile_ad'] = "Bitte w&auml;hlen Sie einen Studiengang aus!"
 
         # context for html
         context['data'], context['errors'] = data, error_msg
@@ -209,7 +210,7 @@ def login_view(request):
         # Hash for verification
         new_hash = pw_generator(hashed=True)
         user_profile = UserProfile(userprofile=user, studentNumber=student_number,
-                                   academicDiscipline=academic_discipline, location="Irgendwo",
+                                   academicDiscipline=academic_discipline, location="",
                                    verifyHash=new_hash)
         verification_mail(request, user)
         user.save()
@@ -281,24 +282,24 @@ def profile_view(request, user):
             if p_user in context['follow_list']:
                 follow = Notification.objects.get(Q(user__exact=p_user) & Q(follower__exact=context['userProfile']))
                 follow.delete()
-                context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt nicht mehr.'
+                context['success_msg'] = 'Sie folgen ' + user.upper() + ' jetzt nicht mehr.'
             else:
                 note = request.user.username + ' folgt Dir jetzt!'
                 set_notification('follower', data={'user': p_user, 'follower': context['userProfile'], 'note': note})
-                context['success_msg'] = 'Du folgst ' + user.upper() + ' jetzt.'
+                context['success_msg'] = 'Sie folgen ' + user.upper() + ' jetzt.'
 
         elif 'entfollow' in data_dict:
             entfollow = User.objects.get(id=data_dict['entfollow'])
             follow = Notification.objects.get(Q(user__exact=entfollow) & Q(follower__exact=context['userProfile']))
             follow.delete()
-            context['success_msg'] = entfollow.username + " wird nicht mehr gefollowt (?) ."
+            context['success_msg'] = entfollow.username + " wird nicht mehr gefolgt."
 
         elif 'leaveGroup' in data_dict:
             group = GroupProfile.objects.get(id=data_dict['leaveGroup'])
             group.member.remove(request.user)
-            note = request.user.username + ' hat deine Gruppe verlassen.'
+            note = request.user.username + ' hat Ihre Gruppe verlassen.'
             set_notification('group', data={'group': group, 'member': group.admin, 'note': note})
-            context['success_msg'] = 'Ihr habt die Gruppe "' + group.name + '" verlassen.'
+            context['success_msg'] = 'Sie haben die Gruppe "' + group.name + '" verlassen.'
 
         context['follow_list'] = context['userProfile'].follow.all()
 
@@ -320,6 +321,7 @@ def profile_view(request, user):
         if 'delMessage' or 'ignoreMsg' not in request.POST:
             context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
+        print(e)
         context = get_context(request, '404', user=request.user)
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Profilseite'
@@ -420,7 +422,7 @@ def profile_settings_view(request):
                                 group.member.add(user)
                             group = group.supergroup
             except ObjectDoesNotExist as e:
-                print(e.__traceback__)
+                print(e)
                 pass
 
     # update current users information if changed

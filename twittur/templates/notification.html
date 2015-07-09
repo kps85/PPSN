@@ -10,9 +10,9 @@
 
 {% block content %}
 {% if new > 0 %}
-  <h2>Du hast {{ new }} neue Benachrichtigung:</h2>
+  <h2>Sie haben {{ new }} neue Benachrichtigung:</h2>
 {% else %}
-  <h2>Du hast keine neuen Benachrichtigungen.</h2>
+  <h2>Sie haben keine neuen Benachrichtigungen.</h2>
 {% endif %}
 
 {% if ntfc_list %}
@@ -22,7 +22,7 @@
         <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
           <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
           <strong>Neuer Follower</strong>:<small class="pull-right">{{ notification.date }}</small><br />
-          <span class="info">{{ notification.follower.userprofile.username }} folgt Dir jetzt!</span>
+          <span class="info">{{ notification.follower.userprofile.username }} folgt Ihnen jetzt!</span>
         </div>
       </a>
     {% elif notification.message and not notification.comment %}
@@ -30,7 +30,7 @@
         <div class="notification {% if boolean == 'False' %}alert alert-success{% else %}panel panel-default hidden{% endif %}" role="alert">
           <span class="glyphicon glyphicon-{% if boolean == 'False' %}alert{% else %}ok{% endif %}" aria-hidden="true"></span>
           <strong>Neue Nachricht</strong>: <small class="pull-right">{{ notification.message.date }}</small><br />
-          <span class="info">{{ notification.message.user.username }} hat Dich in einer Nachricht erw&auml;hnt!</span>
+          <span class="info">{{ notification.message.user.username }} hat Sie in einer Nachricht erw&auml;hnt!</span>
         </div>
       </a>
     {% elif notification.group %}

@@ -9,7 +9,6 @@ Group Views
 - GroupSettingsView:    view for group settings
 """
 
-import re
 
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ObjectDoesNotExist
@@ -80,6 +79,7 @@ def group_view(request, groupshort):
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
         context['list_end'] = messages['list_end']
     except ObjectDoesNotExist as e:
+        print(e)
         context = get_context(request, '404', user=request.user)
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Gruppenseite'
@@ -156,11 +156,11 @@ def djlgroup(request, groupshort):
                         return group_view(request, groupshort)
                 else:
                     group.member.add(request.user)
-                note = request.user.username + ' ist deiner Gruppe beigetreten.'
+                note = request.user.username + ' ist Ihrer Gruppe beigetreten.'
             # User exists -> delete him from group
             else:
                 group.member.remove(request.user)
-                note = request.user.username + ' hat deine Gruppe verlassen.'
+                note = request.user.username + ' hat Ihre Gruppe verlassen.'
             set_notification('group', data={'group': group, 'member': admin, 'note': note})
 
         return HttpResponseRedirect('/twittur/group/'+groupshort)
@@ -221,7 +221,6 @@ def group_settings_view(request, groupshort):
                 # if picture has changed, delete old picture
                 # do not, if old picture was default picture
                 if 'picture' in request.FILES or 'picture-clear' in request.POST:
-                    print("test")
                     gpe_form.oldPicture = group.picture
                     if gpe_form.oldPicture != 'picture/gdefault.gif':
                         gpe_form.oldPicture.delete()

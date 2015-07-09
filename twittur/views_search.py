@@ -7,6 +7,7 @@ Search Views
 - HashtagView:  a view for a single topic
 """
 
+
 import copy
 
 from django.contrib.auth.models import User
@@ -17,7 +18,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .functions import dbm_to_m, elim_dups, get_context, get_messages
 from .models import GroupProfile, Hashtag, Message
-from .views import index_view, profile_view
+from .views import profile_view
 from .views_group import group_view
 
 
@@ -45,7 +46,7 @@ def search_view(request):
     context['search_input'] = ' '.join(search_input)
         
     if search_input is None or search_input[0] == "":
-        context['no_input'] = 'So geht das aber nicht! Geben sie ein Wort ein!'
+        context['no_input'] = 'So geht das aber nicht! Geben Sie ein Wort ein!'
         return render(request, 'search.html', context)
 
     # filter all messages contain the word  or all users contain the word
@@ -90,10 +91,7 @@ def search_view(request):
                     pass
                 else:
                     return profile_view(request, user.username)
-        #if term[0] in "@, &, #":
-        #    term = term[1:]
 
-        print (len(term))
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
         for message in messages_list:
             copy_message = copy.copy(message[1])
@@ -138,7 +136,6 @@ def search_view(request):
     user_list, hashtag_list = elim_dups(user_list), elim_dups(hashtag_list)
     group_list, message_list = elim_dups(group_list), elim_dups(message_list)
     message_list.sort(key=lambda x: x[0].date, reverse=True)
-    print(hashtag_list)
 
     context['user_list'], context['user_list_length'] = user_list, len(user_list)
     context['group_list'], context['group_list_length'] = group_list, len(group_list)

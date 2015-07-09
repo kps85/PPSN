@@ -20,6 +20,11 @@ from .models import GroupProfile, Message, User, UserProfile
 
 
 def install_view(request):
+    """
+    creates a database for the twittur system
+    :param request:
+    :return:
+    """
 
     if len(User.objects.all()) != 0:
         return HttpResponseRedirect('/twittur/login/')
@@ -79,7 +84,6 @@ def install_view(request):
             if User.objects.filter(email=email).exists():
                 error_msg = "Ein Benutzer mit dieser E-Mail Adresse existiert bereits!"
 
-
         # error?
         if error_msg:
             context['error_msg'] = error_msg
@@ -98,6 +102,7 @@ def install_view(request):
         user.save()
         user_profile.save()
 
+        group, sub_group, sub_sub_group = None, None, None
         for grp in grp_list:
             name, short = grp['Name'], grp['Short']
             if not GroupProfile.objects.filter(short=short).exists():
@@ -136,6 +141,11 @@ def install_view(request):
 
 
 def message_get(request):
+    """
+    returns all public messages of a specific user
+    :param request:
+    :return:
+    """
 
     p_user = User.objects.get(username=request.GET['user'].lower())
     p_hash = p_user.userprofile.verifyHash
@@ -153,7 +163,13 @@ def message_get(request):
 
 
 def message_set(request, user, hash_item):
-
+    """
+    saves a message sent to this API
+    :param request:
+    :param user:
+    :param hash_item:
+    :return:
+    """
     p_user = User.objects.get(username=user.lower())
     p_hash = p_user.userprofile.verifyHash
 
@@ -165,4 +181,3 @@ def message_set(request, user, hash_item):
         return HttpResponse("Nachricht erfolgreich gesendet!")
     else:
         return HttpResponse("Nachricht nicht gesendet!")
-

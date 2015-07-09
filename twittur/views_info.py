@@ -94,11 +94,14 @@ def support_view(request):
         # context['error_type'] = request.GET.get('error_type')
         # context['error_object'] = request.GET.get('error_object')
         if context['error_site'] == 'Profilseite':
-            context['error_text'] = 'Der User '+request.GET.get('error_object') + ' existiert nicht. ('+request.GET.get('error_type') + ')'
+            context['error_text'] = 'Der User '+request.GET.get('error_object') \
+                                    + ' existiert nicht. ('+request.GET.get('error_type') + ')'
         elif context['error_site'] == 'Gruppenseite':
-            context['error_text'] = 'Die Gruppe '+request.GET.get('error_object') + ' existiert nicht. ('+request.GET.get('error_type') + ')'
+            context['error_text'] = 'Die Gruppe '+request.GET.get('error_object') \
+                                    + ' existiert nicht. ('+request.GET.get('error_type') + ')'
         elif context['error_site'] == 'Nachrichtenanzeige':
-             context['error_text'] = 'Die Nachricht ('+request.GET.get('error_object') + ') wird nicht angezeigt. ('+request.GET.get('error_type') + ')'
+            context['error_text'] = 'Die Nachricht ('+request.GET.get('error_object') \
+                                    + ') wird nicht angezeigt. ('+request.GET.get('error_type') + ')'
         context['hash'] = 'kontaktformular'
 
     if request.method == 'POST':

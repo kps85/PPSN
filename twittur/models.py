@@ -78,6 +78,7 @@ class Message(models.Model):
     def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
+
 class UserProfile(models.Model):
     """ the user profile contains additional information for a user """
     userprofile = models.OneToOneField(User)
@@ -85,17 +86,18 @@ class UserProfile(models.Model):
 
     follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='Notification')
     studentNumber = models.CharField(max_length=6, default='000000',
-                                     help_text='&Uuml;ber deine Matrikel-Nummer kannst Du eindeutig als Student der '
-                                               'TU Berlin identifiziert werden.<br>(only numbers, max. 6 chars)')
+                                     help_text='&Uuml;ber Ihre Matrikel-Nummer k&ouml;nnen Sie eindeutig als Student'
+                                               ' der TU Berlin identifiziert werden.<br>(muss aus 6 Ziffern bestehen)')
     academicDiscipline = models.CharField(max_length=200,
-                                          help_text='&Uuml;ber deinen Studiengang wirst Du '
+                                          help_text='&Uuml;ber Ihren Studiengang werden Sie '
                                                     'bestimmten Gruppen zugeordnet.')
     picture = models.ImageField(verbose_name='Profilbild', upload_to='picture/', blank=True,
                                 height_field=None, width_field=None, default='picture/default.gif',
-                                help_text='Dieses Bild wird auf Deinem Profil (gro&szlig;) '
-                                          'und in deinen Nachrichten (klein) angezeigt.')
+                                help_text='Dieses Bild wird auf Ihrem Profil (gro&szlig;) '
+                                          'und in Ihren Nachrichten (klein) angezeigt.')
 
-    location = models.CharField(max_length=200, default='None', help_text='Lass Deine KommilitonInnen Dich finden!')
+    location = models.CharField(max_length=200, default='None',
+                                help_text='Lassen Sie Ihre KommillitonInnen Sie finden!')
     ignoreM = models.ManyToManyField(Message, related_name='ignoreM', blank=True)
     ignoreU = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='ignoreU', blank=True)
     ignore = models.BooleanField(default=False)

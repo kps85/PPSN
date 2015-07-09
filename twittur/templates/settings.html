@@ -93,11 +93,11 @@
             {{ userForm.password }}
           {% endif %}  
           <p class="help-block">
-          	{% if group %}Das Gruppenpasswort{% else %}Dein Passwort{% endif %} darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!
+          	{% if group %}Das Gruppenpasswort{% else %}Ihr Passwort{% endif %} darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!
           </p>
         </div>    
         <div class="col-xs-12 col-sm-6 form-group pull-right">
-          <label class="control-label" for="id_ack_password">Passwort bestätigen</label>
+          <label class="control-label" for="id_ack_password">Passwort best&auml;tigen</label>
           {% if group %}              
             {{ gpeForm.ack_password }}
           {% else %}  
@@ -158,7 +158,7 @@
               {% for fac, ad in list %}
                 <optgroup label="{{ fac }}">
                 {% for disc in ad %}
-                  <option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected{% endif %}>{{ disc }}</option>
+                  <option value="{{ disc }}"{% if disc == user.userprofile.academicdiscipline %} selected{% endif %}>{{ disc }}</option>
                 {% endfor %}
                 </optgroup>
               {% endfor %}
@@ -195,7 +195,7 @@
       <div class="col-xs-12 form-group">
           <label class="control-label" for="verifyHash">API Key</label>
           <input class="form-control" id="id_verifyHash" name="verifyHash" type="text" value="{{ user.userprofile.verifyHash }}" disabled="disabled" />
-          <p class="help-block">Diesen Key ben&ouml;tigst Du f&uuml;r unsere APIs.</p>
+          <p class="help-block">Diesen Key ben&ouml;tigen Sie f&uuml;r unsere APIs.</p>
       </div>             
     </div>
     {% endif %}
@@ -205,14 +205,14 @@
       
       <div class="col-xs-12 form-group text-center">
           <p class="help-block">
-            &Uuml;ber diesen Button kannst Du {% if group %}deine Gruppe{% else %}deinen Account{% endif %} vollst&auml;ndig von unserer Plattform entfernen. 
+            &Uuml;ber diesen Button k&ouml;nnen Sie {% if group %}Ihre Gruppe{% else %}Ihren Account{% endif %} vollst&auml;ndig von unserer Plattform entfernen. 
             {% if group %}
               Alle Mitglieder werden aus der Gruppe entfernt und alle Nachrichten der Gruppe vom System gel&ouml;scht.                
             {% else %}
-              Deine Daten und Beitr&auml;ge, die im System gespeichert sind, werden gel&ouml;scht.
+              Ihre Daten und Beitr&auml;ge, die im System gespeichert sind, werden gel&ouml;scht.
             {% endif %}
-            Zur Best&auml;tigung der L&ouml;schung erh&auml;lst Du eine E-Mail an deine uns bekannte E-Mail Adresse.</p>
-          <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#{% if group %}delGrpModal{% else %}delAccModel{% endif %}" id="deleteButton">{% if group %}Gruppe{% else %}Account{% endif %} löschen</button>
+            Zur Best&auml;tigung der L&ouml;schung erhalten Sie eine E-Mail an Ihre uns bekannte E-Mail Adresse.</p>
+          <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#{% if group %}delGrpModal{% else %}delAccModel{% endif %}" id="deleteButton">{% if group %}Gruppe{% else %}Account{% endif %} l&ouml;schen</button>
       </div>        
     </div>
         
@@ -230,7 +230,7 @@
           <h4 class="modal-title" id="myModalLabel">{% if group %}Gruppe{% else %}Account{% endif %} l&ouml;schen?</h4>
         </div>
         <div class="modal-body">
-          Willst Du {% if group %}deine Gruppe{% else %}deinen Account{% endif %} wirklich l&ouml;schen?
+          Wollen Sie {% if group %}Ihre Gruppe{% else %}Ihren Account{% endif %} wirklich l&ouml;schen?
         </div>
         <div class="modal-footer">
           {% if group %}

@@ -7,7 +7,7 @@
       <h3>Beliebte Themen</h3>
       {% for hashtag in hot_list %}
       <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-        <a class="ullink {{ hashtag.name|slugify }}" href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname für die Gruppe rein!!! -->
+        <a class="ullink {{ hashtag.name|slugify }}" href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname f&uuml;r die Gruppe rein!!! -->
       {% endfor %} 
     </ul>
   {% endif %}  
@@ -31,12 +31,12 @@
   <ul class="groups">
     {% if group_sb_list %}
       <h3>Meine Gruppen</h3>
-    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup' %}"> Gruppe hinzufügen<span class="glyphicon glyphicon-plus pull-right"></span></a>
+    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup' %}"> Gruppe hinzuf&uuml;gen<span class="glyphicon glyphicon-plus pull-right"></span></a>
       {% for group in group_sb_list %}
         <li><a class="ullink {{ group.short }}" href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>
       {% endfor %}
     {% else %}
-    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup'  %}"> Gruppe hinzufügen<span class="glyphicon glyphicon-plus pull-right"></span></a>
+    	<li><a class="ullink clearfix" href="{% url 'twittur:addgroup'  %}"> Gruppe hinzuf&uuml;gen<span class="glyphicon glyphicon-plus pull-right"></span></a>
     {% endif %}
       <form action="{% url 'twittur:profile' user=user %}" method="get">
 	      <input name="group" type="hidden" value="true" />
@@ -50,7 +50,7 @@
 {% elif active_page == 'info' %}  
 
   <ul>
-    <li><h3 class="text-uppercase"> Über uns </h3></li>
+    <li><h3 class="text-uppercase"> &Uuml;ber uns </h3></li>
     <li><a href="{% url 'twittur:info' %}#impressum" class="menuCloser ullink impressum">Impressum</a></li>
     <li><a href="{% url 'twittur:info' %}#team" class="menuCloser ullink team">Das Team</a></li>
     <li><a href="{% url 'twittur:info' %}#projekt" class="menuCloser ullink projekt">Unser Projekt</a></li>

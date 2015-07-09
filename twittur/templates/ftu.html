@@ -5,8 +5,8 @@
 <div class="column column-left">
   <div class="headline"> twit<span>tu</span>r ist das soziale Netzwerk f&uuml;r die TU Berlin. </div>
   <div class="subline">
-    <p>Es hilft Dir, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Du den &Uuml;berblick verlierst. </p>
-    <p>Erstelle gleich ein Konto und folge Nachrichten, die Dich interessieren. Oder sieh dir an, was die Nutzer von twit<span>tu</span>r der <a href="#ftuPosts">Welt</a> mitzuteilen haben.</p>
+    <p>Es hilft Ihnen, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Sie den &Uuml;berblick verlieren. </p>
+    <p>Erstellen Sie gleich ein Konto und folgen Nachrichten, die Sie interessieren. Oder sehen Sie sich an, was die Nutzer von twit<span>tu</span>r der <a href="#ftuPosts">Welt</a> mitzuteilen haben.</p>
   </div>
 </div>
 <div class="column column-right">
@@ -25,7 +25,7 @@
       <p></p>
       {% endif %}
       <input type="submit" value="Los geht's!" name="login" />
-      <input type="reset" value="Zurücksetzen" />
+      <input type="reset" value="Zur&uuml;cksetzen" />
       <a class="forgot" href="javascript:;">Passwort vergessen?</a>
     </form>
   </div>
@@ -42,11 +42,11 @@
   <form method="POST" action="{% url 'twittur:login' %}">
 	{% csrf_token %}
     <input id="id_password_reset" name="password_reset" type="hidden" />
-    <input id="id_pwRestMail" name="pwResetMail" placeholder="Deine Mailadresse" type="text" />
+    <input id="id_pwRestMail" name="pwResetMail" placeholder="Ihre Mailadresse" type="text" />
     {% if errors.error_not_registered %}
     	<p><font color="#FF0000">{{ errors.error_not_registered|safe }}</font></p>
     {% endif %}
-    <input id="id_pwResetStudNumb" name="pwResetStudNumb" pattern="[0-9]{6}" placeholder="Deine Matrikel-Nummer zur Sicherheit" type="text" />
+    <input id="id_pwResetStudNumb" name="pwResetStudNumb" pattern="[0-9]{6}" placeholder="Ihre Matrikel-Nummer zur Sicherheit" type="text" />
     {% if errors.error_number_not_identic %}
     	<p><font color="#FF0000">{{ errors.error_number_not_identic|safe }}</font></p>
     {% endif %}
@@ -63,12 +63,12 @@
 <form method="POST" action="">
   {% csrf_token %}
   <div class="column column-left">
-    <h4>Deine Login Daten</h4>
+    <h4>Ihre Login Daten</h4>
     <input type="text" name="name" placeholder="Username *" id="name" {% if data.username %} value="{{ data.username }}"{% endif %}/>
     <br />
     <input type="password" name="password" placeholder="Passwort *" id="password" />
     <br />
-    <input type="password" name="ack_password" placeholder="Passwort bestätigen *" id="ack_password" />
+    <input type="password" name="ack_password" placeholder="Passwort best&auml;tigen *" id="ack_password" />
     <br />
     {% if errors.error_reg_user_p or errors.error_reg_user_n %}    
       {% if errors.error_reg_user_n %}
@@ -79,7 +79,7 @@
       {% endif %}
     {% endif %}
     <br />
-    <h4>Deine persönliche Daten</h4>
+    <h4>Ihre pers&ouml;nlichen Daten</h4>
     <input type="text" name="first_name" placeholder="Vorname" id="first_name" {% if data.first_name %} value="{{ data.first_name }}"{% endif %}/>
     <br />
     <input type="text" name="last_name" placeholder="Nachname" id="last_name" {% if data.last_name %} value="{{ data.last_name }}"{% endif %}/>
@@ -91,7 +91,7 @@
     {% endif %}
   </div>
   <div class="column column-right">
-    <h4>Deine T&auml;tigkeit an der TU Berlin</h4>              
+    <h4>Ihre T&auml;tigkeit an der TU Berlin</h4>              
     {% if discList %}
       {% for list in discList %}
         <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">

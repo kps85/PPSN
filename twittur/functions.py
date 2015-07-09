@@ -36,7 +36,7 @@ from django.contrib import auth
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -68,17 +68,11 @@ def get_context(request, page=None, user=None):
 
     user_profile = UserProfile.objects.get(userprofile=request.user)
     group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
-    group_sb_list = GroupProfile.objects.filter(
+    follow_list = user_profile.follow.all()
+    group_list = GroupProfile.objects.filter(
         Q(member__exact=request.user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
-    follow_list = user_profile.follow.all()
-    # set fav list, order by date of last message
-    follow_sb_list = []
-    messages = Message.objects.filter(user__in=follow_list).order_by('-date').values('user')
-    for item in messages:
-        usr = User.objects.get(pk=item['user'])
-        if usr not in follow_sb_list:
-            follow_sb_list.append(usr)
+
     # collect hashtags, count them and order them by count reversed
     hashtag_count, hot_list = {}, []
     hashtag_list = Message.objects.all().exclude(hashtags=None).values("hashtags")
@@ -91,6 +85,22 @@ def get_context(request, page=None, user=None):
     for htc in hashtag_count_list[:5]:
         ht = Hashtag.objects.get(pk=htc[0])
         hot_list.append(ht)
+
+    # set fav list, order by date of last message
+    follow_sb_list = []
+    messages = Message.objects.filter(user__in=follow_list).order_by('-date').values('user')
+    for item in messages:
+        usr = User.objects.get(pk=item['user'])
+        if usr not in follow_sb_list:
+            follow_sb_list.append(usr)
+
+    # set group list, order by date of last message
+    group_sb_list = []
+    messages = Message.objects.filter(group__in=group_list).order_by('-date').values('group')
+    for item in messages:
+        grp = GroupProfile.objects.get(pk=item['group'])
+        if grp not in group_sb_list:
+            group_sb_list.append(grp)
         
     # generate URL for API
     location = reverse("twittur:get_notification")
@@ -110,7 +120,7 @@ def get_context(request, page=None, user=None):
         'verifyHash': user_profile.verifyHash,
         'follow_list': follow_list,
         'follow_sb_list': follow_sb_list[:5],
-        'group_sb_list': group_sb_list,
+        'group_sb_list': group_sb_list[:5],
         'hot_list': hot_list[:5],
 
         'list_end': 5,
@@ -153,7 +163,7 @@ def msg_dialog(request):
                 msg_to_db(msg_form.instance)
                 msg_form.save()                 # save this shit for the next step
                 if message.user != request.user:
-                    note = request.user.username + ' hat auf deine Nachricht geantwortet.'
+                    note = request.user.username + ' hat auf Ihre Nachricht geantwortet.'
                     set_notification('comment', data={'user': message.user, 'message': msg_form.instance, 'note': note})
 
     msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()}, user_id=request.user.id)
@@ -262,23 +272,13 @@ def dbm_to_m(message):
         for word in message.text.split():
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
             if word[0] == "#" and (word not in urls):
-                try:
-                    ha = Hashtag.objects.get(name=word[1:])
-                except ObjectDoesNotExist as e:
-                    pass
-                else:
-                    '''
-                    href = '<a href="/twittur/hashtag/' + word[1:] + '">' + word + '</a>'
-                    print href
-                    message.text = message.text.replace(word, href)
-                    '''
+                if Hashtag.objects.filter(name=word[1:]).exists():
                     href = r'<a href="/twittur/hashtag/%s">%s</a>' % (word[1:], word)
                     message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
 
             # now find in text all words start with "@". Its important to find this user in database.
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
-            print(word[0] == "@" and word not in urls)
             if word[0] == "@" and word not in urls:
                 if User.objects.filter(username=word[1:]).exists()\
                         and User.objects.get(username=word[1:]) in attag_list:
@@ -386,7 +386,6 @@ def get_messages(data):
 def get_message_list(data):
     """
     get all of the messages for a specific page
-    :param page: page, where the message list will be displayed
     :param data: page specific data
     :return: unformatted message list
     """
@@ -530,7 +529,7 @@ def update(request):
             msg = Message.objects.get(pk=data_dict['id'])
             if msg.user in user_profile.ignoreU.all():
                 response = "<span class='glyphicon glyphicon-warning'></span>&nbsp;" \
-                           "Du musst " + msg.user.username + " erst entsperren. Besuche dazu sein " \
+                           "Sie m&uuml;ssen " + msg.user.username + " erst entsperren. Besuchen Sie dazu sein / ihr " \
                            "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
             else:
                 if msg in ignore_list:
@@ -611,17 +610,17 @@ def set_notification(what, data):
     elif what == 'message':
         ntfc = Notification(
             user=data['user'], message=data['message'],
-            note='Du wurdest in einer Nachricht erw&auml;hnt.'
+            note='Sie wurden in einer Nachricht erw&auml;hnt.'
         )
     elif what == 'comment':
         ntfc = Notification(user=data['user'], message=data['message'], comment=True, note=data['note'])
     elif what == 'group':
         if 'note' not in data:
-            data['note'] = 'Du wurdest aus der Gruppe entfernt.'
+            data['note'] = 'Sie wurden aus der Gruppe entfernt.'
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
     elif what == 'group_admin':
         if 'note' not in data:
-            data['note'] = 'Du wurdest in der Gruppe ' + data['group'].short + ' zum Admin bef&ouml;rdert.'
+            data['note'] = 'Sie wurden in der Gruppe ' + data['group'].short + ' zum Admin bef&ouml;rdert.'
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
 
     ntfc.save()
@@ -660,14 +659,7 @@ def get_notification(request):
     context['ntfc_list'] = ntfc_list
     return render(request, "notification_list.xml", context)
 
-'''
-def test_notification(request):
-    msg =  Message.objects.get(id=380)
-    user = request.user
-    
-    set_notification('message', data={'user': user, 'message': msg, 'note': "test"})
-    return render(request, '404.html')
-'''
+
 def create_abs_url(request, what, data):
     """
 
@@ -815,8 +807,8 @@ def verification_mail(request, user):
     
     url = request.build_absolute_uri(location)
     message = "Hallo @" + user.username + "!\n" \
-              "Dein Konto bei twittur wurde erstellt." \
-              "Bitte verwende den folgenden Link, um dein Konto zu aktivieren: \n\n" + url
+              "Ihr Konto bei twittur wurde erstellt." \
+              "Bitte verwenden Sie den folgenden Link, um ihr Konto zu aktivieren: \n\n" + url
     
     send_mail("Willkommen bei twittur", message, "twittur.sn@gmail.com", [user.email])
 
@@ -835,8 +827,8 @@ def verify(request, user, hash_item):
             login_user(request, p_user)
             return HttpResponseRedirect('/twittur/')
         else:
-            response = "Du bist schon aktiviert, Alter!"
+            response = "Ihr Account ist bereits aktiv!"
     else:
-        response = "Leider nein, leider gar nicht"
+        response = "Der angegebene Hash stimmt nicht mit dem des Benutzers &uuml;berein."
 
     return HttpResponse(response)
