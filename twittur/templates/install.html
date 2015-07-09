@@ -1,5 +1,5 @@
 {% include 'header.html' %}
-<header class="container text-center">
+<div class="container text-center">
   <div class="clearfix"><a class="title" href="{% url 'twittur:install' %}">twittur</a></div>
   <h3 class="clearfix text-uppercase">Installation</h3>
   <p class="help-block text-justify">
@@ -7,7 +7,7 @@
     <br>
     Zur Erstellung des Admin-Nutzers werden folgende Daten ben&ouml;tigt:
   </p>
-</header>
+</div>
 <div class="container">
   <form action="{% url 'twittur:install' %}" class="post" method="POST">
   {% csrf_token %}

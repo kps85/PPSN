@@ -39,9 +39,11 @@ urlpatterns = [
 
     # views_group
     url(r'^add/group$', views_group.group_add_view, name='addgroup'),
-    url(r'^group/(?P<groupshort>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)$', views_group.group_view, name='group'),
-    url(r'^group/(?P<groupshort>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/settings$', views_group.group_settings_view, name='group_settings'),
-    url(r'^group/(?P<groupshort>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/djln$', views_group.djlgroup, name='djlgroup'),  # delete, join, leave
+    url(r'^group/(?P<groupshort>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/$', views_group.group_view, name='group'),
+    url(r'^group/(?P<groupshort>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/settings$',
+        views_group.group_settings_view, name='group_settings'),
+    url(r'^group/(?P<groupshort>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/djln$',
+        views_group.djlgroup, name='djlgroup'),  # delete, join, leave
 
     # function_urls
     url(r'^get_notification/$', csrf_exempt(functions.get_notification), name='get_notification'),
@@ -51,7 +53,8 @@ urlpatterns = [
     url(r'^verify/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w\S+)/(?P<hash_item>\w\S+)$', functions.verify, name='verify'),
 
     # api_urls
-    url(r'^api/set/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/(?P<hash_item>\w+)$', csrf_exempt(views_api.message_set), name='message_set'),
+    url(r'^api/set/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/(?P<hash_item>\w+)$',
+        csrf_exempt(views_api.message_set), name='message_set'),
     url(r'^api/get$', csrf_exempt(views_api.message_get), name='message_get'),
 
     # error_urls
