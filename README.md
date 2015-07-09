@@ -54,6 +54,25 @@ Wirtschaftsinformatiker, Informatiker | Produkt-Anbindung, Tests | Komillitonen,
 
 --
 
+######**INSTALLATION**
+1. Python installieren. (https://www.python.org/doc/)  
+   *Auf gesetzte Umgebungsvariabeln achten!*
+2. Django installieren (https://docs.djangoproject.com/en/1.8/intro/install/)
+3. Gepacktes Repository in gewünschten Ordner entpacken.  
+   (ZIP: https://github.com/kps85/PPSN/archive/master.zip)
+4. Kommandozeile mit Administratorrechten ausführen.
+5. Pillow installieren. (Kommandozeile: pip install pillow)
+6. Mittels Kommandozeile in den Ordner des entpackten Projekts wechseln, in dem sich die manage.py befindet.
+7. Folgende Befehler in derselben Reihenfolge ausführen:  
+   'python manage.py makemigrations'  
+   'python manage.py migrate'  
+   'python manage.py runserver'  
+8. Im Browser auf die Seite http://localhost:8000/twittur/install/ gehen
+9. Ein gültiges Admin-Passwort und eine gültige TU Berlin E-Mail Adresse angeben und auf 'Senden' klicken.
+10. **Herzlichen Glückwunsch, Sie können jetzt twittur verwenden!**
+
+--
+
 <p align="center">
  <img src="https://github.com/kps85/PPSN/blob/master/twittur/static/img/cit_logo.jpg" alt="Complex and Distributed IT Systems" width="100">
 </p>
