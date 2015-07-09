@@ -581,7 +581,7 @@ function initVarious() {
 
 
 function msgManagement() {
-	$(".newMsg, .postToUser, .postToGroup").click(function(e) {
+	$(".newMsg, .postToUser, .postToGroup").unbind("click").click(function(e) {
 		var target = $(this).attr("data-hint");
 		var symbol = ($(this).is(".postToUser")) ? "@" : "&";
 		if ($(this).is(".postToUser") || $(this).is(".postToGroup")) {	
@@ -597,18 +597,18 @@ function msgManagement() {
 			$("#newMessage").find("textarea").focus();
 		}, 500);
   });
-	$(".showMsgEdit, .showCmtEdit, .hideMsgEdit, .hideCmtEdit").click(function(e) {
+	$(".showMsgEdit, .showCmtEdit, .hideMsgEdit, .hideCmtEdit").unbind("click").click(function(e) {
 		var id = $(this).attr("data-hint");
 		var togElements = ".showMsgEdit."+id+", .showCmtEdit."+id+", .postText."+id+", .postTextEdit."+id+", .cmtText."+id+", .cmtTextEdit."+id;
 		$(togElements).toggleClass("hidden");
   });  
 	  
-	$(".reply_link").click(function(e) {
+	$(".reply_link").unbind("click").click(function(e) {
     var data = $(this).attr("data-hint").split(" ");
 	  $("#newComment"+data[0]).find(".modal-title").html("Antwort an " + data[1] + " verfassen");
   });
 	
-	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton, .saveMsgEdit, .saveCmtEdit").click(function(e) {
+	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton, .saveMsgEdit, .saveCmtEdit").unbind("click").click(function(e) {
 		var hint = $(this).attr("data-hint").split(" ");
     var info = {
 			what: hint[0],
@@ -709,7 +709,7 @@ function msgManagement() {
 function loadMore() {	
 	if ($("#body_index").length > 0 || $("#body_profile").length > 0 || $("#body_group").length > 0 || 
 			$("#body_hashtag").length > 0 || $("#body_search").length > 0) {
-		$(".load_more").click(function(e) {
+		$(".load_more").unbind("click").click(function(e) {
 			var url = $(this).attr("data-hint");
 			var info = {
 				page: $(this).attr("data-page"),
@@ -774,7 +774,7 @@ function loadMore() {
 			});
 			($(".notification.panel").length > count) ? $(".load_more").removeClass("hidden") : $(".load_more").addClass("hidden");
 		}
-		$(".load_more").click(function(e) {
+		$(".load_more").unbind("click").click(function(e) {
 			var gIcon = $(this).find("span");
 			gIcon.toggleClass("glyphicon-refresh glyphicon-time");
       setNtfcLength(true);
