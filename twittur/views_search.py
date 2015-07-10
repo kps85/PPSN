@@ -35,6 +35,8 @@ def search_view(request):
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'search', request.user)
+    ignore_m_list, ignore_u_list = context['userProfile'].ignoreM.all(), context['userProfile'].ignoreU.all()
+
 
     if 'search_input' in request.GET:
         search_input = request.GET['search_input'].strip().split(" ")
@@ -85,6 +87,8 @@ def search_view(request):
 
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
         for message in messages_list:
+            if message[1] in ignore_m_list or message[1].user in ignore_u_list:
+                message[1].ignore = True
             copy_message = copy.copy(message[1])
             m_list.append(dbm_to_m(copy_message))
             dbmessage_list.append(message[1])

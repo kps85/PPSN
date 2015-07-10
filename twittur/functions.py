@@ -352,11 +352,9 @@ def get_messages(data):
         # if User ignored this message -> boolean ignore = True, this change will not effect db (no save())
         if message in ignore_m_list or message.user in ignore_u_list:
             message.ignore = True
-            message_list.append(message)
-        else:
-            copy_message = copy.copy(message)
-            message_list.append(dbm_to_m(copy_message))
 
+        copy_message = copy.copy(message)
+        message_list.append(dbm_to_m(copy_message))
         message_forms.append(MessageForm(instance=message))
 
     # check if messages exist, set boolean for frontend
