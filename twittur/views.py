@@ -291,10 +291,9 @@ def profile_view(request, user):
             context['ignored'] = True                                   # yes, so disable all messages from her profile
 
         if p_user in context['follow_list']:
-            context['follow_text'] = '<span class="glyphicon glyphicon-eye-close"></span> '\
-                                     + user.upper() + ' nicht folgen'
+            context['follow_text'] = '<span class="glyphicon glyphicon-star-empty"></span> NICHT FOLGEN'
         else:
-            context['follow_text'] = '<span class="glyphicon glyphicon-eye-open"></span> ' + user.upper() + ' folgen'
+            context['follow_text'] = '<span class="glyphicon glyphicon-star"></span> FOLGEN'
 
         # Messages
         messages = get_messages(data={'page': 'profile', 'data': p_user, 'end': 5, 'request': request})

@@ -66,7 +66,7 @@
     </button>
   </form>
   <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ pUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ pUser|upper }} schreiben" type="button">
-    <strong><span class="glyphicon glyphicon-edit"></span> {{ pUser|upper }} schreiben</strong>
+    <strong><span class="glyphicon glyphicon-edit"></span> SCHREIBEN</strong>
   </button>
   {% endif %}
   
@@ -120,7 +120,7 @@
                 </span>
               {% else %}
                 <span class="pull-right">
-                  <a href="/twittur/group/{{group.short}}/settings">
+                  <a href="{% url 'twittur:group_settings' groupshort=group.short %}">
                     <span class="glyphicon glyphicon-cog" title="Gruppe bearbeiten"></span>
                   </a>
                 </span>
