@@ -78,6 +78,22 @@ class Message(models.Model):
     def __str__(self):
         return self.user.username + ': ' + '"' + self.text + '"'
 
+class PrivateMessage(models.Model):
+    """ a message can also have topics, targets (user or groups) and a parent message (comment) """
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='author')  # author
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='recipient')
+    text = models.CharField(max_length=254)
+    date = models.DateTimeField('date published')
+
+    def get_model_name(self):
+        return self.__class__.__name__
+
+    def __unicode__(self):
+        return self.author.username + ' to ' + self.recipient.username + ': ' + '"' + self.text + '"'
+
+    def __str__(self):
+        return self.author.username + ' to ' + self.recipient.username + ': ' + '"' + self.text + '"'
+
 
 class UserProfile(models.Model):
     """ the user profile contains additional information for a user """

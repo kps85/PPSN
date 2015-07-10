@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+    {% if chatindex %}
+    <h2>Twittur Chat - Chatte mit andere Vögel!!!</h2>
+
+        {% if buddy_list %}
+    <ul class="post memberList">
+        <li class="clearfix"><b>Meine Chats:</b></li>
+    {% for buddy in buddy_list %}
+         <li class="clearfix"><a href="{% url 'twittur:chat' user=buddy.username %}">@{{ buddy.username }}</a></li>
+    {% endfor %}
+    </ul>
+            {% endif %}
+    <ul class="post memberList">
+        <li class="clearfix"><b>Meine Favorieten:</b></li>
+        {% for fav in follow_list %}
+        <li class="clearfix"><a href="{% url 'twittur:chat' user=fav.username %}">@{{ fav.username }}</a></li>
+        {% endfor %}
+     {% elif chat %}
+
+          <div class="post">
+         <h4>Du chattest grad mit {{ chat_partner.first_name }} {{ chat_partner.last_name }} (<a href="{% url 'twittur:profile' user=chat_partner.username %}">@{{ chat_partner.username }}</a>)</h4>
+
+
+
+        <form action="{% url 'twittur:chat' user=chat_partner.username %}" class="searchForm"  method="POST">
+        {% csrf_token %}
+        <div class="col-xs-10 col-sm-12 form-group">
+          <input class="form-control" id="private_message" name="private_message" type="text" placeholder="Geben sie eine Nachricht ein" title="Privatchat">
+            <button type="submit" class=" btn btn-default" title="post_pmessage">
+          senden
+        </button>
+        </div>
+
+        </form>
+          </div>
+
+    {% endif %}
+    {% if private_chat %}
+    {% for message in private_chat %}
+
+<div class="post">
+
+  <div class="icon">
+		{% if message.author.userprofile.picture %}
+        <a href="{% url 'twittur:profile' user=message.author.username %}">
+          <img src="{{ message.author.userprofile.picture.url }}" class="img-thumbnail">
+        </a>
+      {% endif %}
+  </div>
+
+  <div class="postContent">
+    <div class="postMeta">
+      <div class="postAuthor">
+        	<a href="{% url 'twittur:profile' user=message.author.username %}">@{{ message.author.username }}</a>
+      </div>
+
+      <small class="postTime">
+      	Nachricht
+      	vom
+        {{ message.date|date:"j. F Y, \u\m H:i \U\h\r" }}
+      </small>
+    </div>
+
+    <div class="postText" id="postText{{ message.id }}">
+      	<p>{{ message.text|safe }}</p>
+    </div>
+</div>
+        </div>
+   {% endfor %}
+
+
+    {% endif %}
+
+
+
+
+
+
+
+
+{% endblock %}
