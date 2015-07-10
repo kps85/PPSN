@@ -61,7 +61,7 @@
 {% if comment.1 %}
   <div class="children"> 
   {% for comment in comment.1 %}
-  	{% include "comments.html" with comment=comment %}
+  	{% include "message_comments.html" with comment=comment %}
   {% endfor %}
   </div>
 {% endif %}
