@@ -13,7 +13,7 @@ Standard Views
 
 
 import re
-from datetime import datetime
+
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -24,7 +24,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from .models import GroupProfile, Hashtag, Message, Notification, UserProfile, PrivateMessage
+from .models import GroupProfile, Hashtag, Message, Notification, UserProfile
 from .forms import UserForm, UserDataForm
 from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
     verification_mail
@@ -545,46 +545,3 @@ def no_script(request):
     context = get_context(request, 'noscript', user=request.user)
 
     return render(request, 'no_script.html', context)
-
-def chatindex_view(request):
-
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
-
-    context = get_context(request, 'chat', request.user)
-    context['chatindex'] = True
-    context['buddy_list'] = chat_partner_list(request.user)
-
-    return render(request, 'chat.html', context)
-
-def chat_view(request, user):
-
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
-    chat_partner = User.objects.get(username__exact=user)
-    context = get_context(request, 'chat', request.user)
-    context['chat'] = True
-    context['chat_partner'] = chat_partner
-    context['private_chat'] = PrivateMessage.objects.filter((Q(author=request.user) & Q(recipient=chat_partner))| (Q(author=chat_partner) & Q(recipient=request.user))).order_by('-date')
-    print context['private_chat']
-    if request.POST and 'private_message' in request.POST:
-        pmessage = PrivateMessage(author=request.user, recipient=chat_partner, text=request.POST.get('private_message'), date=datetime.now())
-        print pmessage
-        pmessage.save()
-    context['buddy_list']= chat_partner_list(request.user)
-
-    return render(request, 'chat.html', context)
-
-def chat_partner_list(user):
-    chat_buddy = PrivateMessage.objects.filter(Q(author=user) | Q(recipient=user)).values('author', 'recipient')
-    buddy_list = []
-
-    for buddy in chat_buddy:
-        author = User.objects.get(id=buddy['author'])
-        recipient = User.objects.get(id=buddy['recipient'])
-        if author != user and author not in buddy_list:
-            buddy_list.append(author)
-        elif recipient != user and recipient not in buddy_list:
-            buddy_list.append(recipient)
-
-    return buddy_list

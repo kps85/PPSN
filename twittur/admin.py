@@ -14,7 +14,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import FAQ, GroupProfile, Hashtag, Message, Notification, UserProfile, PrivateMessage
+from .models import FAQ, GroupProfile, Hashtag, Message, Notification, UserProfile
 
 
 # initialize admin view for UserProfiles
@@ -73,24 +73,6 @@ class MsgAdmin(admin.ModelAdmin):
     list_display_links = ('date', 'text')
     ordering = ('-date', 'user', 'group')
 
-class PrivateMsgAdmin(admin.ModelAdmin):
-    """
-    fieldsets for single message view
-    - groups different fields and puts them in order
-    sets attributes to be displayed in overview, sets links and puts them in order
-    """
-    # single-view
-    fieldsets = [
-        ('Info',    {'fields': ['author']}),
-        ('Content', {'fields': ['text', ]}),
-        ('Meta',   {'fields': ['recipient', 'date']}),
-    ]
-    # overview
-    list_display = ('date', 'text', 'author', 'recipient')
-    list_display_links = ('date', 'text')
-    ordering = ('-date', 'author')
-
-
 
 # initialize admin view for Notifications
 class NTFCAdmin(admin.ModelAdmin):
@@ -134,7 +116,6 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Message, MsgAdmin)
-admin.site.register(PrivateMessage, PrivateMsgAdmin)
 admin.site.register(Hashtag)
 admin.site.register(GroupProfile, GroupAdmin)
 admin.site.register(Notification, NTFCAdmin)

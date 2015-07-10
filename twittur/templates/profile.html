@@ -103,9 +103,9 @@
       <strong>{{ follow_text|safe }}</strong>
     </button>
   </form>
-  <a class="col-xs-6 text-center btn btn-default profileButton postToUser"  href="{% url 'twittur:chat' user=pUser.username %}">
+  <button class="col-xs-6 text-center btn btn-default profileButton postToUser" data-hint="{{ pUser }}" data-toggle="modal" data-target="#newMessage" id="postToUser" title="{{ pUser|upper }} schreiben" type="button">
     <strong><span class="glyphicon glyphicon-edit"></span> {{ pUser|upper }} schreiben</strong>
-  </a>
+  </button>
   {% endif %}
   
   {% if group %}

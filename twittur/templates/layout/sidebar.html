@@ -2,14 +2,6 @@
 
 {% if active_page in 'index, profile, group, notification, message, search, hashtag' %}
 
-    <ul class="chat">
-      <li >
-        <a href="{% url 'twittur:chatindex' %}"><h4>Hier gehts zum Chat</h4></a></li>
-
-    </ul>
-
-
-
   {% if hot_list %}
     <ul class="hashs">
       <h3>Beliebte Themen</h3>
@@ -75,32 +67,7 @@
     <li><a href="{% url 'twittur:support' %}#nachricht" class="menuCloser ullink nachricht">Nachricht schreiben</a></li>
     <li><a href="{% url 'twittur:support' %}#kontaktformular" class="menuCloser ullink kontaktformular">Kontaktformular</a></li>
   </ul>
-
-    {% elif active_page == 'chat' %}
-
-    <ul class="chat">
-      <li >
-        <a href="{% url 'twittur:chatindex' %}"><h4>Hier gehts zum Chat</h4></a></li>
-    </ul>
-    <ul>
-        <li><h3>Meine Chats</h3></li>
-        {% if buddy_list %}
-            {% for buddy in buddy_list %}
-                 <li><a href="{% url 'twittur:chat' user=buddy.username %}">@{{ buddy.username }}</a></li>
-            {% endfor %}
-            {% endif %}
-    </ul>
-    <ul>
-        <li><h3>Favoriten</h3></li>
-        {% for fav in follow_sb_list %}
-        <li><a href="{% url 'twittur:profile' user=fav.username %}">@{{ fav.username }}</a></li>
-
-        {% endfor %}
-    </ul>
-
-
-
-
+  
 {% elif active_page == 'settings' %}
   <ul>
     <h4>Einstellungen</h4>

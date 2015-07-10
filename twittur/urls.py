@@ -27,8 +27,6 @@ urlpatterns = [
     url(r'^profile/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)$', views.profile_view, name='profile'),
     url(r'^message/(?P<msg>[0-9]+)$', views.message_view, name='message'),
     url(r'^notification/$', views.notification_view, name='notification'),
-    url(r'^chat/$', views.chatindex_view, name='chatindex'),
-    url(r'^chat/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)$', views.chat_view, name='chat'),
 
     # views_info
     url(r'^info/$', views_info.info_view, name='info'),
