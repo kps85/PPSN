@@ -232,6 +232,7 @@ def profile_view(request, user):
     if not request.user.is_authenticated():             # check if user is logged in
         return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
+    user = user.lower()
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'profile', user)
 

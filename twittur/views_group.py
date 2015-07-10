@@ -31,6 +31,7 @@ def group_view(request, groupshort):
     if not request.user.is_authenticated():             # check if user is logged in
         return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
+    groupshort = groupshort.lower()
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'group', request.user)
     context['groupshort'] = groupshort.lower()
@@ -129,6 +130,7 @@ def djlgroup(request, groupshort):
     if not request.user.is_authenticated():             # check if user is logged in
         return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
+    groupshort = groupshort.lower()
     # Be sure this is the right function, true -> get group object
     if 'delete_join_group' in request.POST:
         if GroupProfile.objects.filter(short__exact=groupshort).exists():
@@ -177,6 +179,7 @@ def group_settings_view(request, groupshort):
     if not request.user.is_authenticated():                     # check if user is logged in
         return HttpResponseRedirect(reverse("twittur:login"))   # if user is not logged in, redirect to FTU
 
+    groupshort = groupshort.lower()
     # get current groups information and initialize return messages
     if GroupProfile.objects.filter(short__exact=groupshort).exists():
         group = GroupProfile.objects.get(short__exact=groupshort)

@@ -145,14 +145,14 @@ class GroupProfileForm(ModelForm):
 
     def clean(self):
         error_dict = {}
-        name, short = self.cleaned_data['name'], self.cleaned_data['short']
+        name, short = self.cleaned_data['name'], self.cleaned_data['short'].lower()
         password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
 
         group_list = GroupProfile.objects.all()
         for group in group_list:
             if name.lower() == group.name.lower():
                 error_dict['name'] = "Sorry, Gruppenname ist bereits vergeben."
-            if short.lower() == group.short.lower():
+            if short == group.short.lower():
                 error_dict['short'] = "Sorry, Gruppenabkürzung ist bereits vergeben."
         if 'name' or 'short' not in error_dict:
             if re.match("^[a-zA-Z0-9-_.]*$", short) is None:
