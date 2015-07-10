@@ -82,7 +82,7 @@ def login_view(request):
     # if user tries to log in
     if request.method == "GET":
         if 'login' in request.GET:
-            username, password = request.GET['username'], request.GET['password']
+            username, password = request.GET['username'].lower(), request.GET['password']
             user = authenticate(username=username, password=password)
 
             if user is not None:
@@ -136,11 +136,11 @@ def login_view(request):
 
         # if a guest wants to register
         else:
-            user_list, username = User.objects.all(), query_dict['name']
+            user_list, username = User.objects.all(), query_dict['name'].lower()
 
             # case if username is available
             for user in user_list:
-                if username.lower() == user.username.lower():
+                if username == user.username.lower():
                     error_msg['error_reg_user_n'] = "Sorry, Username ist vergeben."
             if 'error_reg_user_n' not in error_msg:
                 if re.match("^[a-zA-Z0-9-_.]*$", username):
