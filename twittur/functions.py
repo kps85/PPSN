@@ -272,7 +272,7 @@ def dbm_to_m(message):
             # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
             if word[0] == "#" and (word not in urls):
                 if Hashtag.objects.filter(name=word[1:]).exists():
-                    href = r'<a href="/twittur/hashtag/%s">%s</a>' % (word[1:], word)
+                    href = r'<a href="%s">%s</a>' % (reverse("twittur:hashtag", kwargs={'text': word[1:]}), word)
                     message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
 
             # now find in text all words start with "@". Its important to find this user in database.
@@ -281,10 +281,10 @@ def dbm_to_m(message):
             if word[0] == "@" and word not in urls:
                 if User.objects.filter(Q(username=word[1:]) & Q(is_active=True)).exists()\
                         and User.objects.get(username=word[1:]) in attag_list:
-                    href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
+                    href = '<a href="' + reverse("twittur:profile", kwargs={'user': word[1:]}) + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
             if word[0] == '&' and group.short == word[1:] and word not in urls:
-                href = '<a href="/twittur/group/' + word[1:] + '">' + word + '</a>'
+                href = '<a href="' + reverse("twittur:group", kwargs={'groupshort': word[1:]}) + '">' + word + '</a>'
                 message.text = message.text.replace(word, href)
     if urls:
         for url in urls:
@@ -533,7 +533,8 @@ def update(request):
             if msg.user in user_profile.ignoreU.all():
                 response = "<span class='glyphicon glyphicon-warning'></span>&nbsp;" \
                            "Sie m&uuml;ssen " + msg.user.username + " erst entsperren. Besuchen Sie dazu sein / ihr " \
-                           "<a href='/twittur/profile/" + msg.user.username + "'>Profil</a>!"
+                           "<a href='" + reverse("twittur:profile", kwargs={'user': msg.user.username}) + \
+                           "'>Profil</a>!"
             else:
                 if msg in ignore_list:
                     user_profile.ignoreM.remove(msg)
@@ -567,8 +568,7 @@ def update(request):
             if hashtaglist:
                 checkhashtag(msg, hashtaglist)
             msg.delete()
-        response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;" \
-                   "Nachricht gel&ouml;scht!"
+        response = "<span class='glyphicon glyphicon-ok'></span>&nbsp;Nachricht gel&ouml;scht!"
 
     # message will be updated with current information.
     # may clear the picture and delete it from its folder
