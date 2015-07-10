@@ -112,7 +112,7 @@ def login_view(request):
                           "Bitte besuchen Sie folgenden Link um Ihr Passwort zu aendern:\n" \
                           + create_abs_url(request, 'reset_pw', data={'username': user.username,
                                                                       'hash_item': user.userprofile.verifyHash}) + \
-                          "\n" \
+                          "\n\n" \
                           "Wir freuen uns auf Ihren Besuch!\n" \
                           "\n" \
                           "Mit freundlichen Gruessen,\n" \
