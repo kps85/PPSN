@@ -82,7 +82,7 @@ def group_view(request, groupshort):
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Gruppenseite'
         context['error_object'] = groupshort
-        return render(request, '404.html', context)
+        return render(request, 'error_404.html', context)
 
     return render(request, 'group.html', context)
 
@@ -158,7 +158,7 @@ def djlgroup(request, groupshort):
             context['error_type'] = 'ObjectDoesNotExist'
             context['error_site'] = 'Gruppenseite'
             context['error_object'] = groupshort
-            return render(request, '404.html', context)
+            return render(request, 'error_404.html', context)
 
         url = reverse("twittur:group", kwargs={'groupshort': groupshort})
         return HttpResponseRedirect(url)
@@ -234,4 +234,4 @@ def group_settings_view(request, groupshort):
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Gruppenseite'
         context['error_object'] = groupshort
-        return render(request, '404.html', context)
+        return render(request, 'error_404.html', context)

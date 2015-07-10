@@ -308,7 +308,7 @@ def profile_view(request, user):
         context['error_site'] = 'Profilseite'
         context['error_object'] = user
 
-        return render(request, '404.html', context)
+        return render(request, 'error_404.html', context)
         # context['error_msg']['error_no_user'] = 'Kein Benutzer mit dem Benutzernamen ' + user + ' gefunden!'
 
     context['follow_sb_list'] = get_context(request, 'profile', user)['follow_sb_list']
@@ -444,7 +444,7 @@ def message_view(request, msg):
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Nachrichtenanzeige'
         context['error_object'] = msg
-        return render(request, '404.html', context)
+        return render(request, 'error_404.html', context)
     else:
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg'],
 
@@ -501,11 +501,11 @@ def vier_null_vier(request):
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, '404', user=request.user)
 
-    return render(request, '404.html', context)
+    return render(request, 'error_404.html', context)
 
 
 def please_verify_view(request):
-    return render(request, 'pleaseVerify.html', {'active_page': 'pleaseVerify'})
+    return render(request, 'index_please_verify.html', {'active_page': 'pleaseVerify'})
 
 
 # Page: "NoScript-Fehler"
@@ -522,4 +522,4 @@ def no_script(request):
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'noscript', user=request.user)
 
-    return render(request, 'no_script.html', context)
+    return render(request, 'error_no_script.html', context)
