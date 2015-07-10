@@ -7,7 +7,8 @@
       <h3>Beliebte Themen</h3>
       {% for hashtag in hot_list %}
       <li class="{% if false %}active{% endif %}"> <!-- Falls aktiv: highlighting --> 
-        <a class="ullink {{ hashtag.name|slugify }}" href="/twittur/hashtag/{{ hashtag.name }}">#{{ hashtag.name }}</a> <!-- Hier muss ein Kurzname f&uuml;r die Gruppe rein!!! -->
+      	<!-- Hier muss ein Kurzname f&uuml;r die Gruppe rein!!! -->
+        <a class="ullink {{ hashtag.name|slugify }}" href="{% url 'twittur:hashtag' text=hashtag.name %}">#{{ hashtag.name }}</a>
       {% endfor %} 
     </ul>
   {% endif %}  
