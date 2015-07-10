@@ -31,14 +31,13 @@ class UserForm(ModelForm):
     # initializing form input fields
     class Meta:
         model = User
-        fields = ['username', 'password', 'ack_password', 'email', 'first_name', 'last_name']
+        fields = ['password', 'ack_password', 'email', 'first_name', 'last_name']
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
         # get current user's information and set it
         instance = kwargs.get('instance')
         super(UserForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs['readonly'] = True  # set username input readonly
         self.fields['password'].widget = forms.PasswordInput()  # set pw input type to password
         self.fields['password'].required = False  # unset pw input as required
 
@@ -53,12 +52,9 @@ class UserForm(ModelForm):
     # if equal: return password
     # else: return error message
     def clean(self):
-        username = self.cleaned_data['username']
         password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
         email = self.cleaned_data['email']
         error_dict = {}
-        if re.match("^[a-zA-Z0-9-_.]*$", username) is None:
-            error_dict['username'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' im Username erlaubt!"
         if password != ack_password:
             error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
         if ' ' in password:
@@ -171,16 +167,16 @@ class GroupProfileEditForm(ModelForm):
 
     class Meta:
         model = GroupProfile
-        fields = ['name', 'short', 'desc', 'password', 'picture']
+        fields = ['name', 'desc', 'password', 'picture']
         widgets = {
             'password': forms.PasswordInput,
             'desc': forms.Textarea(attrs={'rows': 4, 'style': 'resize: none;'}),
         }
 
     def __init__(self, *args, **kwargs):
+        self.group = kwargs.get('instance')
         super(GroupProfileEditForm, self).__init__(*args, **kwargs)
         self.fields['ack_password'].widget = forms.PasswordInput(attrs=self.fields['ack_password'].widget.attrs)
-        self.fields['short'].widget.attrs['readonly'] = True  # set username input readonly
         self.fields['picture'].widget.attrs['accept'] = 'image/*'
         for field in self.fields:
             if field != 'picture':
@@ -190,15 +186,13 @@ class GroupProfileEditForm(ModelForm):
     # if equal: return password
     # else: return error message
     def clean(self):
-        name, short = self.cleaned_data['name'], self.cleaned_data['short']
+        name = self.cleaned_data['name']
         password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
-        group, group_list = GroupProfile.objects.get(short__exact=short), GroupProfile.objects.all()
+        group, group_list = GroupProfile.objects.get(short__exact=self.group.short), GroupProfile.objects.all()
         error_dict = {}
         for item in group_list:
             if item.name == name and item != group:
                 error_dict['name'] = 'Eine Gruppe mit diesem Namen existiert bereits!'
-            if item.short == short and item != group:
-                error_dict['short'] = 'Eine Gruppe mit dieser Abk&uuml;rzung existiert bereits!'
         if password != '':
             if password != ack_password:
                 error_dict['ack_password'] = 'Passw&ouml;rter stimmen nicht &uuml;berein!'
