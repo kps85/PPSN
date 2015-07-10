@@ -16,6 +16,7 @@ import re
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -81,7 +82,7 @@ def login_view(request):
     # if user tries to log in
     if request.method == "GET":
         if 'login' in request.GET:
-            username, password = request.GET.get('username'), request.GET.get('password')
+            username, password = request.GET['username'], request.GET['password']
             user = authenticate(username=username, password=password)
 
             if user is not None:
@@ -242,8 +243,8 @@ def profile_view(request, user):
         # group_sb_list = GroupProfile.objects.filter(Q(member__exact=request.user))
         context['show_group_list'] = GroupProfile.objects.filter(Q(member__exact=request.user))
 
-    if User.objects.filter(username=user.lower()).exists():
-        p_user = User.objects.get(username=user.lower())  # this is the user displayed in html
+    if User.objects.filter(username=user).exists():
+        p_user = User.objects.get(username=user)  # this is the user displayed in html
         context['pUser'], context['pUserProf'] = p_user, p_user.userprofile
         data_dict = None
         if request.method == 'POST':

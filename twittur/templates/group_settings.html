@@ -125,7 +125,6 @@
           Wollen Sie Ihre Gruppe wirklich l&ouml;schen?
         </div>
         <div class="modal-footer">
-          {% if group %}
           <form action="{% url 'twittur:group_settings' groupshort=group.short %}" method="POST">
           {% csrf_token %}
             <input name="delete" type="hidden" value="true" />
