@@ -43,13 +43,9 @@
   <form method="POST" action="{% url 'twittur:login' %}">
 	{% csrf_token %}
     <input id="id_password_reset" name="password_reset" type="hidden" />
-    <input id="id_pwRestMail" name="pwResetMail" placeholder="Ihre Mailadresse" type="text" />
+    <input id="id_pw_reset_mail" name="pw_reset_mail" placeholder="Ihre Mailadresse" type="text" />
     {% if errors.error_not_registered %}
     	<p><font color="#FF0000">{{ errors.error_not_registered|safe }}</font></p>
-    {% endif %}
-    <input id="id_pwResetStudNumb" name="pwResetVerifyHash" placeholder="Ihr Verify Hash zur Sicherheit" type="text" />
-    {% if errors.error_verify_hash %}
-    	<p><font color="#FF0000">{{ errors.error_verify_hash|safe }}</font></p>
     {% endif %}
     <br />
     <input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />

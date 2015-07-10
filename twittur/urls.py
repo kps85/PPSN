@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^(?i)update/$', functions.update, name='update'),
     url(r'^(?i)verify/(?P<user>[a-zA-Z0-9-_.]+|\w\S+)/(?P<hash_item>\w\S+)/$', functions.verify, name='verify'),
     url(r'^(?i)refresh_hash/$', functions.refresh_hash, name='refresh_hash'),
+    url(r'^(?i)reset_pw/(?P<user>[a-zA-Z0-9-_.]+|\w\S+)/(?P<hash_item>\w\S+)/$', functions.reset_pw, name='reset_pw'),
 
     # api_urls
     url(r'^(?i)api/set/(?P<user>[a-zA-Z0-9-_.]+|\w+)/(?P<hash_item>\w\S+)/$',

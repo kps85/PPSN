@@ -32,6 +32,7 @@ import hashlib
 
 from django.conf import settings
 from django.contrib import auth
+from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -40,7 +41,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from .models import FAQ, GroupProfile, Hashtag, Message, Nav, Notification, User, UserProfile
-from .forms import MessageForm
+from .forms import MessageForm, PWResetForm
 
 
 def logout(request):
@@ -681,6 +682,8 @@ def create_abs_url(request, what, data):
         url = reverse("twittur:group", kwargs={'groupshort': data})
     elif what == 'message':
         url = reverse("twittur:message", kwargs={'msg': data})
+    elif what == 'reset_pw':
+        url = reverse("twittur:reset_pw", kwargs={'user': data['username'], 'hash_item': data['hash_item']})
 
     return request.build_absolute_uri(url)
 
@@ -801,6 +804,37 @@ def refresh_hash(request):
 
     hash_item = pw_generator(hashed=True)
     return HttpResponse(hash_item)
+
+
+def reset_pw(request, user, hash_item):
+    """
+
+    :param request:
+    :param user:
+    :param hash:
+    :return:
+    """
+
+    if request.user.is_authenticated():                   # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur"))   # if user is logged in, redirect to Index
+
+    p_user = User.objects.get(username=user.lower())
+    p_hash = p_user.userprofile.verifyHash
+
+    if hash_item == p_hash:
+        context = {'active_page': '404', 'user': user, 'hash_item': hash_item}
+        if request.method == 'POST':
+            context['pw_reset_form'] = PWResetForm(request.POST, instance=p_user)
+            if context['pw_reset_form'].is_valid():
+                p_user = context['pw_reset_form'].save()
+                user = authenticate(username=p_user.username, password=request.POST['password'])
+                auth.login(request, user)
+                return HttpResponseRedirect(reverse("twittur:index"))
+            else:
+                return render(request, 'index_pw_reset.html', context)
+        else:
+            context['pw_reset_form'] = PWResetForm()
+            return render(request, 'index_pw_reset.html', context)
 
 
 def login_user(request, user):

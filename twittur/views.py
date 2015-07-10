@@ -16,7 +16,6 @@ import re
 
 from django.contrib import auth
 from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -26,7 +25,7 @@ from django.shortcuts import render
 
 from .models import GroupProfile, Hashtag, Message, Notification, UserProfile
 from .forms import UserForm, UserDataForm
-from .functions import get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
+from .functions import create_abs_url, get_context, get_disciplines, get_messages, get_safety_levels, pw_generator, set_notification, \
     verification_mail
 
 
@@ -104,33 +103,25 @@ def login_view(request):
         # if user tries to reset his password, generate new one and send per mail
         # confirm user identity by checking his verify hash
         if 'password_reset' in request.POST:
-            if User.objects.filter(email=request.POST['pwResetMail']).exists():
-                user = User.objects.get(email=request.POST['pwResetMail'])
-                if request.POST['pwResetVerifyHash'] == user.userprofile.verifyHash:
-                    password = pw_generator(10)
-                    message = "Hallo!\n" \
-                              "\n" \
-                              "Sie haben ein neues Passwort fuer Ihren Account bei twittur beantragt.\n" \
-                              "\n" \
-                              "Ihr neues Passwort lautet: " + password + "\n" \
-                              "\n" \
-                              "Bitte aendern Sie Ihr Passwort schnellstmoeglich, indem Sie sich mit dem oben " \
-                              "genannten Passwort einloggen und unter Einstellungen ein neues Passwort festlegen.\n" \
-                              "\n" \
-                              "Wir freuen uns auf Ihren Besuch!\n" \
-                              "\n" \
-                              "Mit freundlichen Gruessen,\n" \
-                              "Ihr twittur Team!"
-                    send_mail("Neues Passwort beantragt", message, "twittur.sn@gmail.com",
-                              [request.POST['pwResetMail']])
-                    user.set_password(password)
-                    user.save()
-                    success_msg = 'Ihr neues Passwort haben Sie per E-Mail erhalten!'
-                else:
-                    error_msg['error_verify_hash'] = "Der eingegebene Wert stimmt nicht mit dem Wert &uuml;berein, " \
-                                                     "der uns bekannt ist. Wenn Sie Ihren verify hash vergessen haben, " \
-                                                     "kontaktieren Sie ein twittur-Teammitglied. " \
-                                                     "(siehe <a href='" + reverse("twittur:info") + "'>Impressum</a>)"
+            if User.objects.filter(email=request.POST['pw_reset_mail']).exists():
+                user = User.objects.get(email=request.POST['pw_reset_mail'])
+                message = "Hallo!\n" \
+                          "\n" \
+                          "Sie haben ein neues Passwort fuer Ihren Account bei twittur beantragt.\n" \
+                          "\n" \
+                          "Bitte besuchen Sie folgenden Link um Ihr Passwort zu aendern:\n" \
+                          + create_abs_url(request, 'reset_pw', data={'username': user.username,
+                                                                      'hash_item': user.userprofile.verifyHash}) + \
+                          "\n" \
+                          "Wir freuen uns auf Ihren Besuch!\n" \
+                          "\n" \
+                          "Mit freundlichen Gruessen,\n" \
+                          "Ihr twittur Team!"
+                send_mail("Neues Passwort beantragt", message, "twittur.sn@gmail.com",
+                          [request.POST['pw_reset_mail']])
+                user.set_password(password)
+                user.save()
+                success_msg = 'Pr&uuml;fen Sie Ihre E-Mails!'
             else:
                 error_msg['error_not_registered'] = "Die eingegebene E-Mail Adresse ist nicht registriert."
 

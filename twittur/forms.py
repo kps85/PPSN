@@ -121,6 +121,55 @@ class UserDataForm(ModelForm):
         return picture
 
 
+class PWResetForm(ModelForm):
+    # initialize second pw input for confirmation
+    ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=True)
+
+    # referencing User model as basis for the form
+    # initializing form input fields
+    class Meta:
+        model = User
+        fields = ['password', 'ack_password']
+
+    # method to initialize the form
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.get('instance')
+        super(PWResetForm, self).__init__(*args, **kwargs)
+        self.fields['password'].widget = forms.PasswordInput()  # set pw input type to password
+        self.fields['password'].widget.attrs['required'] = True  # unset pw input as required
+        self.fields['ack_password'].widget.attrs['required'] = True  # unset pw input as required
+
+        # for each field set class to 'form-control' and
+        # set initial value to user's information except pw and pw confirmation input
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+    # method to compare password and password confirmation input values
+    # if equal: return password
+    # else: return error message
+    def clean(self):
+        password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
+        error_dict = {}
+        if password != ack_password:
+            error_dict['password'] = 'Passwoerter stimmen nicht ueberein!'
+        if ' ' in password:
+            error_dict['password'] = 'Keine Leerzeichen im Passwort erlaubt!'
+
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+        return self.cleaned_data
+
+    # method to save user's updated information
+    # 'set_password' is for encoding raw text password
+    def save(self, commit=True):
+        instance = super(PWResetForm, self).save(commit=False)
+        password = self.cleaned_data['password']
+        self.instance.set_password(password)
+        if commit:
+            self.instance.save()
+        return instance
+
+
 class GroupProfileForm(ModelForm):
     ack_password = forms.CharField(max_length=128, widget=forms.PasswordInput, required=False)
 

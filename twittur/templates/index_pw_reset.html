@@ -1,0 +1,30 @@
+{% include 'header.html' %}
+<div class="width">
+    <h1 class="text-uppercase">Passwort &auml;ndern</h1>
+    <form action="{% url 'twittur:reset_pw' user=user hash_item=hash_item %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        
+        <div class="col-xs-12 col-sm-6 form-group">
+          <label class="control-label" for="id_password"><br />Passwort</label>
+          {{ pw_reset_form.password }}
+        </div>    
+        <div class="col-xs-12 col-sm-6 form-group pull-right">
+          <label class="control-label" for="id_ack_password">Passwort best&auml;tigen</label>
+          {{ pw_reset_form.ack_password }}
+        </div>
+        <p class="help-block">
+          {% if pw_reset_form.password.errors %}
+            <font color="#FF0000">{{ pw_reset_form.password.errors|safe }}</font>
+          {% endif %}
+          Ihr Passwort darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!
+        </p>
+        
+        <div class="col-xs-12 form-group text-center">
+          <button type="submit" class="btn btn-primary" id="submitSettButton">Speichern</button>
+          <button type="reset" class="btn btn-default" id="resetSettButton">Zur&uuml;cksetzen</button>
+        </div>  
+    
+    </form>
+    
+</div>
+{% include 'footer.html' %}
