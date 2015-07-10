@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^login/$', views.login_view, name='login'),
     url(r'^login/pleaseVerify/', views.please_verify_view, name='pleaseVerify'),
     url(r'^settings/$', views.profile_settings_view, name='settings'),
-    url(r'^profile/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w+)/$', views.profile_view, name='profile'),
+    url(r'^profile/(?P<user>[a-zA-Z0-9-_.]+|\w+)/$', views.profile_view, name='profile'),
     url(r'^message/(?P<msg>[0-9]+)/$', views.message_view, name='message'),
     url(r'^notification/$', views.notification_view, name='notification'),
 
@@ -50,11 +50,11 @@ urlpatterns = [
     url(r'^logout/$', functions.logout, name='logout'),
     url(r'^more/$', functions.load_more, name='more'),
     url(r'^update/$', functions.update, name='update'),
-    url(r'^verify/(?P<user>[a-zA-Z0-9-_.()+-/=!?*]+|\w\S+)/(?P<hash_item>\w\S+)/$', functions.verify, name='verify'),
+    url(r'^verify/(?P<user>[a-zA-Z0-9-_.]+|\w\S+)/(?P<hash_item>\w\S+)/$', functions.verify, name='verify'),
     url(r'^refresh_hash/$', functions.refresh_hash, name='refresh_hash'),
 
     # api_urls
-    url(r'^api/set/(?P<user>[a-zA-Z0-9-_.]+|\w+)/(?P<hash_item>\w+)/$',
+    url(r'^api/set/(?P<user>[a-zA-Z0-9-_.]+|\w+)/(?P<hash_item>\w\S+)/$',
         csrf_exempt(views_api.message_set), name='message_set'),
     url(r'^api/get/$', csrf_exempt(views_api.message_get), name='message_get'),
 
