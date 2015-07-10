@@ -11,17 +11,13 @@
 {% block content %}
 {% if not error_msg %}
   <div class="profil clearfix">
-    {% if group and request.user == group.admin %}
-    <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="profilEdit" title="Gruppe bearbeiten">
-      <span class="glyphicon glyphicon-cog"></span>
-    </a>
-    {% elif active_page == 'profile' and request.user == pUser %}
-    <a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
-      <span class="glyphicon glyphicon-cog"></span>
-    </a>
-    {% elif active_page == 'profile' and request.user != pUser %}
+    {% if request.user == pUser %}
+      <a href="{% url 'twittur:settings' %}" class="profilEdit" title="Profil bearbeiten">
+        <span class="glyphicon glyphicon-cog"></span>
+      </a>
+    {% else %}
       <form action="{% url 'twittur:profile' user=pUser %}" method="POST" class="pull-right">
-          {% csrf_token %}
+      {% csrf_token %}
           <input type="hidden" name="ignoreUser" value="{{ pUser }}">
           {% if not ignored and pUser in request.user.userprofile.follow.all %}<input type="hidden" name="entfollow" value="{{ pUser.id }}">{% endif %}
           <button class="ignoreMsgButton profilEdit" type="submit" title="{% if not ignored %}Benutzer ignorieren{% else %}Benutzer nicht mehr ignorieren{% endif %}">
@@ -31,71 +27,37 @@
             <span class="glyphicon glyphicon-eye-open"></span>
           {% endif %}
           </button>
-        </form>
+      </form>
     {% endif %}
     <div class="col-xs-12 col-sm-4 text-center">
-    	{% if group.picture or pUserProf.picture %}
-        {% if group %}
-          <img src="{{ group.picture.url }}" class="profilbild-l img-thumbnail"/>
-        {% else %}
+    	{% if pUserProf.picture %}
           <img src="{{ pUserProf.picture.url }}" class="profilbild-l img-thumbnail"/>
-        {% endif %}
       {% endif %}
     </div>
     <div class="col-xs-12 col-sm-8 clearfix">
       <div class="profilMeta">
         <h3 class="profilAuthor">
-          {% if group %}{{ group.name }}{% else %}{{ pUser.first_name }} {{ pUser.last_name }}{% endif %}
+          {{ pUser.first_name }} {{ pUser.last_name }}
         </h3>
-        <h5 class="profilNick" data-hint="{% if group %}{{ group.short }}{% else %}{{ pUser.username }}{% endif %}">
-          {% if group %}&{{ group.short }}{% else %}@{{ pUser.username }}{% endif %}
+        <h5 class="profilNick" data-hint="{{ pUser.username }}">
+          @{{ pUser.username }}
         </h5>          
         <div class="profilAcaDis" title="Studiengang">
-          {% if group %}
-            <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
-            {{ group.admin.first_name }} {{ group.admin.last_name }} (<a href="{% url 'twittur:profile' user=group.admin %}">@{{ group.admin.username }}</a>)
-          {% else %}
             <span class="glyphicon glyphicon-education" aria-hidden="true"></span>             
             {{ pUserProf.academicDiscipline }} 
-          {% endif %}
         </div>
-        {% if group %}
-        <div class="groupMember" title="Mitglieder">
-          {% if request.user in group.member.all %}
-            <form action="{% url 'twittur:group' groupshort=group.short %}" method="get">
-              <input name="member" type="hidden" value="true" />
-              <strong>
-                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
-                <input class="showMembList" type="submit" value="{{ member_list|length|add:'1' }} {% if member_list|length|add:'1' == 1 %}Mitglied{% else %}Mitglieder{% endif %}" />
-              </strong>
-            </form>
-          {% else %}
-            <strong>
-              <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
-              {{ member_list|length|add:'1' }} {% if member_list|length|add:'1' == 1 %}Mitglied{% else %}Mitglieder{% endif %}
-            </strong>            
-          {% endif %}
-        </div>          
-        {% else %}
         <div class="profilLocation" title="Wohnort">
           <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
           {{ pUserProf.location }}
         </div>
-        {% endif %}
-        <div class="profilJoined" title="{% if group %}erstellt am{% else %}registriert seit{% endif %}">
+        <div class="profilJoined" title="registriert seit">
           <span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
-          {% if group %}{{ group.date }}{% else %}{{ pUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}{% endif %}
+          {{ pUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}
         </div>
-        {% if group %}
-        <div class="profilDesc" title="Beschreibung der Gruppe">
-          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> 
-          {{ group.desc }}
-        </div>
-        {% endif %}
       </div>
     </div>
   </div>
-  {% if request.user != pUser and not group %}
+  {% if request.user != pUser %}
   <form action="{% url 'twittur:profile' user=pUser %}" method="GET" >
     <input name="follow" type="hidden" value="follow" />
     {% if pUser in request.user.userprofile.ignoreU.all %}<input type="hidden" name="ignoreUser" value="{{ pUser }}">{% endif %}
@@ -108,130 +70,13 @@
   </button>
   {% endif %}
   
-  {% if group %}
-    {% if group.joinable %}
-      {% if not group.password and not is_member or is_member %}
-        {% if 'bearbeiten' in button_text %}
-          <a href="{% url 'twittur:group_settings' groupshort=group.short %}" class="col-xs-6 text-center btn btn-default profileButton">
-            <strong>{{ button_text|safe }}</strong>
-          </a>        
-        {% else %}
-          <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST" >
-              {% csrf_token %}
-            <input name="delete_join_group" type="hidden" value="delete" />
-            <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit">
-              <strong>{{ button_text|safe }}</strong>
-            </button>
-          </form>
-        {% endif %}
-      {% else %}
-        <button class="col-xs-6 text-center btn btn-default profileButton postToGroup" data-hint="{{ group.short }}" data-toggle="modal" data-target="#enterPWforGroup" id="joinGroup" title="Gruppe beitreten" type="button">
-          <strong><span class="glyphicon glyphicon-edit"></span> {{ group.short|upper }} beitreten</strong>
-        </button>
-        <div class="modal fade" id="enterPWforGroup" tabindex="-1" role="dialog" aria-labelledby="enterPWforGroupLabel" aria-hidden="true">
-          <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Passwort f&uuml;r {{ group.short|upper }} eingeben!</h4>
-              </div>
-              <form action="{% url 'twittur:djlgroup' groupshort=group.short %}" method="POST">
-              {% csrf_token %}
-              <div class="modal-body">
-                <input class="form-control" name="password" type="password" />
-              </div>
-              <div class="modal-footer">
-                  <input name="delete_join_group" type="hidden" value="join_pw" />
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-                  <button type="submit" class="btn btn-primary">Beitreten</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endif %}
-    {% else %}  
-      <button class="col-xs-6 text-center btn btn-default profileButton" id="id_join_group" type="submit" disabled="disabled">
-        <strong>{{ button_text|safe }}</strong>
-      </button>    
-    {% endif %}
-
-    <button {% if request.user not in group.member.all %} disabled="disabled" {% endif %} class="col-xs-6 text-center btn btn-default profileButton postToGroup" 
-    				data-hint="{{ group.short }}" data-toggle="modal" data-target="#newMessage" id="postToGroup" title="an {{ group.short|upper }} schreiben" type="button">
-      <strong><span class="glyphicon glyphicon-edit"></span> an {{ group.short|upper }} schreiben</strong>
-    </button>
-  {% endif %}
-  
   <div class="clear_box"></div>
   
-  {% if show_member %}
-  <div class="profileMessages">
-    <a href="{% url 'twittur:group' groupshort=group.short %}">&laquo; Nachrichten anzeigen</a><br />
-    <br />
-    <ul class="post memberList">
-      <li class="clearfix">{{ group.admin.first_name }} {{ group.admin.last_name }} (<a href="{% url 'twittur:profile' user=group.admin.username %}">@{{ group.admin.username }}</a>)
-                            <span class="pull-right"> [admin]</span>
-    {% for member in member_list %}
-      <li class="clearfix">{{ member.first_name }} {{ member.last_name }} (<a href="{% url 'twittur:profile' user=member.username %}">@{{ member.username }}</a>)
-                           {% if member == group.admin %}
-                              <span class="pull-right"> [admin]</span>
-                           {% elif request.user == group.admin %}
-                              <a class="btn-xs pull-right remUser" data-toggle="modal" data-target="#remUser{{ member.id }}Modal" id="remUser{{ member.id }}Button" title="Mitglied entfernen">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                              </a>
-                              <div class="modal fade" id="remUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="remUser{{ member.id }}ModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-sm">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                      <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich entfernen?</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-                                      <form action="{% url 'twittur:group' groupshort=group.short %}?member=true" class="pull-right" method="POST">
-                                      {% csrf_token %}
-                                        <input type="hidden" name="group" value="{{ group.id }}">
-                                        <input type="hidden" name="remUser" value="{{ member.id }}">
-                                        <button type="submit" class="btn btn-primary">Benutzer entfernen</button>
-                                      </form>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>   
-                              <a class="btn-xs pull-right promUser" data-toggle="modal" data-target="#promUser{{ member.id }}Modal" id="promUser{{ member.id }}Button" title="zum Admin machen">
-                                <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
-                              </a>
-                              <div class="modal fade" id="promUser{{ member.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="promUser{{ member.id }}ModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-sm">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                      <h4 class="modal-title" id="myModalLabel"><em>{{ member.username }}</em> wirklich zum Admin machen?</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-                                      <form action="{% url 'twittur:group' groupshort=group.short %}?member=true" class="pull-right" method="POST">
-                                      {% csrf_token %}
-                                        <input type="hidden" name="group" value="{{ group.id }}">
-                                        <input type="hidden" name="promUser" value="{{ member.id }}">
-                                        <button type="submit" class="btn btn-primary">Benutzer bef&ouml;rdern</button>
-                                      </form>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>                           		
-                           {% endif %}
-    {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
   {% if show_favs or show_groups %}
-
   <div class="profileMessages">
     <a href="{% url 'twittur:profile' user=request.user %}">&laquo; Nachrichten anzeigen</a><br />
 
-  {% if show_groups %}
-
+    {% if show_groups %}
         <ul class="post memberList">
         <li class="clearfix"><b>Meine Uni Gruppen:</b></li>
             {% for group in show_group_list %}
@@ -239,14 +84,9 @@
                      <li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)</li>
                 {% endif %}
             {% endfor %}
-
         </ul>
-
-      {% endif %}
-
-    {% if show_favs %}
-        <br />
-    <ul class="post memberList">
+    {% elif show_favs %}
+      <ul class="post memberList">
       {% for fav in follow_list %}
         <li class="clearfix">{{ fav.first_name }} {{ fav.last_name }} (<a href="{% url 'twittur:profile' user=fav.username %}">@{{ fav.username }}</a>)
           <span class="pull-right">
@@ -260,62 +100,58 @@
             </form>
           </span>
       {% endfor %}
+      </ul>
     {% endif %}
 
     {% if show_groups and group_list %}
-    <ul class="post memberList">
+      <ul class="post memberList">
         <li class="clearfix"><b>Meine Gruppen:</b></li>
-      {% for group in group_list %}
+        {% for group in group_list %}
           {% if group.joinable %}
-        <li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)
-        {% if group.joinable and group.admin != request.user %}
-          <span class="pull-right">
-            <form action="{% url 'twittur:profile' user=request.user %}" method="POST">
-              {% csrf_token %}
-              <input name="group" type="hidden" value="true" >
-              <input type="hidden" name="leaveGroup" value="{{ group.id }}">
-              <button class="remFav" title="Gruppe verlassen" type="submit"><span class="glyphicon glyphicon-log-out"></span></button>
-            </form>
-          </span>
-        {% elif group.joinable and group.admin == request.user %}
-          <span class="pull-right">
-          	<a href="/twittur/group/{{group.short}}/settings">
-            	<span class="glyphicon glyphicon-cog" title="Gruppe bearbeiten"></span>
-            </a>
-          </span>
-        {% endif %}
+            <li class="clearfix">{{ group.name }} (<a href="{% url 'twittur:group' groupshort=group.short %}">&{{ group.short }}</a>)
+              {% if group.admin != request.user %}
+                <span class="pull-right">
+                  <form action="{% url 'twittur:profile' user=request.user %}" method="POST">
+                    {% csrf_token %}
+                    <input name="group" type="hidden" value="true" >
+                    <input type="hidden" name="leaveGroup" value="{{ group.id }}">
+                    <button class="remFav" title="Gruppe verlassen" type="submit"><span class="glyphicon glyphicon-log-out"></span></button>
+                  </form>
+                </span>
+              {% else %}
+                <span class="pull-right">
+                  <a href="/twittur/group/{{group.short}}/settings">
+                    <span class="glyphicon glyphicon-cog" title="Gruppe bearbeiten"></span>
+                  </a>
+                </span>
+              {% endif %}
            {% endif %}
-      {% endfor %}
+      	{% endfor %}
+    	</ul>
     {% endif %}
-    </ul>
   </div>
   {% endif %}
   
   {% if not ignored %}
-    {% if request.user in group.member.all or active_page == 'profile' %}
-      {% if has_msg %}
-        <div class="profileMessages {% if show_member or show_favs or show_groups %} hidden{% endif %}"> 
-          {% for message, dbmessage, form, comments, count in message_list %}        
-            {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
-          {% endfor %}
-          </div>
-          <div class="text-center{% if show_member or show_favs or show_groups or list_end == True or list_end == 'True' %} hidden{% endif %}">
-            <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
-                    data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}"
-                    data-user="{{ pUser }}" data-group="{{ group.short }}">
-              <span class="glyphicon glyphicon-refresh"></span>
-            </button>
-          </div>
+    {% if has_msg %}
+      <div class="profileMessages {% if show_member or show_favs or show_groups %} hidden{% endif %}"> 
+        {% for message, dbmessage, form, comments, count in message_list %}        
+          {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
+        {% endfor %}
         </div>
-      {% else %}
-        <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
-      {% endif %}
+        <div class="text-center{% if show_member or show_favs or show_groups or list_end == True or list_end == 'True' %} hidden{% endif %}">
+          <button class="load_more btn btn-default" title="Mehr Beitr&auml;ge laden"
+                  data-hint="{% url 'twittur:more' %}" data-length="{{ list_end }}" data-page="{{ active_page }}"
+                  data-user="{{ pUser }}" data-group="{{ group.short }}">
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+        </div>
+      </div>
     {% else %}
-      <div class="text-center"><em>Sie sind nicht Mitglied dieser Gruppe!<br />Nur Mitglieder k&ouml;nnen hier Nachrichten sehen und posten!</em></div>
+      <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
     {% endif %}
   {% else %}
     <div class="text-center"><em>Der Benutzer wurde von Ihnen ausgeblendet!</em></div>
   {% endif %}
-{% else %}
 {% endif %}
 {% endblock %}

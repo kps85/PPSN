@@ -9,6 +9,7 @@ API Views
 
 import datetime
 
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -27,7 +28,7 @@ def install_view(request):
     """
 
     if len(User.objects.all()) != 0:
-        return HttpResponseRedirect('/twittur/login/')
+        return HttpResponseRedirect(reverse("twittur:login"))
 
     context = {'active_page': 'install'}
 
@@ -97,7 +98,7 @@ def install_view(request):
 
         # Hash for verification
         new_hash = pw_generator(hashed=True)
-        user_profile = UserProfile(userprofile=user, location="Irgendwo", verifyHash=new_hash)
+        user_profile = UserProfile(userprofile=user, location="Berlin", verifyHash=new_hash)
         verification_mail(request, user)
         user.save()
         user_profile.save()
@@ -135,7 +136,7 @@ def install_view(request):
         user_profile.academicDiscipline = group.name
         user_profile.save()
 
-        return HttpResponseRedirect('/twittur/install/')
+        return HttpResponseRedirect(reverse("twittur:install"))
 
     return render(request, 'install.html', context)
 
@@ -170,6 +171,7 @@ def message_set(request, user, hash_item):
     :param hash_item:
     :return:
     """
+
     p_user = User.objects.get(username=user.lower())
     p_hash = p_user.userprofile.verifyHash
 

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block list %}	
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+	{% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+  <form action="{% url 'twittur:settings' %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+    <input name="delete" type="hidden" value="false" />                
+    <div class="post" id="bild">        
+        <h4>Profilbild ausw&auml;hlen</h4>
+        
+        <div class="col-xs-12 form-group">
+          <div class="col-xs-12 text-center profilePictures">
+            {% if user.userprofile.picture.url %}
+            <a href="{{ user.userprofile.picture.url }}" target="_blank">
+              <img src="{{ user.userprofile.picture.url }}" class="profilbild-l img-thumbnail">
+              <img src="{{ user.userprofile.picture.url }}" class="profilbild-s img-thumbnail">
+            </a>
+            {% endif %}
+            <p class="help-block">
+              {{ userDataForm.picture.help_text | safe }}
+            </p>
+          </div>
+          <div id="profBildUpdate">
+            <span><strong>Aktuelles Profilbild</strong>: </span>
+            {{ userDataForm.picture }}
+          </div>                
+        </div>            
+    </div>
+    
+    <div class="post" id="account">    
+      <h4>Accountverwaltung</h4>
+    
+        <div class="col-xs-12 form-group">
+          <label class="control-label" for="id_username">Username</label>
+          {{ userForm.username }}
+          <p class="help-block">Der Username kann nicht ver&auml;ndert werden.</p>
+        </div>
+        
+        <div class="col-xs-12 form-group">
+          <label class="control-label" for="id_email">E-Mail</label>
+          {{ userForm.email }}
+        </div>
+        
+        <div class="col-xs-12 col-sm-6 form-group">
+          <label class="control-label" for="id_password">Passwort</label>
+          {{ userForm.password }}
+          <p class="help-block">
+          	Ihr Passwort darf keine Leerzeichen enthalten und muss mit der Best&auml;tigung &uuml;bereinstimmen!
+          </p>
+        </div>    
+        <div class="col-xs-12 col-sm-6 form-group pull-right">
+          <label class="control-label" for="id_ack_password">Passwort best&auml;tigen</label>
+          {{ userForm.ack_password }}
+        </div>
+    </div>
+    
+    <div class="post" id="daten">    
+      <h4>Pers&ouml;nliche Daten</h4>
+        
+        <div class="col-xs-12 col-sm-6 form-group">
+          <label class="control-label" for="id_first_name">Vorname</label>
+          {{ userForm.first_name }}
+        </div>    
+        <div class="col-xs-12 col-sm-6 form-group pull-right">
+          <label class="control-label" for="id_last_name">Nachname</label>
+          {{ userForm.last_name }}
+        </div>
+    
+        <div class="col-xs-12 form-group">
+          <label class="control-label" for="id_academicDiscipline">Studiengang</label>              
+          {% if discList %}
+            {% for list in discList %}
+              <select class="form-control" id="id_academicDiscipline" name="academicDiscipline">
+              {% for fac, ad in list %}
+                <optgroup label="{{ fac }}">
+                {% for disc in ad %}
+                  <option value="{{ disc }}"{% if disc == user.userprofile.academicDiscipline %} selected{% endif %}>{{ disc }}</option>
+                {% endfor %}
+                </optgroup>
+              {% endfor %}
+              </select>
+            {% endfor %}
+          {% endif %}              
+          <p class="help-block">{{ userDataForm.academicDiscipline.help_text|safe }}</p>
+        </div>
+    
+        <div class="col-xs-12 form-group">
+          <label class="control-label" for="id_studentNumber">Matrikel-Nummer</label>
+          {{ userDataForm.studentNumber }}
+          <p class="help-block">{{ userDataForm.studentNumber.help_text|safe }}</p>
+        </div>
+    
+        <div class="col-xs-12 form-group">
+          <label class="control-label" for="id_location">Wohnort</label>
+          {{ userDataForm.location }}
+          <p class="help-block">{{ userDataForm.location.help_text|safe }}</p>
+        </div>
+    </div>  
+          
+    <div class="post" id="seite">      
+      <h4>Seiteneinstellungen</h4>
+      
+      <div class="col-xs-12 form-group">
+          <label class="control-label" for="id_safetyLevel">Standard-Sicherheitsstufe</label>
+          <select class="form-control" id="id_safetyLevel" name="safety">
+            {% for level in safetyLevelList %}
+              <option value="{% if level != 'Public' %}{{ level.name }}{% else %}Public{% endif %}"{% if level.name == user.userprofile.safety %} selected="selected"{% endif %}>
+              	{% if level != 'Public' %}{{ level.name }}{% else %}Public{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+      </div>
+      <div class="box_hash col-xs-10 form-group pull-left" style="padding-right: 0px;">
+          <label class="control-label" for="id_verifyHash">API Key</label>
+          {{ userDataForm.verifyHash }}
+          <p class="help-block">Diesen Key ben&ouml;tigen Sie f&uuml;r unsere APIs.</p>
+      </div>         
+      <div class="box_refresh col-xs-2 pull-right" style="padding-left: 0px;">
+          <label class="control-label" for="id_refresh_hash">&nbsp;</label><br />
+      		<button class="btn btn-default" data-hint="{% url 'twittur:refresh_hash' %}" id="id_refresh_hash" style="width: 100%;" type="button">
+          	<span class="glyphicon glyphicon-refresh"></span>
+          </button>
+      </div>             
+    </div>
+          
+    <div class="post" id="delete">      
+      <h4>Account vollst&auml;ndig l&ouml;schen</h4>
+      
+      <div class="col-xs-12 form-group text-center">
+          <p class="help-block">
+            &Uuml;ber diesen Button k&ouml;nnen Sie Ihren Account vollst&auml;ndig von unserer Plattform entfernen. 
+            Ihre Daten und Beitr&auml;ge, die im System gespeichert sind, werden gel&ouml;scht.
+            Zur Best&auml;tigung der L&ouml;schung erhalten Sie eine E-Mail an Ihre uns bekannte E-Mail Adresse.</p>
+          <button type="button" class="btn btn-primary text-center" data-toggle="modal" data-target="#delAccModel" id="deleteButton">Account l&ouml;schen</button>
+      </div>        
+    </div>
+        
+    <div class="col-xs-12 form-group text-center">
+      <button type="submit" class="btn btn-primary" id="submitSettButton">Speichern</button>
+      <button type="reset" class="btn btn-default" id="resetSettButton">Zur&uuml;cksetzen</button>
+    </div>  
+  </form>
+  
+  <div class="modal fade" id="delAccModel" tabindex="-1" role="dialog" aria-labelledby="delAccModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Account l&ouml;schen?</h4>
+        </div>
+        <div class="modal-body">
+          Wollen Sie Ihren Account wirklich l&ouml;schen?
+        </div>
+        <div class="modal-footer">
+          <form action="{% url 'twittur:settings' %}" method="POST">
+          {% csrf_token %}
+            <input name="delete" type="hidden" value="true" />
+            <button type="button" class="btn btn-default" data-dismiss="modal">Ok, doch nicht.</button>
+            <button type="submit" class="btn btn-primary">Ja, ich will!</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

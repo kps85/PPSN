@@ -10,7 +10,6 @@ Group Views
 
 
 from django.contrib.auth.hashers import check_password, make_password
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -30,16 +29,16 @@ def group_view(request, groupshort):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'group', request.user)
     context['groupshort'] = groupshort.lower()
 
-    try:
+    if GroupProfile.objects.filter(short__exact=context['groupshort']).exists():
         group = GroupProfile.objects.get(short__exact=context['groupshort'])
         context['group'] = group
-        context['member_list'] = group.member.exclude(pk=group.admin.id).order_by('first_name')
+        context['member_list'] = group.member.filter(is_active=True).exclude(pk=group.admin.id).order_by('first_name')
 
         # if message was sent to view: return success message
         if request.method == 'POST':
@@ -78,15 +77,14 @@ def group_view(request, groupshort):
         messages = get_messages(data={'page': 'group', 'data': group, 'request': request})
         context['message_list'], context['has_msg'] = messages['message_list'], messages['has_msg']
         context['list_end'] = messages['list_end']
-    except ObjectDoesNotExist as e:
-        print(e)
+    else:
         context = get_context(request, '404', user=request.user)
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Gruppenseite'
         context['error_object'] = groupshort
         return render(request, '404.html', context)
 
-    return render(request, 'profile.html', context)
+    return render(request, 'group.html', context)
 
 
 # Page: "Gruppe hinzufuegen"
@@ -98,7 +96,7 @@ def group_add_view(request):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'group', request.user)
@@ -117,7 +115,7 @@ def group_add_view(request):
     else:
         group_profile_form = GroupProfileForm()
     context['groupProfileForm'] = group_profile_form
-    return render(request, 'addgroup.html', context)
+    return render(request, 'group_add.html', context)
 
 
 def djlgroup(request, groupshort):
@@ -129,27 +127,23 @@ def djlgroup(request, groupshort):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # Be sure this is the right function, true -> get group object
     if 'delete_join_group' in request.POST:
-        try:
+        if GroupProfile.objects.filter(short__exact=groupshort).exists():
             group = GroupProfile.objects.get(short__exact=groupshort)
-        except ObjectDoesNotExist:
-            context = get_context(request, '404', user=request.user)
-            context['error_type'] = 'ObjectDoesNotExist'
-            context['error_site'] = 'Gruppenseite'
-            context['error_object'] = groupshort
-            return render(request, '404.html', context)
-        else:
             admin, data_dict = group.admin, request.POST
 
             # Member function:
             # check if user is in group or not
-            try:
+            # User exists -> delete him from group
+            if group.member.filter(username__exact=request.user.username).exists():
                 group.member.get(username__exact=request.user.username)
+                group.member.remove(request.user)
+                note = request.user.username + ' hat Ihre Gruppe verlassen.'
             # User does not exist, means he is not in group -> add him (password required?) -> redirect to groupsite
-            except ObjectDoesNotExist:
+            else:
                 if data_dict['delete_join_group'] == 'join_pw':
                     if check_password(data_dict['password'], group.password):
                         group.member.add(request.user)
@@ -158,13 +152,16 @@ def djlgroup(request, groupshort):
                 else:
                     group.member.add(request.user)
                 note = request.user.username + ' ist Ihrer Gruppe beigetreten.'
-            # User exists -> delete him from group
-            else:
-                group.member.remove(request.user)
-                note = request.user.username + ' hat Ihre Gruppe verlassen.'
             set_notification('group', data={'group': group, 'member': admin, 'note': note})
+        else:
+            context = get_context(request, '404', user=request.user)
+            context['error_type'] = 'ObjectDoesNotExist'
+            context['error_site'] = 'Gruppenseite'
+            context['error_object'] = groupshort
+            return render(request, '404.html', context)
 
-        return HttpResponseRedirect('/twittur/group/'+groupshort)
+        url = reverse("twittur:group", kwargs={'groupshort': groupshort})
+        return HttpResponseRedirect(url)
 
 
 # Page: "Gruppen Einstellungen"
@@ -177,22 +174,17 @@ def group_settings_view(request, groupshort):
     :return: rendered HTML in template 'settings.html'
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if user is not logged in, redirect to FTU
 
     # get current groups information and initialize return messages
-    try:
+    if GroupProfile.objects.filter(short__exact=groupshort).exists():
         group = GroupProfile.objects.get(short__exact=groupshort)
-    except ObjectDoesNotExist:
-        context = get_context(request, '404', user=request.user)
-        context['error_type'] = 'ObjectDoesNotExist'
-        context['error_site'] = 'Gruppenseite'
-        context['error_object'] = groupshort
-        return render(request, '404.html', context)
 
-    else:
         if request.user != group.admin:                                 # check if user is group admin
-            return HttpResponseRedirect('/twittur/group/'+groupshort)   # if not -> redirect to group page
+            url = reverse("twittur:group", kwargs={'groupshort': groupshort})
+            return HttpResponseRedirect(url)                            # if not -> redirect to group page
+
         # initialize data dictionary 'context' with relevant display information
         context = get_context(request, 'settings', request.user)
         context['group'], context['member_list'] = group, group.member.all()
@@ -206,7 +198,7 @@ def group_settings_view(request, groupshort):
             # if true: delete group, return to index
             if 'delete' in request.POST and request.POST['delete'] == 'true':
                 group.delete()
-                return HttpResponseRedirect('/twittur/')
+                return HttpResponseRedirect(reverse("twittur:index"))
             elif any(item in request.POST for item in ['promUser', 'remUser']):
                 group = GroupProfile.objects.get(pk=request.POST['group'])
                 if 'remUser' in request.POST:
@@ -234,4 +226,12 @@ def group_settings_view(request, groupshort):
                 context['gpeForm'] = gpe_form
 
         # return information to render settings.html
-        return render(request, 'settings.html', context)
+        return render(request, 'group_settings.html', context)
+
+    # if group does not exist
+    else:
+        context = get_context(request, '404', user=request.user)
+        context['error_type'] = 'ObjectDoesNotExist'
+        context['error_site'] = 'Gruppenseite'
+        context['error_object'] = groupshort
+        return render(request, '404.html', context)

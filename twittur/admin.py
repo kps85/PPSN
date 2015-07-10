@@ -27,13 +27,13 @@ class UserProfileAdmin(admin.ModelAdmin):
     # single-view
     fieldsets = [
         ('User',    {'fields': ['userprofile', 'verifyHash']}),
-        ('Info',    {'fields': ['picture', 'academicDiscipline', 'studentNumber', 'location', 'safety']}),
+        ('Info',    {'fields': ['picture', 'academicDiscipline', 'location', 'safety']}),
         ('Other',   {'fields': ['ignoreM', 'ignoreU', 'ignore']}),
     ]
     # overview
-    list_display = ('studentNumber', 'userprofile', 'academicDiscipline')
-    list_display_links = ('studentNumber', 'userprofile')
-    ordering = ('academicDiscipline', 'studentNumber', 'userprofile')
+    list_display = ('id', 'userprofile', 'academicDiscipline')
+    list_display_links = ('id', 'userprofile')
+    ordering = ('academicDiscipline', 'userprofile')
 
 
 # initialize admin view for Groups

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block list %}
+  {% include 'layout/sidebar.html' %}
+{% endblock %}
+
+{% block nav %}
+  {% include 'layout/nav.html' %}
+{% endblock %}
+
+{% block content %}
+  <div class="post">
+    <h4>Gruppe hinzuf&uuml;gen</h4>
+    {% if groupProfileForm %}
+    <form action="{% url 'twittur:addgroup' %}" method="POST">
+    {% csrf_token %}
+      <div class="col-xs-12 col-sm-6 form-group">
+        <label class="control-label" for="id_name">Gruppenname</label>
+        {{ groupProfileForm.name }}
+        {% if groupProfileForm.name.errors %}
+          <p><font color="#FF0000">{{ groupProfileForm.name.errors|safe }}</font></p>
+        {% endif %}
+      </div>
+      <div class="col-xs-12 col-sm-6 form-group">
+        <label class="control-label" for="id_short">Abk&uuml;rzung</label>
+        {{ groupProfileForm.short }}
+        {% if groupProfileForm.short.errors %}
+          <p><font color="#FF0000">{{ groupProfileForm.short.errors|safe }}</font></p>
+        {% endif %}
+      </div>
+      <div class="col-xs-12 form-group">
+        <label class="control-label" for="id_desc">Beschreibung</label>
+        {{ groupProfileForm.desc }}
+      </div>
+      <div class="col-xs-12 col-sm-6 form-group">
+        <label class="control-label" for="id_password">Passwort</label>
+        {{ groupProfileForm.password }}
+        {% if groupProfileForm.password.errors %}
+          <p><font color="#FF0000">{{ groupProfileForm.password.errors|safe }}</font></p>
+        {% endif %}
+      </div>
+      <div class="col-xs-12 col-sm-6 form-group">
+        <label class="control-label" for="id_ack_password">Passwort best&auml;tigen</label>
+        {{ groupProfileForm.ack_password }}
+        {% if groupProfileForm.ack_password.errors %}
+          <p><font color="#FF0000">{{ groupProfileForm.ack_password.errors|safe }}</font></p>
+        {% endif %}
+      </div>
+      <button type="submit" class="btn btn-primary pull-right">Gruppe erstellen!</button>
+    </form>
+    {% else %}
+    <p>Formular existiert nicht!</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -53,9 +53,12 @@ class UserForm(ModelForm):
     # if equal: return password
     # else: return error message
     def clean(self):
+        username = self.cleaned_data['username']
         password, ack_password = self.cleaned_data['password'], self.cleaned_data['ack_password']
         email = self.cleaned_data['email']
         error_dict = {}
+        if re.match("^[a-zA-Z0-9-_.]*$", username) is None:
+            error_dict['username'] = "Nur 'A-Z, a-z, 0-9, -, _' und '.' im Username erlaubt!"
         if password != ack_password:
             error_dict['ack_password'] = 'Passwoerter stimmen nicht ueberein!'
         if ' ' in password:
@@ -88,7 +91,7 @@ class UserDataForm(ModelForm):
     # initializing form input fields
     class Meta:
         model = UserProfile
-        fields = ['picture', 'academicDiscipline', 'studentNumber', 'location']
+        fields = ['picture', 'academicDiscipline', 'location', 'verifyHash']
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
@@ -99,13 +102,10 @@ class UserDataForm(ModelForm):
         self.fields['location'].required = False
         # picture only accepts images
         self.fields['picture'].widget.attrs['accept'] = 'image/*'
-        # set studentNumber type to text
-        self.fields['studentNumber'].widget = forms.TextInput(attrs={
-            'pattern': '[0-9]{6}'
-        })
+        # set verifyHash field to read only, so it can't be changed by input
+        self.fields['verifyHash'].widget.attrs['readonly'] = True  # set username input readonly
 
         # for each field set class to 'form-control' except 'picture',
-        # set class to 'checkNumeric' for studentNumber and
         # set initial value to user's personal information
         for field in self.fields:
             if field != 'picture':
@@ -114,15 +114,6 @@ class UserDataForm(ModelForm):
                 self.fields[field].widget.attrs['value'] = getattr(instance, field)
             else:
                 self.fields['academicDiscipline'].initial = getattr(instance, field)
-
-    def clean(self):
-        student_number = self.cleaned_data["studentNumber"]
-        error_dict = {}
-        if re.match("^[0-9]*$", student_number) is None:
-            error_dict['studentNumber'] = "Die Matrikel-Nummer darf nur aus sechs Ziffern bestehen!"
-        if len(error_dict) > 0:
-            raise ValidationError(error_dict, code='invalid')
-        return self.cleaned_data
 
     # validation: check after submit before save
     def clean_picture(self):

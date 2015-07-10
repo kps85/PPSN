@@ -429,6 +429,27 @@ function initInfoSettings() {
 				$("#id_other").val("");
 			}
     });
+		
+		/* gets a new verifyHash for user and returns value to user_data_form */
+		$("#id_refresh_hash").click(function(e) {
+			var info = {
+				url: $(this).attr("data-hint")
+			}
+			$.ajax({
+				type:"GET",
+				url: info.url,
+				data: null,
+				dataType: 'html',
+				async: true,
+				success: function(data) {
+					$("#id_verifyHash").val(data);
+				},
+				error: function(xhr,err) {					
+					alert("readyState: "+xhr.readyState+"\nstatus: "+xhr.status);
+					alert("responseText: "+xhr.responseText);
+				}
+			});			      
+    });
 	}
 }
 function infoChange(hash) {		

@@ -33,13 +33,11 @@ import hashlib
 from django.conf import settings
 from django.contrib import auth
 from django.core.mail import send_mail
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.html import mark_safe
 
 from .models import FAQ, GroupProfile, Hashtag, Message, Nav, Notification, User, UserProfile
 from .forms import MessageForm
@@ -53,7 +51,7 @@ def logout(request):
     """
 
     auth.logout(request)
-    return HttpResponseRedirect('/twittur/')
+    return HttpResponseRedirect(reverse("twittur:index"))
 
 
 # initialize global data dictionary
@@ -168,9 +166,12 @@ def msg_dialog(request):
                 msg_form.save()                 # save this shit for the next step
                 if message.user != request.user:
                     note = request.user.username + ' hat auf Ihre Nachricht geantwortet.'
-                    set_notification('comment', data={'user': message.user, 'message': msg_form.instance, 'note': note})
+                    set_notification('comment', data={
+                        'user': message.user, 'message': msg_form.instance, 'note': note
+                    })
 
-    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()}, user_id=request.user.id)
+    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()},
+                           user_id=request.user.id)
     return msg_form
 
 
@@ -196,9 +197,9 @@ def msg_to_db(message):
                 if word[1:] == item:
                     regex_passed = True
             if regex_passed:
-                try:
+                if Hashtag.objects.filter(name__exact=word[1:].encode('utf-8')).exists():
                     hashtag = Hashtag.objects.get(name__exact=word[1:].encode('utf-8'))
-                except ObjectDoesNotExist:
+                else:
                     hashtag = Hashtag(name=word[1:].encode('utf-8'))
                     hashtag.save()
 
@@ -207,26 +208,20 @@ def msg_to_db(message):
         # now find in text all words start with "@". Its important to find this user in database.
         if word[0] == "@":
             # database will save user instead of @user
-            try:
+            if User.objects.filter(username__exact=word[1:]).exists():
                 user = User.objects.get(username__exact=word[1:])
-            except ObjectDoesNotExist:
-                pass
-            else:
                 if message.user != user:
                     set_notification('message', data={'user': user, 'message': message})
                 attaglist.append(user)
 
         if word[0] == "&":
             # database will save group instead of @group
-            try:
+            if GroupProfile.objects.filter(short__exact=str(word[1:])).exists():
                 group = GroupProfile.objects.get(short__exact=str(word[1:]))
-
-            except ObjectDoesNotExist:
+                message.group = group
+            else:
                 if message.group is not None:
                     message.group = None
-                pass
-            else:
-                message.group = group
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
     checkhashtag(message, hashtaglist)
@@ -284,7 +279,7 @@ def dbm_to_m(message):
             # if this user doesnt exist -> no need to set a link
             # else we will set a link to his profile
             if word[0] == "@" and word not in urls:
-                if User.objects.filter(username=word[1:]).exists()\
+                if User.objects.filter(Q(username=word[1:]) & Q(is_active=True)).exists()\
                         and User.objects.get(username=word[1:]) in attag_list:
                     href = '<a href="/twittur/profile/' + word[1:] + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
@@ -465,6 +460,7 @@ def get_comment_count(message):
     count, comments = 0, Message.objects.filter(comment=message)
     for comment in comments:
         count += get_comment_count(comment) + 1
+
     return count
 
 
@@ -475,8 +471,8 @@ def load_more(request):
     :return: rendered HTML in Template 'message_box_reload.html'
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if user is not logged in, redirect to FTU
 
     data, data_dict = None, request.GET
     page = data_dict.get('page')
@@ -523,8 +519,8 @@ def update(request):
     :return: String with update status
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if user is not logged in, redirect to FTU
 
     data_dict, response = request.GET, None
 
@@ -631,6 +627,7 @@ def set_notification(what, data):
         ntfc = Notification(user=data['member'], group=data['group'], note=data['note'])
 
     ntfc.save()
+
     return ntfc
 
 
@@ -675,13 +672,16 @@ def create_abs_url(request, what, data):
     :param data:
     :return:
     """
+
     url = None
+
     if what == 'profile':
         url = reverse("twittur:profile", kwargs={'user': data})
     elif what == 'group':
         url = reverse("twittur:group", kwargs={'groupshort': data})
     elif what == 'message':
         url = reverse("twittur:message", kwargs={'msg': data})
+
     return request.build_absolute_uri(url)
 
 
@@ -716,12 +716,15 @@ def get_safety_levels(user, group=False):
     """
 
     safety_level = ['Public']
+
     disc = GroupProfile.objects.get(name=user.userprofile.academicDiscipline)
     fak = GroupProfile.objects.get(name=disc.supergroup)
     uni = GroupProfile.objects.get(name=fak.supergroup)
+
     safety_level.append(uni)
     safety_level.append(fak)
     safety_level.append(disc)
+
     if group:
         group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
         group_list = GroupProfile.objects.filter(
@@ -746,6 +749,7 @@ def get_faqs():
     for cat in faq_cats:
         faq_list = FAQ.objects.filter(category=cat['category']).order_by('question')
         faqs.append(faq_list)
+
     return faqs
 
 
@@ -774,13 +778,29 @@ def pw_generator(size=6, chars=string.ascii_uppercase + string.digits, hashed=Fa
     :param chars: possible chars to be used in generated password
     :return: random generated password
     """
+
     if hashed:
         m = hashlib.md5()
         m.update((''.join(random.choice(chars) for _ in range(size))).encode('utf-8'))      # extended with md5 hashing
         pw = m.hexdigest()
     else:
         pw = ''.join(random.choice(chars) for _ in range(size))
+
     return pw
+
+
+def refresh_hash(request):
+    """
+    generates a new verify hash for user
+    :param request:
+    :return: new hash
+    """
+
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if user is not logged in, redirect to FTU
+
+    hash_item = pw_generator(hashed=True)
+    return HttpResponse(hash_item)
 
 
 def login_user(request, user):
@@ -792,12 +812,15 @@ def login_user(request, user):
     :param user:
     :return:
     """
+
     from django.contrib.auth import load_backend, login
+
     if not hasattr(user, 'backend'):
         for backend in settings.AUTHENTICATION_BACKENDS:
             if user == load_backend(backend).get_user(user.pk):
                 user.backend = backend
                 break
+
     if hasattr(user, 'backend'):
         return login(request, user)
 
@@ -823,7 +846,6 @@ def verification_mail(request, user):
 
 def verify(request, user, hash_item):
 
-    user = user.lower()
     p_user = User.objects.get(username=user)
     p_hash = p_user.userprofile.verifyHash
 
@@ -833,7 +855,7 @@ def verify(request, user, hash_item):
             p_user.is_active = True
             p_user.save()
             login_user(request, p_user)
-            return HttpResponseRedirect('/twittur/')
+            return HttpResponseRedirect(reverse("twittur:index"))
         else:
             response = "Ihr Account ist bereits aktiv!"
     else:

@@ -81,13 +81,11 @@ class Message(models.Model):
 
 class UserProfile(models.Model):
     """ the user profile contains additional information for a user """
+
     userprofile = models.OneToOneField(User)
     verifyHash = models.CharField(max_length=32, default='')            # for verification
 
     follow = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='follow', through='Notification')
-    studentNumber = models.CharField(max_length=6, default='000000',
-                                     help_text='&Uuml;ber Ihre Matrikel-Nummer k&ouml;nnen Sie eindeutig als Student'
-                                               ' der TU Berlin identifiziert werden.<br>(muss aus 6 Ziffern bestehen)')
     academicDiscipline = models.CharField(max_length=200,
                                           help_text='&Uuml;ber Ihren Studiengang werden Sie '
                                                     'bestimmten Gruppen zugeordnet.')

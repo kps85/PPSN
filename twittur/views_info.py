@@ -9,6 +9,7 @@ Info Views
 """
 
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
@@ -51,8 +52,8 @@ def faq_view(request):
     :return: rendered HTML in template 'info_faq.html'
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if not -> redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'info', request.user)
@@ -79,8 +80,8 @@ def support_view(request):
     :return: rendered HTML in template 'info_support.html'
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if not -> redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'info', request.user)

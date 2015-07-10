@@ -1,0 +1,147 @@
+{% include 'header.html' %}
+<div id="ftu" class="full-page">
+<div class="center">
+<a class="title" href="{% url 'twittur:index' %}">twittur</a>
+<a class="showRegister" href="#"> <span class="default">Registrieren</span> <span class="mobile">Jetzt bei twittur registrieren!</span> </a>
+<div class="column column-left">
+  <div class="headline"> twit<span>tu</span>r ist das soziale Netzwerk f&uuml;r die TU Berlin. </div>
+  <div class="subline">
+    <p>Es hilft Ihnen, einfach mit Kommilitonen, Lehrst&uuml;hlen und anderen Organisationen in Kontakt zu bleiben, ohne dass Sie den &Uuml;berblick verlieren. </p>
+    <p>Erstellen Sie gleich ein Konto und folgen Nachrichten, die Sie interessieren. Oder sehen Sie sich an, was die Nutzer von twit<span>tu</span>r der <a href="#ftuPosts">Welt</a> mitzuteilen haben.</p>
+  </div>
+</div>
+<div class="column column-right">
+<div class="box loginBox {% if not pActive %}active {% endif %}">
+  <h2>Anmelden</h2>
+  <div id="login">
+    <form method="GET">
+      {% csrf_token %}
+      <input type="text" name="username" id="username" placeholder="Username"  />
+      <br />
+      <input type="password" name="password" name="password" placeholder="Passwort" autocomplete="off" />
+      <br />
+      {% if error_login %}
+      <p><font color="#FF0000"> &nbsp; {{ error_login|safe }}</font></p>
+      {% else %}
+      <p></p>
+      {% endif %}
+      <input type="submit" value="Los geht's!" name="login" />
+      <input type="reset" value="Zur&uuml;cksetzen" />
+      <a class="forgot" href="javascript:;">Passwort vergessen?</a>
+    </form>
+  </div>
+</div>
+<div class="box forgotBox {% if pActive %}active{% endif %}">
+  <h2>Passiert jedem mal ...</h2>
+  {% if success_msg %}
+    <div class="infoMessage alert alert-success" role="alert">
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+      {{ success_msg|safe }}
+      <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
+    </div>
+  {% endif %}
+  <form method="POST" action="{% url 'twittur:login' %}">
+	{% csrf_token %}
+    <input id="id_password_reset" name="password_reset" type="hidden" />
+    <input id="id_pwRestMail" name="pwResetMail" placeholder="Ihre Mailadresse" type="text" />
+    {% if errors.error_not_registered %}
+    	<p><font color="#FF0000">{{ errors.error_not_registered|safe }}</font></p>
+    {% endif %}
+    <input id="id_pwResetStudNumb" name="pwResetVerifyHash" placeholder="Ihr Verify Hash zur Sicherheit" type="text" />
+    {% if errors.error_verify_hash %}
+    	<p><font color="#FF0000">{{ errors.error_verify_hash|safe }}</font></p>
+    {% endif %}
+    <br />
+    <input type="submit" class="forgotSendButton" value="Neues Passwort anfordern" />
+  	<a class="forgotBack">Zur&uuml;ck</a>
+  </form>
+</div>
+</div>
+</div>
+</div>
+<div class="{% if rActive %}active {% endif %} scrollfix" id="register">
+<h1>Registrieren</h1>
+<form method="POST" action="">
+  {% csrf_token %}
+  <div class="column column-left">
+    <h4>Ihre Login Daten</h4>
+    <input type="text" name="name" placeholder="Username *" id="name" {% if data.username %} value="{{ data.username }}"{% endif %}/>
+    <br />
+    <input type="password" name="password" placeholder="Passwort *" id="password" />
+    <br />
+    <input type="password" name="ack_password" placeholder="Passwort best&auml;tigen *" id="ack_password" />
+    <br />
+    {% if errors.error_reg_user_p or errors.error_reg_user_n %}    
+      {% if errors.error_reg_user_n %}
+      <p><font color="#FF0000"> &nbsp; {{ errors.error_reg_user_n|safe }}</font></p>
+      {% endif %}
+      {% if errors.error_reg_user_p %}
+      <p><font color="#FF0000"> &nbsp; {{ errors.error_reg_user_p|safe }}</font></p>
+      {% endif %}
+    {% endif %}
+    <br />
+    <h4>Ihre pers&ouml;nlichen Daten</h4>
+    <input type="text" name="first_name" placeholder="Vorname" id="first_name" {% if data.first_name %} value="{{ data.first_name }}"{% endif %}/>
+    <br />
+    <input type="text" name="last_name" placeholder="Nachname" id="last_name" {% if data.last_name %} value="{{ data.last_name }}"{% endif %}/>
+    <br />
+    <input type="text" name="email" placeholder="E-Mail *" id="email" required="required" {% if data.email %} value="{{ data.email }}"{% endif %}/>
+    <br />
+    {% if errors.error_reg_mail %}
+    	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_mail|safe }}</font></p>
+    {% endif %}
+    <br />
+  </div>
+  <div class="column column-right">
+    <h4>Ihre T&auml;tigkeit an der TU Berlin</h4>              
+    {% if discList %}
+      {% for list in discList %}
+        <select class="superDropdown" id="id_academicDiscipline" name="academicDiscipline" placeholder="Studiengang *" required="required">
+        {% for fac, ad in list %}
+          <optgroup label="{{ fac }}">
+          {% for disc in ad %}
+            <option value="{{ disc }}">{{ disc }}</option>
+          {% endfor %}
+          </optgroup>
+        {% endfor %}
+        </select>
+      {% endfor %}
+    {% endif %}
+    
+    {% if errors.error_reg_userprofile_ad %}
+    	<p><font color="#FF0000"> &nbsp; {{ errors.error_reg_userprofile_ad|safe }}</font></p>
+    {% endif %}
+    <p class="help-block pull-left">Mit * gekennzeichnete Felder sind notwendig!</p>
+  </div><br /><br />
+  <div id="registerButtons">
+    <input type="reset" value="Abbrechen" />
+    <input type="submit" class="registerButton" value="Registrieren" name="submit" />
+  </div>
+</form>
+</div>
+{% if message_list %}
+<div id="ftuPosts" class="full-page-nomobile">
+  <div class="center">
+    <div class="column column-right ftuTags">
+      <h2>Beliebte Themen</h2>
+      <ul>
+      {% for tag in hashtag_list %}
+        <li>#{{ tag }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="column column-left">
+      <h2>&Ouml;ffentliche Nachrichten</h2>
+      <div class="messages">
+      	{% for message in message_list %}
+        	{% include "message_box.html" with message=message %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div id="ftuFooter">
+  <div class="center"> <a href="{% url 'twittur:info' %}">Impressum</a> </div>
+</div>
+{% include 'footer.html' %}

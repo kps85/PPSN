@@ -11,10 +11,10 @@ Search Views
 import copy
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.exceptions import ObjectDoesNotExist
 
 from .functions import dbm_to_m, elim_dups, get_context, get_messages
 from .models import GroupProfile, Hashtag, Message
@@ -30,8 +30,8 @@ def search_view(request):
     :return: rendered HTML in template 'search.html'
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if not -> redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'search', request.user)
@@ -71,25 +71,16 @@ def search_view(request):
     for term in search_input:
         if len(search_input) == 1 and len(term) > 1:
             if term[0] == "#":
-                try:
+                if Hashtag.objects.filter(name__exact=term[1:]).exists():
                     hashtag = Hashtag.objects.get(name__exact=term[1:])
-                except ObjectDoesNotExist:
-                    pass
-                else:
                     return hashtag_view(request, hashtag.name)
             elif term[0] == "&":
-                try:
+                if GroupProfile.objects.filter(short__exact=term[1:]).exists():
                     group = GroupProfile.objects.get(short__exact=term[1:])
-                except ObjectDoesNotExist:
-                    pass
-                else:
                     return group_view(request, group.short)
             elif term[0] == "@":
-                try:
+                if User.objects.filter(username__exact=term[1:]).exists():
                     user = User.objects.get(username__exact=term[1:])
-                except ObjectDoesNotExist:
-                    pass
-                else:
                     return profile_view(request, user.username)
 
         m_list, dbmessage_list, message_forms, comment_list, comment_count = [], [], [], [], []
@@ -104,11 +95,11 @@ def search_view(request):
         m_zip = zip(m_list, dbmessage_list, message_forms, comment_list, comment_count)
         message_list.append(m_zip)
         if term[0] == '@' and len(term) > 1:
-            user_list.append(User.objects.all().filter(Q(username__contains=term[1:])))
+            user_list.append(User.objects.filter(Q(username__contains=term[1:]) & Q(is_active=True)))
         elif term[0] == '@' and len(term) == 1:
-            user_list.append(User.objects.all())
+            user_list.append(User.objects.filter(is_active=True))
         else:
-            user_list.append(User.objects.all().filter(Q(username__contains=term)))
+            user_list.append(User.objects.filter(Q(username__contains=term) & Q(is_active=True)))
 
         if term[0] == '&' and len(term) > 1:
             group = GroupProfile.objects.filter(Q(short__contains=term[1:]))
@@ -121,17 +112,18 @@ def search_view(request):
             group_list.append(group.distinct())
 
         if len(term) > 1 and term[0] == '#':
-            hashtag = Hashtag.objects.all().filter(Q(name__contains=term[1:]))
+            hashtag = Hashtag.objects.filter(Q(name__contains=term[1:]))
         elif len(term) == 1 and term[0] == '#':
             hashtag = Hashtag.objects.all()
         else:
-            hashtag = Hashtag.objects.all().filter(Q(name__contains=term))
+            hashtag = Hashtag.objects.filter(Q(name__contains=term))
 
         hashtag_count = []
         for item in hashtag:
             hashtag_count.append(Message.objects.filter(hashtags__name__exact=item.name).count())
 
         hashtag_list.append(zip(hashtag, hashtag_count))
+
     # eliminate duplicates from each list and sort message list by date
     user_list, hashtag_list = elim_dups(user_list), elim_dups(hashtag_list)
     group_list, message_list = elim_dups(group_list), elim_dups(message_list)
@@ -159,8 +151,8 @@ def hashtag_view(request, text):
     :return: rendered HTML in template 'search.html'
     """
 
-    if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+    if not request.user.is_authenticated():                     # check if user is logged in
+        return HttpResponseRedirect(reverse("twittur:login"))   # if not -> redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'hashtag', request.user)

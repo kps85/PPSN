@@ -17,12 +17,11 @@ import re
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
 
 from .models import GroupProfile, Hashtag, Message, Notification, UserProfile
 from .forms import UserForm, UserDataForm
@@ -39,10 +38,10 @@ def index_view(request):
     """
 
     if len(User.objects.all()) == 0:
-        return HttpResponseRedirect('/twittur/install/')
+        return HttpResponseRedirect(reverse("twittur:install"))
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if not -> redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if not -> redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'index', request.user)
@@ -70,7 +69,7 @@ def login_view(request):
     """
 
     :param request:
-    :return: rendered HTML in template 'ftu.html'
+    :return: rendered HTML in template 'index_ftu.html'
     """
 
     # Public Messages:
@@ -88,25 +87,25 @@ def login_view(request):
             if user is not None:
                 if user.is_active:
                     auth.login(request, user)
-                    return HttpResponseRedirect('/twittur/')
+                    return HttpResponseRedirect(reverse("twittur:index"))
                 else:
                     context['error_login'] = "Ihr Account wurde noch nicht verifiziert!"
             else:
                 context['error_login'] = "Ups, Username oder Passwort falsch."
-            return render(request, 'ftu.html', context)
+            return render(request, 'index_ftu.html', context)
 
     # if user tries to register or to reset his password
     if request.method == 'POST':
         query_dict, data, error_msg, success_msg = request.POST, {}, {}, None
-        username, password, email, first_name, last_name, academic_discipline, student_number = \
-            None, None, None, None, None, None, None
+        username, password, email, first_name, last_name, academic_discipline = \
+            None, None, None, None, None, None
 
         # if user tries to reset his password, generate new one and send per mail
-        # confirm user identity by checking his student number
+        # confirm user identity by checking his verify hash
         if 'password_reset' in request.POST:
-            try:
+            if User.objects.filter(email=request.POST['pwResetMail']).exists():
                 user = User.objects.get(email=request.POST['pwResetMail'])
-                if request.POST['pwResetStudNumb'] == user.userprofile.studentNumber:
+                if request.POST['pwResetVerifyHash'] == user.userprofile.verifyHash:
                     password = pw_generator(10)
                     message = "Hallo!\n" \
                               "\n" \
@@ -127,13 +126,11 @@ def login_view(request):
                     user.save()
                     success_msg = 'Ihr neues Passwort haben Sie per E-Mail erhalten!'
                 else:
-                    error_msg['error_stud_number'] = "Die eingegebene Matrikel-Nummer stimmt nicht mit der " \
-                                                     "Matrikel-Nummer &uuml;berein, die uns bekannt ist.<br>" \
-                                                     "Wenn Sie Ihre eingegebe Matrikel-Nummer vergessen haben, " \
-                                                     "kontaktieren Sie ein twittur-Teammmitglied. (siehe " \
-                                                     "<a href='/twittur/info'>Impressum</a>)"
-            except ObjectDoesNotExist as e:
-                print(e)
+                    error_msg['error_verify_hash'] = "Der eingegebene Wert stimmt nicht mit dem Wert &uuml;berein, " \
+                                                     "der uns bekannt ist. Wenn Sie Ihren verify hash vergessen haben, " \
+                                                     "kontaktieren Sie ein twittur-Teammitglied. " \
+                                                     "(siehe <a href='" + reverse("twittur:info") + "'>Impressum</a>)"
+            else:
                 error_msg['error_not_registered'] = "Die eingegebene E-Mail Adresse ist nicht registriert."
 
         # if a guest wants to register
@@ -174,16 +171,6 @@ def login_view(request):
                 data['first_name'] = first_name
             if len(last_name) > 0:
                 data['last_name'] = last_name
-            if len(query_dict['studentNumber']) == 6:
-                student_number = query_dict['studentNumber']
-                if re.match("^[0-9]*$", student_number) is None:
-                    error_msg['error_student_number'] = "Die Matrikel-Nummer darf nur aus sechs Ziffern bestehen!"
-                elif UserProfile.objects.filter(studentNumber=student_number).exists():
-                    error_msg["error_student_number"] = "Ein Benutzer mit dieser Matrikel-Nummer existiert bereits."
-                else:
-                    data['studentNumber'] = student_number
-            else:
-                error_msg['error_student_number'] = "Die eingegebene Matrikel-Nummer ist ung&uuml;ltig!"
             if len(academic_discipline) > 0:
                 data['academicDiscipline'] = academic_discipline
             else:
@@ -201,7 +188,7 @@ def login_view(request):
             else:
                 context['rActive'] = 'active'
 
-            return render(request, 'ftu.html', context)
+            return render(request, 'index_ftu.html', context)
 
         # if data is correct -> create User and Userprofile
         user = User.objects.create_user(username, email, password)
@@ -209,7 +196,7 @@ def login_view(request):
 
         # Hash for verification
         new_hash = pw_generator(hashed=True)
-        user_profile = UserProfile(userprofile=user, studentNumber=student_number,
+        user_profile = UserProfile(userprofile=user,
                                    academicDiscipline=academic_discipline, location="",
                                    verifyHash=new_hash)
         verification_mail(request, user)
@@ -218,7 +205,7 @@ def login_view(request):
 
         # academic discipline (required user in db)
         # -> add user to group uni, fac whatever and his academic discipline
-        try:
+        if GroupProfile.objects.filter(name=academic_discipline).exists():
             group = GroupProfile.objects.get(name=academic_discipline)
             while True:
                 group.member.add(user)
@@ -227,14 +214,9 @@ def login_view(request):
                 else:
                     group = group.supergroup
 
-        except ObjectDoesNotExist as e:
-            print(e)
-            pass
+        return HttpResponseRedirect(reverse("twittur:pleaseVerify"))
 
-        location = reverse("twittur:pleaseVerify")
-        return HttpResponseRedirect(location)
-
-    return render(request, 'ftu.html', context)
+    return render(request, 'index_ftu.html', context)
 
 
 # Page: "Profilseite"
@@ -247,7 +229,7 @@ def profile_view(request, user):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'profile', user)
@@ -260,7 +242,7 @@ def profile_view(request, user):
         # group_sb_list = GroupProfile.objects.filter(Q(member__exact=request.user))
         context['show_group_list'] = GroupProfile.objects.filter(Q(member__exact=request.user))
 
-    try:
+    if User.objects.filter(username=user.lower()).exists():
         p_user = User.objects.get(username=user.lower())  # this is the user displayed in html
         context['pUser'], context['pUserProf'] = p_user, p_user.userprofile
         data_dict = None
@@ -320,8 +302,7 @@ def profile_view(request, user):
 
         if 'delMessage' or 'ignoreMsg' not in request.POST:
             context['list_end'] = messages['list_end']
-    except ObjectDoesNotExist as e:
-        print(e)
+    else:
         context = get_context(request, '404', user=request.user)
         context['error_type'] = 'ObjectDoesNotExist'
         context['error_site'] = 'Profilseite'
@@ -340,14 +321,14 @@ def profile_settings_view(request):
     """
     view to update account and personal information
     -- picture, email, password, first_name, last_name,
-       academicDiscipline, studentNumber, location
+       academicDiscipline, location
     user can also delete its account
     :param request:
     :return: rendered HTML in template 'settings.html'
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, page='settings', user=request.user)
@@ -364,7 +345,7 @@ def profile_settings_view(request):
         if data_dict['delete'] == 'true':
             user_profile.delete()
             user.delete()
-            return HttpResponseRedirect('/twittur/')
+            return HttpResponseRedirect(reverse("twittur:index"))
         # else: validate userForm and userDataForm and save changes
         else:
             user_form = UserForm(data_dict, instance=user)
@@ -403,7 +384,7 @@ def profile_settings_view(request):
 
             # academic discipline (required user in db)
             # -> add user to group uni, fac whatever and his academic discipline
-            try:
+            if GroupProfile.objects.filter(name=user_profile.academicDiscipline).exists():
                 group = GroupProfile.objects.get(name=user_profile.academicDiscipline)
                 if group is not user_group:
                     if user in user_group.member.all():
@@ -421,9 +402,6 @@ def profile_settings_view(request):
                             if user not in group.member.all():
                                 group.member.add(user)
                             group = group.supergroup
-            except ObjectDoesNotExist as e:
-                print(e)
-                pass
 
     # update current users information if changed
     if request.method == 'POST':
@@ -435,7 +413,7 @@ def profile_settings_view(request):
     context['userForm'], context['userDataForm'] = UserForm(instance=user), UserDataForm(instance=user_profile)
     context['discList'], context['safetyLevelList'] = get_disciplines(), get_safety_levels(user)
 
-    return render(request, 'settings.html', context)
+    return render(request, 'profile_settings.html', context)
 
 
 # Page: "Nachricht / Konversation"
@@ -448,7 +426,7 @@ def message_view(request, msg):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, page='message', user=request.user)
@@ -484,7 +462,7 @@ def notification_view(request):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, page='notification', user=request.user)
@@ -518,7 +496,7 @@ def vier_null_vier(request):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, '404', user=request.user)
@@ -539,7 +517,7 @@ def no_script(request):
     """
 
     if not request.user.is_authenticated():             # check if user is logged in
-        return HttpResponseRedirect('/twittur/login/')  # if user is not logged in, redirect to FTU
+        return HttpResponseRedirect(reverse("twittur:login"))  # if user is not logged in, redirect to FTU
 
     # initialize data dictionary 'context' with relevant display information
     context = get_context(request, 'noscript', user=request.user)
