@@ -76,7 +76,9 @@ def get_context(request, page=None, user=None):
 
     # collect hashtags, count them and order them by count reversed
     hashtag_count, hot_list = {}, []
-    hashtag_list = Message.objects.all().exclude(hashtags=None).values("hashtags")
+    date_yesterday = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(hours=24),
+                                         timezone.get_current_timezone())
+    hashtag_list = Message.objects.filter(Q(date__gt=date_yesterday)).exclude(hashtags=None).values("hashtags")
     for ht in hashtag_list:
         if ht['hashtags'] not in hashtag_count:
             hashtag_count[ht['hashtags']] = 1
