@@ -299,7 +299,7 @@ class MessageForm(ModelForm):
                                          timezone.get_current_timezone())
         # prevent spam!
         if last_msg.date > check_date:
-            error_dict['user'] = 'Sie müssen eine Minute warten, bevor Sie wieder posten können!'
+            error_dict['user'] = 'Sie müssen 30 Sekunden warten, bevor Sie wieder posten können!'
 
         if len(error_dict) > 0:
             raise ValidationError(error_dict, code='invalid')

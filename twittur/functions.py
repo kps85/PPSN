@@ -200,7 +200,7 @@ def msg_to_db(message):
     :return:
     """
 
-    hashtaglist, attaglist = [], []
+    hashtaglist, attaglist, ntfc_list = [], [], []
     regex_passed = False
     # Step 1: replace all # and @ with link
     for word in message.text.split():
@@ -226,8 +226,8 @@ def msg_to_db(message):
             # database will save user instead of @user
             if User.objects.filter(username__exact=word[1:]).exists():
                 user = User.objects.get(username__exact=word[1:])
-                if message.user != user:
-                    set_notification('message', data={'user': user, 'message': message})
+                if message.user != user and user not in ntfc_list:
+                    ntfc_list.append(user)
                 attaglist.append(user)
 
         if word[0] == "&":
@@ -238,6 +238,10 @@ def msg_to_db(message):
             else:
                 if message.group is not None:
                     message.group = None
+
+    # send a ntfc to every mentioned user
+    for user in ntfc_list:
+        set_notification('message', data={'user': user, 'message': message})
 
     # (2) check for hashtags and attags in database (remove if no reference), only for edit
     checkhashtag(message, hashtaglist)
@@ -674,11 +678,13 @@ def get_notification(request):
             ntfc.notified = True
             ntfc.save()
 
-    context['ntfc_list'] = ntfc_list
+    if len(ntfc_list) > 4:
+        context['ntfc_has_more'] = create_abs_url(request, 'notification')
+    context['ntfc_list'] = ntfc_list[:4]
     return render(request, "notification_list.xml", context)
 
 
-def create_abs_url(request, what, data):
+def create_abs_url(request, what, data=None):
     """
 
     :param request:
@@ -697,6 +703,8 @@ def create_abs_url(request, what, data):
         url = reverse("twittur:message", kwargs={'msg': data})
     elif what == 'reset_pw':
         url = reverse("twittur:reset_pw", kwargs={'user': data['username'], 'hash_item': data['hash_item']})
+    elif what == 'notification':
+        url = reverse("twittur:notification")
 
     return request.build_absolute_uri(url)
 
