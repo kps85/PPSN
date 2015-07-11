@@ -244,7 +244,7 @@ function notificationTest(message, delay) {
 }
 
 function getNotifications(user, verify, url) {
-    $.post( url, { 'user': user, 'hash':verify }, function(data) {
+    $.post( url, {'user': user, 'hash': verify}, function(data) {
         if(data != "") {
             var $xml = $(data);
             $xml.find("notification").each(function() {
@@ -259,13 +259,14 @@ function getNotifications(user, verify, url) {
 
 function initNotifications() {
 	if(!$(".liveNotifications").length) return;
-    var user = $("body").attr('data-user');
-    var verify = $("body").attr('data-verify');
-    var url = $('link[rel="api"]').attr('href');
-    if(user == "" || verify == "") return;
-    setInterval(function() {
-        getNotifications(user, verify, url);
-    }, notificationPoll);
+	
+	var user = $("body").attr('data-user');
+	var verify = $("body").attr('data-verify');
+	var url = $('link[rel="api"]').attr('href');
+	if(user == "" || verify == "") return;
+	setInterval(function() {
+			getNotifications(user, verify, url);
+	}, notificationPoll);
     
 }
 
