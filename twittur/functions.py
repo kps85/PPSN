@@ -67,6 +67,8 @@ def get_context(request, page=None, user=None):
 
     user_profile = UserProfile.objects.get(userprofile=request.user)
     follow_list = user_profile.follow.all()
+
+
     # group_super_list is to hide default groups from sidebar // DISABLED for the moment
     # group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
     group_list = GroupProfile.objects.filter(
@@ -289,23 +291,24 @@ def dbm_to_m(message):
     # message contains hashtags or atttags
     if attag_list or hashtag_list or group:
         for word in message.text.split():
-            # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-            if word[0] == "#" and (word not in urls):
-                if Hashtag.objects.filter(name=word[1:]).exists():
-                    href = r'<a href="%s">%s</a>' % (reverse("twittur:hashtag", kwargs={'text': word[1:]}), word)
-                    message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
+            if len(word[1:]) > 0:
+                # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
+                if word[0] == "#" and (word not in urls):
+                    if Hashtag.objects.filter(name=word[1:]).exists():
+                        href = r'<a href="%s">%s</a>' % (reverse("twittur:hashtag", kwargs={'text': word[1:]}), word)
+                        message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
 
-            # now find in text all words start with "@". Its important to find this user in database.
-            # if this user doesnt exist -> no need to set a link
-            # else we will set a link to his profile
-            if word[0] == "@" and word not in urls:
-                if User.objects.filter(Q(username=word[1:]) & Q(is_active=True)).exists()\
-                        and User.objects.get(username=word[1:]) in attag_list:
-                    href = '<a href="' + reverse("twittur:profile", kwargs={'user': word[1:]}) + '">' + word + '</a>'
+                # now find in text all words start with "@". Its important to find this user in database.
+                # if this user doesnt exist -> no need to set a link
+                # else we will set a link to his profile
+                if word[0] == "@" and word not in urls:
+                    if User.objects.filter(Q(username=word[1:]) & Q(is_active=True)).exists()\
+                            and User.objects.get(username=word[1:]) in attag_list:
+                        href = '<a href="' + reverse("twittur:profile", kwargs={'user': word[1:]}) + '">' + word + '</a>'
+                        message.text = message.text.replace(word, href)
+                if word[0] == '&' and group.short == word[1:] and word not in urls:
+                    href = '<a href="' + reverse("twittur:group", kwargs={'groupshort': word[1:]}) + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
-            if word[0] == '&' and group.short == word[1:] and word not in urls:
-                href = '<a href="' + reverse("twittur:group", kwargs={'groupshort': word[1:]}) + '">' + word + '</a>'
-                message.text = message.text.replace(word, href)
     if urls:
         for url in urls:
             href = '<a href="' + url + '">' + url + '</a>'
