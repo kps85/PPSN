@@ -36,20 +36,24 @@
     </div>
     <div class="col-xs-12 col-sm-8 clearfix">
       <div class="profilMeta">
+      	{% if pUser.first_name or pUser.last_name %}
         <h3 class="profilAuthor">
           {{ pUser.first_name }} {{ pUser.last_name }}
         </h3>
+        {% endif %}
         <h5 class="profilNick" data-hint="{{ pUser.username }}">
           @{{ pUser.username }}
-        </h5>          
+        </h5>
         <div class="profilAcaDis" title="Studiengang">
             <span class="glyphicon glyphicon-education" aria-hidden="true"></span>             
             {{ pUserProf.academicDiscipline }} 
         </div>
+      	{% if pUser.first_name or pUser.last_name %}
         <div class="profilLocation" title="Wohnort">
           <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
           {{ pUserProf.location }}
         </div>
+        {% endif %}
         <div class="profilJoined" title="registriert seit">
           <span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
           {{ pUser.date_joined|date:"j. F Y, \u\m H:i \U\h\r" }}
