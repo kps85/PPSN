@@ -294,11 +294,12 @@ class MessageForm(ModelForm):
     def clean(self):
         error_dict = {}
         user = User.objects.get(pk=self.user_id)
-        last_msg = Message.objects.filter(user=user).order_by("-date")[:1][0]
+        last_msg = Message.objects.filter(user=user).order_by("-date")[:1]
         check_date = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(seconds=30),
                                          timezone.get_current_timezone())
+        print(len(last_msg))
         # prevent spam!
-        if last_msg.date > check_date:
+        if len(last_msg) > 0 and last_msg[0].date > check_date:
             error_dict['user'] = 'Sie müssen 30 Sekunden warten, bevor Sie wieder posten können!'
 
         if len(error_dict) > 0:
