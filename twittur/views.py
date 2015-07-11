@@ -361,7 +361,7 @@ def profile_settings_view(request):
 
                     # re-authenticate user if he changed his password
                     if 'password' in data_dict and len(data_dict['password']) > 0:
-                        username = data_dict['username']
+                        username = user.username
                         password = data_dict['password']
                         user = authenticate(username=username, password=password)
                         auth.login(request, user)
