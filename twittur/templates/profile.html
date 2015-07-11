@@ -48,7 +48,7 @@
             <span class="glyphicon glyphicon-education" aria-hidden="true"></span>             
             {{ pUserProf.academicDiscipline }} 
         </div>
-      	{% if pUser.first_name or pUser.last_name %}
+      	{% if pUser.location and pUser.location != "" %}
         <div class="profilLocation" title="Wohnort">
           <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> 
           {{ pUserProf.location }}
