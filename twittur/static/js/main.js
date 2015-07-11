@@ -174,8 +174,8 @@ function initList() {
 }
 
 // Notifications
-var notificationShown = 7000; // Wie lange eine Notification angezeigt wird
-var notificationPoll = 1000; // Wie oft auf neue Notifications geprüft werden soll
+var notificationShown = 5000; // Wie lange eine Notification angezeigt wird
+var notificationPoll = 3000; // Wie oft auf neue Notifications geprüft werden soll
 
 function showNotification($notify) {
 	// Blendet eine einzelne Notification ein

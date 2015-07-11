@@ -61,7 +61,8 @@
   <form action="{% url 'twittur:profile' user=pUser %}" method="GET" >
     <input name="follow" type="hidden" value="follow" />
     {% if pUser in request.user.userprofile.ignoreU.all %}<input type="hidden" name="ignoreUser" value="{{ pUser }}">{% endif %}
-    <button class="col-xs-6 text-center btn btn-default profileButton" id="id_follow" type="submit">
+    <button class="col-xs-6 text-center btn btn-default profileButton" id="id_follow" 
+    				title="{% if pUser in request.user.userprofile.follow.all %}Aus Favoriten entfernen{% else %}Zu Favoriten hinzuf&uuml;gen{% endif %}" type="submit">
       <strong>{{ follow_text|safe }}</strong>
     </button>
   </form>
@@ -95,7 +96,7 @@
               <input name="favorits" type="hidden" value="true" >
               <input type="hidden" name="entfollow" value="{{ fav.id }}">
               <button class="remFav" title="{{ fav.username }} aus Favoriten entfernen" type="submit">
-              	<span class="glyphicon glyphicon-eye-close"></span>
+              	<span class="glyphicon glyphicon-star-empty"></span>
               </button>
             </form>
           </span>

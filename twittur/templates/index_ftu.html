@@ -77,9 +77,9 @@
     {% endif %}
     <br />
     <h4>Ihre pers&ouml;nlichen Daten</h4>
-    <input type="text" name="first_name" placeholder="Vorname" id="first_name" {% if data.first_name %} value="{{ data.first_name }}"{% endif %}/>
+    <input type="text" maxlength="30" name="first_name" placeholder="Vorname" id="first_name" {% if data.first_name %} value="{{ data.first_name }}"{% endif %}/>
     <br />
-    <input type="text" name="last_name" placeholder="Nachname" id="last_name" {% if data.last_name %} value="{{ data.last_name }}"{% endif %}/>
+    <input type="text" maxlength="30" name="last_name" placeholder="Nachname" id="last_name" {% if data.last_name %} value="{{ data.last_name }}"{% endif %}/>
     <br />
     <input type="text" name="email" placeholder="E-Mail *" id="email" required="required" {% if data.email %} value="{{ data.email }}"{% endif %}/>
     <br />

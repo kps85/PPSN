@@ -57,7 +57,7 @@
             <span class="glyphicon glyphicon-remove pull-right hideInfo" aria-hidden="true" ></span>
           {% for key, value in error_msg.items %}
             <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-            {{ value|safe }} ({{ key }})<br />
+            {{ value|safe }}<br />
           {% endfor %}
           </div>
         {% endif %}

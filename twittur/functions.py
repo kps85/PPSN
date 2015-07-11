@@ -75,6 +75,8 @@ def get_context(request, page=None, user=None):
         # & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
     )
 
+    error_msg = {}
+
     # collect hashtags, count them and order them by count reversed
     hashtag_count, hot_list = {}, []
     date_yesterday = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(hours=24),
@@ -110,14 +112,19 @@ def get_context(request, page=None, user=None):
     location = reverse("twittur:get_notification")
     api_url = request.build_absolute_uri(location)
 
+    # initialize msgForm and check for error_msg
+    msg_form = msg_dialog(request)
+    if msg_form.errors:
+        error_msg = msg_form.errors
+
     # intialize data dictionary with relevant display information
     context = {
         'active_page': page,
         'nav': Nav.nav,
-        'error_msg': {},
+        'error_msg': error_msg,
         'success_msg': None,
         'new': Notification.objects.filter(Q(read=False) & Q(user=request.user)).count(),
-        'msgForm': msg_dialog(request),
+        'msgForm': msg_form,
         'apiUrl': api_url,
         'user': user,
         'userProfile': user_profile,
@@ -142,6 +149,9 @@ def msg_dialog(request):
     :param request:
     :return:
     """
+
+    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()},
+                           user_id=request.user.id)
 
     if request.method == 'POST' and 'codename' in request.POST:
         if request.POST['codename'] == 'message':
@@ -173,8 +183,11 @@ def msg_dialog(request):
                         'user': message.user, 'message': msg_form.instance, 'note': note
                     })
 
-    msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()},
-                           user_id=request.user.id)
+    if not msg_form.errors:
+        msg_form = MessageForm(initial={'user': request.user.id, 'date': datetime.datetime.now()},
+                               user_id=request.user.id)
+
+
     return msg_form
 
 

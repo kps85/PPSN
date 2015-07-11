@@ -62,7 +62,7 @@ class Message(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)  # author
     text = models.CharField(max_length=254)
     picture = models.ImageField(upload_to='picture/', height_field=None, width_field=None, blank=True)
-    date = models.DateTimeField('date published')
+    date = models.DateTimeField('date published', default=timezone.now)
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
     attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='Notification')
     group = models.ForeignKey(GroupProfile, related_name='group', blank=True, null=True)

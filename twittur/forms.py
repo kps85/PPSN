@@ -11,6 +11,7 @@ Forms
 - FAQForm               form to create a new FAQ entry
 """
 
+import datetime
 import re
 
 from django import forms
@@ -271,7 +272,7 @@ class MessageForm(ModelForm):
     # initializing form input fields
     class Meta:
         model = Message
-        fields = ['user', 'text',  'date', 'picture']
+        fields = ['user', 'text', 'picture']
 
     # method to initialize the form
     def __init__(self, *args, **kwargs):
@@ -279,7 +280,6 @@ class MessageForm(ModelForm):
         super(MessageForm, self).__init__(*args, **kwargs)
         # set user input and date input type to hidden
         self.fields['user'].widget = forms.HiddenInput()
-        self.fields['date'].widget = forms.HiddenInput()
         # set visibility field
 
         # set text input type to textarea and add class 'form-control'
@@ -290,6 +290,21 @@ class MessageForm(ModelForm):
         })
 
         self.fields['picture'].widget.attrs['accept'] = 'image/*'
+
+    def clean(self):
+        error_dict = {}
+        user = User.objects.get(pk=self.user_id)
+        last_msg = Message.objects.filter(user=user).order_by("-date")[:1][0]
+        check_date = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(seconds=30),
+                                         timezone.get_current_timezone())
+        # prevent spam!
+        if last_msg.date > check_date:
+            error_dict['user'] = 'Sie müssen eine Minute warten, bevor Sie wieder posten können!'
+
+        if len(error_dict) > 0:
+            raise ValidationError(error_dict, code='invalid')
+
+        return self.cleaned_data
 
     # return checked text input value
     def clean_text(self):
@@ -306,7 +321,7 @@ class MessageForm(ModelForm):
 
 
 class FAQForm(ModelForm):
-    other = forms.CharField(max_length=128, required=False)
+    other = forms.CharField(max_length=100, required=False)
 
     # referencing FAQ model as basis for the form
     # initializing form input fields

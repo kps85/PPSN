@@ -48,7 +48,8 @@ def index_view(request):
 
     # if request was sent to view: return success message
     if request.method == 'POST':
-        context['success_msg'] = 'Nachricht erfolgreich gesendet!'
+        if len(context['error_msg']) == 0:
+            context['success_msg'] = 'Nachricht erfolgreich gesendet!'
         if 'list_end' in request.POST:
             context['list_end'] = request.POST['list_end']
     elif request.method == 'GET' and 'search_input' in request.GET:
@@ -282,9 +283,9 @@ def profile_view(request, user):
             context['ignored'] = True                                   # yes, so disable all messages from her profile
 
         if p_user in context['follow_list']:
-            context['follow_text'] = '<span class="glyphicon glyphicon-star-empty"></span> NICHT FOLGEN'
+            context['follow_text'] = '<span class="glyphicon glyphicon-star-empty"></span> ENTFERNEN'
         else:
-            context['follow_text'] = '<span class="glyphicon glyphicon-star"></span> FOLGEN'
+            context['follow_text'] = '<span class="glyphicon glyphicon-star"></span> HINZUF&Uuml;GEN'
 
         # Messages
         messages = get_messages(data={'page': 'profile', 'data': p_user, 'end': 5, 'request': request})
@@ -427,7 +428,8 @@ def message_view(request, msg):
     # if a message was sent to this view:
     # return success_msg
     if request.method == 'POST':
-        context['success_msg'] = 'Nachricht erfolgreich gesendet!'
+        if len(context['error_msg']) == 0:
+            context['success_msg'] = 'Nachricht erfolgreich gesendet!'
 
     # gets all Messages
     messages = get_messages(data={'page': msg, 'data': request.user, 'request': request})

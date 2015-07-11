@@ -180,6 +180,8 @@ def message_set(request, user, hash_item):
         if msg_form.is_valid():
             msg_form.save()
             msg_to_db(msg_form.instance)
-        return HttpResponse("Nachricht erfolgreich gesendet!")
+            return HttpResponse("Message sent successfully!")
+        else:
+            return HttpResponse("Please wait a minute, before sending a new request!")
     else:
-        return HttpResponse("Nachricht nicht gesendet!")
+        return HttpResponse("Sorry, user data does not match!")
