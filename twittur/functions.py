@@ -431,7 +431,7 @@ def get_message_list(data):
         ).order_by('-date')
     elif page == 'hashtag':
         db_message_list = Message.objects.filter(
-            Q(hashtags__name__contains=data) & (Q(group__in=usr_grps) | Q(group=None))
+            Q(hashtags__name=data) & (Q(group__in=usr_grps) | Q(group=None))
         ).order_by('-date')
     elif page == 'search':
         query = Q(user__username__in=data) & (Q(group__in=usr_grps) | Q(group=None))
