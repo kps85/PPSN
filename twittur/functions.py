@@ -209,7 +209,6 @@ def msg_to_db(message):
 
         # find all words starts with "#".
         if word[0] == "#":
-            word[1:] = string.replace(word[1:], "'", "`")
             check = re.findall(r'[a-zA-Z0-9-_äöüÄÖÜß()+-/=!?*]+', word[1:].encode('utf-8'))
             for item in check:
                 item = item.decode('utf-8')
