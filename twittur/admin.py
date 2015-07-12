@@ -50,7 +50,7 @@ class GroupAdmin(admin.ModelAdmin):
         ('Admin',       {'fields': ['admin']}),
     ]
     # overview
-    list_display = ('name', 'supergroup', 'admin')
+    list_display = ('name', 'short', 'supergroup', 'admin')
     list_display_links = ('supergroup', 'name')
     ordering = ('-supergroup', 'name')
 
