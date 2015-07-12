@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^(?i)info/support/$', views_info.support_view, name='support'),
 
     # views_search
-    url(r'^(?i)hashtag/(?P<text>[a-zA-Z0-9-_.()+-=!?*]+|\w+)/$', views_search.hashtag_view, name='hashtag'),
+    url(r'^(?i)hashtag/(?P<text>[a-zA-Z0-9-_.()+-=!?*´`]+|\w+)/$', views_search.hashtag_view, name='hashtag'),
     url(r'^(?i)search/$', views_search.search_view, name='search'),
 
     # views_group

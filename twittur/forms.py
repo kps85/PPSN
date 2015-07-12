@@ -211,6 +211,15 @@ class GroupProfileForm(ModelForm):
             raise ValidationError(error_dict, code='invalid')
         return self.cleaned_data
 
+    # method to save user's updated information
+    # 'set_password' is for encoding raw text password
+    def save(self, commit=True):
+        instance = super(GroupProfileForm, self).save(commit=False)
+        instance.short = self.cleaned_data['short'].lower()
+        if commit:
+            instance.save()
+        return instance
+
 
 class GroupProfileEditForm(ModelForm):
     ack_password = forms.CharField(max_length=128, required=False)
