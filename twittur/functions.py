@@ -731,7 +731,6 @@ def get_disciplines():
             faks.append(ad_list)
             uni.append(item.name)
         discs.append(zip(uni, faks))
-        print discs
     return discs
 
 
