@@ -720,8 +720,8 @@ def get_disciplines():
 
     discs, uni, faks = [], [], []
 
-    if GroupProfile.objects.filter(short='uni').exists():
-        tub = GroupProfile.objects.get(short='uni')
+    if GroupProfile.objects.filter(short='tub').exists():
+        tub = GroupProfile.objects.get(short='tub')
         fak = GroupProfile.objects.filter(supergroup=tub).order_by('name')
         for item in fak:
             ad = GroupProfile.objects.filter(supergroup=item).order_by('name')
@@ -731,6 +731,7 @@ def get_disciplines():
             faks.append(ad_list)
             uni.append(item.name)
         discs.append(zip(uni, faks))
+        print discs
     return discs
 
 
