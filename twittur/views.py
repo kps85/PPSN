@@ -58,12 +58,9 @@ def index_view(request):
     # Messages
     messages = get_messages(data={'page': 'index', 'data': context['user'],
                                   'end': context['list_end'], 'request': request})
-    fmessages = get_messages(data={'page': 'index_favo', 'data': context['user'],
-                                  'end': context['list_end'], 'request': request})
 
     context['list_length'], context['list_end'] = messages['list_length'], messages['list_end']
     context['has_msg'], context['message_list'] = messages['has_msg'], messages['message_list']
-    context['fmessage_list'] = fmessages['message_list']
 
     return render(request, 'index.html', context)
 

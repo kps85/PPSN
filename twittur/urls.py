@@ -50,7 +50,6 @@ urlpatterns = [
     url(r'^(?i)logout/$', functions.logout, name='logout'),
     url(r'^(?i)more/$', functions.load_more, name='more'),
     url(r'^(?i)update/$', functions.update, name='update'),
-    url(r'^(?i)favorite/(?P<msg>[0-9]+)/$', functions.favorite, name='favorite'),
     url(r'^(?i)verify/(?P<user>[a-zA-Z0-9-_.]+|\w\S+)/(?P<hash_item>\w\S+)/$', functions.verify, name='verify'),
     url(r'^(?i)refresh_hash/$', functions.refresh_hash, name='refresh_hash'),
     url(r'^(?i)reset_pw/(?P<user>[a-zA-Z0-9-_.]+|\w\S+)/(?P<hash_item>\w\S+)/$', functions.reset_pw, name='reset_pw'),
