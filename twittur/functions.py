@@ -293,7 +293,7 @@ def dbm_to_m(message):
         for word in message.text.split():
             if len(word[1:]) > 0:
                 # find all words starts with "#" and replace them with a link. No "/" allowed in hashtag.
-                if word[0] == "#" and (word not in urls):
+                if word[0] == "#" and word not in urls:
                     if Hashtag.objects.filter(name=word[1:]).exists():
                         href = r'<a href="%s">%s</a>' % (reverse("twittur:hashtag", kwargs={'text': word[1:]}), word)
                         message.text = re.sub(r'(^|\s)%s($|\s)' % re.escape(word), r'\1%s\2' % href, message.text)
@@ -306,7 +306,7 @@ def dbm_to_m(message):
                             and User.objects.get(username=word[1:]) in attag_list:
                         href = '<a href="' + reverse("twittur:profile", kwargs={'user': word[1:]}) + '">' + word + '</a>'
                         message.text = message.text.replace(word, href)
-                if word[0] == '&' and group.short == word[1:] and word not in urls:
+                if word[0] == '&' and word not in urls:
                     href = '<a href="' + reverse("twittur:group", kwargs={'groupshort': word[1:]}) + '">' + word + '</a>'
                     message.text = message.text.replace(word, href)
     if urls:
