@@ -109,7 +109,7 @@ def get_context(request, page=None, user=None):
         grp = GroupProfile.objects.get(pk=item['group'])
         if grp not in group_sb_list:
             group_sb_list.append(grp)
-        
+    print group_sb_list
     # generate URL for API
     location = reverse("twittur:get_notification")
     api_url = request.build_absolute_uri(location)
@@ -378,6 +378,7 @@ def get_messages(data):
         message_list.append(dbm_to_m(copy_message))
         message_forms.append(MessageForm(instance=message))
 
+
     # check if messages exist, set boolean for frontend
     if len(db_message_list) > 0:
         result['has_msg'] = True
@@ -403,7 +404,7 @@ def get_messages(data):
 
 
 # return Full Message List
-def get_message_list(data):
+def get_message_list(data, startpage=None):
     """
     get all of the messages for a specific page
     :param data: page specific data
@@ -438,8 +439,15 @@ def get_message_list(data):
         for term in data:
             query |= Q(text__contains=term) | Q(user__username__contains=term)
         db_message_list = Message.objects.filter(query).order_by('-date')
+    elif page == 'index_favo':
+        db_message_list = Message.objects.filter(
+            Q(favorite__username__exact=data.username)
+        ).order_by('-date')
+
     else:
         db_message_list = Message.objects.filter(pk=page)
+
+
 
     return db_message_list.distinct()
 
@@ -753,9 +761,8 @@ def get_safety_levels(user, group=False):
     safety_level.append(disc)
 
     if group:
-        group_super_list = GroupProfile.objects.filter(pk__in=[24, 25, 34, 35, 36, 37, 38, 39])
         group_list = GroupProfile.objects.filter(
-            Q(member__exact=user) & ~Q(pk__in=group_super_list) & ~Q(supergroup__in=group_super_list)
+            Q(member__exact=user)
         ).order_by('name')
         gl = []
         for group in group_list:
@@ -920,3 +927,12 @@ def verify(request, user, hash_item):
         response = "Der angegebene Hash stimmt nicht mit dem des Benutzers &uuml;berein."
 
     return HttpResponse(response)
+
+def favorite(request, msg):
+    message = Message.objects.get(id=msg)
+    if request.user in message.favorite.all():
+        message.favorite.remove(request.user)
+    else:
+        message.favorite.add(request.user)
+
+    return HttpResponseRedirect('/twittur/')

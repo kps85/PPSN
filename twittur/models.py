@@ -65,6 +65,8 @@ class Message(models.Model):
     date = models.DateTimeField('date published', default=timezone.now)
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtags')
     attags = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='attags', through='Notification')
+    favorite = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='favorite')
+    retweet = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='retweet')
     group = models.ForeignKey(GroupProfile, related_name='group', blank=True, null=True)
     comment = models.ForeignKey('self', related_name='comments', blank=True, null=True)
     ignore = models.BooleanField(default=False)

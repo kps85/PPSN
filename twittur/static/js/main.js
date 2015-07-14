@@ -630,7 +630,7 @@ function msgManagement() {
 	  $("#newComment"+data[0]).find(".modal-title").html("Antwort an " + data[1] + " verfassen");
   });
 	
-	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton, .saveMsgEdit, .saveCmtEdit").unbind("click").click(function(e) {
+	$(".ignoreCmtButton, .ignoreMsgButton, .deleteMsgButton, .saveMsgEdit, .saveCmtEdit, .favoMsg").unbind("click").click(function(e) {
 		var hint = $(this).attr("data-hint").split(" ");
     var info = {
 			what: hint[0],

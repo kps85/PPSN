@@ -10,15 +10,50 @@
 
 {% block content %}
   {% if has_msg %}
+      <div class="clearfix">
+    <a href="#searchUser" class="col-xs-6 btn btn-default searchResultButton searchUser active
+    ">
+      Meine Startseite
+    </a>
+    <a href="#searchGroup" class="col-xs-6 btn btn-default searchResultButton searchGroup">
+     Favorisierte Posts
+    </a>
+
+    <br>
+      <br>
+      <br>
+
+  </div>
+      <div class="searchResultBox searchUser active " id="searchUser">
+      {% if message_list %}
     {% for message, dbmessage, form, comments, count in message_list %}
       {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
-    {% endfor %}
-    </div>
-    <div class="text-center{% if list_end == True or list_end == 'True' %} hidden{% endif %}">
+           {% endfor %}
+         <div class="text-center{% if list_end == True or list_end == 'True' %} hidden{% endif %}">
     	<button class="load_more btn btn-default" data-hint="{% url 'twittur:more' %}" data-page="{{ active_page }}" data-length="{{ list_end }}" title="Mehr Beitr&auml;ge laden">
       	<span class="glyphicon glyphicon-refresh"></span>
-      </button><br />
-      <br />
+      </button>
+  {% else %}
+    <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+  {% endif %}
+
+    </div>
+      </div>
+      <div class="searchResultBox searchGroup " id="searchGroup">
+      {% if fmessage_list %}
+    {% for message, dbmessage, form, comments, count in fmessage_list %}
+      {% include "message_box.html" with message=message dbmessage=dbmessage form=form comments=comments comCount=count %}
+    {% endfor %}
+          {% else %}
+           <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
+          {% endif %}
+
+    </div>
+
+
+
+
+
   {% else %}
     <div class="text-center"><em>Keine Nachrichten zum Anzeigen gefunden!</em></div>
   {% endif %}
