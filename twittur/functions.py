@@ -304,11 +304,16 @@ def dbm_to_m(message):
                 if word[0] == "@" and word not in urls:
                     if User.objects.filter(Q(username=word[1:]) & Q(is_active=True)).exists()\
                             and User.objects.get(username=word[1:]) in attag_list:
-                        href = '<a href="' + reverse("twittur:profile", kwargs={'user': word[1:]}) + '">' + word + '</a>'
+                        href = '<a href="' \
+                               + reverse("twittur:profile", kwargs={'user': word[1:]}) \
+                               + '">' + word + '</a>'
                         message.text = message.text.replace(word, href)
                 if word[0] == '&' and word not in urls:
-                    href = '<a href="' + reverse("twittur:group", kwargs={'groupshort': word[1:]}) + '">' + word + '</a>'
-                    message.text = message.text.replace(word, href)
+                    if GroupProfile.objects.filter(short=word[1:]).exists():
+                        href = '<a href="' \
+                               + reverse("twittur:group", kwargs={'groupshort': word[1:]}) \
+                               + '">' + word + '</a>'
+                        message.text = message.text.replace(word, href)
     if urls:
         for url in urls:
             href = '<a href="' + url + '">' + url + '</a>'
