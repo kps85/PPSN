@@ -422,7 +422,7 @@ def get_message_list(data):
         db_message_list = Message.objects.filter(
             ((Q(user__exact=data)
               | (Q(user__exact=data.userprofile.follow.all()) & (Q(group__in=usr_grps) | Q(group=None)))
-              | Q(attags=data))) & Q(comment=None)
+              | Q(attags=data))) & Q(comment=None) | Q(group__member__exact=request.user)
         ).order_by('-date')
     elif page == 'group':
         grp = GroupProfile.objects.get(name=data)
